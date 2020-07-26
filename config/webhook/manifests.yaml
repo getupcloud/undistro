@@ -1,0 +1,250 @@
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: mutating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-cluster.getupcloud.com-v1alpha1-cluster
+  failurePolicy: Fail
+  name: default.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusters
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-cluster.getupcloud.com-v1alpha1-machine
+  failurePolicy: Fail
+  name: default.machine.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machines
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-cluster.getupcloud.com-v1alpha1-machinedeployment
+  failurePolicy: Fail
+  name: default.machinedeployment.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machinedeployments
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-cluster.getupcloud.com-v1alpha1-machinehealthcheck
+  failurePolicy: Fail
+  name: default.machinehealthcheck.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machinehealthchecks
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-cluster.getupcloud.com-v1alpha1-machineset
+  failurePolicy: Fail
+  name: default.machineset.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machinesets
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-controlplane-getupcloud.com-v1alpha1-kubeadmcontrolplane
+  failurePolicy: Fail
+  name: default.kubeadmcontrolplane.controlplane.getupcloud.com
+  rules:
+  - apiGroups:
+    - controlplane.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - kubeadmcontrolplanes
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: validating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-cluster.getupcloud.com-v1alpha1-cluster
+  failurePolicy: Fail
+  name: validation.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusters
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-cluster.getupcloud.com-v1alpha1-machine
+  failurePolicy: Fail
+  name: validation.machine.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machines
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-cluster.getupcloud.com-v1alpha1-machinedeployment
+  failurePolicy: Fail
+  name: validation.machinedeployment.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machinedeployments
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-cluster.getupcloud.com-v1alpha1-machinehealthcheck
+  failurePolicy: Fail
+  name: validation.machinehealthcheck.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machinehealthchecks
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-cluster.getupcloud.com-v1alpha1-machineset
+  failurePolicy: Fail
+  name: validation.machineset.cluster.getupcloud.com
+  rules:
+  - apiGroups:
+    - cluster.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machinesets
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-bootstrap-getupcloud.com-v1alpha1-kubeadmconfig
+  failurePolicy: Fail
+  name: validation.kubeadmconfig.bootstrap.getupcloud.com
+  rules:
+  - apiGroups:
+    - bootstrap.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - kubeadmconfigs
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-controlplane-getupcloud.com-v1alpha1-kubeadmcontrolplane
+  failurePolicy: Fail
+  name: validation.kubeadmcontrolplane.controlplane.getupcloud.com
+  rules:
+  - apiGroups:
+    - controlplane.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - kubeadmcontrolplanes

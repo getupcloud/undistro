@@ -41,8 +41,8 @@ func (in *KubeadmControlPlane) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:verbs=create;update,path=/mutate-controlplane-getupcloud.com-v1alpha1-kubeadmcontrolplane,mutating=true,failurePolicy=fail,matchPolicy=Equivalent,groups=controlplane.getupcloud.com,resources=kubeadmcontrolplanes,versions=v1alpha1,name=default.kubeadmcontrolplane.controlplane.getupcloud.com,sideEffects=None
-// +kubebuilder:webhook:verbs=create;update,path=/validate-controlplane-getupcloud.com-v1alpha1-kubeadmcontrolplane,mutating=false,failurePolicy=fail,matchPolicy=Equivalent,groups=controlplane.getupcloud.com,resources=kubeadmcontrolplanes,versions=v1alpha1,name=validation.kubeadmcontrolplane.controlplane.getupcloud.com,sideEffects=None
+// +kubebuilder:webhook:verbs=create;update,path=/mutate-controlplane-getupcloud.com-v1alpha1-kubeadmcontrolplane,mutating=true,failurePolicy=fail,groups=controlplane.getupcloud.com,resources=kubeadmcontrolplanes,versions=v1alpha1,name=default.kubeadmcontrolplane.controlplane.getupcloud.com
+// +kubebuilder:webhook:verbs=create;update,path=/validate-controlplane-getupcloud.com-v1alpha1-kubeadmcontrolplane,mutating=false,failurePolicy=fail,groups=controlplane.getupcloud.com,resources=kubeadmcontrolplanes,versions=v1alpha1,name=validation.kubeadmcontrolplane.controlplane.getupcloud.com
 
 var _ webhook.Defaulter = &KubeadmControlPlane{}
 var _ webhook.Validator = &KubeadmControlPlane{}
