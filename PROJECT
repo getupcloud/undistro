@@ -1,0 +1,4 @@
+domain: getupcloud.com
+multigroup: true
+repo: github.com/getupcloud/undistro
+version: "2"
