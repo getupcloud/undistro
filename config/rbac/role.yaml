@@ -29,20 +29,6 @@ rules:
   - list
   - watch
 - apiGroups:
-  - bootstrap.cluster.x-k8s.io
-  - controlplane.cluster.x-k8s.io
-  - infrastructure.cluster.x-k8s.io
-  resources:
-  - '*'
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
   - bootstrap.getupcloud.com
   resources:
   - kubeadmconfigs
@@ -83,19 +69,71 @@ rules:
   - update
   - watch
 - apiGroups:
-  - cluster.x-k8s.io
+  - cluster.getupcloud.com
   resources:
   - clusters
   - clusters/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cluster.getupcloud.com
+  resources:
+  - clusters
+  - clusters/status
+  - machines
+  - machines/status
   verbs:
   - get
   - list
   - watch
 - apiGroups:
-  - cluster.x-k8s.io
+  - cluster.getupcloud.com
+  resources:
+  - machinedeployments
+  - machinedeployments/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cluster.getupcloud.com
+  resources:
+  - machinehealthchecks
+  - machinehealthchecks/status
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cluster.getupcloud.com
   resources:
   - machines
   - machines/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cluster.getupcloud.com
+  resources:
+  - machinesets
+  - machinesets/status
   verbs:
   - create
   - delete
@@ -145,80 +183,6 @@ rules:
   verbs:
   - get
   - list
-  - watch
-- apiGroups:
-  - getupcloud.com
-  resources:
-  - clusters
-  - clusters/status
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - getupcloud.com
-  resources:
-  - clusters
-  - clusters/status
-  - machines
-  - machines/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - getupcloud.com
-  resources:
-  - machinedeployments
-  - machinedeployments/status
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - getupcloud.com
-  resources:
-  - machinehealthchecks
-  - machinehealthchecks/status
-  verbs:
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - getupcloud.com
-  resources:
-  - machines
-  - machines/status
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - getupcloud.com
-  resources:
-  - machinesets
-  - machinesets/status
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
   - watch
 
 ---

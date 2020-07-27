@@ -2,3 +2,17 @@ domain: getupcloud.com
 multigroup: true
 repo: github.com/getupcloud/undistro
 version: "2"
+resources:
+- group: cluster
+  version: v1alpha1
+  kind: Cluster
+- group: cluster
+  version: v1alpha1
+  kind: Machine
+- group: cluster
+  version: v1alpha1
+  kind: MachineSet
+- group: cluster
+  version: v1alpha1
+  kind: MachineDeployment
+

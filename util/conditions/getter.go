@@ -17,9 +17,9 @@ limitations under the License.
 package conditions
 
 import (
+	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 

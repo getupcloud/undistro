@@ -58,8 +58,8 @@ const (
 
 // +kubebuilder:rbac:groups=core,resources=events,verbs=get;list;watch;create;patch
 // +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch
-// +kubebuilder:rbac:groups=getupcloud.com,resources=machines;machines/status,verbs=get;list;watch;delete
-// +kubebuilder:rbac:groups=getupcloud.com,resources=machinehealthchecks;machinehealthchecks/status,verbs=get;list;watch;update;patch
+// +kubebuilder:rbac:groups=cluster.getupcloud.com,resources=machines;machines/status,verbs=get;list;watch;delete
+// +kubebuilder:rbac:groups=cluster.getupcloud.com,resources=machinehealthchecks;machinehealthchecks/status,verbs=get;list;watch;update;patch
 
 // MachineHealthCheckReconciler reconciles a MachineHealthCheck object
 type MachineHealthCheckReconciler struct {
@@ -95,7 +95,6 @@ func (r *MachineHealthCheckReconciler) SetupWithManager(mgr ctrl.Manager, option
 	if err != nil {
 		return errors.Wrap(err, "failed to add Watch for Clusters to controller manager")
 	}
-
 	// Add index to Machine for listing by Node reference
 	if err := mgr.GetCache().IndexField(ctx, &clusterv1.Machine{},
 		machineNodeNameIndex,

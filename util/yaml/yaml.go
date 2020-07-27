@@ -22,6 +22,8 @@ import (
 	"io"
 	"os"
 
+	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
+	"github.com/getupcloud/undistro/util"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -30,8 +32,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer/streaming"
 	apiyaml "k8s.io/apimachinery/pkg/util/yaml"
 	"k8s.io/client-go/kubernetes/scheme"
-	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
-	"github.com/getupcloud/undistro/util"
 	"sigs.k8s.io/yaml"
 )
 

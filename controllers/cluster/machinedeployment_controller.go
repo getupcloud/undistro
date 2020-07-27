@@ -49,7 +49,7 @@ var (
 // +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch
 // +kubebuilder:rbac:groups=core,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=infrastructure.getupcloud.com;bootstrap.getupcloud.com,resources=*,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=getupcloud.com,resources=machinedeployments;machinedeployments/status,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=cluster.getupcloud.com,resources=machinedeployments;machinedeployments/status,verbs=get;list;watch;create;update;patch;delete
 
 // MachineDeploymentReconciler reconciles a MachineDeployment object
 type MachineDeploymentReconciler struct {

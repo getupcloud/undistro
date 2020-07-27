@@ -314,7 +314,7 @@ func generateClientCert(caCertEncoded, caKeyEncoded []byte) (tls.Certificate, er
 
 func newClientCert(caCert *x509.Certificate, key *rsa.PrivateKey, caKey crypto.Signer) (*x509.Certificate, error) {
 	cfg := certs.Config{
-		CommonName: "cluster-api.x-k8s.io",
+		CommonName: "cluster-api.getupcloud.com",
 	}
 
 	now := time.Now().UTC()

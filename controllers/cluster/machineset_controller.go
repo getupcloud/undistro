@@ -64,7 +64,7 @@ var (
 // +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch
 // +kubebuilder:rbac:groups=core,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=infrastructure.getupcloud.com;bootstrap.getupcloud.com,resources=*,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=getupcloud.com,resources=machinesets;machinesets/status,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=cluster.getupcloud.com,resources=machinesets;machinesets/status,verbs=get;list;watch;create;update;patch;delete
 
 // MachineSetReconciler reconciles a MachineSet object
 type MachineSetReconciler struct {

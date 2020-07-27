@@ -17,8 +17,8 @@ limitations under the License.
 package predicates
 
 import (
-	"github.com/go-logr/logr"
 	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
+	"github.com/go-logr/logr"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )

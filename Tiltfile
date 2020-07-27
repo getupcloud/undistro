@@ -20,13 +20,13 @@ def binary():
 
 local(manifests() + generate())
 
-local_resource('crd', manifests() + 'kustomize build config/crd | kubectl apply -f -', deps=["api"])
+local_resource('crd', manifests() + 'kustomize build config/crd | kubectl apply -f -', deps=["apis"])
 
 #local_resource('un-crd', 'kustomize build config/crd | kubectl delete -f -', auto_init=False, trigger_mode=TRIGGER_MODE_MANUAL)
 
 k8s_yaml(yaml())
 
-local_resource('recompile', generate() + binary(), deps=['controllers', 'main.go'])
+local_resource('recompile', generate() + binary(), deps=['controllers', 'util', 'errors', 'internal', 'test', 'main.go'])
 
 docker_build_with_restart(IMG, '.', 
  dockerfile='tilt.docker',

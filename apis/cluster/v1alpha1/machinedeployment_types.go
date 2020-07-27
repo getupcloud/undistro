@@ -29,17 +29,17 @@ const (
 	RollingUpdateMachineDeploymentStrategyType MachineDeploymentStrategyType = "RollingUpdate"
 
 	// RevisionAnnotation is the revision annotation of a machine deployment's machine sets which records its rollout sequence
-	RevisionAnnotation = "machinedeployment.clusters.cluster.getupcloud.com/revision"
+	RevisionAnnotation = "machinedeployment.cluster.getupcloud.com/revision"
 	// RevisionHistoryAnnotation maintains the history of all old revisions that a machine set has served for a machine deployment.
-	RevisionHistoryAnnotation = "machinedeployment.clusters.cluster.getupcloud.com/revision-history"
+	RevisionHistoryAnnotation = "machinedeployment.cluster.getupcloud.com/revision-history"
 	// DesiredReplicasAnnotation is the desired replicas for a machine deployment recorded as an annotation
 	// in its machine sets. Helps in separating scaling events from the rollout process and for
 	// determining if the new machine set for a deployment is really saturated.
-	DesiredReplicasAnnotation = "machinedeployment.clusters.cluster.getupcloud.com/desired-replicas"
+	DesiredReplicasAnnotation = "machinedeployment.cluster.getupcloud.com/desired-replicas"
 	// MaxReplicasAnnotation is the maximum replicas a deployment can have at a given point, which
 	// is machinedeployment.spec.replicas + maxSurge. Used by the underlying machine sets to estimate their
 	// proportions in case the deployment has surge replicas.
-	MaxReplicasAnnotation = "machinedeployment.clusters.cluster.getupcloud.com/max-replicas"
+	MaxReplicasAnnotation = "machinedeployment.cluster.getupcloud.com/max-replicas"
 )
 
 // ANCHOR: MachineDeploymentSpec

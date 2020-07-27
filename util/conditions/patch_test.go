@@ -20,10 +20,10 @@ import (
 	"testing"
 	"time"
 
+	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
 )
 
 func TestNewPatch(t *testing.T) {

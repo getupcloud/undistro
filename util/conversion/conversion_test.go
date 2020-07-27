@@ -21,9 +21,9 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	clusterv1a2 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
 	clusterv1a3 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestMarshalData(t *testing.T) {

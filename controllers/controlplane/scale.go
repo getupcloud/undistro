@@ -29,6 +29,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
 func (r *KubeadmControlPlaneReconciler) initializeControlPlane(ctx context.Context, cluster *clusterv1.Cluster, kcp *controlplanev1.KubeadmControlPlane, controlPlane *internal.ControlPlane) (ctrl.Result, error) {
@@ -62,9 +63,9 @@ func (r *KubeadmControlPlaneReconciler) initializeControlPlane(ctx context.Conte
 
 func (r *KubeadmControlPlaneReconciler) scaleUpControlPlane(ctx context.Context, cluster *clusterv1.Cluster, kcp *controlplanev1.KubeadmControlPlane, controlPlane *internal.ControlPlane) (ctrl.Result, error) {
 	logger := controlPlane.Logger()
-
+	zero := reconcile.Result{}
 	// reconcileHealth returns err if there is a machine being delete which is a required condition to check before scaling up
-	if result, err := r.reconcileHealth(ctx, cluster, kcp, controlPlane); err != nil {
+	if result, err := r.reconcileHealth(ctx, cluster, kcp, controlPlane); err != nil || result != zero {
 		return result, err
 	}
 
@@ -89,8 +90,8 @@ func (r *KubeadmControlPlaneReconciler) scaleDownControlPlane(
 	outdatedMachines internal.FilterableMachineCollection,
 ) (ctrl.Result, error) {
 	logger := controlPlane.Logger()
-
-	if result, err := r.reconcileHealth(ctx, cluster, kcp, controlPlane); err != nil {
+	zero := reconcile.Result{}
+	if result, err := r.reconcileHealth(ctx, cluster, kcp, controlPlane); err != nil || result != zero {
 		return result, err
 	}
 

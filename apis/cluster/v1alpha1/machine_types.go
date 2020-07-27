@@ -17,9 +17,9 @@ limitations under the License.
 package v1alpha1
 
 import (
+	capierrors "github.com/getupcloud/undistro/errors"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	capierrors "github.com/getupcloud/undistro/errors"
 )
 
 const (

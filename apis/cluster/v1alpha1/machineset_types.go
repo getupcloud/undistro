@@ -17,11 +17,11 @@ limitations under the License.
 package v1alpha1
 
 import (
+	capierrors "github.com/getupcloud/undistro/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	metav1validation "k8s.io/apimachinery/pkg/apis/meta/v1/validation"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-	capierrors "github.com/getupcloud/undistro/errors"
 )
 
 // ANCHOR: MachineSetSpec
