@@ -33,6 +33,9 @@ install: manifests
 uninstall: manifests
 	kustomize build config/crd | kubectl delete -f -
 
+install-certmanager:
+	kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.16.0/cert-manager.yaml
+
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy: manifests
 	cd config/manager && kustomize edit set image controller=${IMG}
