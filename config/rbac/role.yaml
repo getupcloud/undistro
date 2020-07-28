@@ -21,6 +21,14 @@ rules:
   - update
   - watch
 - apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - apiextensions.k8s.io
   resources:
   - customresourcedefinitions
@@ -184,6 +192,55 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - getupcloud.com
+  resources:
+  - clusters
+  - machines
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - infrastructure.getupcloud.com
+  resources:
+  - dockerclusters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infrastructure.getupcloud.com
+  resources:
+  - dockerclusters/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - infrastructure.getupcloud.com
+  resources:
+  - dockermachines
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infrastructure.getupcloud.com
+  resources:
+  - dockermachines/status
+  verbs:
+  - get
+  - patch
+  - update
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1

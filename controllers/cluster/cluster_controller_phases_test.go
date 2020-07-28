@@ -113,7 +113,7 @@ func TestClusterReconcilePhases(t *testing.T) {
 						"name":      "test",
 						"namespace": "test-namespace",
 						"annotations": map[string]interface{}{
-							"getupcloud.com/paused": "true",
+							"cluster.getupcloud.com/paused": "true",
 						},
 					},
 				},

@@ -1,4 +1,8 @@
 FROM golang:alpine
 WORKDIR /
+# install a couple of dependencies
+RUN curl -L https://dl.k8s.io/latest/kubernetes-client-linux-amd64.tar.gz | tar xvz
+RUN mv /tmp/kubernetes/client/bin/kubectl /usr/local/bin
+RUN curl https://get.docker.com | sh
 COPY ./bin/manager /
 CMD ["/manager"]

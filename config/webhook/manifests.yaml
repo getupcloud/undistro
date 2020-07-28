@@ -248,3 +248,21 @@ webhooks:
     - UPDATE
     resources:
     - kubeadmcontrolplanes
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-infrastructure-getupcloud.com-v1alpha1-dockermachinetemplate
+  failurePolicy: Fail
+  name: validation.dockermachinetemplate.infrastructure.getupcloud.com
+  rules:
+  - apiGroups:
+    - infrastructure.getupcloud.com
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - dockermachinetemplates

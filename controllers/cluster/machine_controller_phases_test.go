@@ -957,7 +957,7 @@ func TestReconcileInfrastructure(t *testing.T) {
 					"name":      "infra-config1",
 					"namespace": "default",
 					"annotations": map[string]interface{}{
-						"getupcloud.com/paused": "true",
+						"cluster.getupcloud.com/paused": "true",
 					},
 				},
 				"spec": map[string]interface{}{

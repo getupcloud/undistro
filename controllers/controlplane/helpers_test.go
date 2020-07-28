@@ -312,13 +312,13 @@ func TestKubeadmControlPlaneReconciler_generateMachine(t *testing.T) {
 
 	infraRef := &corev1.ObjectReference{
 		Kind:       "InfraKind",
-		APIVersion: "infrastructure.getupcloud.com/v1alpha3",
+		APIVersion: "infrastructure.getupcloud.com/v1alpha1",
 		Name:       "infra",
 		Namespace:  cluster.Namespace,
 	}
 	bootstrapRef := &corev1.ObjectReference{
 		Kind:       "BootstrapKind",
-		APIVersion: "bootstrap.getupcloud.com/v1alpha3",
+		APIVersion: "bootstrap.getupcloud.com/v1alpha1",
 		Name:       "bootstrap",
 		Namespace:  cluster.Namespace,
 	}

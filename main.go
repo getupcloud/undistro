@@ -15,11 +15,13 @@ import (
 	bootstrapv1alpha1 "github.com/getupcloud/undistro/apis/bootstrap/v1alpha1"
 	clusterv1alpha1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
 	controlplanev1alpha1 "github.com/getupcloud/undistro/apis/controlplane/v1alpha1"
+	infrav1alpha1 "github.com/getupcloud/undistro/apis/infrastructure/v1alpha1"
 	"github.com/getupcloud/undistro/cmd/version"
 	bootstrapcontroller "github.com/getupcloud/undistro/controllers/bootstrap"
 	clustercontroller "github.com/getupcloud/undistro/controllers/cluster"
 	"github.com/getupcloud/undistro/controllers/cluster/remote"
 	controlplanecontroller "github.com/getupcloud/undistro/controllers/controlplane"
+	infracontroller "github.com/getupcloud/undistro/controllers/infrastructure"
 	"github.com/getupcloud/undistro/util"
 	certmanagerv1beta1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1beta1"
 	"github.com/spf13/pflag"
@@ -54,6 +56,7 @@ var (
 	machineHealthCheckConcurrency  int
 	kubeadmConfigConcurrency       int
 	kubeadmControlPlaneConcurrency int
+	infraConcurrency               int
 	syncPeriod                     time.Duration
 	webhookPort                    int
 	healthAddr                     string
@@ -67,6 +70,7 @@ func init() {
 	_ = bootstrapv1alpha1.AddToScheme(scheme)
 	_ = apiextensionsv1.AddToScheme(scheme)
 	_ = controlplanev1alpha1.AddToScheme(scheme)
+	_ = infrav1alpha1.AddToScheme(scheme)
 	_ = certmanagerv1beta1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
@@ -123,6 +127,9 @@ func InitFlags(fs *pflag.FlagSet) {
 
 	fs.IntVar(&kubeadmControlPlaneConcurrency, "kubeadmcontrolplane-concurrency", 10,
 		"Number of kubeadm control planes to process simultaneously")
+
+	fs.IntVar(&infraConcurrency, "concurrency", 10,
+		"The number of docker machines to process simultaneously")
 }
 
 func main() {
@@ -263,6 +270,22 @@ func setupReconcilers(mgr ctrl.Manager) {
 		setupLog.Error(err, "unable to create controller", "controller", "KubeadmControlPlane")
 		os.Exit(1)
 	}
+
+	if err := (&infracontroller.DockerMachineReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("DockerMachine"),
+	}).SetupWithManager(mgr, concurrency(infraConcurrency)); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "reconciler")
+		os.Exit(1)
+	}
+
+	if err := (&infracontroller.DockerClusterReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("DockerCluster"),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "DockerCluster")
+		os.Exit(1)
+	}
 }
 
 func setupWebhooks(mgr ctrl.Manager) {
@@ -316,6 +339,10 @@ func setupWebhooks(mgr ctrl.Manager) {
 	}
 	if err := (&controlplanev1alpha1.KubeadmControlPlane{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "KubeadmControlPlane")
+		os.Exit(1)
+	}
+	if err := (&infrav1alpha1.DockerMachineTemplate{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "DockerMachineTemplate")
 		os.Exit(1)
 	}
 }

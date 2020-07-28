@@ -507,8 +507,8 @@ func TestKubeadmControlPlaneReconciler_adoption(t *testing.T) {
 					Namespace: cluster.Namespace,
 					Name:      fmt.Sprintf("important-cluster-secret-%d", i),
 					Labels: map[string]string{
-						"getupcloud.com/cluster-name": cluster.Name,
-						"previous-owner":              "kubeadmconfig",
+						"cluster.getupcloud.com/cluster-name": cluster.Name,
+						"previous-owner":                      "kubeadmconfig",
 					},
 					// See: https://github.com/kubernetes-sigs/cluster-api-bootstrap-provider-kubeadm/blob/38af74d92056e64e571b9ea1d664311769779453/internal/cluster/certificates.go#L323-L330
 					OwnerReferences: []metav1.OwnerReference{

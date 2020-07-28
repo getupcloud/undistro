@@ -1,6 +1,6 @@
 module github.com/getupcloud/undistro
 
-go 1.13
+go 1.14
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
@@ -32,5 +32,6 @@ require (
 	k8s.io/kubectl v0.18.6
 	k8s.io/utils v0.0.0-20200619165400-6e3d28b6ed19
 	sigs.k8s.io/controller-runtime v0.6.1
+	sigs.k8s.io/kind v0.8.1
 	sigs.k8s.io/yaml v1.2.0
 )

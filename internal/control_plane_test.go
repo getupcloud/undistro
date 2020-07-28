@@ -104,7 +104,7 @@ var _ = Describe("Control Plane", func() {
 			It("should generate kubeadmconfig without controller reference", func() {
 				spec := &bootstrapv1.KubeadmConfigSpec{}
 				kubeadmConfig := controlPlane.GenerateKubeadmConfig(spec)
-				Expect(kubeadmConfig.Labels["getupcloud.com/cluster-name"]).To(Equal("test-cluster"))
+				Expect(kubeadmConfig.Labels["cluster.getupcloud.com/cluster-name"]).To(Equal("test-cluster"))
 				Expect(kubeadmConfig.OwnerReferences[0].Controller).To(BeNil())
 			})
 			It("should generate new machine with controller reference", func() {
