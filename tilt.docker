@@ -1,8 +1,9 @@
-FROM golang:alpine
+FROM golang
 WORKDIR /
 # install a couple of dependencies
-RUN curl -L https://dl.k8s.io/latest/kubernetes-client-linux-amd64.tar.gz | tar xvz
-RUN mv /tmp/kubernetes/client/bin/kubectl /usr/local/bin
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
+    mv kubectl /usr/bin/kubectl && \
+    chmod +x /usr/bin/kubectl
 RUN curl https://get.docker.com | sh
 COPY ./bin/manager /
 CMD ["/manager"]
