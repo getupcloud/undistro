@@ -50,6 +50,13 @@ echo "Registry Host: ${reg_host}"
 cat <<EOF | kind create cluster --name "${KIND_CLUSTER_NAME}" --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraMounts:
+      - hostPath: /var/lib/docker
+        containerPath: /var/lib/docker
+      - hostPath: /var/run/docker.sock
+        containerPath: /var/run/docker.sock
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${reg_port}"]

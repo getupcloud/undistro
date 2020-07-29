@@ -31,7 +31,7 @@ func (m *DockerMachineTemplate) SetupWebhookWithManager(mgr ctrl.Manager) error 
 		Complete()
 }
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-infrastructure-getupcloud.com-v1alpha1-dockermachinetemplate,mutating=false,failurePolicy=fail,groups=infrastructure.getupcloud.com,resources=dockermachinetemplates,versions=v1alpha1,name=validation.dockermachinetemplate.infrastructure.getupcloud.com
+// +kubebuilder:webhook:verbs=create;update,path=/validate-infrastructure-getupcloud-com-v1alpha1-dockermachinetemplate,mutating=false,failurePolicy=fail,groups=infrastructure.getupcloud.com,resources=dockermachinetemplates,versions=v1alpha1,name=validation.dockermachinetemplate.infrastructure.getupcloud.com
 
 var _ webhook.Validator = &DockerMachineTemplate{}
 
