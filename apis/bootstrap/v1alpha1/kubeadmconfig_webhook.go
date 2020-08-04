@@ -40,7 +40,7 @@ func (c *KubeadmConfig) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-bootstrap-getupcloud-com-v1alpha1-kubeadmconfig,mutating=false,failurePolicy=fail,groups=bootstrap.getupcloud.com,resources=kubeadmconfigs,versions=v1alpha1,name=validation.kubeadmconfig.bootstrap.getupcloud.com
+// +kubebuilder:webhook:verbs=create;update,path=/validate-bootstrap-getupcloud.com-v1alpha1-kubeadmconfig,mutating=false,failurePolicy=fail,groups=bootstrap.getupcloud.com,resources=kubeadmconfigs,versions=v1alpha1,name=validation.kubeadmconfig.bootstrap.getupcloud.com
 
 var _ webhook.Validator = &KubeadmConfig{}
 

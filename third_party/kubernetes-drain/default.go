@@ -57,7 +57,7 @@ func RunCordonOrUncordon(drainer *Helper, node *corev1.Node, desired bool) error
 		return nil
 	}
 
-	err, patchErr := c.PatchOrReplace(drainer.Client, false)
+	err, patchErr := c.PatchOrReplace(drainer.Client)
 	if patchErr != nil {
 		return patchErr
 	}

@@ -510,7 +510,7 @@ func TestGetOwnerMachineSuccessByNameFromDifferentVersion(t *testing.T) {
 		OwnerReferences: []metav1.OwnerReference{
 			{
 				Kind:       "Machine",
-				APIVersion: clusterv1.GroupVersion.Group + "/v1alpha1",
+				APIVersion: clusterv1.GroupVersion.Group + "/v1alpha2",
 				Name:       "my-machine",
 			},
 		},
@@ -617,7 +617,7 @@ func TestEnsureOwnerRef(t *testing.T) {
 	t.Run("should update the APIVersion if duplicate", func(t *testing.T) {
 		oldgvk := schema.GroupVersion{
 			Group:   clusterv1.GroupVersion.Group,
-			Version: "v1alpha1",
+			Version: "v1alpha2",
 		}
 		obj := &clusterv1.Machine{
 			ObjectMeta: metav1.ObjectMeta{

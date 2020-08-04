@@ -180,12 +180,12 @@ func TestEqualMachineTemplate(t *testing.T) {
 				Spec: clusterv1.MachineSpec{
 					Bootstrap: clusterv1.Bootstrap{
 						ConfigRef: &corev1.ObjectReference{
-							APIVersion: "bootstrap.getupcloud.com/v1alpha1",
+							APIVersion: "bootstrap.getupcloud.com/v1alpha2",
 							Kind:       "MachineBootstrap",
 						},
 					},
 					InfrastructureRef: corev1.ObjectReference{
-						APIVersion: "infrastructure.getupcloud.com/v1alpha1",
+						APIVersion: "infrastructure.getupcloud.com/v1alpha2",
 						Kind:       "MachineInfrastructure",
 					},
 				},
@@ -218,12 +218,12 @@ func TestEqualMachineTemplate(t *testing.T) {
 				Spec: clusterv1.MachineSpec{
 					Bootstrap: clusterv1.Bootstrap{
 						ConfigRef: &corev1.ObjectReference{
-							APIVersion: "bootstrap.getupcloud.com/v1alpha1",
+							APIVersion: "bootstrap.getupcloud.com/v1alpha2",
 							Kind:       "MachineBootstrap1",
 						},
 					},
 					InfrastructureRef: corev1.ObjectReference{
-						APIVersion: "infrastructure.getupcloud.com/v1alpha1",
+						APIVersion: "infrastructure.getupcloud.com/v1alpha2",
 						Kind:       "MachineInfrastructure",
 					},
 				},

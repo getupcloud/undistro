@@ -376,7 +376,7 @@ func (r *MachineReconciler) drainNode(ctx context.Context, cluster *clusterv1.Cl
 		return nil
 	}
 
-	node, err := kubeClient.CoreV1().Nodes().Get(ctx, nodeName, metav1.GetOptions{})
+	node, err := kubeClient.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{})
 	if err != nil {
 		if apierrors.IsNotFound(err) {
 			// If an admin deletes the node directly, we'll end up here.
@@ -405,6 +405,7 @@ func (r *MachineReconciler) drainNode(ctx context.Context, cluster *clusterv1.Cl
 		},
 		Out:    writer{klog.Info},
 		ErrOut: writer{klog.Error},
+		DryRun: false,
 	}
 
 	if noderefutil.IsNodeUnreachable(node) {

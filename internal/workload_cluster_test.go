@@ -26,7 +26,7 @@ import (
 	"github.com/blang/semver"
 	cabpkv1 "github.com/getupcloud/undistro/apis/bootstrap/v1alpha1"
 	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
-	"github.com/getupcloud/undistro/apis/controlplane/v1alpha1"
+	controlplanev1 "github.com/getupcloud/undistro/apis/controlplane/v1alpha1"
 	kubeadmv1beta1 "github.com/getupcloud/undistro/third_party/kubeadm/types/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -50,42 +50,42 @@ func TestUpdateKubeProxyImageInfo(t *testing.T) {
 		expectImage string
 		clientGet   map[string]interface{}
 		patchErr    error
-		KCP         *v1alpha1.KubeadmControlPlane
+		KCP         *controlplanev1.KubeadmControlPlane
 	}{
 		{
 			name:        "succeeds if patch correctly",
 			ds:          newKubeProxyDS(),
 			expectErr:   false,
 			expectImage: "k8s.gcr.io/kube-proxy:v1.16.3",
-			KCP:         &v1alpha1.KubeadmControlPlane{Spec: v1alpha1.KubeadmControlPlaneSpec{Version: "v1.16.3"}},
+			KCP:         &controlplanev1.KubeadmControlPlane{Spec: controlplanev1.KubeadmControlPlaneSpec{Version: "v1.16.3"}},
 		},
 		{
 			name:        "returns error if image in kube-proxy ds was in digest format",
 			ds:          newKubeProxyDSWithImage("k8s.gcr.io/kube-proxy@sha256:47bfd"),
 			expectErr:   true,
 			expectImage: "k8s.gcr.io/kube-proxy@sha256:47bfd",
-			KCP:         &v1alpha1.KubeadmControlPlane{Spec: v1alpha1.KubeadmControlPlaneSpec{Version: "v1.16.3"}},
+			KCP:         &controlplanev1.KubeadmControlPlane{Spec: controlplanev1.KubeadmControlPlaneSpec{Version: "v1.16.3"}},
 		},
 		{
 			name:        "expects OCI compatible format of tag",
 			ds:          newKubeProxyDS(),
 			expectErr:   false,
 			expectImage: "k8s.gcr.io/kube-proxy:v1.16.3_build1",
-			KCP:         &v1alpha1.KubeadmControlPlane{Spec: v1alpha1.KubeadmControlPlaneSpec{Version: "v1.16.3+build1"}},
+			KCP:         &controlplanev1.KubeadmControlPlane{Spec: controlplanev1.KubeadmControlPlaneSpec{Version: "v1.16.3+build1"}},
 		},
 		{
 			name:      "returns error if image in kube-proxy ds was in wrong format",
 			ds:        newKubeProxyDSWithImage(""),
 			expectErr: true,
-			KCP:       &v1alpha1.KubeadmControlPlane{Spec: v1alpha1.KubeadmControlPlaneSpec{Version: "v1.16.3"}},
+			KCP:       &controlplanev1.KubeadmControlPlane{Spec: controlplanev1.KubeadmControlPlaneSpec{Version: "v1.16.3"}},
 		},
 		{
 			name:        "updates image repository if one has been set on the control plane",
 			ds:          newKubeProxyDS(),
 			expectErr:   false,
 			expectImage: "foo.bar.example/baz/qux/kube-proxy:v1.16.3",
-			KCP: &v1alpha1.KubeadmControlPlane{
-				Spec: v1alpha1.KubeadmControlPlaneSpec{
+			KCP: &controlplanev1.KubeadmControlPlane{
+				Spec: controlplanev1.KubeadmControlPlaneSpec{
 					Version: "v1.16.3",
 					KubeadmConfigSpec: cabpkv1.KubeadmConfigSpec{
 						ClusterConfiguration: &kubeadmv1beta1.ClusterConfiguration{
@@ -99,8 +99,8 @@ func TestUpdateKubeProxyImageInfo(t *testing.T) {
 			ds:          newKubeProxyDS(),
 			expectErr:   false,
 			expectImage: "k8s.gcr.io/kube-proxy:v1.16.3",
-			KCP: &v1alpha1.KubeadmControlPlane{
-				Spec: v1alpha1.KubeadmControlPlaneSpec{
+			KCP: &controlplanev1.KubeadmControlPlane{
+				Spec: controlplanev1.KubeadmControlPlaneSpec{
 					Version: "v1.16.3",
 					KubeadmConfigSpec: cabpkv1.KubeadmConfigSpec{
 						ClusterConfiguration: &kubeadmv1beta1.ClusterConfiguration{
@@ -113,8 +113,8 @@ func TestUpdateKubeProxyImageInfo(t *testing.T) {
 			name:      "returns error if image repository is invalid",
 			ds:        newKubeProxyDS(),
 			expectErr: true,
-			KCP: &v1alpha1.KubeadmControlPlane{
-				Spec: v1alpha1.KubeadmControlPlaneSpec{
+			KCP: &controlplanev1.KubeadmControlPlane{
+				Spec: controlplanev1.KubeadmControlPlaneSpec{
 					Version: "v1.16.3",
 					KubeadmConfigSpec: cabpkv1.KubeadmConfigSpec{
 						ClusterConfiguration: &kubeadmv1beta1.ClusterConfiguration{
@@ -128,13 +128,13 @@ func TestUpdateKubeProxyImageInfo(t *testing.T) {
 			ds:          newKubeProxyDSWithImage(""), // Using the same image name that would otherwise lead to an error
 			expectErr:   false,
 			expectImage: "",
-			KCP: &v1alpha1.KubeadmControlPlane{
+			KCP: &controlplanev1.KubeadmControlPlane{
 				ObjectMeta: metav1.ObjectMeta{
 					Annotations: map[string]string{
-						v1alpha1.SkipKubeProxyAnnotation: "",
+						controlplanev1.SkipKubeProxyAnnotation: "",
 					},
 				},
-				Spec: v1alpha1.KubeadmControlPlaneSpec{
+				Spec: controlplanev1.KubeadmControlPlaneSpec{
 					Version: "v1.16.3",
 				}},
 		},

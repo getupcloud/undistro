@@ -11,7 +11,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-cluster-getupcloud-com-v1alpha1-cluster
+      path: /mutate-cluster.getupcloud.com-v1alpha1-cluster
   failurePolicy: Fail
   name: default.cluster.getupcloud.com
   rules:
@@ -29,7 +29,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-cluster-getupcloud-com-v1alpha1-machine
+      path: /mutate-cluster.getupcloud.com-v1alpha1-machine
   failurePolicy: Fail
   name: default.machine.cluster.getupcloud.com
   rules:
@@ -47,7 +47,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-cluster-getupcloud-com-v1alpha1-machinedeployment
+      path: /mutate-cluster.getupcloud.com-v1alpha1-machinedeployment
   failurePolicy: Fail
   name: default.machinedeployment.cluster.getupcloud.com
   rules:
@@ -65,7 +65,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-cluster-getupcloud-com-v1alpha1-machinehealthcheck
+      path: /mutate-cluster.getupcloud.com-v1alpha1-machinehealthcheck
   failurePolicy: Fail
   name: default.machinehealthcheck.cluster.getupcloud.com
   rules:
@@ -83,7 +83,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-cluster-getupcloud-com-v1alpha1-machineset
+      path: /mutate-cluster.getupcloud.com-v1alpha1-machineset
   failurePolicy: Fail
   name: default.machineset.cluster.getupcloud.com
   rules:
@@ -101,7 +101,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-controlplane-getupcloud-com-v1alpha1-kubeadmcontrolplane
+      path: /mutate-controlplane-getupcloud.com-v1alpha1-kubeadmcontrolplane
   failurePolicy: Fail
   name: default.kubeadmcontrolplane.controlplane.getupcloud.com
   rules:
@@ -127,7 +127,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-cluster-getupcloud-com-v1alpha1-cluster
+      path: /validate-cluster.getupcloud.com-v1alpha1-cluster
   failurePolicy: Fail
   name: validation.cluster.getupcloud.com
   rules:
@@ -145,7 +145,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-cluster-getupcloud-com-v1alpha1-machine
+      path: /validate-cluster.getupcloud.com-v1alpha1-machine
   failurePolicy: Fail
   name: validation.machine.cluster.getupcloud.com
   rules:
@@ -163,7 +163,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-cluster-getupcloud-com-v1alpha1-machinedeployment
+      path: /validate-cluster.getupcloud.com-v1alpha1-machinedeployment
   failurePolicy: Fail
   name: validation.machinedeployment.cluster.getupcloud.com
   rules:
@@ -181,7 +181,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-cluster-getupcloud-com-v1alpha1-machinehealthcheck
+      path: /validate-cluster.getupcloud.com-v1alpha1-machinehealthcheck
   failurePolicy: Fail
   name: validation.machinehealthcheck.cluster.getupcloud.com
   rules:
@@ -199,7 +199,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-cluster-getupcloud-com-v1alpha1-machineset
+      path: /validate-cluster.getupcloud.com-v1alpha1-machineset
   failurePolicy: Fail
   name: validation.machineset.cluster.getupcloud.com
   rules:
@@ -217,7 +217,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-bootstrap-getupcloud-com-v1alpha1-kubeadmconfig
+      path: /validate-bootstrap-getupcloud.com-v1alpha1-kubeadmconfig
   failurePolicy: Fail
   name: validation.kubeadmconfig.bootstrap.getupcloud.com
   rules:
@@ -235,7 +235,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-controlplane-getupcloud-com-v1alpha1-kubeadmcontrolplane
+      path: /validate-controlplane-getupcloud.com-v1alpha1-kubeadmcontrolplane
   failurePolicy: Fail
   name: validation.kubeadmcontrolplane.controlplane.getupcloud.com
   rules:
@@ -253,7 +253,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-infrastructure-getupcloud-com-v1alpha1-dockermachinetemplate
+      path: /validate-infrastructure-getupcloud.com-v1alpha1-dockermachinetemplate
   failurePolicy: Fail
   name: validation.dockermachinetemplate.infrastructure.getupcloud.com
   rules:

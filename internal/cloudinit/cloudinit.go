@@ -21,9 +21,8 @@ import (
 	"fmt"
 	"text/template"
 
-	"github.com/pkg/errors"
-
 	bootstrapv1 "github.com/getupcloud/undistro/apis/bootstrap/v1alpha1"
+	"github.com/pkg/errors"
 )
 
 const (

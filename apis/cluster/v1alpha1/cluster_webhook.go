@@ -30,8 +30,8 @@ func (c *Cluster) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-cluster-getupcloud-com-v1alpha1-cluster,mutating=false,failurePolicy=fail,groups=cluster.getupcloud.com,resources=clusters,versions=v1alpha1,name=validation.cluster.getupcloud.com
-// +kubebuilder:webhook:verbs=create;update,path=/mutate-cluster-getupcloud-com-v1alpha1-cluster,mutating=true,failurePolicy=fail,groups=cluster.getupcloud.com,resources=clusters,versions=v1alpha1,name=default.cluster.getupcloud.com
+// +kubebuilder:webhook:verbs=create;update,path=/validate-cluster.getupcloud.com-v1alpha1-cluster,mutating=false,failurePolicy=fail,groups=cluster.getupcloud.com,resources=clusters,versions=v1alpha1,name=validation.cluster.getupcloud.com
+// +kubebuilder:webhook:verbs=create;update,path=/mutate-cluster.getupcloud.com-v1alpha1-cluster,mutating=true,failurePolicy=fail,groups=cluster.getupcloud.com,resources=clusters,versions=v1alpha1,name=default.cluster.getupcloud.com
 
 var _ webhook.Defaulter = &Cluster{}
 var _ webhook.Validator = &Cluster{}

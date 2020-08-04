@@ -103,6 +103,15 @@ rules:
 - apiGroups:
   - cluster.getupcloud.com
   resources:
+  - clusters
+  - machines
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cluster.getupcloud.com
+  resources:
   - machinedeployments
   - machinedeployments/status
   verbs:
@@ -182,24 +191,6 @@ rules:
   - list
   - patch
   - update
-  - watch
-- apiGroups:
-  - exp.getupcloud.com
-  resources:
-  - machinepools
-  - machinepools/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - getupcloud.com
-  resources:
-  - clusters
-  - machines
-  verbs:
-  - get
-  - list
   - watch
 - apiGroups:
   - infrastructure.getupcloud.com

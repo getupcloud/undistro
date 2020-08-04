@@ -23,7 +23,6 @@ import (
 	controlplanecontroller "github.com/getupcloud/undistro/controllers/controlplane"
 	infracontroller "github.com/getupcloud/undistro/controllers/infrastructure"
 	"github.com/getupcloud/undistro/util"
-	certmanagerv1beta1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1beta1"
 	"github.com/spf13/pflag"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -71,7 +70,6 @@ func init() {
 	_ = apiextensionsv1.AddToScheme(scheme)
 	_ = controlplanev1alpha1.AddToScheme(scheme)
 	_ = infrav1alpha1.AddToScheme(scheme)
-	_ = certmanagerv1beta1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 

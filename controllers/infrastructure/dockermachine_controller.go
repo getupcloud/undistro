@@ -54,7 +54,7 @@ type DockerMachineReconciler struct {
 
 // +kubebuilder:rbac:groups=infrastructure.getupcloud.com,resources=dockermachines,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=infrastructure.getupcloud.com,resources=dockermachines/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=getupcloud.com,resources=clusters;machines,verbs=get;list;watch
+// +kubebuilder:rbac:groups=cluster.getupcloud.com,resources=clusters;machines,verbs=get;list;watch
 // +kubebuilder:rbac:groups="",resources=secrets;,verbs=get;list;watch
 
 // Reconcile handles DockerMachine events

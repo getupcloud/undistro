@@ -17,11 +17,12 @@ limitations under the License.
 package v1alpha1
 
 import (
-	cabpkv1 "github.com/getupcloud/undistro/apis/bootstrap/v1alpha1"
 	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
-	"github.com/getupcloud/undistro/errors"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	cabpkv1 "github.com/getupcloud/undistro/apis/bootstrap/v1alpha1"
+	"github.com/getupcloud/undistro/errors"
 )
 
 const (

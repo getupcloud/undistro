@@ -17,11 +17,9 @@ limitations under the License.
 package drain
 
 import (
-	"context"
 	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
@@ -72,7 +70,7 @@ func (c *CordonHelper) UpdateIfRequired(desired bool) bool {
 // updating the given node object; it may return error if the object cannot be encoded as
 // JSON, or if either patch or update calls fail; it will also return a second error
 // whenever creating a patch has failed
-func (c *CordonHelper) PatchOrReplace(clientset kubernetes.Interface, serverDryRun bool) (error, error) {
+func (c *CordonHelper) PatchOrReplace(clientset kubernetes.Interface) (error, error) {
 	client := clientset.CoreV1().Nodes()
 
 	oldData, err := json.Marshal(c.node)
@@ -89,17 +87,9 @@ func (c *CordonHelper) PatchOrReplace(clientset kubernetes.Interface, serverDryR
 
 	patchBytes, patchErr := strategicpatch.CreateTwoWayMergePatch(oldData, newData, c.node)
 	if patchErr == nil {
-		patchOptions := metav1.PatchOptions{}
-		if serverDryRun {
-			patchOptions.DryRun = []string{metav1.DryRunAll}
-		}
-		_, err = client.Patch(context.TODO(), c.node.Name, types.StrategicMergePatchType, patchBytes, patchOptions)
+		_, err = client.Patch(c.node.Name, types.StrategicMergePatchType, patchBytes)
 	} else {
-		updateOptions := metav1.UpdateOptions{}
-		if serverDryRun {
-			updateOptions.DryRun = []string{metav1.DryRunAll}
-		}
-		_, err = client.Update(context.TODO(), c.node, updateOptions)
+		_, err = client.Update(c.node)
 	}
 	return err, patchErr
 }

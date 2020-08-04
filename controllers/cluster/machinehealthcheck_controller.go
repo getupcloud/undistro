@@ -73,7 +73,6 @@ type MachineHealthCheckReconciler struct {
 }
 
 func (r *MachineHealthCheckReconciler) SetupWithManager(mgr ctrl.Manager, options controller.Options) error {
-	ctx := context.Background()
 	controller, err := ctrl.NewControllerManagedBy(mgr).
 		For(&clusterv1.MachineHealthCheck{}).
 		Watches(
@@ -95,8 +94,9 @@ func (r *MachineHealthCheckReconciler) SetupWithManager(mgr ctrl.Manager, option
 	if err != nil {
 		return errors.Wrap(err, "failed to add Watch for Clusters to controller manager")
 	}
+
 	// Add index to Machine for listing by Node reference
-	if err := mgr.GetCache().IndexField(ctx, &clusterv1.Machine{},
+	if err := mgr.GetCache().IndexField(&clusterv1.Machine{},
 		machineNodeNameIndex,
 		r.indexMachineByNodeName,
 	); err != nil {

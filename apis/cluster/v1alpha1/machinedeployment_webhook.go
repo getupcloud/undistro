@@ -36,8 +36,8 @@ func (m *MachineDeployment) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-cluster-getupcloud-com-v1alpha1-machinedeployment,mutating=false,failurePolicy=fail,groups=cluster.getupcloud.com,resources=machinedeployments,versions=v1alpha1,name=validation.machinedeployment.cluster.getupcloud.com
-// +kubebuilder:webhook:verbs=create;update,path=/mutate-cluster-getupcloud-com-v1alpha1-machinedeployment,mutating=true,failurePolicy=fail,groups=cluster.getupcloud.com,resources=machinedeployments,versions=v1alpha1,name=default.machinedeployment.cluster.getupcloud.com
+// +kubebuilder:webhook:verbs=create;update,path=/validate-cluster.getupcloud.com-v1alpha1-machinedeployment,mutating=false,failurePolicy=fail,groups=cluster.getupcloud.com,resources=machinedeployments,versions=v1alpha1,name=validation.machinedeployment.cluster.getupcloud.com
+// +kubebuilder:webhook:verbs=create;update,path=/mutate-cluster.getupcloud.com-v1alpha1-machinedeployment,mutating=true,failurePolicy=fail,groups=cluster.getupcloud.com,resources=machinedeployments,versions=v1alpha1,name=default.machinedeployment.cluster.getupcloud.com
 
 var _ webhook.Defaulter = &MachineDeployment{}
 var _ webhook.Validator = &MachineDeployment{}

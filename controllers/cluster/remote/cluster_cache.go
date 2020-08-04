@@ -464,7 +464,6 @@ func (m *ClusterCacheTracker) healthCheckCluster(in *healthCheckInput) {
 // healthCheckPath attempts to request a given absolute path from the API server
 // defined in the rest.Config and returns any errors that occurred during the request.
 func healthCheckPath(sourceCfg *rest.Config, requestTimeout time.Duration, path string) error {
-	ctx := context.Background()
 	codec := runtime.NoopEncoder{Decoder: scheme.Codecs.UniversalDecoder()}
 	cfg := rest.CopyConfig(sourceCfg)
 	cfg.NegotiatedSerializer = serializer.NegotiatedSerializerWrapper(runtime.SerializerInfo{Serializer: codec})
@@ -475,7 +474,7 @@ func healthCheckPath(sourceCfg *rest.Config, requestTimeout time.Duration, path 
 		return err
 	}
 
-	_, err = restClient.Get().AbsPath(path).Timeout(requestTimeout).Do(ctx).Get()
+	_, err = restClient.Get().AbsPath(path).Timeout(requestTimeout).Do().Get()
 	if err != nil {
 		return err
 	}

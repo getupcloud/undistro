@@ -42,7 +42,7 @@ var _ = Describe("Patch Helper", func() {
 		obj := &unstructured.Unstructured{
 			Object: map[string]interface{}{
 				"kind":       "BootstrapMachine",
-				"apiVersion": "bootstrap.cluster.getupcloud.com/v1alpha1",
+				"apiVersion": "bootstrap.getupcloud.com/v1alpha1",
 				"metadata": map[string]interface{}{
 					"generateName": "test-bootstrap-",
 					"namespace":    "default",

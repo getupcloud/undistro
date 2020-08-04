@@ -727,7 +727,7 @@ func TestReconcileBootstrap(t *testing.T) {
 			},
 		},
 		{
-			name: "existing machine, machineset owner and version v1alpha1, and ownerref updated",
+			name: "existing machine, machineset owner and version v1alpha2, and ownerref updated",
 			bootstrapConfig: map[string]interface{}{
 				"kind":       "BootstrapMachine",
 				"apiVersion": "bootstrap.getupcloud.com/v1alpha1",
@@ -736,7 +736,7 @@ func TestReconcileBootstrap(t *testing.T) {
 					"namespace": "default",
 					"ownerReferences": []interface{}{
 						map[string]interface{}{
-							"apiVersion": "cluster.getupcloud.com/v1alpha1",
+							"apiVersion": "getupcloud.com/v1alpha2",
 							"kind":       "MachineSet",
 							"name":       "ms",
 							"uid":        "1",
@@ -757,7 +757,7 @@ func TestReconcileBootstrap(t *testing.T) {
 				Spec: clusterv1.MachineSpec{
 					Bootstrap: clusterv1.Bootstrap{
 						ConfigRef: &corev1.ObjectReference{
-							APIVersion: "bootstrap.getupcloud.com/v1alpha1",
+							APIVersion: "bootstrap.getupcloud.com/v1alpha2",
 							Kind:       "BootstrapMachine",
 							Name:       "bootstrap-config1",
 						},

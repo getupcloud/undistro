@@ -67,8 +67,6 @@ func init() {
 		ErrorIfCRDPathMissing: true,
 		CRDDirectoryPaths: []string{
 			filepath.Join(root, "config", "crd", "bases"),
-			filepath.Join(root, "controlplane", "kubeadm", "config", "crd", "bases"),
-			filepath.Join(root, "bootstrap", "kubeadm", "config", "crd", "bases"),
 		},
 		CRDs: []runtime.Object{
 			external.TestGenericBootstrapCRD.DeepCopy(),

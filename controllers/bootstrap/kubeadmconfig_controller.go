@@ -31,6 +31,7 @@ import (
 	kubeadmv1beta1 "github.com/getupcloud/undistro/third_party/kubeadm/types/v1beta1"
 	"github.com/getupcloud/undistro/util"
 	"github.com/getupcloud/undistro/util/annotations"
+	bsutil "github.com/getupcloud/undistro/util/bootstrap"
 	"github.com/getupcloud/undistro/util/conditions"
 	"github.com/getupcloud/undistro/util/patch"
 	"github.com/getupcloud/undistro/util/predicates"
@@ -59,7 +60,6 @@ type InitLocker interface {
 
 // +kubebuilder:rbac:groups=bootstrap.getupcloud.com,resources=kubeadmconfigs;kubeadmconfigs/status,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=cluster.getupcloud.com,resources=clusters;clusters/status;machines;machines/status,verbs=get;list;watch
-// +kubebuilder:rbac:groups=exp.getupcloud.com,resources=machinepools;machinepools/status,verbs=get;list;watch
 // +kubebuilder:rbac:groups="",resources=secrets;events;configmaps,verbs=get;list;watch;create;update;patch;delete
 
 // KubeadmConfigReconciler reconciles a KubeadmConfig object
@@ -75,7 +75,7 @@ type KubeadmConfigReconciler struct {
 type Scope struct {
 	logr.Logger
 	Config      *bootstrapv1.KubeadmConfig
-	ConfigOwner *util.ConfigOwner
+	ConfigOwner *bsutil.ConfigOwner
 	Cluster     *clusterv1.Cluster
 }
 
@@ -136,7 +136,7 @@ func (r *KubeadmConfigReconciler) Reconcile(req ctrl.Request) (_ ctrl.Result, re
 	}
 
 	// Look up the owner of this KubeConfig if there is one
-	configOwner, err := util.GetConfigOwner(ctx, r.Client, config)
+	configOwner, err := bsutil.GetConfigOwner(ctx, r.Client, config)
 	if apierrors.IsNotFound(err) {
 		// Could not find the owner yet, this is not an error and will rereconcile when the owner gets set.
 		return ctrl.Result{}, nil

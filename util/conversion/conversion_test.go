@@ -21,8 +21,7 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	clusterv1a2 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
-	clusterv1a3 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
+	clusterv1 "github.com/getupcloud/undistro/apis/cluster/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -32,21 +31,21 @@ func TestMarshalData(t *testing.T) {
 	t.Run("should write source object to destination", func(t *testing.T) {
 		version := "v1.16.4"
 		providerID := "aws://some-id"
-		src := &clusterv1a3.Machine{
+		src := &clusterv1.Machine{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Labels: map[string]string{
 					"label1": "",
 				},
 			},
-			Spec: clusterv1a3.MachineSpec{
+			Spec: clusterv1.MachineSpec{
 				ClusterName: "test-cluster",
 				Version:     &version,
 				ProviderID:  &providerID,
 			},
 		}
 
-		dst := &clusterv1a2.Machine{
+		dst := &clusterv1.Machine{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -65,12 +64,12 @@ func TestMarshalData(t *testing.T) {
 	})
 
 	t.Run("should append the annotation", func(t *testing.T) {
-		src := &clusterv1a3.Machine{
+		src := &clusterv1.Machine{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
-		dst := &clusterv1a2.Machine{
+		dst := &clusterv1.Machine{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Annotations: map[string]string{
@@ -88,12 +87,12 @@ func TestUnmarshalData(t *testing.T) {
 	g := NewWithT(t)
 
 	t.Run("should return false without errors if annotation doesn't exist", func(t *testing.T) {
-		src := &clusterv1a3.Machine{
+		src := &clusterv1.Machine{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
 		}
-		dst := &clusterv1a2.Machine{
+		dst := &clusterv1.Machine{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 			},
@@ -105,7 +104,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("should return true when a valid annotation with data exists", func(t *testing.T) {
-		src := &clusterv1a3.Machine{
+		src := &clusterv1.Machine{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Annotations: map[string]string{
@@ -113,7 +112,7 @@ func TestUnmarshalData(t *testing.T) {
 				},
 			},
 		}
-		dst := &clusterv1a2.Machine{}
+		dst := &clusterv1.Machine{}
 
 		ok, err := UnmarshalData(src, dst)
 		g.Expect(ok).To(BeTrue())
@@ -126,7 +125,7 @@ func TestUnmarshalData(t *testing.T) {
 	})
 
 	t.Run("should clean the annotation on successful unmarshal", func(t *testing.T) {
-		src := &clusterv1a3.Machine{
+		src := &clusterv1.Machine{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "test-1",
 				Annotations: map[string]string{
@@ -135,7 +134,7 @@ func TestUnmarshalData(t *testing.T) {
 				},
 			},
 		}
-		dst := &clusterv1a2.Machine{}
+		dst := &clusterv1.Machine{}
 
 		ok, err := UnmarshalData(src, dst)
 		g.Expect(ok).To(BeTrue())

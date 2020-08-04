@@ -82,7 +82,7 @@ type MachineAddresses []MachineAddress
 // the API and some issues that can impact user experience.
 //
 // During the [upgrade to controller-tools@v2](https://github.com/kubernetes-sigs/cluster-api/pull/1054)
-// for v1alpha1, we noticed a failure would occur running Cluster API test suite against the new CRDs,
+// for v1alpha2, we noticed a failure would occur running Cluster API test suite against the new CRDs,
 // specifically `spec.metadata.creationTimestamp in body must be of type string: "null"`.
 // The investigation showed that `controller-tools@v2` behaves differently than its previous version
 // when handling types from [metav1](k8s.io/apimachinery/pkg/apis/meta/v1) package.

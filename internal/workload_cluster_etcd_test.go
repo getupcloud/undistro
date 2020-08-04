@@ -31,7 +31,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
+	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
@@ -160,7 +160,7 @@ kind: ClusterConfiguration
 				var actualConfig corev1.ConfigMap
 				g.Expect(w.Client.Get(
 					ctx,
-					client.ObjectKey{Name: kubeadmConfigKey, Namespace: metav1.NamespaceSystem},
+					ctrlclient.ObjectKey{Name: kubeadmConfigKey, Namespace: metav1.NamespaceSystem},
 					&actualConfig,
 				)).To(Succeed())
 				g.Expect(actualConfig.Data[clusterConfigurationKey]).To(Equal(tt.expectedClusterConfig))
@@ -317,7 +317,7 @@ func TestForwardEtcdLeadership(t *testing.T) {
 			machine             *clusterv1.Machine
 			leaderCandidate     *clusterv1.Machine
 			etcdClientGenerator etcdClientFor
-			k8sClient           client.Client
+			k8sClient           ctrlclient.Client
 			expectErr           bool
 		}{
 			{

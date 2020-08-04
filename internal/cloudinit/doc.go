@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 /*
-Package cloudinit defines cloud init adapter for kind nodes and controlplane.
+Package cloudinit defines cloud init adapter for kind nodes.
 
 The Adapter supports a limited set of cloud init features, just what is necessary to test CPBPK;
 additionally, for sake of simplicity, the adapter is designed to work on existing kind node images.

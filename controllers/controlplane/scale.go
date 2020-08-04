@@ -29,7 +29,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
 func (r *KubeadmControlPlaneReconciler) initializeControlPlane(ctx context.Context, cluster *clusterv1.Cluster, kcp *controlplanev1.KubeadmControlPlane, controlPlane *internal.ControlPlane) (ctrl.Result, error) {
@@ -50,7 +49,7 @@ func (r *KubeadmControlPlaneReconciler) initializeControlPlane(ctx context.Conte
 	}
 
 	bootstrapSpec := controlPlane.InitialControlPlaneConfig()
-	fd := controlPlane.FailureDomainWithFewestMachines()
+	fd := controlPlane.NextFailureDomainForScaleUp()
 	if err := r.cloneConfigsAndGenerateMachine(ctx, cluster, kcp, bootstrapSpec, fd); err != nil {
 		logger.Error(err, "Failed to create initial control plane Machine")
 		r.recorder.Eventf(kcp, corev1.EventTypeWarning, "FailedInitialization", "Failed to create initial control plane Machine for cluster %s/%s control plane: %v", cluster.Namespace, cluster.Name, err)
@@ -63,15 +62,15 @@ func (r *KubeadmControlPlaneReconciler) initializeControlPlane(ctx context.Conte
 
 func (r *KubeadmControlPlaneReconciler) scaleUpControlPlane(ctx context.Context, cluster *clusterv1.Cluster, kcp *controlplanev1.KubeadmControlPlane, controlPlane *internal.ControlPlane) (ctrl.Result, error) {
 	logger := controlPlane.Logger()
-	zero := reconcile.Result{}
+
 	// reconcileHealth returns err if there is a machine being delete which is a required condition to check before scaling up
-	if result, err := r.reconcileHealth(ctx, cluster, kcp, controlPlane); err != nil || result != zero {
+	if result, err := r.reconcileHealth(ctx, cluster, kcp, controlPlane); err != nil || !result.IsZero() {
 		return result, err
 	}
 
 	// Create the bootstrap configuration
 	bootstrapSpec := controlPlane.JoinControlPlaneConfig()
-	fd := controlPlane.FailureDomainWithFewestMachines()
+	fd := controlPlane.NextFailureDomainForScaleUp()
 	if err := r.cloneConfigsAndGenerateMachine(ctx, cluster, kcp, bootstrapSpec, fd); err != nil {
 		logger.Error(err, "Failed to create additional control plane Machine")
 		r.recorder.Eventf(kcp, corev1.EventTypeWarning, "FailedScaleUp", "Failed to create additional control plane Machine for cluster %s/%s control plane: %v", cluster.Namespace, cluster.Name, err)
@@ -90,8 +89,8 @@ func (r *KubeadmControlPlaneReconciler) scaleDownControlPlane(
 	outdatedMachines internal.FilterableMachineCollection,
 ) (ctrl.Result, error) {
 	logger := controlPlane.Logger()
-	zero := reconcile.Result{}
-	if result, err := r.reconcileHealth(ctx, cluster, kcp, controlPlane); err != nil || result != zero {
+
+	if result, err := r.reconcileHealth(ctx, cluster, kcp, controlPlane); err != nil || !result.IsZero() {
 		return result, err
 	}
 
