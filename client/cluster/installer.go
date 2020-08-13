@@ -56,7 +56,7 @@ func (i *providerInstaller) Add(components repository.Components) {
 func (i *providerInstaller) Install() ([]repository.Components, error) {
 	ret := make([]repository.Components, 0, len(i.installQueue))
 	for _, components := range i.installQueue {
-		if err := installComponentsAndUpdateInventory(components, i.providerComponents, i.providerInventory); err != nil {
+		if err := installComponentsAndUpdateInventory(components, i.providerComponents, i.providerInventory, i.configClient); err != nil {
 			return nil, err
 		}
 
@@ -65,7 +65,7 @@ func (i *providerInstaller) Install() ([]repository.Components, error) {
 	return ret, nil
 }
 
-func installComponentsAndUpdateInventory(components repository.Components, providerComponents ComponentsClient, providerInventory InventoryClient) error {
+func installComponentsAndUpdateInventory(components repository.Components, providerComponents ComponentsClient, providerInventory InventoryClient, configClient config.Client) error {
 	log := logf.Log
 	log.Info("Installing", "Provider", components.ManifestLabel(), "Version", components.Version(), "TargetNamespace", components.TargetNamespace())
 
@@ -79,6 +79,16 @@ func installComponentsAndUpdateInventory(components repository.Components, provi
 	providerList, err := providerInventory.List()
 	if err != nil {
 		return err
+	}
+
+	installedProviders := providerList.FilterByProviderName(components.Name())
+	firstInstall := len(installedProviders) == 0
+	initFunc := components.GetInitFunc()
+	if initFunc != nil {
+		err = initFunc(configClient, firstInstall)
+		if err != nil {
+			return err
+		}
 	}
 
 	installSharedComponents, err := shouldInstallSharedComponents(providerList, inventoryObject)

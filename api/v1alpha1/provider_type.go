@@ -169,6 +169,12 @@ func (l *ProviderList) FilterNonCore() []Provider {
 	})
 }
 
+func (l *ProviderList) FilterByProviderName(providerName string) []Provider {
+	return l.filterBy(func(p Provider) bool {
+		return p.GetName() == providerName
+	})
+}
+
 func (l *ProviderList) filterBy(predicate func(p Provider) bool) []Provider {
 	ret := []Provider{}
 	for _, i := range l.Items {

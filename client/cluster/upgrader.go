@@ -353,7 +353,7 @@ func (u *providerUpgrader) doUpgrade(upgradePlan *UpgradePlan) error {
 		}
 
 		// Install the new version of the provider components.
-		if err := installComponentsAndUpdateInventory(components, u.providerComponents, u.providerInventory); err != nil {
+		if err := installComponentsAndUpdateInventory(components, u.providerComponents, u.providerInventory, u.configClient); err != nil {
 			return err
 		}
 	}

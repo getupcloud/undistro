@@ -39,7 +39,7 @@ type Provider interface {
 	GetInitFunc() InitFunc
 }
 
-type InitFunc func(Client) error
+type InitFunc func(Client, bool) error
 
 // provider implements provider
 type provider struct {
