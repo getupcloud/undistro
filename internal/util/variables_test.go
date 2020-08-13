@@ -2,15 +2,15 @@
 Copyright 2020 Getup Cloud. All rights reserved.
 */
 
-package util
+package util_test
 
 import (
 	"context"
 	"testing"
-	"time"
 
 	uclient "github.com/getupcloud/undistro/client"
 	"github.com/getupcloud/undistro/internal/scheme"
+	"github.com/getupcloud/undistro/internal/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
@@ -57,35 +57,33 @@ var _ = AfterSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 })
 
-func TestAPIs(t *testing.T) {
-	SetDefaultEventuallyPollingInterval(100 * time.Millisecond)
-	SetDefaultEventuallyTimeout(30 * time.Second)
-	RegisterFailHandler(Fail)
-
-	RunSpecsWithDefaultAndCustomReporters(t,
-		"Controller Suite",
-		[]Reporter{printer.NewlineReporter{}})
-}
-
 var _ = Describe("Varaables", func() {
-	ctx := context.Background()
-	vi := VariablesInput{
-		VariablesClient: undistroClient.GetVariables(),
-		ClientSet:       k8sClient,
-		NamespacedName: types.NamespacedName{
-			Namespace: "default",
-		},
-	}
 	It("should set variable value in EnvVar", func() {
+		ctx := context.Background()
+		vi := util.VariablesInput{
+			VariablesClient: undistroClient.GetVariables(),
+			ClientSet:       k8sClient,
+			NamespacedName: types.NamespacedName{
+				Namespace: "default",
+			},
+		}
 		e := corev1.EnvVar{
 			Name:  "UNDISTRO_TEST",
 			Value: "test",
 		}
 		vi.EnvVars = append(vi.EnvVars, e)
-		err := SetVariablesFromEnvVar(ctx, vi)
+		err := util.SetVariablesFromEnvVar(ctx, vi)
 		Expect(err).ToNot(HaveOccurred())
 		value, err := undistroClient.GetVariables().Get("UNDISTRO_TEST")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(value).To(Equal("test"))
 	})
 })
+
+func TestAPIs(t *testing.T) {
+	RegisterFailHandler(Fail)
+
+	RunSpecsWithDefaultAndCustomReporters(t,
+		"Controller Suite",
+		[]Reporter{printer.NewlineReporter{}})
+}
