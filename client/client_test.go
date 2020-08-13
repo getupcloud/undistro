@@ -57,6 +57,10 @@ type fakeClient struct {
 
 var _ Client = &fakeClient{}
 
+func (f fakeClient) GetVariables() Variables {
+	return f.configClient.Variables()
+}
+
 func (f fakeClient) GetProvidersConfig() ([]Provider, error) {
 	return f.internalClient.GetProvidersConfig()
 }

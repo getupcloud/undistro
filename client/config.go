@@ -19,6 +19,10 @@ import (
 	"k8s.io/apimachinery/pkg/util/version"
 )
 
+func (c *undistroClient) GetVariables() Variables {
+	return c.configClient.Variables()
+}
+
 func (c *undistroClient) GetProvidersConfig() ([]Provider, error) {
 	r, err := c.configClient.Providers().List()
 	if err != nil {

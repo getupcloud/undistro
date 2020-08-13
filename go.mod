@@ -8,6 +8,7 @@ require (
 	github.com/go-logr/logr v0.1.0
 	github.com/google/go-github/v32 v32.1.0
 	github.com/gophercloud/gophercloud v0.12.0 // indirect
+	github.com/onsi/ginkgo v1.12.1
 	github.com/onsi/gomega v1.10.1
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.0.0
