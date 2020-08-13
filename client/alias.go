@@ -38,3 +38,6 @@ type Processor yaml.Processor
 
 // Variables defines a list o variables necessary for config
 type Variables config.VariablesClient
+
+// Proxy is the cluster proxy
+type Proxy cluster.Proxy

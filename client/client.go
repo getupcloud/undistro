@@ -53,6 +53,9 @@ type Client interface {
 
 	// GetVariables provide a way to get variables
 	GetVariables() Variables
+
+	// GetProxy provider a way to get proxy
+	GetProxy() (Proxy, error)
 }
 
 // YamlPrinter exposes methods that prints the processed template and

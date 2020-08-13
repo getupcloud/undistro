@@ -59,6 +59,8 @@ func (f *FakeProxy) GetConfig() (*rest.Config, error) {
 	return nil, nil
 }
 
+func (f *FakeProxy) SetConfig(cfg *rest.Config) {}
+
 func (f *FakeProxy) NewClient() (client.Client, error) {
 	if f.cs != nil {
 		return f.cs, nil

@@ -61,6 +61,10 @@ func (f fakeClient) GetVariables() Variables {
 	return f.configClient.Variables()
 }
 
+func (f fakeClient) GetProxy() (Proxy, error) {
+	return test.NewFakeProxy(), nil
+}
+
 func (f fakeClient) GetProvidersConfig() ([]Provider, error) {
 	return f.internalClient.GetProvidersConfig()
 }

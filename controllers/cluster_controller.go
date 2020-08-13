@@ -45,7 +45,12 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	err = util.SetVariablesFromEnvVar(r.Client, undistroClient.GetVariables(), cluster.Spec.InfrastructureProvider.Env)
+	err = util.SetVariablesFromEnvVar(ctx, util.VariablesInput{
+		VariablesClient: undistroClient.GetVariables(),
+		ClientSet:       r.Client,
+		NamespacedName:  req.NamespacedName,
+		EnvVars:         cluster.Spec.InfrastructureProvider.Env,
+	})
 	if err != nil {
 		return ctrl.Result{}, err
 	}

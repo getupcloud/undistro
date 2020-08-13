@@ -221,6 +221,9 @@ type Proxy interface {
 
 	// ListResources returns all the Kubernetes objects with the given labels existing the listed namespaces.
 	ListResources(labels map[string]string, namespaces ...string) ([]unstructured.Unstructured, error)
+
+	// SetConfig for test proposes
+	SetConfig(*rest.Config)
 }
 
 // retryWithExponentialBackoff repeats an operation until it passes or the exponential backoff times out.
