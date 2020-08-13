@@ -64,8 +64,7 @@ func valueFromSecret(ctx context.Context, client client.Client, selector *corev1
 	}
 	s, err := base64.StdEncoding.DecodeString(string(b64))
 	if err != nil {
-		log.Error(err, "couldn't get secret value", "name", n)
-		return ""
+		return string(b64)
 	}
 	return string(s)
 }
