@@ -69,6 +69,15 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 }
 
 func (r *ClusterReconciler) init(cl *undistrov1.Cluster, c uclient.Client) error {
+	opts := uclient.InitOptions{
+		InfrastructureProviders: []string{cl.Spec.InfrastructureProvider.NameVersion()},
+		TargetNamespace:         "undistro-system",
+		LogUsageInstructions:    false,
+	}
+	_, err := c.Init(opts)
+	if err != nil {
+		return err
+	}
 	cl.Status.Phase = "initialized"
 	return nil
 }
