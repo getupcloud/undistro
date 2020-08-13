@@ -38,13 +38,13 @@ func Test_newRepositoryClient_LocalFileSystemRepository(t *testing.T) {
 		{
 			name: "successfully creates repository client with local filesystem backend and scheme == \"\"",
 			fields: fields{
-				provider: config.NewProvider("foo", dst1, undistrov1.BootstrapProviderType),
+				provider: config.NewProvider("foo", dst1, undistrov1.BootstrapProviderType, nil),
 			},
 		},
 		{
 			name: "successfully creates repository client with local filesystem backend and scheme == \"file\"",
 			fields: fields{
-				provider: config.NewProvider("bar", "file://"+dst2, undistrov1.BootstrapProviderType),
+				provider: config.NewProvider("bar", "file://"+dst2, undistrov1.BootstrapProviderType, nil),
 			},
 		},
 	}
@@ -98,7 +98,7 @@ func Test_newRepositoryClient_YamlProcesor(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			g := NewWithT(t)
-			configProvider := config.NewProvider("fakeProvider", "", undistrov1.CoreProviderType)
+			configProvider := config.NewProvider("fakeProvider", "", undistrov1.CoreProviderType, nil)
 			configClient, err := config.New("", config.InjectReader(test.NewFakeReader()))
 			g.Expect(err).NotTo(HaveOccurred())
 

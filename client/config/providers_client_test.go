@@ -27,10 +27,10 @@ func Test_providers_List(t *testing.T) {
 		return defaults[i].Less(defaults[j])
 	})
 
-	defaultsAndZZZ := append(defaults, NewProvider("zzz", "https://zzz/infrastructure-components.yaml", "InfrastructureProvider"))
+	defaultsAndZZZ := append(defaults, NewProvider("zzz", "https://zzz/infrastructure-components.yaml", "InfrastructureProvider", nil))
 
 	defaultsWithOverride := append([]Provider{}, defaults...)
-	defaultsWithOverride[0] = NewProvider(defaults[0].Name(), "https://zzz/infrastructure-components.yaml", defaults[0].Type())
+	defaultsWithOverride[0] = NewProvider(defaults[0].Name(), "https://zzz/infrastructure-components.yaml", defaults[0].Type(), nil)
 
 	type fields struct {
 		configGetter Reader
@@ -135,70 +135,70 @@ func Test_validateProvider(t *testing.T) {
 		{
 			name: "Pass",
 			args: args{
-				r: NewProvider("foo", "https://something.com", undistrov1.InfrastructureProviderType),
+				r: NewProvider("foo", "https://something.com", undistrov1.InfrastructureProviderType, nil),
 			},
 			wantErr: false,
 		},
 		{
 			name: "Pass (core provider)",
 			args: args{
-				r: NewProvider(ClusterAPIProviderName, "https://something.com", undistrov1.CoreProviderType),
+				r: NewProvider(ClusterAPIProviderName, "https://something.com", undistrov1.CoreProviderType, nil),
 			},
 			wantErr: false,
 		},
 		{
 			name: "Fails if cluster-api name used with wrong type",
 			args: args{
-				r: NewProvider(ClusterAPIProviderName, "https://something.com", undistrov1.BootstrapProviderType),
+				r: NewProvider(ClusterAPIProviderName, "https://something.com", undistrov1.BootstrapProviderType, nil),
 			},
 			wantErr: true,
 		},
 		{
 			name: "Fails if CoreProviderType used with wrong name",
 			args: args{
-				r: NewProvider("sss", "https://something.com", undistrov1.CoreProviderType),
+				r: NewProvider("sss", "https://something.com", undistrov1.CoreProviderType, nil),
 			},
 			wantErr: true,
 		},
 		{
 			name: "Fails if name is empty",
 			args: args{
-				r: NewProvider("", "", ""),
+				r: NewProvider("", "", "", nil),
 			},
 			wantErr: true,
 		},
 		{
 			name: "Fails if name is not valid",
 			args: args{
-				r: NewProvider("FOo", "https://something.com", ""),
+				r: NewProvider("FOo", "https://something.com", "", nil),
 			},
 			wantErr: true,
 		},
 		{
 			name: "Fails if url is empty",
 			args: args{
-				r: NewProvider("foo", "", ""),
+				r: NewProvider("foo", "", "", nil),
 			},
 			wantErr: true,
 		},
 		{
 			name: "Fails if url is not valid",
 			args: args{
-				r: NewProvider("foo", "%gh&%ij", "bar"),
+				r: NewProvider("foo", "%gh&%ij", "bar", nil),
 			},
 			wantErr: true,
 		},
 		{
 			name: "Fails if type is empty",
 			args: args{
-				r: NewProvider("foo", "https://something.com", ""),
+				r: NewProvider("foo", "https://something.com", "", nil),
 			},
 			wantErr: true,
 		},
 		{
 			name: "Fails if type is not valid",
 			args: args{
-				r: NewProvider("foo", "https://something.com", "bar"),
+				r: NewProvider("foo", "https://something.com", "bar", nil),
 			},
 			wantErr: true,
 		},
@@ -270,7 +270,7 @@ func Test_providers_Get(t *testing.T) {
 				name:         KubeadmBootstrapProviderName,
 				providerType: undistrov1.BootstrapProviderType,
 			},
-			want:    NewProvider(KubeadmBootstrapProviderName, "https://github.com/kubernetes-sigs/cluster-api/releases/latest/bootstrap-components.yaml", undistrov1.BootstrapProviderType),
+			want:    NewProvider(KubeadmBootstrapProviderName, "https://github.com/kubernetes-sigs/cluster-api/releases/latest/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil),
 			wantErr: false,
 		},
 		{
@@ -279,7 +279,7 @@ func Test_providers_Get(t *testing.T) {
 				name:         KubeadmControlPlaneProviderName,
 				providerType: undistrov1.ControlPlaneProviderType,
 			},
-			want:    NewProvider(KubeadmControlPlaneProviderName, "https://github.com/kubernetes-sigs/cluster-api/releases/latest/control-plane-components.yaml", undistrov1.ControlPlaneProviderType),
+			want:    NewProvider(KubeadmControlPlaneProviderName, "https://github.com/kubernetes-sigs/cluster-api/releases/latest/control-plane-components.yaml", undistrov1.ControlPlaneProviderType, nil),
 			wantErr: false,
 		},
 		{

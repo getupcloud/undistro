@@ -32,11 +32,11 @@ func Test_githubRepository_newGitHubRepository(t *testing.T) {
 		{
 			name: "can create a new GitHub repo",
 			field: field{
-				providerConfig: config.NewProvider("test", "https://github.com/o/r1/releases/v0.4.1/path", undistrov1.CoreProviderType),
+				providerConfig: config.NewProvider("test", "https://github.com/o/r1/releases/v0.4.1/path", undistrov1.CoreProviderType, nil),
 				variableClient: test.NewFakeVariableClient(),
 			},
 			want: &gitHubRepository{
-				providerConfig:           config.NewProvider("test", "https://github.com/o/r1/releases/v0.4.1/path", undistrov1.CoreProviderType),
+				providerConfig:           config.NewProvider("test", "https://github.com/o/r1/releases/v0.4.1/path", undistrov1.CoreProviderType, nil),
 				configVariablesClient:    test.NewFakeVariableClient(),
 				authenticatingHTTPClient: nil,
 				owner:                    "o",
@@ -51,7 +51,7 @@ func Test_githubRepository_newGitHubRepository(t *testing.T) {
 		{
 			name: "missing variableClient",
 			field: field{
-				providerConfig: config.NewProvider("test", "https://github.com/o/r1/releases/v0.4.1/path", undistrov1.CoreProviderType),
+				providerConfig: config.NewProvider("test", "https://github.com/o/r1/releases/v0.4.1/path", undistrov1.CoreProviderType, nil),
 				variableClient: nil,
 			},
 			want:    nil,
@@ -60,7 +60,7 @@ func Test_githubRepository_newGitHubRepository(t *testing.T) {
 		{
 			name: "provider url is not valid",
 			field: field{
-				providerConfig: config.NewProvider("test", "%gh&%ij", undistrov1.CoreProviderType),
+				providerConfig: config.NewProvider("test", "%gh&%ij", undistrov1.CoreProviderType, nil),
 				variableClient: test.NewFakeVariableClient(),
 			},
 			want:    nil,
@@ -69,7 +69,7 @@ func Test_githubRepository_newGitHubRepository(t *testing.T) {
 		{
 			name: "provider url should be in https",
 			field: field{
-				providerConfig: config.NewProvider("test", "http://github.com/blabla", undistrov1.CoreProviderType),
+				providerConfig: config.NewProvider("test", "http://github.com/blabla", undistrov1.CoreProviderType, nil),
 				variableClient: test.NewFakeVariableClient(),
 			},
 			want:    nil,
@@ -78,7 +78,7 @@ func Test_githubRepository_newGitHubRepository(t *testing.T) {
 		{
 			name: "provider url should be in github",
 			field: field{
-				providerConfig: config.NewProvider("test", "http://gitlab.com/blabla", undistrov1.CoreProviderType),
+				providerConfig: config.NewProvider("test", "http://gitlab.com/blabla", undistrov1.CoreProviderType, nil),
 				variableClient: test.NewFakeVariableClient(),
 			},
 			want:    &gitHubRepository{},
@@ -87,7 +87,7 @@ func Test_githubRepository_newGitHubRepository(t *testing.T) {
 		{
 			name: "provider url should be in https://github.com/{owner}/{Repository}/%s/{latest|version-tag}/{componentsClient.yaml} format",
 			field: field{
-				providerConfig: config.NewProvider("test", "https://github.com/dd/", undistrov1.CoreProviderType),
+				providerConfig: config.NewProvider("test", "https://github.com/dd/", undistrov1.CoreProviderType, nil),
 				variableClient: test.NewFakeVariableClient(),
 			},
 			want:    nil,
@@ -145,7 +145,7 @@ func Test_githubRepository_getFile(t *testing.T) {
 	client, mux, teardown := test.NewFakeGitHub()
 	defer teardown()
 
-	providerConfig := config.NewProvider("test", "https://github.com/o/r/releases/v0.4.1/file.yaml", undistrov1.CoreProviderType)
+	providerConfig := config.NewProvider("test", "https://github.com/o/r/releases/v0.4.1/file.yaml", undistrov1.CoreProviderType, nil)
 
 	// test.NewFakeGitHub and handler for returning a fake release
 	mux.HandleFunc("/repos/o/r/releases/tags/v0.4.1", func(w http.ResponseWriter, r *http.Request) {
@@ -244,7 +244,7 @@ func Test_gitHubRepository_getVersions(t *testing.T) {
 		{
 			name: "Get versions",
 			field: field{
-				providerConfig: config.NewProvider("test", "https://github.com/o/r1/releases/v0.4.1/path", undistrov1.CoreProviderType),
+				providerConfig: config.NewProvider("test", "https://github.com/o/r1/releases/v0.4.1/path", undistrov1.CoreProviderType, nil),
 			},
 			want:    []string{"v0.4.0", "v0.4.1", "v0.4.2", "v0.4.3-alpha"},
 			wantErr: false,
@@ -306,7 +306,7 @@ func Test_gitHubRepository_getLatestRelease(t *testing.T) {
 		{
 			name: "Get release v0.4.1, ignores pre-release version",
 			field: field{
-				providerConfig: config.NewProvider("test", "https://github.com/o/r1/releases/latest/path", undistrov1.CoreProviderType),
+				providerConfig: config.NewProvider("test", "https://github.com/o/r1/releases/latest/path", undistrov1.CoreProviderType, nil),
 			},
 			want:    "v0.4.2", // prerelease/build releaese are considered as well
 			wantErr: false,
@@ -314,7 +314,7 @@ func Test_gitHubRepository_getLatestRelease(t *testing.T) {
 		{
 			name: "Fails, when no release found",
 			field: field{
-				providerConfig: config.NewProvider("test", "https://github.com/o/r2/releases/v0.4.1/path", undistrov1.CoreProviderType),
+				providerConfig: config.NewProvider("test", "https://github.com/o/r2/releases/v0.4.1/path", undistrov1.CoreProviderType, nil),
 			},
 			want:    "",
 			wantErr: true,
@@ -346,7 +346,7 @@ func Test_gitHubRepository_getReleaseByTag(t *testing.T) {
 	client, mux, teardown := test.NewFakeGitHub()
 	defer teardown()
 
-	providerConfig := config.NewProvider("test", "https://github.com/o/r/releases/v0.4.1/path", undistrov1.CoreProviderType)
+	providerConfig := config.NewProvider("test", "https://github.com/o/r/releases/v0.4.1/path", undistrov1.CoreProviderType, nil)
 
 	// setup and handler for returning a fake release
 	mux.HandleFunc("/repos/o/r/releases/tags/foo", func(w http.ResponseWriter, r *http.Request) {
@@ -412,7 +412,7 @@ func Test_gitHubRepository_downloadFilesFromRelease(t *testing.T) {
 	client, mux, teardown := test.NewFakeGitHub()
 	defer teardown()
 
-	providerConfig := config.NewProvider("test", "https://github.com/o/r/releases/v0.4.1/file.yaml", undistrov1.CoreProviderType) //tree/master/path not relevant for the test
+	providerConfig := config.NewProvider("test", "https://github.com/o/r/releases/v0.4.1/file.yaml", undistrov1.CoreProviderType, nil) //tree/master/path not relevant for the test
 
 	// test.NewFakeGitHub an handler for returning a fake release asset
 	mux.HandleFunc("/repos/o/r/releases/assets/1", func(w http.ResponseWriter, r *http.Request) {

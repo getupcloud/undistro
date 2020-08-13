@@ -51,7 +51,7 @@ var configMapYaml = []byte("apiVersion: v1\n" +
 func Test_componentsClient_Get(t *testing.T) {
 	g := NewWithT(t)
 
-	p1 := config.NewProvider("p1", "", undistrov1.BootstrapProviderType)
+	p1 := config.NewProvider("p1", "", undistrov1.BootstrapProviderType, nil)
 
 	configClient, err := config.New("", config.InjectReader(test.NewFakeReader().WithVar(variableName, variableValue)))
 	g.Expect(err).NotTo(HaveOccurred())

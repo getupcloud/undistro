@@ -82,8 +82,8 @@ func Test_undistroClient_Move(t *testing.T) {
 }
 
 func fakeClientForMove() *fakeClient {
-	core := config.NewProvider("cluster-api", "https://somewhere.com", undistrov1.CoreProviderType)
-	infra := config.NewProvider("infra", "https://somewhere.com", undistrov1.InfrastructureProviderType)
+	core := config.NewProvider("cluster-api", "https://somewhere.com", undistrov1.CoreProviderType, nil)
+	infra := config.NewProvider("infra", "https://somewhere.com", undistrov1.InfrastructureProviderType, nil)
 
 	config1 := newFakeConfig().
 		WithProvider(core).

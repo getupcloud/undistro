@@ -156,7 +156,7 @@ func (p *providersClient) List() ([]Provider, error) {
 	}
 
 	for _, u := range userDefinedProviders {
-		provider := NewProvider(u.Name, u.URL, u.Type)
+		provider := NewProvider(u.Name, u.URL, u.Type, nil)
 		if err := validateProvider(provider); err != nil {
 			return nil, errors.Wrapf(err, "error validating configuration for the %s with name %s. Please fix the providers value in undistro configuration file", provider.Type(), provider.Name())
 		}
@@ -188,7 +188,7 @@ func (p *providersClient) Get(name string, providerType undistrov1.ProviderType)
 		return nil, err
 	}
 
-	provider := NewProvider(name, "", providerType) //Nb. Having the url empty is fine because the url is not considered by SameAs.
+	provider := NewProvider(name, "", providerType, nil) //Nb. Having the url empty is fine because the url is not considered by SameAs.
 	for _, r := range l {
 		if r.SameAs(provider) {
 			return r, nil

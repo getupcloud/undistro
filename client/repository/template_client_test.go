@@ -18,7 +18,7 @@ import (
 )
 
 func Test_templates_Get(t *testing.T) {
-	p1 := config.NewProvider("p1", "", undistrov1.BootstrapProviderType)
+	p1 := config.NewProvider("p1", "", undistrov1.BootstrapProviderType, nil)
 
 	type fields struct {
 		version               string
