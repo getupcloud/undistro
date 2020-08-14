@@ -54,7 +54,7 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	if cluster.Status.Phase == "" && !cluster.Spec.Imported {
+	if cluster.Status.Phase == "" {
 		log.Info("ensure mangement cluster is initialized and updated")
 		if err = r.init(&cluster, undistroClient); client.IgnoreNotFound(err) != nil {
 			log.Error(err, "couldn't initialize or update the mangement cluster")
@@ -69,14 +69,23 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 }
 
 func (r *ClusterReconciler) init(cl *undistrov1.Cluster, c uclient.Client) error {
-	opts := uclient.InitOptions{
+	components, err := c.Init(uclient.InitOptions{
 		InfrastructureProviders: []string{cl.Spec.InfrastructureProvider.NameVersion()},
 		TargetNamespace:         "undistro-system",
 		LogUsageInstructions:    false,
-	}
-	_, err := c.Init(opts)
+	})
 	if err != nil {
 		return err
+	}
+	cl.Status.InstalledComponents = make([]undistrov1.InstalledComponent, len(components))
+	for i, component := range components {
+		ic := undistrov1.InstalledComponent{
+			Name:    component.Name(),
+			Version: component.Version(),
+			URL:     component.URL(),
+			Type:    component.Type(),
+		}
+		cl.Status.InstalledComponents[i] = ic
 	}
 	cl.Status.Phase = "initialized"
 	return nil

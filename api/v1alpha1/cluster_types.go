@@ -40,16 +40,23 @@ type ClusterSpec struct {
 	InfrastructureProvider InfrastructureProvider `json:"infrastructureProvider,omitempty"`
 	ControlPlaneNode       Node                   `json:"controlPlaneNode,omitempty"`
 	WorkerNode             Node                   `json:"workerNode,omitempty"`
-	Imported               bool                   `json:"imported,omitempty"`
+}
+
+type InstalledComponent struct {
+	Name    string       `json:"name,omitempty"`
+	Version string       `json:"version,omitempty"`
+	URL     string       `json:"url,omitempty"`
+	Type    ProviderType `json:"type,omitempty"`
 }
 
 // ClusterStatus defines the observed state of Cluster
 type ClusterStatus struct {
-	Phase string `json:"phase,omitempty"`
+	Phase               string               `json:"phase,omitempty"`
+	InstalledComponents []InstalledComponent `json:"installedComponents,omitempty"`
 }
 
 // +kubebuilder:object:root=true
-// +kubebuilder:resource:path=undistro-clusters,shortName=ucl,scope=Namespaced,categories=undistro
+// +kubebuilder:resource:path=clusters,shortName=cl,scope=Namespaced,categories=undistro
 // +kubebuilder:storageversion
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Infra",type="string",JSONPath=".spec.infrastructureProvider.name"

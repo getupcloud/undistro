@@ -6,7 +6,7 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.3.0
   creationTimestamp: null
-  name: undistro-clusters.getupcloud.com
+  name: clusters.getupcloud.com
 spec:
   group: getupcloud.com
   names:
@@ -14,9 +14,9 @@ spec:
     - undistro
     kind: Cluster
     listKind: ClusterList
-    plural: undistro-clusters
+    plural: clusters
     shortNames:
-    - ucl
+    - cl
     singular: cluster
   scope: Namespaced
   versions:
@@ -62,8 +62,6 @@ spec:
                     minimum: 1
                     type: integer
                 type: object
-              imported:
-                type: boolean
               infrastructureProvider:
                 properties:
                   env:
@@ -169,6 +167,20 @@ spec:
           status:
             description: ClusterStatus defines the observed state of Cluster
             properties:
+              installedComponents:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    type:
+                      description: ProviderType is a string representation of a Provider type.
+                      type: string
+                    url:
+                      type: string
+                    version:
+                      type: string
+                  type: object
+                type: array
               phase:
                 type: string
             type: object
