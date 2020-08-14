@@ -51,7 +51,7 @@ type InstalledComponent struct {
 
 // ClusterStatus defines the observed state of Cluster
 type ClusterStatus struct {
-	Phase               string               `json:"phase,omitempty"`
+	Phase               ClusterPhase         `json:"phase,omitempty"`
 	InstalledComponents []InstalledComponent `json:"installedComponents,omitempty"`
 }
 

@@ -811,7 +811,7 @@ func Test_addCommonLabels(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			g := NewWithT(t)
 
-			got := addCommonLabels(tt.args.objs, config.NewProvider(tt.args.name, "", tt.args.providerType, nil))
+			got := addCommonLabels(tt.args.objs, config.NewProvider(tt.args.name, "", tt.args.providerType, nil, nil))
 			g.Expect(got).To(Equal(tt.want))
 		})
 	}

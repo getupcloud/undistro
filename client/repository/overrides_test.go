@@ -47,7 +47,7 @@ func TestOverrides(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			g := NewWithT(t)
-			provider := config.NewProvider("myinfra", "", undistrov1.InfrastructureProviderType, nil)
+			provider := config.NewProvider("myinfra", "", undistrov1.InfrastructureProviderType, nil, nil)
 			override := newOverride(&newOverrideInput{
 				configVariablesClient: tt.configVarClient,
 				provider:              provider,
@@ -70,7 +70,7 @@ func TestGetLocalOverrides(t *testing.T) {
 
 		info := &newOverrideInput{
 			configVariablesClient: test.NewFakeVariableClient().WithVar(overrideFolderKey, tmpDir),
-			provider:              config.NewProvider("myinfra", "", undistrov1.InfrastructureProviderType, nil),
+			provider:              config.NewProvider("myinfra", "", undistrov1.InfrastructureProviderType, nil, nil),
 			version:               "v1.0.1",
 			filePath:              "infra-comp.yaml",
 		}
@@ -85,7 +85,7 @@ func TestGetLocalOverrides(t *testing.T) {
 
 		info := &newOverrideInput{
 			configVariablesClient: test.NewFakeVariableClient().WithVar(overrideFolderKey, "do-not-exist"),
-			provider:              config.NewProvider("myinfra", "", undistrov1.InfrastructureProviderType, nil),
+			provider:              config.NewProvider("myinfra", "", undistrov1.InfrastructureProviderType, nil, nil),
 			version:               "v1.0.1",
 			filePath:              "infra-comp.yaml",
 		}

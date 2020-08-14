@@ -85,6 +85,7 @@ func installComponentsAndUpdateInventory(components repository.Components, provi
 	firstInstall := len(installedProviders) == 0
 	initFunc := components.GetInitFunc()
 	if initFunc != nil {
+		log.Info("executing init func", "component", components.Name())
 		err = initFunc(configClient, firstInstall)
 		if err != nil {
 			return err

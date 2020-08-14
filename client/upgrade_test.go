@@ -238,8 +238,8 @@ func Test_undistroClient_ApplyUpgrade(t *testing.T) {
 }
 
 func fakeClientForUpgrade() *fakeClient {
-	core := config.NewProvider("cluster-api", "https://somewhere.com", undistrov1.CoreProviderType, nil)
-	infra := config.NewProvider("infra", "https://somewhere.com", undistrov1.InfrastructureProviderType, nil)
+	core := config.NewProvider("cluster-api", "https://somewhere.com", undistrov1.CoreProviderType, nil, nil)
+	infra := config.NewProvider("infra", "https://somewhere.com", undistrov1.InfrastructureProviderType, nil, nil)
 
 	config1 := newFakeConfig().
 		WithProvider(core).

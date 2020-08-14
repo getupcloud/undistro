@@ -38,7 +38,7 @@ func Test_metadataClient_Get(t *testing.T) {
 		{
 			name: "Pass",
 			fields: fields{
-				provider: config.NewProvider("p1", "", undistrov1.CoreProviderType, nil),
+				provider: config.NewProvider("p1", "", undistrov1.CoreProviderType, nil, nil),
 				version:  "v1.0.0",
 				repository: test.NewFakeRepository().
 					WithPaths("root", "").
@@ -63,7 +63,7 @@ func Test_metadataClient_Get(t *testing.T) {
 		{
 			name: "Pass with embedded metadata",
 			fields: fields{
-				provider: config.NewProvider(config.ClusterAPIProviderName, "", undistrov1.CoreProviderType, nil),
+				provider: config.NewProvider(config.ClusterAPIProviderName, "", undistrov1.CoreProviderType, nil, nil),
 				version:  "v1.0.0",
 				repository: test.NewFakeRepository(). //repository without a metadata file
 									WithPaths("root", "").
@@ -84,7 +84,7 @@ func Test_metadataClient_Get(t *testing.T) {
 		{
 			name: "Fails if the file does not exists",
 			fields: fields{
-				provider: config.NewProvider("p1", "", undistrov1.CoreProviderType, nil),
+				provider: config.NewProvider("p1", "", undistrov1.CoreProviderType, nil, nil),
 				version:  "v1.0.0",
 				repository: test.NewFakeRepository(). //repository without a metadata file
 									WithPaths("root", "").
@@ -96,7 +96,7 @@ func Test_metadataClient_Get(t *testing.T) {
 		{
 			name: "Fails if the file does not exists for the current version",
 			fields: fields{
-				provider: config.NewProvider("p1", "", undistrov1.CoreProviderType, nil),
+				provider: config.NewProvider("p1", "", undistrov1.CoreProviderType, nil, nil),
 				version:  "v1.0.0",
 				repository: test.NewFakeRepository().
 					WithPaths("root", "").
@@ -109,7 +109,7 @@ func Test_metadataClient_Get(t *testing.T) {
 		{
 			name: "Fails if the file isn't a valid metadata",
 			fields: fields{
-				provider: config.NewProvider("p1", "", undistrov1.CoreProviderType, nil),
+				provider: config.NewProvider("p1", "", undistrov1.CoreProviderType, nil, nil),
 				version:  "v1.0.0",
 				repository: test.NewFakeRepository().
 					WithPaths("root", "").

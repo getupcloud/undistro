@@ -38,7 +38,7 @@ func Test_localRepository_newLocalRepository(t *testing.T) {
 		{
 			name: "successfully creates new local repository object with a single version",
 			fields: fields{
-				provider:              config.NewProvider("foo", "/base/path/bootstrap-foo/v1.0.0/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil),
+				provider:              config.NewProvider("foo", "/base/path/bootstrap-foo/v1.0.0/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil, nil),
 				configVariablesClient: test.NewFakeVariableClient(),
 			},
 			want: want{
@@ -53,7 +53,7 @@ func Test_localRepository_newLocalRepository(t *testing.T) {
 		{
 			name: "successfully creates new local repository object with a single version and no basepath",
 			fields: fields{
-				provider:              config.NewProvider("foo", "/bootstrap-foo/v1.0.0/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil),
+				provider:              config.NewProvider("foo", "/bootstrap-foo/v1.0.0/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil, nil),
 				configVariablesClient: test.NewFakeVariableClient(),
 			},
 			want: want{
@@ -68,7 +68,7 @@ func Test_localRepository_newLocalRepository(t *testing.T) {
 		{
 			name: "fails if an absolute path not specified",
 			fields: fields{
-				provider:              config.NewProvider("foo", "./bootstrap-foo/v1/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil),
+				provider:              config.NewProvider("foo", "./bootstrap-foo/v1/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil, nil),
 				configVariablesClient: test.NewFakeVariableClient(),
 			},
 			want:    want{},
@@ -77,7 +77,7 @@ func Test_localRepository_newLocalRepository(t *testing.T) {
 		{
 			name: "fails if provider id does not match in the path",
 			fields: fields{
-				provider:              config.NewProvider("foo", "/foo/bar/bootstrap-bar/v1/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil),
+				provider:              config.NewProvider("foo", "/foo/bar/bootstrap-bar/v1/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil, nil),
 				configVariablesClient: test.NewFakeVariableClient(),
 			},
 			want:    want{},
@@ -86,7 +86,7 @@ func Test_localRepository_newLocalRepository(t *testing.T) {
 		{
 			name: "fails if malformed path: invalid version directory",
 			fields: fields{
-				provider:              config.NewProvider("foo", "/foo/bar/bootstrap-foo/v.a.b.c/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil),
+				provider:              config.NewProvider("foo", "/foo/bar/bootstrap-foo/v.a.b.c/bootstrap-components.yaml", undistrov1.BootstrapProviderType, nil, nil),
 				configVariablesClient: test.NewFakeVariableClient(),
 			},
 			want:    want{},
@@ -148,7 +148,7 @@ func Test_localRepository_newLocalRepository_Latest(t *testing.T) {
 	// Provider URL for the latest release
 	p2URLLatest := "bootstrap-foo/latest/bootstrap-components.yaml"
 	p2URLLatestAbs := filepath.Join(tmpDir, p2URLLatest)
-	p2 := config.NewProvider("foo", p2URLLatestAbs, undistrov1.BootstrapProviderType, nil)
+	p2 := config.NewProvider("foo", p2URLLatestAbs, undistrov1.BootstrapProviderType, nil, nil)
 
 	got, err := newLocalRepository(p2, test.NewFakeVariableClient())
 	g.Expect(err).NotTo(HaveOccurred())
@@ -166,7 +166,7 @@ func Test_localRepository_GetFile(t *testing.T) {
 
 	// Provider 1: URL is for the only release available
 	dst1 := createLocalTestProviderFile(t, tmpDir, "bootstrap-foo/v1.0.0/bootstrap-components.yaml", "foo: bar")
-	p1 := config.NewProvider("foo", dst1, undistrov1.BootstrapProviderType, nil)
+	p1 := config.NewProvider("foo", dst1, undistrov1.BootstrapProviderType, nil, nil)
 
 	// Provider 2: URL is for the latest release
 	createLocalTestProviderFile(t, tmpDir, "bootstrap-bar/v1.0.0/bootstrap-components.yaml", "version: v1.0.0")
@@ -176,7 +176,7 @@ func Test_localRepository_GetFile(t *testing.T) {
 	createLocalTestProviderFile(t, tmpDir, "bootstrap-bar/foo.file", "foo: bar")
 	p2URLLatest := "bootstrap-bar/latest/bootstrap-components.yaml"
 	p2URLLatestAbs := filepath.Join(tmpDir, p2URLLatest)
-	p2 := config.NewProvider("bar", p2URLLatestAbs, undistrov1.BootstrapProviderType, nil)
+	p2 := config.NewProvider("bar", p2URLLatestAbs, undistrov1.BootstrapProviderType, nil, nil)
 
 	type fields struct {
 		provider              config.Provider
@@ -282,7 +282,7 @@ func Test_localRepository_GetVersions(t *testing.T) {
 
 	// Provider 1: has a single release available
 	dst1 := createLocalTestProviderFile(t, tmpDir, "bootstrap-foo/v1.0.0/bootstrap-components.yaml", "foo: bar")
-	p1 := config.NewProvider("foo", dst1, undistrov1.BootstrapProviderType, nil)
+	p1 := config.NewProvider("foo", dst1, undistrov1.BootstrapProviderType, nil, nil)
 
 	// Provider 2: Has multiple releases available
 	createLocalTestProviderFile(t, tmpDir, "bootstrap-bar/v1.0.0/bootstrap-components.yaml", "version: v1.0.0")
@@ -294,7 +294,7 @@ func Test_localRepository_GetVersions(t *testing.T) {
 	createLocalTestProviderFile(t, tmpDir, "bootstrap-bar/foo.file", "foo: bar")
 	p2URLLatest := "bootstrap-bar/latest/bootstrap-components.yaml"
 	p2URLLatestAbs := filepath.Join(tmpDir, p2URLLatest)
-	p2 := config.NewProvider("bar", p2URLLatestAbs, undistrov1.BootstrapProviderType, nil)
+	p2 := config.NewProvider("bar", p2URLLatestAbs, undistrov1.BootstrapProviderType, nil, nil)
 
 	type fields struct {
 		provider              config.Provider

@@ -37,16 +37,22 @@ type Provider interface {
 
 	// GetInitFunc return provider initFunc
 	GetInitFunc() InitFunc
+
+	// GetPreConfigFunc return preConfigFunc
+	GetPreConfigFunc() PreConfigFunc
 }
 
 type InitFunc func(Client, bool) error
 
+type PreConfigFunc func(*undistrov1.Cluster, VariablesClient) error
+
 // provider implements provider
 type provider struct {
-	name         string
-	url          string
-	providerType undistrov1.ProviderType
-	initFunc     InitFunc
+	name          string
+	url           string
+	providerType  undistrov1.ProviderType
+	initFunc      InitFunc
+	preConfigFunc PreConfigFunc
 }
 
 // ensure provider implements provider
@@ -81,12 +87,17 @@ func (p *provider) GetInitFunc() InitFunc {
 	return p.initFunc
 }
 
-func NewProvider(name string, url string, ttype undistrov1.ProviderType, initFunc InitFunc) Provider {
+func (p *provider) GetPreConfigFunc() PreConfigFunc {
+	return p.preConfigFunc
+}
+
+func NewProvider(name string, url string, ttype undistrov1.ProviderType, initFunc InitFunc, preConfigFunc PreConfigFunc) Provider {
 	return &provider{
-		name:         name,
-		url:          url,
-		providerType: ttype,
-		initFunc:     initFunc,
+		name:          name,
+		url:           url,
+		providerType:  ttype,
+		initFunc:      initFunc,
+		preConfigFunc: preConfigFunc,
 	}
 }
 

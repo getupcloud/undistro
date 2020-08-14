@@ -250,7 +250,7 @@ func (c *fakeComponents) Yaml() ([]byte, error) {
 func newFakeComponents(name string, providerType undistrov1.ProviderType, version, targetNamespace, watchingNamespace string) repository.Components {
 	inventoryObject := fakeProvider(name, providerType, version, targetNamespace, watchingNamespace)
 	return &fakeComponents{
-		Provider:        config.NewProvider(inventoryObject.ProviderName, "", undistrov1.ProviderType(inventoryObject.Type), nil),
+		Provider:        config.NewProvider(inventoryObject.ProviderName, "", undistrov1.ProviderType(inventoryObject.Type), nil, nil),
 		inventoryObject: inventoryObject,
 	}
 }

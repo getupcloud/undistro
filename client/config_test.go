@@ -24,7 +24,7 @@ import (
 )
 
 func Test_undistroClient_GetProvidersConfig(t *testing.T) {
-	customProviderConfig := config.NewProvider("custom", "url", undistrov1.BootstrapProviderType, nil)
+	customProviderConfig := config.NewProvider("custom", "url", undistrov1.BootstrapProviderType, nil, nil)
 
 	type field struct {
 		client Client
@@ -177,7 +177,7 @@ func Test_getComponentsByName_withEmptyVariables(t *testing.T) {
 	g := NewWithT(t)
 
 	// Create a fake config with a provider named P1 and a variable named foo.
-	repository1Config := config.NewProvider("p1", "url", undistrov1.InfrastructureProviderType, nil)
+	repository1Config := config.NewProvider("p1", "url", undistrov1.InfrastructureProviderType, nil, nil)
 
 	config1 := newFakeConfig().
 		WithProvider(repository1Config)

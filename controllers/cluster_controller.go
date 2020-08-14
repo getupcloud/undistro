@@ -11,6 +11,7 @@ import (
 	uclient "github.com/getupcloud/undistro/client"
 	"github.com/getupcloud/undistro/internal/util"
 	"github.com/go-logr/logr"
+	"github.com/prometheus/common/log"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -54,10 +55,21 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	if cluster.Status.Phase == "" {
-		log.Info("ensure mangement cluster is initialized and updated")
+	if cluster.Status.Phase == undistrov1.NewPhase {
+		log.Info("ensure mangement cluster is initialized and updated", "name", req.NamespacedName)
 		if err = r.init(&cluster, undistroClient); client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't initialize or update the mangement cluster")
+			log.Error(err, "couldn't initialize or update the mangement cluster", "name", req.NamespacedName)
+			return ctrl.Result{}, err
+		}
+		if err = r.Status().Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
+			log.Error(err, "couldn't update status", "name", req.NamespacedName)
+			return ctrl.Result{}, err
+		}
+	}
+	if cluster.Status.Phase == undistrov1.InitializedPhase {
+		log.Info("generanting cluster-api configuration", "name", req.NamespacedName)
+		if err = r.config(&cluster, undistroClient); client.IgnoreNotFound(err) != nil {
+			log.Error(err, "couldn't initialize or update the mangement cluster", "name", req.NamespacedName)
 			return ctrl.Result{}, err
 		}
 		if err = r.Status().Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
@@ -79,6 +91,14 @@ func (r *ClusterReconciler) init(cl *undistrov1.Cluster, c uclient.Client) error
 	}
 	cl.Status.InstalledComponents = make([]undistrov1.InstalledComponent, len(components))
 	for i, component := range components {
+		preConfigFunc := component.GetPreConfigFunc()
+		if preConfigFunc != nil {
+			log.Info("executing pre config func", "component", component.Name())
+			err = preConfigFunc(cl, c.GetVariables())
+			if err != nil {
+				return err
+			}
+		}
 		ic := undistrov1.InstalledComponent{
 			Name:    component.Name(),
 			Version: component.Version(),
@@ -87,7 +107,11 @@ func (r *ClusterReconciler) init(cl *undistrov1.Cluster, c uclient.Client) error
 		}
 		cl.Status.InstalledComponents[i] = ic
 	}
-	cl.Status.Phase = "initialized"
+	cl.Status.Phase = undistrov1.InitializedPhase
+	return nil
+}
+
+func (r *ClusterReconciler) config(cl *undistrov1.Cluster, c uclient.Client) error {
 	return nil
 }
 
