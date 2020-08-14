@@ -27,6 +27,10 @@ type InitOptions struct {
 	// cluster-api core provider's latest release is used.
 	CoreProvider string
 
+	// UndistroProvider version (e.g. undistro:v0.3.0) to add to the management cluster. If unspecified, the
+	// undistro provider's latest release is used.
+	UndistroProvider string
+
 	// BootstrapProviders and versions (e.g. kubeadm:v0.3.0) to add to the management cluster.
 	// If unspecified, the kubeadm bootstrap provider's latest release is used.
 	BootstrapProviders []string
@@ -201,6 +205,9 @@ func (c *undistroClient) addDefaultProviders(cluster cluster.Client, options *In
 		firstRun = true
 		if options.CoreProvider == "" {
 			options.CoreProvider = config.ClusterAPIProviderName
+		}
+		if options.UndistroProvider == "" {
+			options.UndistroProvider = config.UndistroProviderName
 		}
 		if len(options.BootstrapProviders) == 0 {
 			options.BootstrapProviders = append(options.BootstrapProviders, config.KubeadmBootstrapProviderName)

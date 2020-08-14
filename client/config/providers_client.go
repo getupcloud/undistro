@@ -17,6 +17,7 @@ import (
 const (
 	// Core providers
 	ClusterAPIProviderName = "cluster-api"
+	UndistroProviderName   = "undistro"
 
 	// Infra providers
 	AWSProviderName       = "aws"
@@ -74,6 +75,12 @@ func (p *providersClient) defaults() []Provider {
 			name:         ClusterAPIProviderName,
 			url:          "https://github.com/kubernetes-sigs/cluster-api/releases/latest/core-components.yaml",
 			providerType: undistrov1.CoreProviderType,
+		},
+
+		&provider{
+			name:         UndistroProviderName,
+			url:          "https://github.com/getupcloud/undistro/releases/latest/core-components.yaml",
+			providerType: undistrov1.UndistroProviderType,
 		},
 
 		// Infrastructure providers
@@ -224,14 +231,16 @@ func validateProvider(r Provider) error {
 	case undistrov1.CoreProviderType,
 		undistrov1.BootstrapProviderType,
 		undistrov1.InfrastructureProviderType,
-		undistrov1.ControlPlaneProviderType:
+		undistrov1.ControlPlaneProviderType,
+		undistrov1.UndistroProviderType:
 		break
 	default:
-		return errors.Errorf("invalid provider type. Allowed values are [%s, %s, %s, %s]",
+		return errors.Errorf("invalid provider type. Allowed values are [%s, %s, %s, %s, %s]",
 			undistrov1.CoreProviderType,
 			undistrov1.BootstrapProviderType,
 			undistrov1.InfrastructureProviderType,
-			undistrov1.ControlPlaneProviderType)
+			undistrov1.ControlPlaneProviderType,
+			undistrov1.UndistroProviderType)
 	}
 	return nil
 }
