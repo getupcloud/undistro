@@ -43,6 +43,7 @@ func Test_undistroClient_GetProvidersConfig(t *testing.T) {
 			// note: these will be sorted by name by the Providers() call, so be sure they are in alphabetical order here too
 			wantProviders: []string{
 				config.ClusterAPIProviderName,
+				config.UndistroProviderName,
 				config.KubeadmBootstrapProviderName,
 				config.TalosBootstrapProviderName,
 				config.KubeadmControlPlaneProviderName,
@@ -64,6 +65,7 @@ func Test_undistroClient_GetProvidersConfig(t *testing.T) {
 			// note: these will be sorted by name by the Providers() call, so be sure they are in alphabetical order here too
 			wantProviders: []string{
 				config.ClusterAPIProviderName,
+				config.UndistroProviderName,
 				customProviderConfig.Name(),
 				config.KubeadmBootstrapProviderName,
 				config.TalosBootstrapProviderName,

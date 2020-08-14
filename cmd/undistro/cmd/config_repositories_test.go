@@ -88,6 +88,7 @@ providers:
 
 var expectedOutputText = `NAME                TYPE                     URL                                                                                          FILE
 cluster-api         CoreProvider             https://github.com/myorg/myforkofclusterapi/releases/latest/                                 core_components.yaml
+undistro            UndistroProvider         https://github.com/getupcloud/undistro/releases/latest/                                      core-components.yaml
 another-provider    BootstrapProvider        ./                                                                                           bootstrap-components.yaml
 kubeadm             BootstrapProvider        https://github.com/kubernetes-sigs/cluster-api/releases/latest/                              bootstrap-components.yaml
 talos               BootstrapProvider        https://github.com/talos-systems/cluster-api-bootstrap-provider-talos/releases/latest/       bootstrap-components.yaml
@@ -106,6 +107,10 @@ var expectedOutputYaml = `- File: core_components.yaml
   Name: cluster-api
   ProviderType: CoreProvider
   URL: https://github.com/myorg/myforkofclusterapi/releases/latest/
+- File: core-components.yaml
+  Name: undistro
+  ProviderType: UndistroProvider
+  URL: https://github.com/getupcloud/undistro/releases/latest/
 - File: bootstrap-components.yaml
   Name: another-provider
   ProviderType: BootstrapProvider
