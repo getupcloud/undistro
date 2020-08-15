@@ -22,6 +22,8 @@ type InfrastructureProvider struct {
 	// +kubebuilder:validation:MinLength=1
 	Name    string  `json:"name,omitempty"`
 	Version *string `json:"version,omitempty"`
+	// +kubebuilder:validation:MinLength=1
+	SSHKey string `json:"sshKey,omitempty"`
 	// +kubebuilder:validation:UniqueItems=true
 	Env []corev1.EnvVar `json:"env,omitempty"`
 }
@@ -38,6 +40,7 @@ type CNI string
 
 const (
 	CalicoCNI = CNI("calico")
+	EmptyCNI  = CNI("")
 )
 
 var cniMapAddr = map[CNI]string{
@@ -77,6 +80,7 @@ type ClusterStatus struct {
 // +kubebuilder:printcolumn:name="Control Plane Replicas",type="integer",JSONPath=".spec.controlPlaneNode.replicas"
 // +kubebuilder:printcolumn:name="Worker Replicas",type="integer",JSONPath=".spec.workerNode.replicas"
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
+// +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.ready"
 
 // Cluster is the Schema for the clusters API
 type Cluster struct {

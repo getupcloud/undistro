@@ -85,9 +85,11 @@ func (p *providersClient) defaults() []Provider {
 
 		// Infrastructure providers
 		&provider{
-			name:         AWSProviderName,
-			url:          "https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/infrastructure-components.yaml",
-			providerType: undistrov1.InfrastructureProviderType,
+			name:          AWSProviderName,
+			url:           "https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/infrastructure-components.yaml",
+			providerType:  undistrov1.InfrastructureProviderType,
+			preConfigFunc: awsPreConfig,
+			initFunc:      awsInit,
 		},
 		&provider{
 			name:         AzureProviderName,

@@ -36,6 +36,9 @@ spec:
     - jsonPath: .status.phase
       name: Phase
       type: string
+    - jsonPath: .status.ready
+      name: Ready
+      type: string
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -149,6 +152,9 @@ spec:
                     type: array
                     uniqueItems: true
                   name:
+                    minLength: 1
+                    type: string
+                  sshKey:
                     minLength: 1
                     type: string
                   version:

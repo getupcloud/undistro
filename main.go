@@ -14,7 +14,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	getupcloudcomv1alpha1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/getupcloud/undistro/controllers"
 	// +kubebuilder:scaffold:imports
 )
@@ -27,7 +27,7 @@ var (
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 
-	_ = undistrov1.AddToScheme(scheme)
+	_ = getupcloudcomv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -60,6 +60,10 @@ func main() {
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Cluster")
+		os.Exit(1)
+	}
+	if err = (&getupcloudcomv1alpha1.Cluster{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "Cluster")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
