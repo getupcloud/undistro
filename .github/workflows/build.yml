@@ -55,7 +55,6 @@ jobs:
         kustomize_version: "3.5.4"
         kustomize_build_dir: "config/default"
         kustomize_output_file: "core-components.yaml"
-        enable_alpha_plugins: true
       env:
         GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
     
