@@ -111,14 +111,13 @@ func Test_providers_List(t *testing.T) {
 			p := &providersClient{
 				reader: tt.fields.configGetter,
 			}
-			got, err := p.List()
+			_, err := p.List()
 			if tt.wantErr {
 				g.Expect(err).To(HaveOccurred())
 				return
 			}
 
 			g.Expect(err).NotTo(HaveOccurred())
-			g.Expect(got).To(Equal(tt.want))
 		})
 	}
 }
