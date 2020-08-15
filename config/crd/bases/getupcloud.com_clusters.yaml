@@ -52,13 +52,17 @@ spec:
           spec:
             description: ClusterSpec defines the desired state of Cluster
             properties:
+              cniName:
+                enum:
+                - calico
+                type: string
               controlPlaneNode:
                 properties:
                   machineType:
                     minLength: 1
                     type: string
                   replicas:
-                    format: int32
+                    format: int64
                     minimum: 1
                     type: integer
                 type: object
@@ -159,7 +163,7 @@ spec:
                     minLength: 1
                     type: string
                   replicas:
-                    format: int32
+                    format: int64
                     minimum: 1
                     type: integer
                 type: object
@@ -183,6 +187,8 @@ spec:
                 type: array
               phase:
                 type: string
+              ready:
+                type: boolean
             type: object
         type: object
     served: true

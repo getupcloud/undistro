@@ -13,7 +13,7 @@ import (
 
 type Node struct {
 	// +kubebuilder:validation:Minimum=1
-	Replicas *int32 `json:"replicas,omitempty"`
+	Replicas *int64 `json:"replicas,omitempty"`
 	// +kubebuilder:validation:MinLength=1
 	MachineType string `json:"machineType,omitempty"`
 }
@@ -33,6 +33,17 @@ func (i *InfrastructureProvider) NameVersion() string {
 	return i.Name
 }
 
+// +kubebuilder:validation:Enum=calico
+type CNI string
+
+const (
+	CalicoCNI = CNI("calico")
+)
+
+var cniMapAddr = map[CNI]string{
+	CalicoCNI: "https://docs.projectcalico.org/v3.15/manifests/calico.yaml",
+}
+
 // ClusterSpec defines the desired state of Cluster
 type ClusterSpec struct {
 	// +kubebuilder:validation:MinLength=1
@@ -40,6 +51,7 @@ type ClusterSpec struct {
 	InfrastructureProvider InfrastructureProvider `json:"infrastructureProvider,omitempty"`
 	ControlPlaneNode       Node                   `json:"controlPlaneNode,omitempty"`
 	WorkerNode             Node                   `json:"workerNode,omitempty"`
+	CniName                CNI                    `json:"cniName,omitempty"`
 }
 
 type InstalledComponent struct {
@@ -53,6 +65,7 @@ type InstalledComponent struct {
 type ClusterStatus struct {
 	Phase               ClusterPhase         `json:"phase,omitempty"`
 	InstalledComponents []InstalledComponent `json:"installedComponents,omitempty"`
+	Ready               bool                 `json:"ready,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -72,6 +85,10 @@ type Cluster struct {
 
 	Spec   ClusterSpec   `json:"spec,omitempty"`
 	Status ClusterStatus `json:"status,omitempty"`
+}
+
+func (c *Cluster) GetCNITemplateURL() string {
+	return cniMapAddr[c.Spec.CniName]
 }
 
 // +kubebuilder:object:root=true

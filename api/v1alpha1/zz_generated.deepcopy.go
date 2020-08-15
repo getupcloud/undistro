@@ -187,7 +187,7 @@ func (in *Node) DeepCopyInto(out *Node) {
 	*out = *in
 	if in.Replicas != nil {
 		in, out := &in.Replicas, &out.Replicas
-		*out = new(int32)
+		*out = new(int64)
 		**out = **in
 	}
 }

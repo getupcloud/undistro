@@ -4,8 +4,8 @@ type ClusterPhase string
 
 const (
 	NewPhase          = ClusterPhase("")
-	InitializedPhase  = ClusterPhase("initialized")
-	ProvisioningPhase = ClusterPhase("provisioning")
-	ProvisionedPhase  = ClusterPhase("provisioned")
-	ReadyPhase        = ClusterPhase("ready")
+	InitializedPhase  = ClusterPhase("Initialized")
+	ProvisioningPhase = ClusterPhase("Provisioning")
+	ProvisionedPhase  = ClusterPhase("Provisioned")
+	FailedPhase       = ClusterPhase("Failed")
 )

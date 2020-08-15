@@ -9,14 +9,13 @@ import (
 	"io/ioutil"
 	"strconv"
 
-	"k8s.io/utils/pointer"
-
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/getupcloud/undistro/client/cluster"
 	"github.com/getupcloud/undistro/client/repository"
 	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/version"
+	"k8s.io/utils/pointer"
 )
 
 func (c *undistroClient) GetVariables() Variables {
