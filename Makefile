@@ -30,7 +30,7 @@ TOOLS_DIR := hack/tools
 TOOLS_BIN_DIR := $(TOOLS_DIR)/bin
 BIN_DIR := bin
 
-IMG ?= controller:latest
+IMG ?= felipeweb/undistro:v0.4.0
 
 # Binaries.
 # Need to use abspath so we can invoke these from subdirectories

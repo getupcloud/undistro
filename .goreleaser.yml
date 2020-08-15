@@ -11,7 +11,10 @@ builds:
       - arm64
     goarm:
       - 7
+
 release:
   github:
     owner: getupcloud
     name: undistro
+  extra_files:
+    - glob: ./core-components.yaml
