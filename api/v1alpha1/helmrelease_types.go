@@ -132,18 +132,7 @@ func (hr HelmRelease) GetWait() bool {
 // GetValuesFromSources maintains backwards compatibility with
 // ValueFileSecrets by merging them into the ValuesFrom array.
 func (hr HelmRelease) GetValuesFromSources() []ValuesFromSource {
-	valuesFrom := hr.Spec.ValuesFrom
-	// Maintain backwards compatibility with ValueFileSecrets.
-	if hr.Spec.ValueFileSecrets != nil {
-		var secretKeyRefs []ValuesFromSource
-		for _, ref := range hr.Spec.ValueFileSecrets {
-			s := &OptionalSecretKeySelector{}
-			s.Name = ref.Name
-			secretKeyRefs = append(secretKeyRefs, ValuesFromSource{SecretKeyRef: s})
-		}
-		valuesFrom = append(secretKeyRefs, valuesFrom...)
-	}
-	return valuesFrom
+	return hr.Spec.ValuesFrom
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -434,11 +423,8 @@ type HelmReleaseSpec struct {
 	ReleaseName string `json:"releaseName,omitempty"`
 	// MaxHistory is the maximum amount of revisions to keep for the
 	// Helm release. If not supplied, it defaults to 10.
-	MaxHistory *int `json:"maxHistory,omitempty"`
-	// ValueFileSecrets holds the local name references to secrets.
-	// DEPRECATED, use ValuesFrom.secretKeyRef instead.
-	ValueFileSecrets []LocalObjectReference `json:"valueFileSecrets,omitempty"`
-	ValuesFrom       []ValuesFromSource     `json:"valuesFrom,omitempty"`
+	MaxHistory *int               `json:"maxHistory,omitempty"`
+	ValuesFrom []ValuesFromSource `json:"valuesFrom,omitempty"`
 	// TargetNamespace overrides the targeted namespace for the Helm
 	// release. The default namespace equals to the namespace of the
 	// HelmRelease resource.

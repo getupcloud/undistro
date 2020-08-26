@@ -307,11 +307,6 @@ func (in *HelmReleaseSpec) DeepCopyInto(out *HelmReleaseSpec) {
 		*out = new(int)
 		**out = **in
 	}
-	if in.ValueFileSecrets != nil {
-		in, out := &in.ValueFileSecrets, &out.ValueFileSecrets
-		*out = make([]LocalObjectReference, len(*in))
-		copy(*out, *in)
-	}
 	if in.ValuesFrom != nil {
 		in, out := &in.ValuesFrom, &out.ValuesFrom
 		*out = make([]ValuesFromSource, len(*in))

@@ -171,16 +171,6 @@ spec:
                 description: Timeout is the time to wait for any individual Kubernetes operation (like Jobs for hooks) during installation and upgrade operations.
                 format: int64
                 type: integer
-              valueFileSecrets:
-                description: ValueFileSecrets holds the local name references to secrets. DEPRECATED, use ValuesFrom.secretKeyRef instead.
-                items:
-                  properties:
-                    name:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                type: array
               values:
                 description: Values holds the values for this Helm release.
                 type: object
