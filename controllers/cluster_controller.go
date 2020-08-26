@@ -383,7 +383,7 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl *undistrov1.Clust
 }
 
 func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager, opts controller.Options) error {
-	if err := mgr.GetFieldIndexer().IndexField(&clusterApi.Cluster{}, jobOwnerKey, func(rawObj runtime.Object) []string {
+	if err := mgr.GetFieldIndexer().IndexField(context.TODO(), &clusterApi.Cluster{}, jobOwnerKey, func(rawObj runtime.Object) []string {
 		cluster := rawObj.(*clusterApi.Cluster)
 		owner := metav1.GetControllerOf(cluster)
 		if owner == nil {
