@@ -44,3 +44,5 @@ type Proxy cluster.Proxy
 
 // Logs of providers controller
 type Logs cluster.LogStreamer
+
+type WorkloadCluster cluster.WorkloadCluster

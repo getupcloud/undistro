@@ -58,8 +58,11 @@ func runGetKubeconfig(workloadClusterName string) error {
 		WorkloadClusterName: workloadClusterName,
 		Namespace:           gk.namespace,
 	}
-
-	out, err := c.GetKubeconfig(options)
+	wc, err := c.GetWorkloadCluster(options.Kubeconfig)
+	if err != nil {
+		return err
+	}
+	out, err := wc.GetKubeconfig(options.WorkloadClusterName, options.Namespace)
 	if err != nil {
 		return err
 	}

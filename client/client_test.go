@@ -20,6 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/rest"
 )
 
 // TestNewFakeClient is a fake test to document fakeClient usage
@@ -89,8 +90,8 @@ func (f fakeClient) Delete(options DeleteOptions) error {
 	return f.internalClient.Delete(options)
 }
 
-func (f fakeClient) GetKubeconfig(options GetKubeconfigOptions) (string, error) {
-	return f.internalClient.GetKubeconfig(options)
+func (f fakeClient) GetWorkloadCluster(k Kubeconfig) (WorkloadCluster, error) {
+	return f.internalClient.GetWorkloadCluster(k)
 }
 
 func (f fakeClient) Move(options MoveOptions) error {
@@ -126,7 +127,7 @@ func newFakeClient(configClient config.Client) *fakeClient {
 	var clusterClientFactory = func(i ClusterClientFactoryInput) (cluster.Client, error) {
 		// converting the client.Kubeconfig to cluster.Kubeconfig alias
 		k := cluster.Kubeconfig(i.kubeconfig)
-		if _, ok := fake.clusters[k]; !ok {
+		if c, ok := fake.clusters[k]; !ok || c == nil {
 			return nil, errors.Errorf("Cluster for kubeconfig %q and/or context %q does not exist.", i.kubeconfig.Path, i.kubeconfig.Context)
 		}
 		return fake.clusters[k], nil
@@ -216,6 +217,20 @@ func (p *fakeCertManagerClient) Images() ([]string, error) {
 	return p.images, p.imagesError
 }
 
+type fakeWorkloadCluster struct {
+	Error error
+}
+
+var _ cluster.WorkloadCluster = &fakeWorkloadCluster{}
+
+func (p *fakeWorkloadCluster) GetKubeconfig(workloadClusterName string, namespace string) (string, error) {
+	return "", p.Error
+}
+
+func (p *fakeWorkloadCluster) GetRestConfig(workloadClusterName string, namespace string) (*rest.Config, error) {
+	return nil, p.Error
+}
+
 type fakeClusterClient struct {
 	kubeconfig      cluster.Kubeconfig
 	fakeProxy       *test.FakeProxy
@@ -223,6 +238,7 @@ type fakeClusterClient struct {
 	repositories    map[string]repository.Client
 	internalclient  cluster.Client
 	certManager     cluster.CertManagerClient
+	workloadCluster cluster.WorkloadCluster
 }
 
 var _ cluster.Client = &fakeClusterClient{}
@@ -286,7 +302,7 @@ func (f *fakeClusterClient) WithRepository(repositoryClient repository.Client) *
 }
 
 func (f *fakeClusterClient) WorkloadCluster() cluster.WorkloadCluster {
-	return f.internalclient.WorkloadCluster()
+	return f.workloadCluster
 }
 
 func (f *fakeClusterClient) WithObjectMover(mover cluster.ObjectMover) *fakeClusterClient {

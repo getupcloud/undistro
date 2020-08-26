@@ -48,32 +48,3 @@ func TestHelmValues(t *testing.T) {
 		})
 	}
 }
-
-func TestRefOrDefault(t *testing.T) {
-	testCases := []struct {
-		chartSource      GitChartSource
-		potentialDefault string
-		expected         string
-	}{
-		{
-			chartSource: GitChartSource{
-				Ref: "master",
-			},
-			potentialDefault: "dev",
-			expected:         "master",
-		},
-		{
-			chartSource:      GitChartSource{},
-			potentialDefault: "dev",
-			expected:         "dev",
-		},
-	}
-
-	for i, tc := range testCases {
-		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			g := NewWithT(t)
-			got := tc.chartSource.RefOrDefault(tc.potentialDefault)
-			g.Expect(got).To(Equal(tc.expected))
-		})
-	}
-}

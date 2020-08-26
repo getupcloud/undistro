@@ -4,9 +4,9 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package cluster
 
 import (
-	"github.com/getupcloud/undistro/client/cluster/helm"
-	"github.com/getupcloud/undistro/log"
 	"github.com/pkg/errors"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 	utilkubeconfig "sigs.k8s.io/cluster-api/util/kubeconfig"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -15,25 +15,19 @@ import (
 type WorkloadCluster interface {
 	// GetKubeconfig returns the kubeconfig of the workload cluster.
 	GetKubeconfig(workloadClusterName string, namespace string) (string, error)
-	// GetHelm instance
-	GetHelm() helm.Client
+	// GetRestConfig returns the *rest.Config of the workload cluster.
+	GetRestConfig(workloadClusterName string, namespace string) (*rest.Config, error)
 }
 
 // workloadCluster implements WorkloadCluster.
 type workloadCluster struct {
-	proxy      Proxy
-	helmClient helm.Client
+	proxy Proxy
 }
 
 // newWorkloadCluster returns a workloadCluster.
 func newWorkloadCluster(proxy Proxy) *workloadCluster {
-	cfg, err := proxy.GetConfig()
-	if err != nil {
-		log.Log.Error(err, "couldn't get rest config")
-	}
 	return &workloadCluster{
-		proxy:      proxy,
-		helmClient: helm.New(cfg),
+		proxy: proxy,
 	}
 }
 
@@ -54,6 +48,18 @@ func (p *workloadCluster) GetKubeconfig(workloadClusterName string, namespace st
 	return string(dataBytes), nil
 }
 
-func (p *workloadCluster) GetHelm() helm.Client {
-	return p.helmClient
+func (p *workloadCluster) GetRestConfig(workloadClusterName string, namespace string) (*rest.Config, error) {
+	k, err := p.GetKubeconfig(workloadClusterName, namespace)
+	if err != nil {
+		return nil, err
+	}
+	cfg, err := clientcmd.NewClientConfigFromBytes([]byte(k))
+	if err != nil {
+		return nil, err
+	}
+	workloadCfg, err := cfg.ClientConfig()
+	if err != nil {
+		return nil, err
+	}
+	return workloadCfg, nil
 }

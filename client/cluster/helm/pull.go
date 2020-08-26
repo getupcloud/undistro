@@ -1,11 +1,15 @@
 package helm
 
 import (
+	"encoding/base64"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
 
+	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/getupcloud/undistro/internal/urlutil"
+	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/downloader"
 	"helm.sh/helm/v3/pkg/helmpath"
@@ -125,4 +129,40 @@ func downloadMissingRepositoryIndexes(repositories []*repo.Entry) error {
 	}
 	wg.Wait()
 	return nil
+}
+
+func (h *HelmV3) EnsureChartFetched(base string, source *undistrov1.RepoChartSource) (string, bool, error) {
+	repoPath, filename, err := makeChartPath(base, h.Version(), source)
+	if err != nil {
+		return "", false, ChartUnavailableError{err}
+	}
+	chartPath := filepath.Join(repoPath, filename)
+	stat, err := os.Stat(chartPath)
+	switch {
+	case os.IsNotExist(err):
+		chartPath, err = h.PullWithRepoURL(source.RepoURL, source.Name, source.Version, chartPath)
+		if err != nil {
+			return chartPath, false, ChartUnavailableError{err}
+		}
+		return chartPath, true, nil
+	case err != nil:
+		return chartPath, false, ChartUnavailableError{err}
+	case stat.IsDir():
+		return chartPath, false, ChartUnavailableError{errors.New("path to chart exists but is a directory")}
+	}
+	return chartPath, false, nil
+}
+
+// makeChartPath gives the expected filesystem location for a chart,
+// without testing whether the file exists or not.
+func makeChartPath(base string, clientVersion string, source *undistrov1.RepoChartSource) (string, string, error) {
+	// We don't need to obscure the location of the charts in the
+	// filesystem; but we do need a stable, filesystem-friendly path
+	// to them that is based on the URL and the client version.
+	repoPath := filepath.Join("helmcharts", base, clientVersion, base64.URLEncoding.EncodeToString([]byte(source.CleanRepoURL())))
+	if err := os.MkdirAll(repoPath, 00750); err != nil {
+		return "", "", err
+	}
+	filename := fmt.Sprintf("%s-%s.tgz", source.Name, source.Version)
+	return repoPath, filename, nil
 }

@@ -21,7 +21,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 	clusterApi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	utilresource "sigs.k8s.io/cluster-api/util/resource"
 	"sigs.k8s.io/cluster-api/util/yaml"
@@ -348,21 +347,13 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl *undistrov1.Clust
 	if err != nil {
 		return err
 	}
-	clKubeconfig, err := c.GetKubeconfig(uclient.GetKubeconfigOptions{
-		Kubeconfig: uclient.Kubeconfig{
-			RestConfig: r.RestConfig,
-		},
-		WorkloadClusterName: cl.Name,
-		Namespace:           cl.Namespace,
+	wc, err := c.GetWorkloadCluster(uclient.Kubeconfig{
+		RestConfig: r.RestConfig,
 	})
 	if err != nil {
 		return err
 	}
-	cfg, err := clientcmd.NewClientConfigFromBytes([]byte(clKubeconfig))
-	if err != nil {
-		return err
-	}
-	workloadCfg, err := cfg.ClientConfig()
+	workloadCfg, err := wc.GetRestConfig(cl.Name, cl.Namespace)
 	if err != nil {
 		return err
 	}

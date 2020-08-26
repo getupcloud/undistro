@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"time"
 
+	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/google/go-cmp/cmp"
 	"sigs.k8s.io/yaml"
 )
@@ -31,6 +32,7 @@ type Client interface {
 	Uninstall(releaseName string, opts UninstallOptions) error
 	GetChartRevision(chartPath string) (string, error)
 	Version() string
+	EnsureChartFetched(base string, source *undistrov1.RepoChartSource) (string, bool, error)
 }
 
 func Diff(j *Release, k *Release) string {
