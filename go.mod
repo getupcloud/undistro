@@ -19,7 +19,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	helm.sh/helm/v3 v3.3.0
 	k8s.io/api v0.18.8
-	k8s.io/apiextensions-apiserver v0.18.4
+	k8s.io/apiextensions-apiserver v0.18.8
 	k8s.io/apimachinery v0.18.8
 	k8s.io/cli-runtime v0.18.8
 	k8s.io/client-go v0.18.8
@@ -28,7 +28,7 @@ require (
 	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/cluster-api v0.3.9-0.20200825193203-d4101d79f330
 	sigs.k8s.io/cluster-api-provider-aws v0.5.5
-	sigs.k8s.io/controller-runtime v0.5.9
+	sigs.k8s.io/controller-runtime v0.6.2
 	sigs.k8s.io/yaml v1.2.0
 )
 
