@@ -1,0 +1,20 @@
+# permissions for end users to view helmreleases.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: helmrelease-viewer-role
+rules:
+- apiGroups:
+  - getupcloud.com
+  resources:
+  - helmreleases
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - getupcloud.com
+  resources:
+  - helmreleases/status
+  verbs:
+  - get

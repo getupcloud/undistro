@@ -96,7 +96,7 @@ func (l *logStreamer) streamLogs(ctx context.Context, reqs []logRequest, writer 
 	wg.Add(len(reqs))
 	r, w := io.Pipe()
 	for _, req := range reqs {
-		reader, err := req.req.Stream()
+		reader, err := req.req.Stream(ctx)
 		if err != nil {
 			return err
 		}
@@ -164,7 +164,7 @@ func (l *logStreamer) getLogs(ctx context.Context, pods []corev1.Pod) []logReque
 				SinceTime: &metav1.Time{
 					Time: time.Now(),
 				},
-			}).Context(ctx)
+			})
 		reqs[i] = logRequest{
 			podName: pod.Name,
 			req:     req,

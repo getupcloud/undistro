@@ -4,19 +4,18 @@ import (
 	"path/filepath"
 	"testing"
 
+	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	"github.com/getupcloud/undistro/internal/scheme"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"k8s.io/client-go/rest"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
-
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/internal/scheme"
-	ctrl "sigs.k8s.io/controller-runtime"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -51,6 +50,9 @@ var _ = BeforeSuite(func(done Done) {
 	err = undistrov1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
+	err = undistrov1.AddToScheme(scheme.Scheme)
+	Expect(err).NotTo(HaveOccurred())
+
 	// +kubebuilder:scaffold:scheme
 
 	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
@@ -67,6 +69,11 @@ var _ = BeforeSuite(func(done Done) {
 		Log:        ctrl.Log.WithName("controllers").WithName("Cluster"),
 		Scheme:     mgr.GetScheme(),
 		RestConfig: cfg,
+	}).SetupWithManager(mgr, controller.Options{})
+	(&HelmReleaseReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("HelmRelease"),
+		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr, controller.Options{})
 	go func() {
 		err = mgr.Start(ctrl.SetupSignalHandler())

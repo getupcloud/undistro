@@ -8,13 +8,14 @@ import (
 	"flag"
 	"os"
 
-	getupcloudcomv1alpha1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/controllers"
-	"github.com/getupcloud/undistro/internal/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+
+	getupcloudcomv1alpha1 "github.com/getupcloud/undistro/api/v1alpha1"
+	"github.com/getupcloud/undistro/controllers"
+	"github.com/getupcloud/undistro/internal/scheme"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -57,6 +58,15 @@ func main() {
 		RestConfig: restCfg,
 	}).SetupWithManager(mgr, concurrency(maxConcurrency)); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Cluster")
+		os.Exit(1)
+	}
+
+	if err = (&controllers.HelmReleaseReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("HelmRelease"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr, concurrency(maxConcurrency)); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "HelmRelease")
 		os.Exit(1)
 	}
 	_, ok := os.LookupEnv("UNDISTRO_DEBUG")

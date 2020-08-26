@@ -232,6 +232,26 @@ rules:
 - apiGroups:
   - getupcloud.com
   resources:
+  - helmreleases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - getupcloud.com
+  resources:
+  - helmreleases/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - getupcloud.com
+  resources:
   - providers
   verbs:
   - create
