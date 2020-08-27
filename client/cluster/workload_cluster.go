@@ -4,6 +4,7 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package cluster
 
 import (
+	"github.com/getupcloud/undistro/client/cluster/helm"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -17,6 +18,8 @@ type WorkloadCluster interface {
 	GetKubeconfig(workloadClusterName string, namespace string) (string, error)
 	// GetRestConfig returns the *rest.Config of the workload cluster.
 	GetRestConfig(workloadClusterName string, namespace string) (*rest.Config, error)
+	// GetHelm returns helm.Client
+	GetHelm(workloadClusterName string, namespace string) (helm.Client, error)
 }
 
 // workloadCluster implements WorkloadCluster.
@@ -62,4 +65,12 @@ func (p *workloadCluster) GetRestConfig(workloadClusterName string, namespace st
 		return nil, err
 	}
 	return workloadCfg, nil
+}
+
+func (p *workloadCluster) GetHelm(workloadClusterName string, namespace string) (helm.Client, error) {
+	cfg, err := p.GetRestConfig(workloadClusterName, namespace)
+	if err != nil {
+		return nil, err
+	}
+	return helm.New(cfg), nil
 }

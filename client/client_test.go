@@ -11,6 +11,7 @@ import (
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/getupcloud/undistro/client/cluster"
+	"github.com/getupcloud/undistro/client/cluster/helm"
 	"github.com/getupcloud/undistro/client/config"
 	"github.com/getupcloud/undistro/client/repository"
 	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
@@ -228,6 +229,10 @@ func (p *fakeWorkloadCluster) GetKubeconfig(workloadClusterName string, namespac
 }
 
 func (p *fakeWorkloadCluster) GetRestConfig(workloadClusterName string, namespace string) (*rest.Config, error) {
+	return nil, p.Error
+}
+
+func (p *fakeWorkloadCluster) GetHelm(workloadClusterName string, namespace string) (helm.Client, error) {
 	return nil, p.Error
 }
 
