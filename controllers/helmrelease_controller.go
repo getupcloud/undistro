@@ -13,11 +13,14 @@ import (
 	"github.com/getupcloud/undistro/client/cluster/helm"
 	"github.com/getupcloud/undistro/status"
 	"github.com/go-logr/logr"
+	"github.com/google/go-cmp/cmp"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/event"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
 type errCollection []error
@@ -317,5 +320,24 @@ func (r *HelmReleaseReconciler) SetupWithManager(mgr ctrl.Manager, opts controll
 	return ctrl.NewControllerManagedBy(mgr).
 		WithOptions(opts).
 		For(&undistrov1.HelmRelease{}).
+		WithEventFilter(predicate.Funcs{
+			UpdateFunc: r.updateFilter,
+		}).
 		Complete(r)
+}
+
+func (r *HelmReleaseReconciler) updateFilter(e event.UpdateEvent) bool {
+	n, ok := e.ObjectNew.(*undistrov1.HelmRelease)
+	if !ok {
+		return false
+	}
+	o, ok := e.ObjectOld.(*undistrov1.HelmRelease)
+	if !ok {
+		return false
+	}
+	diff := cmp.Diff(o.Spec, n.Spec)
+	if sDiff := cmp.Diff(o.Status, n.Status); diff == "" && sDiff != "" {
+		return false
+	}
+	return true
 }
