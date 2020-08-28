@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"sort"
 
+	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/ncabatoff/go-seq/seq"
+	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
@@ -12,6 +14,28 @@ import (
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage/driver"
 )
+
+type ChartState struct {
+	ChartPath string
+	Revision  string
+	Changed   bool
+}
+
+func PrepareChart(h Client, hr *undistrov1.HelmRelease) (ChartState, error) {
+	if hr.Spec.RepoChartSource != nil && hr.Spec.RepoURL != "" && hr.Spec.Name != "" && hr.Spec.Version != "" {
+		chartPath, _, err := h.EnsureChartFetched(hr.GetClusterNamespacedName().String(), hr.Spec.RepoChartSource)
+		if err != nil {
+			return ChartState{}, err
+		}
+		revision, err := h.GetChartRevision(chartPath)
+		if err != nil {
+			return ChartState{}, err
+		}
+		changed := hr.Status.LastAttemptedRevision != revision
+		return ChartState{chartPath, revision, changed}, nil
+	}
+	return ChartState{}, errors.Errorf("couldn't find valid chart source configuration for release %s:%s", hr.Spec.Name, hr.Spec.Version)
+}
 
 // releaseToGenericRelease transforms a v3 release structure
 // into a generic `helm.Release`

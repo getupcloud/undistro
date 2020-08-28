@@ -14,23 +14,16 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-// AntecedentAnnotation is an annotation on a resource indicating that
-// the cause of that resource is a HelmRelease. We use this rather than
-// the `OwnerReference` type built into Kubernetes as this does not
-// allow cross-namespace references by design.
-const AntecedentAnnotation = "getupcloud.com/antecedent"
-
-type helmAction string
+type HelmAction string
 
 const (
-	InstallAction       helmAction = "install"
-	UpgradeAction       helmAction = "upgrade"
-	SkipAction          helmAction = "skip"
-	RollbackAction      helmAction = "rollback"
-	UninstallAction     helmAction = "uninstall"
-	DryRunCompareAction helmAction = "dry-run-compare"
-	AnnotateAction      helmAction = "annotate"
-	TestAction          helmAction = "test"
+	InstallAction       HelmAction = "install"
+	UpgradeAction       HelmAction = "upgrade"
+	SkipAction          HelmAction = "skip"
+	RollbackAction      HelmAction = "rollback"
+	UninstallAction     HelmAction = "uninstall"
+	DryRunCompareAction HelmAction = "dry-run-compare"
+	TestAction          HelmAction = "test"
 )
 
 // +genclient

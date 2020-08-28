@@ -62,9 +62,10 @@ func main() {
 	}
 
 	if err = (&controllers.HelmReleaseReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("HelmRelease"),
-		Scheme: mgr.GetScheme(),
+		Client:     mgr.GetClient(),
+		Log:        ctrl.Log.WithName("controllers").WithName("HelmRelease"),
+		Scheme:     mgr.GetScheme(),
+		RestConfig: restCfg,
 	}).SetupWithManager(mgr, concurrency(maxConcurrency)); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "HelmRelease")
 		os.Exit(1)
