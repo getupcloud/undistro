@@ -10,7 +10,7 @@ import (
 func ChooseAction(ctx context.Context, h Client, hr *undistrov1.HelmRelease, chart ChartState, synced, hasRollback, retry bool) (undistrov1.HelmAction, *Release, error) {
 	curRel, err := h.Get(hr.GetReleaseName(), GetOptions{Namespace: hr.GetTargetNamespace()})
 	if err != nil {
-		return undistrov1.SkipAction, nil, errors.Errorf("couldn't to retrieve Helm release: %w", err)
+		return undistrov1.SkipAction, nil, errors.Errorf("couldn't to retrieve Helm release: %v", err)
 	}
 	if curRel == nil {
 		return undistrov1.InstallAction, nil, nil
@@ -37,7 +37,7 @@ func ChooseAction(ctx context.Context, h Client, hr *undistrov1.HelmRelease, cha
 		}
 		hist, err := h.History(hr.GetReleaseName(), HistoryOptions{Namespace: hr.GetTargetNamespace(), Max: hr.GetMaxHistory()})
 		if err != nil {
-			return undistrov1.SkipAction, nil, errors.Errorf("couldn't to retreive history for rolled back release: %w", err)
+			return undistrov1.SkipAction, nil, errors.Errorf("couldn't to retreive history for rolled back release: %v", err)
 		}
 		for _, r := range hist {
 			if r.Info.Status == StatusFailed || r.Info.Status == StatusSuperseded {
