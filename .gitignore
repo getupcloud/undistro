@@ -28,3 +28,4 @@ bin/
 *.pem
 core-components.yaml
 *demo.yaml
+undistro.yaml

@@ -343,6 +343,7 @@ const (
 	HelmV3 HelmVersion = "v3"
 )
 
+// +kubebuilder:validation:Type=object
 type HelmValues struct {
 	// Data holds the configuration keys and values.
 	// Work around for https://github.com/kubernetes-sigs/kubebuilder/issues/528
@@ -606,4 +607,8 @@ type HelmReleaseStatus struct {
 	// +patchMergeKey=type
 	// +patchStrategy=merge
 	Conditions []HelmReleaseCondition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
+}
+
+func init() {
+	SchemeBuilder.Register(&HelmRelease{}, &HelmReleaseList{})
 }
