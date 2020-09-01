@@ -6,30 +6,23 @@ package controllers
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"time"
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	uclient "github.com/getupcloud/undistro/client"
+	"github.com/getupcloud/undistro/client/cluster/cluster"
 	"github.com/getupcloud/undistro/internal/util"
+	"github.com/getupcloud/undistro/status"
 	"github.com/go-logr/logr"
-	"github.com/pkg/errors"
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
 	clusterApi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	utilresource "sigs.k8s.io/cluster-api/util/resource"
-	"sigs.k8s.io/cluster-api/util/yaml"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-	"sigs.k8s.io/controller-runtime/pkg/handler"
-	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
 var (
@@ -70,39 +63,18 @@ type ClusterReconciler struct {
 func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
 	log := r.Log.WithValues("cluster", req.NamespacedName)
-	var cluster undistrov1.Cluster
-	if err := r.Get(ctx, req.NamespacedName, &cluster); err != nil {
+	var cl undistrov1.Cluster
+	if err := r.Get(ctx, req.NamespacedName, &cl); err != nil {
 		if client.IgnoreNotFound(err) != nil {
 			log.Error(err, "couldn't get object", "name", req.NamespacedName)
 			return ctrl.Result{}, err
 		}
 		return ctrl.Result{}, nil
 	}
-	if !controllerutil.ContainsFinalizer(&cluster, undistrov1.ClusterFinalizer) {
-		controllerutil.AddFinalizer(&cluster, undistrov1.ClusterFinalizer)
-		if err := r.Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't update status", "name", req.NamespacedName)
-			return ctrl.Result{}, err
-		}
-		return ctrl.Result{}, nil
-	}
-	if !cluster.DeletionTimestamp.IsZero() {
-		log.Info("removing cluster", "name", req.NamespacedName)
-		if err := r.delete(ctx, &cluster); err != nil {
-			return ctrl.Result{}, err
-		}
-		if err := r.Status().Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't update status", "name", req.NamespacedName)
-			return ctrl.Result{}, err
-		}
-		if cluster.Status.Phase == undistrov1.DeletingPhase {
-			return ctrl.Result{Requeue: true}, nil
-		}
-		controllerutil.RemoveFinalizer(&cluster, undistrov1.ClusterFinalizer)
-		if err := r.Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't update status", "name", req.NamespacedName)
-			return ctrl.Result{}, err
-		}
+	defer status.SetObservedGenerationCluster(ctx, r.Client, &cl, cl.Generation)
+	// Add finalizer first if not exist to avoid the race condition between init and delete
+	if !controllerutil.ContainsFinalizer(&cl, undistrov1.ClusterFinalizer) {
+		controllerutil.AddFinalizer(&cl, undistrov1.ClusterFinalizer)
 		return ctrl.Result{}, nil
 	}
 	undistroClient, err := uclient.New("")
@@ -113,263 +85,158 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		VariablesClient: undistroClient.GetVariables(),
 		ClientSet:       r.Client,
 		NamespacedName:  req.NamespacedName,
-		EnvVars:         cluster.Spec.InfrastructureProvider.Env,
+		EnvVars:         cl.Spec.InfrastructureProvider.Env,
 	})
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	if cluster.Status.Phase == undistrov1.NewPhase {
-		log.Info("ensure mangement cluster is initialized and updated", "name", req.NamespacedName)
-		if err = r.init(ctx, &cluster, undistroClient); err != nil {
-			if client.IgnoreNotFound(err) != nil {
-				log.Error(err, "couldn't initialize or update the mangement cluster", "name", req.NamespacedName)
-				return ctrl.Result{}, err
-			}
-			return ctrl.Result{}, nil
-		}
-		if err = r.Status().Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't update status", "name", req.NamespacedName)
-			return ctrl.Result{}, err
-		}
-		return ctrl.Result{Requeue: true}, nil
-	}
-	if cluster.Status.Phase == undistrov1.InitializedPhase {
-		log.Info("generanting cluster-api configuration", "name", req.NamespacedName)
-		if err = r.config(ctx, &cluster, undistroClient); err != nil {
-			if client.IgnoreNotFound(err) != nil {
-				log.Error(err, "couldn't initialize or update the mangement cluster", "name", req.NamespacedName)
-				return ctrl.Result{}, err
-			}
-			return ctrl.Result{}, nil
-		}
-		if err = r.Status().Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't update status", "name", req.NamespacedName)
-			return ctrl.Result{}, err
-		}
-		return ctrl.Result{}, nil
-	}
-	if cluster.Status.Phase == undistrov1.ProvisioningPhase {
-		res, err := r.provisioning(ctx, &cluster, undistroClient)
-		if client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't provision the cluster", "name", req.NamespacedName)
-			return res, err
-		}
-		return res, nil
-	}
-	return ctrl.Result{}, nil
+	action := cluster.ChooseAction(ctx, &cl)
+	return ctrl.Result{}, r.run(ctx, undistroClient, action, &cl)
 }
 
-func (r *ClusterReconciler) delete(ctx context.Context, cl *undistrov1.Cluster) error {
+func (r *ClusterReconciler) run(
+	ctx context.Context,
+	uc uclient.Client,
+	action undistrov1.ClusterAction,
+	cl *undistrov1.Cluster) error {
 	log := r.Log
-	cl.Status.Ready = false
-	if cl.Status.ClusterAPIRef == nil {
-		cl.Status.Phase = undistrov1.DeletedPhase
-		return nil
-	}
-	capiNM := types.NamespacedName{
-		Name:      cl.Status.ClusterAPIRef.Name,
-		Namespace: cl.Status.ClusterAPIRef.Namespace,
-	}
-	var capi clusterApi.Cluster
-	err := r.Get(ctx, capiNM, &capi)
-	if err != nil {
-		if client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't get capi", "name", capiNM)
-			return err
-		}
-		cl.Status.Phase = undistrov1.DeletedPhase
-		return nil
-	}
-	if capi.Status.Phase != string(clusterApi.ClusterPhaseDeleting) {
-		if err := r.Delete(ctx, &capi); err != nil {
-			if client.IgnoreNotFound(err) != nil {
-				log.Error(err, "couldn't delete capi", "name", capiNM)
-				return err
+	errs := errCollection{}
+	upgrade := false
+next:
+	switch action {
+	case undistrov1.InitClusterAction:
+		if !upgrade {
+			log.Info("running init", "name", cl.Name, "namespace", cl.Namespace)
+			err := status.SetClusterPhase(ctx, r.Client, cl, undistrov1.InitializingPhase)
+			if err != nil {
+				log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
 			}
-			cl.Status.Phase = undistrov1.DeletedPhase
-			return nil
 		}
-	}
-	cl.Status.Phase = undistrov1.DeletingPhase
-	return nil
-}
-
-func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {
-	log := r.Log
-	components, err := c.Init(uclient.InitOptions{
-		Kubeconfig: uclient.Kubeconfig{
-			RestConfig: r.RestConfig,
-		},
-		InfrastructureProviders: []string{cl.Spec.InfrastructureProvider.NameVersion()},
-		TargetNamespace:         "undistro-system",
-		LogUsageInstructions:    false,
-	})
-	if err != nil {
-		return err
-	}
-	if len(components) == 0 {
-		var comp uclient.Components
-		comp, err = c.GetProviderComponents(cl.Spec.InfrastructureProvider.Name, undistrov1.InfrastructureProviderType, uclient.ComponentsOptions{
-			TargetNamespace: "undistro-system",
+		components, err := uc.Init(uclient.InitOptions{
+			Kubeconfig: uclient.Kubeconfig{
+				RestConfig: r.RestConfig,
+			},
+			InfrastructureProviders: []string{cl.Spec.InfrastructureProvider.NameVersion()},
+			TargetNamespace:         "undistro-system",
+			LogUsageInstructions:    false,
 		})
 		if err != nil {
-			return err
-		}
-		components = append(components, comp)
-	}
-	cl.Status.InstalledComponents = make([]undistrov1.InstalledComponent, len(components))
-	for i, component := range components {
-		preConfigFunc := component.GetPreConfigFunc()
-		if preConfigFunc != nil {
-			log.Info("executing pre config func", "component", component.Name())
-			err = preConfigFunc(cl, c.GetVariables())
+			log.Error(err, "couldn't init cluster", "name", cl.Name, "namespace", cl.Namespace)
+			errs = append(errs, err)
+			err = status.SetClusterPhase(ctx, r.Client, cl, undistrov1.FailedPhase)
 			if err != nil {
-				return err
+				log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
 			}
+			break
 		}
-		ic := undistrov1.InstalledComponent{
-			Name:    component.Name(),
-			Version: component.Version(),
-			URL:     component.URL(),
-			Type:    component.Type(),
-		}
-		cl.Status.InstalledComponents[i] = ic
-	}
-	cl.Status.Phase = undistrov1.InitializedPhase
-	return nil
-}
-
-func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {
-	tpl, err := c.GetClusterTemplate(uclient.GetClusterTemplateOptions{
-		Kubeconfig: uclient.Kubeconfig{
-			RestConfig: r.RestConfig,
-		},
-		ClusterName:              cl.Name,
-		TargetNamespace:          cl.Namespace,
-		ListVariablesOnly:        false,
-		KubernetesVersion:        cl.Spec.KubernetesVersion,
-		ControlPlaneMachineCount: cl.Spec.ControlPlaneNode.Replicas,
-		WorkerMachineCount:       cl.Spec.WorkerNode.Replicas,
-	})
-	if err != nil {
-		return err
-	}
-	objs := utilresource.SortForCreate(tpl.Objs())
-	for _, o := range objs {
-		isCluster := false
-		if o.GetKind() == "Cluster" && o.GroupVersionKind().GroupVersion().String() == clusterApi.GroupVersion.String() {
-			isCluster = true
-			err = ctrl.SetControllerReference(cl, &o, r.Scheme)
+		if len(components) == 0 {
+			var comp uclient.Components
+			comp, err = uc.GetProviderComponents(cl.Spec.InfrastructureProvider.Name, undistrov1.InfrastructureProviderType, uclient.ComponentsOptions{
+				TargetNamespace: "undistro-system",
+			})
 			if err != nil {
-				return errors.Errorf("couldn't set reference: %v", err)
+				log.Error(err, "couldn't init cluster infra", "name", cl.Name, "namespace", cl.Namespace)
+				errs = append(errs, err)
+				err = status.SetClusterPhase(ctx, r.Client, cl, undistrov1.FailedPhase)
+				if err != nil {
+					log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
+				}
+				break
 			}
+			components = append(components, comp)
 		}
-		err = r.Create(ctx, &o)
+		ics := make([]undistrov1.InstalledComponent, len(components))
+		for i, component := range components {
+			preConfigFunc := component.GetPreConfigFunc()
+			if preConfigFunc != nil {
+				log.Info("executing pre config func", "component", component.Name())
+				err = preConfigFunc(cl, uc.GetVariables())
+				if err != nil {
+					log.Error(err, "couldn't init cluster pre config func", "name", cl.Name, "namespace", cl.Namespace)
+					errs = append(errs, err)
+					err = status.SetClusterPhase(ctx, r.Client, cl, undistrov1.FailedPhase)
+					if err != nil {
+						log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
+					}
+					break
+				}
+			}
+			ic := undistrov1.InstalledComponent{
+				Name:    component.Name(),
+				Version: component.Version(),
+				URL:     component.URL(),
+				Type:    component.Type(),
+			}
+			ics[i] = ic
+		}
+		err = status.SetClusterPhaseWithCompoments(ctx, r.Client, cl, undistrov1.InitializedPhase, ics)
 		if err != nil {
-			return err
-		}
-		if isCluster {
-			cl.Status.ClusterAPIRef = &corev1.ObjectReference{
-				Kind:            o.GetKind(),
-				Namespace:       o.GetNamespace(),
-				Name:            o.GetName(),
-				UID:             o.GetUID(),
-				ResourceVersion: o.GetResourceVersion(),
-				APIVersion:      o.GetAPIVersion(),
-			}
-		}
-	}
-	cl.Status.Phase = undistrov1.ProvisioningPhase
-	return nil
-}
-
-func (r *ClusterReconciler) provisioning(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) (ctrl.Result, error) {
-	log := r.Log
-	log.Info("provisioning cluster", "name", cl.Name, "namespace", cl.Namespace)
-	var clusterList clusterApi.ClusterList
-	if err := r.List(ctx, &clusterList, client.InNamespace(cl.Namespace), client.MatchingFields{jobOwnerKey: cl.Name}); err != nil {
-		return ctrl.Result{}, err
-	}
-	if len(clusterList.Items) != 1 {
-		return ctrl.Result{}, errors.Errorf("has more than one Cluster API Cluster owned by %s/%s", cl.Namespace, cl.Name)
-	}
-	capi := &clusterList.Items[0]
-	if undistrov1.ClusterPhase(capi.Status.Phase) == undistrov1.FailedPhase {
-		cl.Status.Phase = undistrov1.FailedPhase
-		if err := r.Status().Update(ctx, cl); client.IgnoreNotFound(err) != nil {
 			log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
-			return ctrl.Result{}, err
 		}
-		return ctrl.Result{}, nil
-	}
-	if capi.Status.ControlPlaneInitialized && !capi.Status.ControlPlaneReady {
-		if err := r.installCNI(ctx, cl, c); err != nil {
-			return ctrl.Result{}, err
+		action = undistrov1.ProvisionClusterAction
+		if upgrade {
+			action = undistrov1.UpgradeClusterAction
 		}
-	}
-	if capi.Status.ControlPlaneReady && capi.Status.InfrastructureReady && undistrov1.ClusterPhase(capi.Status.Phase) == undistrov1.ProvisionedPhase {
-		cl.Status.Phase = undistrov1.ProvisionedPhase
-		cl.Status.Ready = true
-		if err := r.Status().Update(ctx, cl); client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
-			return ctrl.Result{}, err
-		}
-		return ctrl.Result{}, nil
-	}
-	return ctrl.Result{}, nil
-}
-
-func (r *ClusterReconciler) installCNI(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {
-	log := r.Log
-	cniAddr := cl.GetCNITemplateURL()
-	if cniAddr == "" {
-		return errors.Errorf("CNI %s is not supported", cl.Spec.CniName)
-	}
-	log.Info("getting CNI", "name", cl.Spec.CniName, "URL", cniAddr)
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, cniAddr, nil)
-	if err != nil {
-		return err
-	}
-	httpClient := &http.Client{
-		Timeout: 30 * time.Second,
-	}
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	byt, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	objs, err := yaml.ToUnstructured(byt)
-	if err != nil {
-		return err
-	}
-	wc, err := c.GetWorkloadCluster(uclient.Kubeconfig{
-		RestConfig: r.RestConfig,
-	})
-	if err != nil {
-		return err
-	}
-	workloadCfg, err := wc.GetRestConfig(cl.Name, cl.Namespace)
-	if err != nil {
-		return err
-	}
-	workloadClient, err := client.New(workloadCfg, client.Options{Scheme: r.Scheme})
-	if err != nil {
-		return err
-	}
-	objs = utilresource.SortForCreate(objs)
-	for _, o := range objs {
-		_, err = controllerutil.CreateOrUpdate(ctx, workloadClient, &o, func() error {
-			return nil
+		goto next
+	case undistrov1.ProvisionClusterAction:
+		log.Info("running provision", "name", cl.Name, "namespace", cl.Namespace)
+		var capi unstructured.Unstructured
+		tpl, err := uc.GetClusterTemplate(uclient.GetClusterTemplateOptions{
+			Kubeconfig: uclient.Kubeconfig{
+				RestConfig: r.RestConfig,
+			},
+			ClusterName:              cl.Name,
+			TargetNamespace:          cl.Namespace,
+			ListVariablesOnly:        false,
+			KubernetesVersion:        cl.Spec.KubernetesVersion,
+			ControlPlaneMachineCount: cl.Spec.ControlPlaneNode.Replicas,
+			WorkerMachineCount:       cl.Spec.WorkerNode.Replicas,
 		})
 		if err != nil {
-			return err
+			log.Error(err, "couldn't get cluster template", "name", cl.Name, "namespace", cl.Namespace)
+			errs = append(errs, err)
+			err = status.SetClusterPhase(ctx, r.Client, cl, undistrov1.FailedPhase)
+			if err != nil {
+				log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
+			}
+			break
 		}
+		objs := utilresource.SortForCreate(tpl.Objs())
+		for _, o := range objs {
+			if o.GetKind() == "Cluster" && o.GroupVersionKind().GroupVersion().String() == clusterApi.GroupVersion.String() {
+				err = ctrl.SetControllerReference(cl, &o, r.Scheme)
+				if err != nil {
+					log.Error(err, "couldn't set reference", "name", cl.Name, "namespace", cl.Namespace)
+					errs = append(errs, err)
+					err = status.SetClusterPhase(ctx, r.Client, cl, undistrov1.FailedPhase)
+					if err != nil {
+						log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
+					}
+					break
+				}
+				capi = o
+			}
+			err = r.Create(ctx, &o)
+			if err != nil {
+				log.Error(err, "couldn't create object", "name", o.GetName(), "namespace", o.GetNamespace())
+				errs = append(errs, err)
+				err = status.SetClusterPhase(ctx, r.Client, cl, undistrov1.FailedPhase)
+				if err != nil {
+					log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
+				}
+				break
+			}
+		}
+		err = status.SetClusterPhaseWithCapi(ctx, r.Client, cl, undistrov1.ProvisioningPhase, capi)
+		if err != nil {
+			log.Error(err, "couldn't update status", "name", cl.Name, "namespace", cl.Namespace)
+		}
+	case undistrov1.StatusClusterAction:
 	}
-	return nil
+	if errs.Empty() {
+		return nil
+	}
+	return errs
 }
 
 func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager, opts controller.Options) error {
@@ -390,44 +257,5 @@ func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager, opts controller.O
 		WithOptions(opts).
 		For(&undistrov1.Cluster{}).
 		Owns(&clusterApi.Cluster{}).
-		Watches(
-			&source.Kind{Type: &clusterApi.Cluster{}},
-			&handler.EnqueueRequestsFromMapFunc{
-				ToRequests: handler.ToRequestsFunc(r.capiToUndistro),
-			},
-		).
 		Complete(r)
-}
-
-func (r *ClusterReconciler) capiToUndistro(o handler.MapObject) []ctrl.Request {
-	ctx := context.TODO()
-	c, ok := o.Object.(*clusterApi.Cluster)
-	if !ok {
-		r.Log.Error(nil, fmt.Sprintf("expected a Cluster but got a %T", o.Object))
-		return nil
-	}
-	if c.Status.Phase == "" {
-		return nil
-	}
-	nm := types.NamespacedName{
-		Name:      c.Name,
-		Namespace: c.Namespace,
-	}
-	uc := undistrov1.Cluster{}
-	if err := r.Get(ctx, nm, &uc); err != nil {
-		if client.IgnoreNotFound(err) != nil {
-			r.Log.Error(err, "couldn't get undistro cluster")
-		}
-		return nil
-	}
-	uc.Status.Phase = undistrov1.ClusterPhase(c.Status.Phase)
-	if err := r.Status().Update(ctx, &uc); client.IgnoreNotFound(err) != nil {
-		r.Log.Error(err, "couldn't update status", "name", uc.Name, "namespace", uc.Namespace)
-		return nil
-	}
-	return []ctrl.Request{
-		{
-			NamespacedName: nm,
-		},
-	}
 }
