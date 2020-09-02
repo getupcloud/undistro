@@ -34,7 +34,6 @@ const (
 // +kubebuilder:printcolumn:name="Release",type="string",JSONPath=".status.releaseName",description="Release is the name of the Helm release, as given by Helm."
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase",description="Phase is the current release phase being performed for the HelmRelease."
 // +kubebuilder:printcolumn:name="ReleaseStatus",type="string",JSONPath=".status.releaseStatus",description="ReleaseStatus is the status of the Helm release, as given by Helm."
-// +kubebuilder:printcolumn:name="Message",type="string",JSONPath=".status.conditions[?(@.type==\"Released\")].message",description=""
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp",description="CreationTimestamp is a timestamp representing the server time when this object was created. It is not guaranteed to be set in happens-before order across separate operations. Clients may not set this value. It is represented in RFC3339 form and is in UTC."
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:path=helmreleases,shortName=hr;hrs
