@@ -21,16 +21,16 @@ spec:
   scope: Cluster
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.infrastructureProvider.name
+    - jsonPath: .status.infrastructureName
       name: Infra
       type: string
-    - jsonPath: .spec.kubernetesVersion
+    - jsonPath: .status.kubernetesVersion
       name: K8s
       type: string
-    - jsonPath: .spec.controlPlaneNode.replicas
+    - jsonPath: .status.controlPlaneNode.replicas
       name: Control Plane Replicas
       type: integer
-    - jsonPath: .spec.workerNode.replicas
+    - jsonPath: .status.workerNode.replicas
       name: Worker Replicas
       type: integer
     - jsonPath: .status.phase
@@ -201,6 +201,18 @@ spec:
                     description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
                     type: string
                 type: object
+              controlPlaneNode:
+                properties:
+                  machineType:
+                    minLength: 1
+                    type: string
+                  replicas:
+                    format: int64
+                    minimum: 1
+                    type: integer
+                type: object
+              infrastructureName:
+                type: string
               installedComponents:
                 items:
                   properties:
@@ -215,10 +227,22 @@ spec:
                       type: string
                   type: object
                 type: array
+              kubernetesVersion:
+                type: string
               phase:
                 type: string
               ready:
                 type: boolean
+              workerNode:
+                properties:
+                  machineType:
+                    minLength: 1
+                    type: string
+                  replicas:
+                    format: int64
+                    minimum: 1
+                    type: integer
+                type: object
             type: object
         type: object
     served: true

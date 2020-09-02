@@ -70,16 +70,20 @@ type ClusterStatus struct {
 	InstalledComponents []InstalledComponent    `json:"installedComponents,omitempty"`
 	Ready               bool                    `json:"ready,omitempty"`
 	ClusterAPIRef       *corev1.ObjectReference `json:"clusterAPIRef,omitempty"`
+	KubernetesVersion   string                  `json:"kubernetesVersion,omitempty"`
+	ControlPlaneNode    Node                    `json:"controlPlaneNode,omitempty"`
+	WorkerNode          Node                    `json:"workerNode,omitempty"`
+	InfrastructureName  string                  `json:"infrastructureName,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:path=clusters,shortName=cl,scope=Cluster,categories=undistro
 // +kubebuilder:storageversion
 // +kubebuilder:subresource:status
-// +kubebuilder:printcolumn:name="Infra",type="string",JSONPath=".spec.infrastructureProvider.name"
-// +kubebuilder:printcolumn:name="K8s",type="string",JSONPath=".spec.kubernetesVersion"
-// +kubebuilder:printcolumn:name="Control Plane Replicas",type="integer",JSONPath=".spec.controlPlaneNode.replicas"
-// +kubebuilder:printcolumn:name="Worker Replicas",type="integer",JSONPath=".spec.workerNode.replicas"
+// +kubebuilder:printcolumn:name="Infra",type="string",JSONPath=".status.infrastructureName"
+// +kubebuilder:printcolumn:name="K8s",type="string",JSONPath=".status.kubernetesVersion"
+// +kubebuilder:printcolumn:name="Control Plane Replicas",type="integer",JSONPath=".status.controlPlaneNode.replicas"
+// +kubebuilder:printcolumn:name="Worker Replicas",type="integer",JSONPath=".status.workerNode.replicas"
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
 // +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.ready"
 

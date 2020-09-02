@@ -207,10 +207,6 @@ spec:
               lastAttemptedRevision:
                 description: LastAttemptedRevision is the revision of the latest chart sync, and may be of a failed release.
                 type: string
-              observedGeneration:
-                description: ObservedGeneration is the most recent generation observed by the operator.
-                format: int64
-                type: integer
               phase:
                 description: Phase the release is in, one of ('ChartFetched', 'ChartFetchFailed', 'Installing', 'Upgrading', 'Deployed', 'DeployFailed', 'Testing', 'TestFailed', 'Tested', 'Succeeded', 'RollingBack', 'RolledBack', 'RollbackFailed')
                 enum:

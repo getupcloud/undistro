@@ -236,6 +236,10 @@ func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c 
 		cl.Status.InstalledComponents[i] = ic
 	}
 	cl.Status.Phase = undistrov1.InitializedPhase
+	cl.Status.KubernetesVersion = cl.Spec.KubernetesVersion
+	cl.Status.WorkerNode = cl.Spec.WorkerNode
+	cl.Status.ControlPlaneNode = cl.Spec.ControlPlaneNode
+	cl.Status.InfrastructureName = cl.Spec.InfrastructureProvider.Name
 	return nil
 }
 
