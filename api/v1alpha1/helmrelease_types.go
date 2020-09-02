@@ -450,54 +450,6 @@ type HelmReleaseSpec struct {
 // "RolledBack"
 // "Tested",
 // +kubebuilder:validation:Enum="ChartFetched";"Deployed";"Released";"RolledBack";"Tested"
-// +optional
-type HelmReleaseConditionType string
-
-const (
-	// ChartFetched means the chart to which the HelmRelease refers
-	// has been fetched successfully.
-	HelmReleaseChartFetched HelmReleaseConditionType = "ChartFetched"
-	// Deployed means the chart to which the HelmRelease refers has
-	// been successfully installed or upgraded.
-	HelmReleaseDeployed HelmReleaseConditionType = "Deployed"
-	// Released means the chart release, as specified in this
-	// HelmRelease, has been processed by Helm.
-	HelmReleaseReleased HelmReleaseConditionType = "Released"
-	// RolledBack means the chart to which the HelmRelease refers
-	// has been rolled back.
-	HelmReleaseRolledBack HelmReleaseConditionType = "RolledBack"
-	// Tested means the chart to which the HelmRelease refers has
-	// been successfully tested.
-	HelmReleaseTested HelmReleaseConditionType = "Tested"
-)
-
-type HelmReleaseCondition struct {
-	// Type of the condition, one of ('ChartFetched', 'Deployed', 'Released', 'RolledBack', 'Tested').
-	Type HelmReleaseConditionType `json:"type"`
-
-	// Status of the condition, one of ('True', 'False', 'Unknown').
-	Status ConditionStatus `json:"status"`
-
-	// LastUpdateTime is the timestamp corresponding to the last status
-	// update of this condition.
-	// +optional
-	LastUpdateTime *metav1.Time `json:"lastUpdateTime,omitempty"`
-
-	// LastTransitionTime is the timestamp corresponding to the last status
-	// change of this condition.
-	// +optional
-	LastTransitionTime *metav1.Time `json:"lastTransitionTime,omitempty"`
-
-	// Reason is a brief machine readable explanation for the condition's last
-	// transition.
-	// +optional
-	Reason string `json:"reason,omitempty"`
-
-	// Message is a human readable description of the details of the last
-	// transition, complementing reason.
-	// +optional
-	Message string `json:"message,omitempty"`
-}
 
 // HelmReleasePhase represents the phase a HelmRelease is in.
 // Valid HelmReleasePhase values are:
@@ -600,13 +552,6 @@ type HelmReleaseStatus struct {
 	// successful upgrade or revision change.
 	// +optional
 	RollbackCount int64 `json:"rollbackCount,omitempty"`
-
-	// Conditions contains observations of the resource's state, e.g.,
-	// has the chart which it refers to been fetched.
-	// +optional
-	// +patchMergeKey=type
-	// +patchStrategy=merge
-	Conditions []HelmReleaseCondition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type"`
 }
 
 func init() {

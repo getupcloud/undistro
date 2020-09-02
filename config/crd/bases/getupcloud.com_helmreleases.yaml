@@ -204,45 +204,6 @@ spec:
           status:
             description: HelmReleaseStatus contains status information about an HelmRelease.
             properties:
-              conditions:
-                description: Conditions contains observations of the resource's state, e.g., has the chart which it refers to been fetched.
-                items:
-                  properties:
-                    lastTransitionTime:
-                      description: LastTransitionTime is the timestamp corresponding to the last status change of this condition.
-                      format: date-time
-                      type: string
-                    lastUpdateTime:
-                      description: LastUpdateTime is the timestamp corresponding to the last status update of this condition.
-                      format: date-time
-                      type: string
-                    message:
-                      description: Message is a human readable description of the details of the last transition, complementing reason.
-                      type: string
-                    reason:
-                      description: Reason is a brief machine readable explanation for the condition's last transition.
-                      type: string
-                    status:
-                      description: Status of the condition, one of ('True', 'False', 'Unknown').
-                      enum:
-                      - "True"
-                      - "False"
-                      - Unknown
-                      type: string
-                    type:
-                      description: Type of the condition, one of ('ChartFetched', 'Deployed', 'Released', 'RolledBack', 'Tested').
-                      enum:
-                      - ChartFetched
-                      - Deployed
-                      - Released
-                      - RolledBack
-                      - Tested
-                      type: string
-                  required:
-                  - status
-                  - type
-                  type: object
-                type: array
               lastAttemptedRevision:
                 description: LastAttemptedRevision is the revision of the latest chart sync, and may be of a failed release.
                 type: string
