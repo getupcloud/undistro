@@ -39,7 +39,9 @@ func (p *workloadCluster) GetKubeconfig(workloadClusterName string, namespace st
 	if err != nil {
 		return "", err
 	}
-
+	if namespace == "" {
+		namespace = "default"
+	}
 	obj := client.ObjectKey{
 		Namespace: namespace,
 		Name:      workloadClusterName,
