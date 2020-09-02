@@ -109,6 +109,17 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		}
 		return ctrl.Result{}, err
 	}
+	status, err := h.Status(hr.GetReleaseName(), helm.StatusOptions{
+		Namespace: hr.GetTargetNamespace(),
+	})
+	if err != nil {
+		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
+		serr := r.Status().Update(ctx, &hr)
+		if serr != nil {
+			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+			return ctrl.Result{}, serr
+		}
+	}
 	if curRel == nil {
 		log.Info("running instalation")
 		_, err = h.UpgradeFromPath(ch.ChartPath, hr.GetReleaseName(), values, helm.UpgradeOptions{
@@ -133,6 +144,9 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		}
 		hr.Status.Phase = undistrov1.HelmReleasePhaseDeployed
 		hr.Status.Revision = ch.Revision
+		hr.Status.LastAttemptedRevision = ch.Revision
+		hr.Status.ReleaseName = hr.GetReleaseName()
+		hr.Status.ReleaseStatus = status.String()
 		serr := r.Status().Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)

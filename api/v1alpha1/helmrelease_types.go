@@ -516,11 +516,6 @@ const (
 
 // HelmReleaseStatus contains status information about an HelmRelease.
 type HelmReleaseStatus struct {
-	// ObservedGeneration is the most recent generation observed by
-	// the operator.
-	// +optional
-	ObservedGeneration int64 `json:"observedGeneration,omitempty"`
-
 	// Phase the release is in, one of ('ChartFetched',
 	// 'ChartFetchFailed', 'Installing', 'Upgrading', 'Deployed',
 	// 'DeployFailed', 'Testing', 'TestFailed', 'Tested', 'Succeeded',
