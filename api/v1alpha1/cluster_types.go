@@ -11,17 +11,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type ClusterAction string
-
-const (
-	InitClusterAction       ClusterAction = "init"
-	ProvisionClusterAction  ClusterAction = "provision"
-	InstallNetClusterAction ClusterAction = "net"
-	DeleteClusterAction     ClusterAction = "delete"
-	StatusClusterAction     ClusterAction = "status"
-	UpgradeClusterAction    ClusterAction = "upgrade"
-)
-
 type Node struct {
 	// +kubebuilder:validation:Minimum=1
 	Replicas *int64 `json:"replicas,omitempty"`
@@ -81,19 +70,6 @@ type ClusterStatus struct {
 	InstalledComponents []InstalledComponent    `json:"installedComponents,omitempty"`
 	Ready               bool                    `json:"ready,omitempty"`
 	ClusterAPIRef       *corev1.ObjectReference `json:"clusterAPIRef,omitempty"`
-
-	// InfrastructureReady is the state of the infrastructure provider.
-	// +optional
-	InfrastructureReady bool `json:"infrastructureReady"`
-
-	// ControlPlaneInitialized defines if the control plane has been initialized.
-	// +optional
-	ControlPlaneInitialized bool `json:"controlPlaneInitialized"`
-
-	// ControlPlaneReady defines if the control plane is ready.
-	// +optional
-	ControlPlaneReady  bool  `json:"controlPlaneReady,omitempty"`
-	ObservedGeneration int64 `json:"observedGeneration,omitempty"`
 }
 
 // +kubebuilder:object:root=true
