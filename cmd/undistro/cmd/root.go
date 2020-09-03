@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/MakeNowJust/heredoc"
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/getupcloud/undistro/client/config"
 	logf "github.com/getupcloud/undistro/log"
 	"github.com/pkg/errors"
