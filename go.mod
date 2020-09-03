@@ -16,17 +16,17 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.1
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	helm.sh/helm/v3 v3.3.0
+	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43
+	helm.sh/helm/v3 v3.3.1
 	k8s.io/api v0.18.8
 	k8s.io/apiextensions-apiserver v0.18.8
 	k8s.io/apimachinery v0.18.8
 	k8s.io/cli-runtime v0.18.8
 	k8s.io/client-go v0.18.8
 	k8s.io/kubectl v0.18.8
-	k8s.io/utils v0.0.0-20200731180307-f00132d28269
+	k8s.io/utils v0.0.0-20200821003339-5e75c0163111
 	rsc.io/letsencrypt v0.0.3 // indirect
-	sigs.k8s.io/cluster-api v0.3.9-0.20200825193203-d4101d79f330
+	sigs.k8s.io/cluster-api v0.3.9
 	sigs.k8s.io/cluster-api-provider-aws v0.5.5
 	sigs.k8s.io/controller-runtime v0.6.2
 	sigs.k8s.io/yaml v1.2.0
