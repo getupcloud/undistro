@@ -6,6 +6,7 @@ package controllers
 
 import (
 	"context"
+	"time"
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	uclient "github.com/getupcloud/undistro/client"
@@ -48,12 +49,13 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		RestConfig: r.RestConfig,
 	})
 	if err != nil {
-		return ctrl.Result{}, err
+		return ctrl.Result{}, nil
 	}
 	nm := hr.GetClusterNamespacedName()
 	h, err := wc.GetHelm(nm.Name, nm.Namespace)
 	if err != nil {
-		return ctrl.Result{}, err
+		log.Error(err, "cluster is not ready yet", "namespaced name", nm.String())
+		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 	}
 	if !hr.DeletionTimestamp.IsZero() {
 		log.Info("running uninstall")

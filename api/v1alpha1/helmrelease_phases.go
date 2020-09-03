@@ -61,4 +61,7 @@ const (
 	HelmReleasePhaseRolledBack HelmReleasePhase = "RolledBack"
 	// RolledBackFailed means the rollback for the HelmRelease failed.
 	HelmReleasePhaseRollbackFailed HelmReleasePhase = "RollbackFailed"
+
+	// WaitClusterReady wait cluster to be ready
+	HelmReleasePhaseWaitClusterReady HelmReleasePhase = "ClusterNotReady"
 )
