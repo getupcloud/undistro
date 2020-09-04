@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
+	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/getupcloud/undistro/client"
 	"github.com/getupcloud/undistro/client/cluster"
 	"github.com/getupcloud/undistro/internal/util"
@@ -30,14 +32,14 @@ var deleteClusterCmd = &cobra.Command{
 	Example: Examples(`
 		# Deletes a cluster with variable values using
 		a template from a specific URL.
-		undistro create cluster --from https://github.com/foo-org/foo-repository/blob/master/cluster-template.yaml
+		undistro delete cluster --from https://github.com/foo-org/foo-repository/blob/master/cluster-template.yaml
 
 		# Deletes a cluster with variable values using
 		a template stored locally.
-		undistro create cluster --from ~/workspace/cluster-template.yaml
+		undistro delete cluster --from ~/workspace/cluster-template.yaml
 
 		# Deletes a cluster from template passed in via stdin
-		cat ~/workspace/cluster-template.yaml | undistro create cluster
+		cat ~/workspace/cluster-template.yaml | undistro delete cluster
 `),
 
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -96,12 +98,18 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 	nm := types.NamespacedName{}
 	objs = util.ReverseObjs(utilresource.SortForCreate(objs))
 	for _, o := range objs {
-		nm.Name = o.GetName()
-		nm.Namespace = o.GetNamespace()
+		if o.GetNamespace() == "" {
+			o.SetNamespace("default")
+		}
+		if o.GetKind() == "Cluster" && o.GetAPIVersion() == undistrov1.GroupVersion.String() {
+			nm.Name = o.GetName()
+			nm.Namespace = o.GetNamespace()
+		}
 		err = k8sClient.Delete(context.Background(), &o)
 		if err != nil {
 			return err
 		}
+		fmt.Printf("%s.%s %q deleted", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}
 	logStreamer, err := c.GetLogs(client.Kubeconfig{
 		Path: ddOpts.kubeconfig,

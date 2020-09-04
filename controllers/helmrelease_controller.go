@@ -54,7 +54,7 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 	nm := hr.GetClusterNamespacedName()
 	h, err := wc.GetHelm(nm.Name, nm.Namespace)
 	if err != nil {
-		log.Error(err, "cluster is not ready yet", "namespaced name", nm.String())
+		log.Info("cluster is not ready yet", "err", err, "namespaced name", nm.String())
 		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 	}
 	if !hr.DeletionTimestamp.IsZero() {

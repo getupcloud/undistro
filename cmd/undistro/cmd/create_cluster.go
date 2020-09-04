@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
+	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/getupcloud/undistro/client"
 	"github.com/getupcloud/undistro/client/cluster"
 	"github.com/spf13/cobra"
@@ -94,8 +96,11 @@ func createCluster(r io.Reader, w io.Writer) error {
 	}
 	objs = utilresource.SortForCreate(objs)
 	nm := types.NamespacedName{}
-	for i, o := range objs {
-		if i == 0 {
+	for _, o := range objs {
+		if o.GetNamespace() == "" {
+			o.SetNamespace("default")
+		}
+		if o.GetKind() == "Cluster" && o.GetAPIVersion() == undistrov1.GroupVersion.String() {
 			nm.Name = o.GetName()
 			nm.Namespace = o.GetNamespace()
 		}
@@ -103,6 +108,7 @@ func createCluster(r io.Reader, w io.Writer) error {
 		if err != nil {
 			return err
 		}
+		fmt.Printf("%s.%s %q created", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}
 	logStreamer, err := c.GetLogs(client.Kubeconfig{
 		Path: ccOpts.kubeconfig,
@@ -113,9 +119,6 @@ func createCluster(r io.Reader, w io.Writer) error {
 	cfg, err := proxy.GetConfig()
 	if err != nil {
 		return err
-	}
-	if nm.Namespace == "" {
-		nm.Namespace = "default"
 	}
 	err = logStreamer.Stream(context.Background(), cfg, os.Stdout, nm, cluster.IsReady)
 	if err != nil {

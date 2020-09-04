@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
-	github.com/aws/aws-sdk-go v1.34.17
+	github.com/aws/aws-sdk-go v1.34.18
 	github.com/drone/envsubst v1.0.3-0.20200709223903-efdb65b94e5a
 	github.com/go-logr/logr v0.1.0
 	github.com/google/go-cmp v0.5.2
@@ -18,12 +18,12 @@ require (
 	github.com/spf13/viper v1.7.1
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43
 	helm.sh/helm/v3 v3.3.1
-	k8s.io/api v0.18.8
-	k8s.io/apiextensions-apiserver v0.18.8
-	k8s.io/apimachinery v0.18.8
-	k8s.io/cli-runtime v0.18.8
-	k8s.io/client-go v0.18.8
-	k8s.io/kubectl v0.18.8
+	k8s.io/api v0.18.9-rc.0
+	k8s.io/apiextensions-apiserver v0.18.9-rc.0
+	k8s.io/apimachinery v0.18.9-rc.0
+	k8s.io/cli-runtime v0.18.9-rc.0
+	k8s.io/client-go v0.18.9-rc.0
+	k8s.io/kubectl v0.18.9-rc.0
 	k8s.io/utils v0.0.0-20200821003339-5e75c0163111
 	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/cluster-api v0.3.9

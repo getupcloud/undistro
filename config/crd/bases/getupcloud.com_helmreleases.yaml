@@ -200,6 +200,12 @@ spec:
             type: object
           status:
             description: HelmReleaseStatus contains status information about an HelmRelease.
+            enum:
+            - ChartFetched
+            - Deployed
+            - Released
+            - RolledBack
+            - Tested
             properties:
               lastAttemptedRevision:
                 description: LastAttemptedRevision is the revision of the latest chart sync, and may be of a failed release.
@@ -221,6 +227,7 @@ spec:
                 - RollingBack
                 - RolledBack
                 - RollbackFailed
+                - ChartFetchFailed
                 type: string
               releaseName:
                 description: ReleaseName is the name as either supplied or generated.
