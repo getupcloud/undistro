@@ -16,7 +16,6 @@ package v1alpha1
 // "RollingBack",
 // "RolledBack",
 // "RollbackFailed",
-// +kubebuilder:validation:Enum="ChartFetched";"ChartFetchFailed";"Installing";"Upgrading";"Deployed";"DeployFailed";"Testing";"TestFailed";"Tested";"Succeeded";"Failed";"RollingBack";"RolledBack";"RollbackFailed";"ChartFetchFailed"
 // +optional
 type HelmReleasePhase string
 

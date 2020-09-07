@@ -4,6 +4,11 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package cluster
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
 	"github.com/getupcloud/undistro/client/cluster/helm"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/rest"
@@ -70,9 +75,27 @@ func (p *workloadCluster) GetRestConfig(workloadClusterName string, namespace st
 }
 
 func (p *workloadCluster) GetHelm(workloadClusterName string, namespace string) (helm.Client, error) {
-	cfg, err := p.GetRestConfig(workloadClusterName, namespace)
+	cfg, err := p.GetKubeconfig(workloadClusterName, namespace)
 	if err != nil {
 		return nil, err
 	}
-	return helm.New(cfg), nil
+	path := filepath.Join("configs", namespace, fmt.Sprintf("%s.kubeconfig", workloadClusterName))
+	_, err = os.Stat(path)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, err
+	}
+	_, derr := os.Stat(filepath.Dir(path))
+	if os.IsNotExist(derr) {
+		derr = os.MkdirAll(filepath.Dir(path), 0700)
+		if derr != nil {
+			return nil, derr
+		}
+	}
+	if os.IsNotExist(err) {
+		err = ioutil.WriteFile(path, []byte(cfg), 0666)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return helm.New(path), nil
 }

@@ -109,7 +109,7 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("%s.%s %q deleted", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
+		fmt.Printf("%s.%s %q deleted\n", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}
 	logStreamer, err := c.GetLogs(client.Kubeconfig{
 		Path: ddOpts.kubeconfig,

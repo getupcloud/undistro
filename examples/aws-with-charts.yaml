@@ -1,0 +1,54 @@
+---
+apiVersion: getupcloud.com/v1alpha1
+kind: Cluster
+metadata:
+  name: undistro-quickstart
+  namespace: default
+spec:
+  kubernetesVersion: v1.18.2
+  cniName: calico
+  controlPlaneNode:
+    replicas: 3
+    machineType: t3.large
+  workerNode:
+    replicas: 3
+    machineType: t3.large
+  infrastructureProvider:
+    name: aws
+    sshKey: undistro
+    env:
+      - name: AWS_ACCESS_KEY_ID
+        value: ""
+      - name: AWS_SECRET_ACCESS_KEY
+        value: ""
+---
+
+apiVersion: getupcloud.com/v1alpha1
+kind: HelmRelease
+metadata:
+  name: rabbitmq
+  namespace: default
+spec:
+  clusterName: default/undistro-quickstart
+  chart:
+    repository: https://charts.bitnami.com/bitnami
+    name: bitnami/rabbitmq
+    version: 3.3.6
+  values:
+    replicas: 1
+---
+apiVersion: getupcloud.com/v1alpha1
+kind: HelmRelease
+metadata:
+  name: kubernetes-dashboard
+  namespace: default
+spec:
+  clusterName: default/undistro-quickstart
+  chart:
+    repository: https://kubernetes.github.io/dashboard
+    name: kubernetes-dashboard
+    version: 2.0.3
+  values:
+    ingress:
+      enabled: true
+

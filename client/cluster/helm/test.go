@@ -5,7 +5,7 @@ import (
 )
 
 func (h *HelmV3) Uninstall(releaseName string, opts UninstallOptions) error {
-	cfg, err := newActionConfig(h.kubeConfig, h.infoLogFunc(opts.Namespace, releaseName), opts.Namespace, "")
+	cfg, err := newActionConfig(h.path, h.infoLogFunc(opts.Namespace, releaseName), opts.Namespace, "")
 	if err != nil {
 		return err
 	}
@@ -25,7 +25,7 @@ func (opts UninstallOptions) configure(action *action.Uninstall) {
 }
 
 func (h *HelmV3) Test(releaseName string, opts TestOptions) error {
-	cfg, err := newActionConfig(h.kubeConfig, h.infoLogFunc(opts.Namespace, releaseName), opts.Namespace, "")
+	cfg, err := newActionConfig(h.path, h.infoLogFunc(opts.Namespace, releaseName), opts.Namespace, "")
 	if err != nil {
 		return err
 	}

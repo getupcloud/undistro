@@ -91,10 +91,7 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		if err := r.delete(ctx, &cluster); err != nil {
 			return ctrl.Result{}, err
 		}
-		if err := r.Status().Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't update status", "name", req.NamespacedName)
-			return ctrl.Result{}, err
-		}
+		r.Status().Update(ctx, &cluster)
 		if cluster.Status.Phase == undistrov1.DeletingPhase {
 			return ctrl.Result{Requeue: true}, nil
 		}

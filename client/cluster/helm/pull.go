@@ -17,7 +17,7 @@ import (
 )
 
 func (h *HelmV3) Rollback(releaseName string, opts RollbackOptions) (*Release, error) {
-	cfg, err := newActionConfig(h.kubeConfig, h.infoLogFunc(opts.Namespace, releaseName), opts.Namespace, "")
+	cfg, err := newActionConfig(h.path, h.infoLogFunc(opts.Namespace, releaseName), opts.Namespace, "")
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,10 @@ func (h *HelmV3) PullWithRepoURL(repoURL, name, version, dest string) (string, e
 			// Ensure we have the repository index as this is
 			// later used by Helm.
 			if r, err := newChartRepository(entry); err == nil {
-				r.DownloadIndexFile()
+				_, err = r.DownloadIndexFile()
+				if err != nil {
+					return "", err
+				}
 			}
 			break
 		}
@@ -140,7 +143,7 @@ func (h *HelmV3) EnsureChartFetched(base string, source *undistrov1.RepoChartSou
 	stat, err := os.Stat(chartPath)
 	switch {
 	case os.IsNotExist(err):
-		chartPath, err = h.PullWithRepoURL(source.RepoURL, source.Name, source.Version, chartPath)
+		chartPath, err = h.PullWithRepoURL(source.RepoURL, source.Name, source.Version, repoPath)
 		if err != nil {
 			return chartPath, false, ChartUnavailableError{err}
 		}

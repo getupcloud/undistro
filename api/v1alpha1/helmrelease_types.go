@@ -441,15 +441,6 @@ type HelmReleaseSpec struct {
 	Values HelmValues `json:"values,omitempty"`
 }
 
-// HelmReleaseConditionType represents an HelmRelease condition value.
-// Valid HelmReleaseConditionType values are:
-// "ChartFetched",
-// "Deployed",
-// "Released",
-// "RolledBack"
-// "Tested",
-// +kubebuilder:validation:Enum="ChartFetched";"Deployed";"Released";"RolledBack";"Tested"
-
 // HelmReleaseStatus contains status information about an HelmRelease.
 type HelmReleaseStatus struct {
 	// Phase the release is in, one of ('ChartFetched',

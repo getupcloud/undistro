@@ -19,7 +19,6 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
-	"k8s.io/client-go/rest"
 	"k8s.io/kubectl/pkg/cmd/util"
 )
 
@@ -37,13 +36,13 @@ type HelmOptions struct {
 }
 
 type HelmV3 struct {
-	kubeConfig *rest.Config
+	path string
 }
 
 type infoLogFunc func(string, ...interface{})
 
 // New creates a new HelmV3 client
-func New(kubeConfig *rest.Config) Client {
+func New(path string) Client {
 	// Add CRDs to the scheme. They are missing by default but required
 	// by Helm v3.
 	if err := apiextv1beta1.AddToScheme(scheme.Scheme); err != nil {
@@ -51,7 +50,7 @@ func New(kubeConfig *rest.Config) Client {
 		panic(err)
 	}
 	return &HelmV3{
-		kubeConfig: kubeConfig,
+		path: path,
 	}
 }
 
@@ -68,9 +67,9 @@ func (h *HelmV3) infoLogFunc(namespace string, releaseName string) infoLogFunc {
 	}
 }
 
-func newActionConfig(config *rest.Config, logFunc infoLogFunc, namespace, driver string) (*action.Configuration, error) {
+func newActionConfig(path string, logFunc infoLogFunc, namespace, driver string) (*action.Configuration, error) {
 
-	restClientGetter := newConfigFlags(config, namespace)
+	restClientGetter := newConfigFlags(path, namespace)
 	kubeClient := &kube.Client{
 		Factory: util.NewFactory(restClientGetter),
 		Log:     logFunc,
@@ -93,12 +92,9 @@ func newActionConfig(config *rest.Config, logFunc infoLogFunc, namespace, driver
 	}, nil
 }
 
-func newConfigFlags(config *rest.Config, namespace string) *genericclioptions.ConfigFlags {
+func newConfigFlags(path, namespace string) *genericclioptions.ConfigFlags {
 	return &genericclioptions.ConfigFlags{
-		Namespace:   &namespace,
-		APIServer:   &config.Host,
-		CAFile:      &config.CAFile,
-		BearerToken: &config.BearerToken,
+		KubeConfig: &path,
 	}
 }
 

@@ -1,4 +1,5 @@
 FROM golang:alpine
 WORKDIR /
+RUN apk update && apk add ca-certificates
 COPY ./bin/manager /
 CMD ["/manager"]

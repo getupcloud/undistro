@@ -10,7 +10,7 @@ import (
 func (h *HelmV3) UpgradeFromPath(chartPath string, releaseName string, values []byte,
 	opts UpgradeOptions) (*Release, error) {
 
-	cfg, err := newActionConfig(h.kubeConfig, h.infoLogFunc(opts.Namespace, releaseName), opts.Namespace, "")
+	cfg, err := newActionConfig(h.path, h.infoLogFunc(opts.Namespace, releaseName), opts.Namespace, "")
 	if err != nil {
 		return nil, err
 	}
