@@ -5,13 +5,11 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package helm
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"time"
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/google/go-cmp/cmp"
-	"sigs.k8s.io/yaml"
+	"helm.sh/helm/v3/pkg/chartutil"
 )
 
 // Client is the generic interface for Helm (v2 and v3) clients.
@@ -170,7 +168,7 @@ type Chart struct {
 	Name       string
 	Version    string
 	AppVersion string
-	Values     Values
+	Values     chartutil.Values
 	Templates  []*File
 }
 
@@ -195,25 +193,4 @@ func (s Status) AllowsUpgrade() bool {
 // String returns the Status as a string
 func (s Status) String() string {
 	return string(s)
-}
-
-// Values represents a collection of (Helm) values.
-// We define our own type to avoid working with two `chartutil`
-// versions.
-type Values map[string]interface{}
-
-// YAML encodes the values into YAML bytes.
-func (v Values) YAML() ([]byte, error) {
-	b, err := yaml.Marshal(v)
-	return b, err
-}
-
-// Checksum calculates and returns the SHA256 checksum of the YAML
-// encoded values.
-func (v Values) Checksum() string {
-	b, _ := v.YAML()
-
-	hasher := sha256.New()
-	hasher.Write(b)
-	return hex.EncodeToString(hasher.Sum(nil))
 }

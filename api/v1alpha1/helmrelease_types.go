@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/getupcloud/undistro/log"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -342,49 +344,15 @@ const (
 	HelmV3 HelmVersion = "v3"
 )
 
-// +kubebuilder:validation:Type=object
-type HelmValues struct {
-	// Data holds the configuration keys and values.
-	// Work around for https://github.com/kubernetes-sigs/kubebuilder/issues/528
-	Data map[string]interface{} `json:"-"`
-}
-
-// MarshalJSON marshals the HelmValues data to a JSON blob.
-func (v HelmValues) MarshalJSON() ([]byte, error) {
-	return json.Marshal(v.Data)
-}
-
-// UnmarshalJSON sets the HelmValues to a copy of data.
-func (v *HelmValues) UnmarshalJSON(data []byte) error {
-	var out map[string]interface{}
-	err := json.Unmarshal(data, &out)
-	if err != nil {
-		return err
+func (hr HelmRelease) GetValues() map[string]interface{} {
+	var values map[string]interface{}
+	if hr.Spec.Values != nil {
+		err := json.Unmarshal(hr.Spec.Values.Raw, &values)
+		if err != nil {
+			log.Log.Error(err, "is not a json")
+		}
 	}
-	v.Data = out
-	return nil
-}
-
-// DeepCopyInto is an deepcopy function, copying the receiver, writing
-// into out. In must be non-nil. Declaring this here prevents it from
-// being generated in `zz_generated.deepcopy.go`.
-//
-// This exists here to work around https://github.com/kubernetes/code-generator/issues/50,
-// and partially around https://github.com/kubernetes-sigs/controller-tools/pull/126
-// and https://github.com/kubernetes-sigs/controller-tools/issues/294.
-func (in *HelmValues) DeepCopyInto(out *HelmValues) {
-	b, err := json.Marshal(in.Data)
-	if err != nil {
-		// The marshal should have been performed cleanly as otherwise
-		// the resource would not have been created by the API server.
-		panic(err)
-	}
-	var c map[string]interface{}
-	err = json.Unmarshal(b, &c)
-	if err != nil {
-		panic(err)
-	}
-	out.Data = c
+	return values
 }
 
 type HelmReleaseSpec struct {
@@ -438,7 +406,7 @@ type HelmReleaseSpec struct {
 	Test Test `json:"test,omitempty"`
 	// Values holds the values for this Helm release.
 	// +optional
-	Values HelmValues `json:"values,omitempty"`
+	Values *apiextensionsv1.JSON `json:"values,omitempty"`
 }
 
 // HelmReleaseStatus contains status information about an HelmRelease.

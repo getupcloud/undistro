@@ -42,7 +42,7 @@ func (h *HelmV3) UpgradeFromPath(chartPath string, releaseName string, values []
 	if err != nil {
 		return nil, err
 	}
-	return releaseToGenericRelease(res), err
+	return releaseToGenericRelease(res), nil
 }
 
 type installOptions UpgradeOptions

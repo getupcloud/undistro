@@ -6,6 +6,8 @@ package controllers
 
 import (
 	"context"
+	"os"
+	"strings"
 	"time"
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
@@ -59,6 +61,11 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 	err = r.List(ctx, &cls)
 	if err != nil {
 		log.Info("cluster is not ready yet", "namespaced name", nm.String())
+		hr.Status.Phase = undistrov1.HelmReleasePhaseWaitClusterReady
+		serr := r.Status().Update(ctx, &hr)
+		if serr != nil {
+			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+		}
 		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 	}
 	cl := undistrov1.Cluster{}
@@ -73,10 +80,31 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 	}
 	if !cl.Status.Ready {
 		log.Info("cluster is not ready yet", "namespaced name", nm.String())
+		hr.Status.Phase = undistrov1.HelmReleasePhaseWaitClusterReady
+		serr := r.Status().Update(ctx, &hr)
+		if serr != nil {
+			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+		}
 		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 	}
 	h, err := wc.GetHelm(nm.Name, nm.Namespace)
 	if err != nil {
+		return ctrl.Result{}, err
+	}
+	ch, err := helm.PrepareChart(h, &hr)
+	if err != nil {
+		log.Error(err, "couldn't prepare chart", "chartPath", ch.ChartPath, "revision", ch.Revision)
+		hr.Status.Phase = undistrov1.HelmReleasePhaseChartFetchFailed
+		serr := r.Status().Update(ctx, &hr)
+		if serr != nil {
+			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+			return ctrl.Result{}, serr
+		}
+		serr = r.Update(ctx, &hr)
+		if serr != nil {
+			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+			return ctrl.Result{}, serr
+		}
 		return ctrl.Result{}, err
 	}
 	if !hr.DeletionTimestamp.IsZero() {
@@ -89,50 +117,35 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
+		os.RemoveAll(ch.ChartPath)
 		return ctrl.Result{}, nil
-	}
-	ch, err := helm.PrepareChart(h, &hr)
-	if err != nil {
-		log.Error(err, "couldn't prepare chart", "chartPath", ch.ChartPath, "revision", ch.Revision)
-		hr.Status.Phase = undistrov1.HelmReleasePhaseChartFetchFailed
-		serr := r.Update(ctx, &hr)
-		if serr != nil {
-			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
-			return ctrl.Result{}, serr
-		}
-		serr = r.Status().Update(ctx, &hr)
-		if serr != nil {
-			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
-			return ctrl.Result{}, serr
-		}
-		return ctrl.Result{}, err
 	}
 	if ch.Changed {
 		hr.Status.Phase = undistrov1.HelmReleasePhaseChartFetched
 		hr.Status.LastAttemptedRevision = ch.Revision
 		hr.Status.Revision = ch.Revision
-		serr := r.Update(ctx, &hr)
+		serr := r.Status().Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 			return ctrl.Result{}, serr
 		}
-		serr = r.Status().Update(ctx, &hr)
+		serr = r.Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 			return ctrl.Result{}, serr
 		}
-		return ctrl.Result{}, nil
+		return ctrl.Result{Requeue: true}, nil
 	}
 	values, err := helm.ComposeValues(ctx, r.Client, &hr, ch.ChartPath)
 	if err != nil {
 		log.Error(err, "failed to compose values for release", "name", hr.Name)
 		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
-		serr := r.Update(ctx, &hr)
+		serr := r.Status().Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 			return ctrl.Result{}, serr
 		}
-		serr = r.Status().Update(ctx, &hr)
+		serr = r.Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 			return ctrl.Result{}, serr
@@ -141,14 +154,20 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 	}
 	curRel, err := h.Get(hr.GetReleaseName(), helm.GetOptions{Namespace: hr.GetTargetNamespace()})
 	if err != nil {
+		if strings.Contains(err.Error(), "no such host") {
+
+			return ctrl.Result{Requeue: true}, nil
+		}
 		log.Error(err, "failed to get release", "name", hr.Name)
 		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
-		serr := r.Update(ctx, &hr)
+		hr.Status.Revision = ""
+		hr.Status.LastAttemptedRevision = ""
+		serr := r.Status().Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 			return ctrl.Result{}, serr
 		}
-		serr = r.Status().Update(ctx, &hr)
+		serr = r.Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 			return ctrl.Result{}, serr
@@ -168,14 +187,16 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 			DisableValidation: false,
 		})
 		if err != nil {
+			log.Error(err, "fail to install")
 			hr.Status.Phase = undistrov1.HelmReleasePhaseDeployFailed
-			hr.Status.Revision = ch.Revision
-			serr := r.Update(ctx, &hr)
+			hr.Status.Revision = ""
+			hr.Status.LastAttemptedRevision = ""
+			serr := r.Status().Update(ctx, &hr)
 			if serr != nil {
 				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 				return ctrl.Result{}, serr
 			}
-			serr = r.Status().Update(ctx, &hr)
+			serr = r.Update(ctx, &hr)
 			if serr != nil {
 				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 				return ctrl.Result{}, serr
@@ -186,7 +207,9 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 			Namespace: hr.GetTargetNamespace(),
 		})
 		if err != nil {
+			log.Error(err, "fail to get status")
 			hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
+			hr.Status.LastAttemptedRevision = ""
 			serr := r.Update(ctx, &hr)
 			if serr != nil {
 				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
@@ -201,12 +224,12 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		hr.Status.Phase = undistrov1.HelmReleasePhaseDeployed
 		hr.Status.ReleaseName = hr.GetReleaseName()
 		hr.Status.ReleaseStatus = status.String()
-		serr := r.Update(ctx, &hr)
+		serr := r.Status().Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 			return ctrl.Result{}, serr
 		}
-		serr = r.Status().Update(ctx, &hr)
+		serr = r.Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 			return ctrl.Result{}, serr
@@ -235,7 +258,7 @@ func (r *HelmReleaseReconciler) updateFilter(e event.UpdateEvent) bool {
 	if !ok {
 		return false
 	}
-	if newHr.Status.Phase == undistrov1.HelmReleasePhaseChartFetched {
+	if newHr.Status.Phase == undistrov1.HelmReleasePhaseChartFetched || newHr.Status.Phase == undistrov1.HelmReleasePhaseWaitClusterReady {
 		return true
 	}
 	diff := cmp.Diff(oldHr.Spec, newHr.Spec)

@@ -95,6 +95,7 @@ func newActionConfig(path string, logFunc infoLogFunc, namespace, driver string)
 func newConfigFlags(path, namespace string) *genericclioptions.ConfigFlags {
 	return &genericclioptions.ConfigFlags{
 		KubeConfig: &path,
+		Namespace:  &namespace,
 	}
 }
 

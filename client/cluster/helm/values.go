@@ -9,36 +9,36 @@ import (
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/pkg/errors"
+	"helm.sh/helm/v3/pkg/chartutil"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/yaml"
 )
 
 // readURL attempts to read a file from an HTTP(S) URL.
 func readURL(URL string) ([]byte, error) {
 	u, err := url.Parse(URL)
 	if err != nil {
-		return nil, err
+		return []byte{}, err
 	}
 	if u.Scheme != "http" && u.Scheme != "https" {
-		return nil, errors.Errorf("URL scheme should be HTTP(S), got '%s'", u.Scheme)
+		return []byte{}, errors.Errorf("URL scheme should be HTTP(S), got '%s'", u.Scheme)
 	}
 	resp, err := http.Get(u.String())
 	if err != nil {
-		return nil, err
+		return []byte{}, err
 	}
 	defer resp.Body.Close()
 	switch resp.StatusCode {
 	case http.StatusOK:
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return nil, err
+			return []byte{}, err
 		}
 		return body, nil
 	default:
-		return nil, errors.Errorf("failed to retrieve file from URL, status '%s (%d)'", resp.Status, resp.StatusCode)
+		return []byte{}, errors.Errorf("failed to retrieve file from URL, status '%s (%d)'", resp.Status, resp.StatusCode)
 	}
 }
 
@@ -46,7 +46,7 @@ func readURL(URL string) ([]byte, error) {
 func readLocalChartFile(filePath string) ([]byte, error) {
 	f, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		return nil, err
+		return []byte{}, err
 	}
 	return f, nil
 }
@@ -81,14 +81,12 @@ func mergeValues(dest, src map[string]interface{}) map[string]interface{} {
 }
 
 func ComposeValues(ctx context.Context, r client.Client, hr *undistrov1.HelmRelease, chartPath string) ([]byte, error) {
-	result := Values{}
-
+	var res chartutil.Values = make(map[string]interface{})
 	for _, v := range hr.GetValuesFromSources() {
-		var valueFile Values
 		nm := types.NamespacedName{
 			Namespace: hr.Namespace,
 		}
-
+		var result chartutil.Values
 		switch {
 		case v.ConfigMapKeyRef != nil:
 			cm := v.ConfigMapKeyRef
@@ -106,20 +104,21 @@ func ComposeValues(ctx context.Context, r client.Client, hr *undistrov1.HelmRele
 				if apierrors.IsNotFound(err) && cm.Optional {
 					continue
 				}
-				return nil, err
+				return []byte{}, err
 			}
 			d, ok := configMap.Data[key]
 			if !ok {
 				if cm.Optional {
 					continue
 				}
-				return nil, errors.Errorf("could not find key %v in ConfigMap %s", key, nm.String())
+				return []byte{}, errors.Errorf("could not find key %v in ConfigMap %s", key, nm.String())
 			}
-			if err := yaml.Unmarshal([]byte(d), &valueFile); err != nil {
+			result, err = chartutil.ReadValues([]byte(d))
+			if err != nil {
 				if cm.Optional {
 					continue
 				}
-				return nil, errors.Errorf("unable to yaml.Unmarshal %v from %s in ConfigMap %s", d, key, nm.String())
+				return []byte{}, errors.Errorf("unable to yaml.Unmarshal %v from %s in ConfigMap %s", d, key, nm.String())
 			}
 		case v.SecretKeyRef != nil:
 			s := v.SecretKeyRef
@@ -137,17 +136,18 @@ func ComposeValues(ctx context.Context, r client.Client, hr *undistrov1.HelmRele
 				if apierrors.IsNotFound(err) && s.Optional {
 					continue
 				}
-				return nil, err
+				return []byte{}, err
 			}
 			d, ok := secret.Data[key]
 			if !ok {
 				if s.Optional {
 					continue
 				}
-				return nil, errors.Errorf("could not find key %s in Secret %s", key, nm.String())
+				return []byte{}, errors.Errorf("could not find key %s in Secret %s", key, nm.String())
 			}
-			if err := yaml.Unmarshal(d, &valueFile); err != nil {
-				return nil, errors.Errorf("unable to yaml.Unmarshal %v from %s in Secret %s", d, key, nm.String())
+			result, err = chartutil.ReadValues(d)
+			if err != nil {
+				return []byte{}, errors.Errorf("unable to yaml.Unmarshal %v from %s in Secret %s", d, key, nm.String())
 			}
 		case v.ExternalSourceRef != nil:
 			es := v.ExternalSourceRef
@@ -158,13 +158,14 @@ func ComposeValues(ctx context.Context, r client.Client, hr *undistrov1.HelmRele
 				if optional {
 					continue
 				}
-				return nil, errors.Errorf("unable to read value file from URL %s", u)
+				return []byte{}, errors.Errorf("unable to read value file from URL %s", u)
 			}
-			if err := yaml.Unmarshal(b, &valueFile); err != nil {
+			result, err = chartutil.ReadValues(b)
+			if err != nil {
 				if optional {
 					continue
 				}
-				return nil, errors.Errorf("unable to yaml.Unmarshal %v from URL %s", b, u)
+				return []byte{}, errors.Errorf("unable to yaml.Unmarshal %v from URL %s", b, u)
 			}
 		case v.ChartFileRef != nil:
 			cf := v.ChartFileRef
@@ -175,18 +176,22 @@ func ComposeValues(ctx context.Context, r client.Client, hr *undistrov1.HelmRele
 				if optional {
 					continue
 				}
-				return nil, errors.Errorf("unable to read value file from path %s", filePath)
+				return []byte{}, errors.Errorf("unable to read value file from path %s", filePath)
 			}
-			if err := yaml.Unmarshal(f, &valueFile); err != nil {
+			result, err = chartutil.ReadValues(f)
+			if err != nil {
 				if optional {
 					continue
 				}
-				return nil, errors.Errorf("unable to yaml.Unmarshal %v from path %s", f, filePath)
+				return []byte{}, errors.Errorf("unable to yaml.Unmarshal %v from path %s", f, filePath)
 			}
 		}
-		result = mergeValues(result, valueFile)
+		res = mergeValues(res, result)
 	}
-
-	result = mergeValues(result, hr.Spec.Values.Data)
-	return result.YAML()
+	res = mergeValues(res, hr.GetValues())
+	y, err := res.YAML()
+	if err != nil {
+		return []byte{}, err
+	}
+	return []byte(y), nil
 }
