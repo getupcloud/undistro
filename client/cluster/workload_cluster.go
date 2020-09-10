@@ -91,11 +91,13 @@ func (p *workloadCluster) GetHelm(workloadClusterName string, namespace string) 
 			return nil, derr
 		}
 	}
-	if os.IsNotExist(err) {
-		err = ioutil.WriteFile(path, []byte(cfg), 0666)
-		if err != nil {
-			return nil, err
-		}
+	if err == nil {
+		// remove if already exists to ensure we will use the last version
+		os.RemoveAll(path)
+	}
+	err = ioutil.WriteFile(path, []byte(cfg), 0666)
+	if err != nil {
+		return nil, err
 	}
 	return helm.New(path), nil
 }

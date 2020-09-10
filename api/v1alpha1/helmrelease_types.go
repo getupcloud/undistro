@@ -52,11 +52,12 @@ func (hr HelmRelease) GetClusterNamespacedName() types.NamespacedName {
 	if hr.Spec.ClusterName != "" {
 		spl := strings.Split(hr.Spec.ClusterName, "/")
 		if len(spl) == 2 {
-			nm.Namespace = spl[0]
+			if spl[0] != "default" {
+				nm.Namespace = spl[0]
+			}
 			nm.Name = spl[1]
 			return nm
 		}
-		nm.Namespace = "default"
 		nm.Name = spl[0]
 	}
 	return nm

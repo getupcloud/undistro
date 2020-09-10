@@ -15,7 +15,7 @@ def vetfmt():
     return 'go vet ./...; go fmt ./...'
 
 def binary():
-    return 'GOOS=linux GOARCH=amd64 GO111MODULE=on go build -tags net -a -ldflags "-linkmode external -extldflags -static -s -w" -o ./bin/manager main.go'
+    return 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o bin/manager main.go'
 
 local(manifests() + generate())
 

@@ -1,11 +1,5 @@
-FROM golang
+FROM golang:alpine
 WORKDIR /
-RUN apt update \
- && apt install -y \
-    gcc \
-    libblkid-dev \
- && apt clean \
- && apt autoremove -y \
- && rm -rf /var/lib/apt/lists/*
+RUN apk --update add ca-certificates
 COPY ./bin/manager /
 CMD ["/manager"]

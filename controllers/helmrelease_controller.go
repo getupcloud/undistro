@@ -12,6 +12,7 @@ import (
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	uclient "github.com/getupcloud/undistro/client"
+	"github.com/getupcloud/undistro/client/cluster"
 	"github.com/getupcloud/undistro/client/cluster/helm"
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp"
@@ -57,28 +58,7 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		return ctrl.Result{}, err
 	}
 	nm := hr.GetClusterNamespacedName()
-	cls := undistrov1.ClusterList{}
-	err = r.List(ctx, &cls)
-	if err != nil {
-		log.Info("cluster is not ready yet", "namespaced name", nm.String())
-		hr.Status.Phase = undistrov1.HelmReleasePhaseWaitClusterReady
-		serr := r.Status().Update(ctx, &hr)
-		if serr != nil {
-			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
-		}
-		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
-	}
-	cl := undistrov1.Cluster{}
-	for _, c := range cls.Items {
-		if c.Namespace == "" {
-			c.Namespace = "default"
-		}
-		if c.Name == nm.Name && c.Namespace == nm.Namespace {
-			cl = c
-			break
-		}
-	}
-	if !cl.Status.Ready {
+	if ok, _ := cluster.IsReady(ctx, r.Client, nm); !ok {
 		log.Info("cluster is not ready yet", "namespaced name", nm.String())
 		hr.Status.Phase = undistrov1.HelmReleasePhaseWaitClusterReady
 		serr := r.Status().Update(ctx, &hr)
@@ -210,12 +190,13 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 			log.Error(err, "fail to get status")
 			hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
 			hr.Status.LastAttemptedRevision = ""
-			serr := r.Update(ctx, &hr)
+
+			serr := r.Status().Update(ctx, &hr)
 			if serr != nil {
 				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 				return ctrl.Result{}, serr
 			}
-			serr = r.Status().Update(ctx, &hr)
+			serr = r.Update(ctx, &hr)
 			if serr != nil {
 				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 				return ctrl.Result{}, serr
