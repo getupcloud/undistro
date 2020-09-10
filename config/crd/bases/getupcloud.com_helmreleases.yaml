@@ -20,6 +20,10 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
+    - description: Cluster where Helm release will be applied
+      jsonPath: .spec.clusterName
+      name: Cluster
+      type: string
     - description: Release is the name of the Helm release, as given by Helm.
       jsonPath: .status.releaseName
       name: Release

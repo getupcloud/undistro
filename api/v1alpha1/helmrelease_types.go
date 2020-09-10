@@ -33,6 +33,7 @@ const (
 
 // HelmRelease is a type to represent a Helm release.
 // +k8s:openapi-gen=true
+// +kubebuilder:printcolumn:name="Cluster",type="string",JSONPath=".spec.clusterName",description="Cluster where Helm release will be applied"
 // +kubebuilder:printcolumn:name="Release",type="string",JSONPath=".status.releaseName",description="Release is the name of the Helm release, as given by Helm."
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase",description="Phase is the current release phase being performed for the HelmRelease."
 // +kubebuilder:printcolumn:name="ReleaseStatus",type="string",JSONPath=".status.releaseStatus",description="ReleaseStatus is the status of the Helm release, as given by Helm."
