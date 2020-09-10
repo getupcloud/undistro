@@ -40,6 +40,7 @@ GOLANGCI_LINT := $(abspath $(TOOLS_BIN_DIR)/golangci-lint)
 # Bindata.
 GOBINDATA := $(abspath $(TOOLS_BIN_DIR)/go-bindata)
 GOBINDATA_UNDISTRO_DIR := config
+GOBINDATA_TEMPLATES_DIR := templates
 
 GINKGO_NODES ?= 1
 
@@ -128,6 +129,10 @@ generate-bindata: $(KUSTOMIZE) $(GOBINDATA) clean-bindata  ## Generate code for 
 	$(GOBINDATA) -mode=420 -modtime=1 -pkg=config -o=$(GOBINDATA_UNDISTRO_DIR)/zz_generated.bindata.go $(GOBINDATA_UNDISTRO_DIR)/manifest/ $(GOBINDATA_UNDISTRO_DIR)/assets
 	cat ./hack/boilerplate.go.txt $(GOBINDATA_UNDISTRO_DIR)/zz_generated.bindata.go > $(GOBINDATA_UNDISTRO_DIR)/manifest/manifests.go
 	cp $(GOBINDATA_UNDISTRO_DIR)/manifest/manifests.go $(GOBINDATA_UNDISTRO_DIR)/zz_generated.bindata.go
+	# template
+	$(GOBINDATA) -mode=420 -modtime=1 -pkg=templates -o=$(GOBINDATA_TEMPLATES_DIR)/zz_generated.bindata.go  $(GOBINDATA_TEMPLATES_DIR)/yaml/...
+	cat ./hack/boilerplate.go.txt $(GOBINDATA_TEMPLATES_DIR)/zz_generated.bindata.go > $(GOBINDATA_TEMPLATES_DIR)/templates.go
+	rm $(GOBINDATA_TEMPLATES_DIR)/zz_generated.bindata.go 
 	# Cleanup the manifest folder.
 	$(MAKE) clean-bindata
 

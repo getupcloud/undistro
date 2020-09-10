@@ -31,3 +31,4 @@ core-components.yaml
 undistro.yaml
 helmcharts/
 __debug_bin
+.restart-proc

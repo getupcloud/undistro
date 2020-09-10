@@ -15,7 +15,7 @@ def vetfmt():
     return 'go vet ./...; go fmt ./...'
 
 def binary():
-    return 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o bin/manager main.go'
+    return 'GOOS=linux GOARCH=amd64 GO111MODULE=on go build -tags net -a -ldflags "-linkmode external -extldflags -static -s -w" -o ./bin/manager main.go'
 
 local(manifests() + generate())
 
@@ -23,7 +23,7 @@ local_resource('crd', manifests() + 'kustomize build config/crd | kubectl apply 
 
 k8s_yaml(yaml())
 
-local_resource('recompile', generate() + binary(), deps=['controllers', 'client/...', 'main.go'])
+local_resource('recompile', generate() + binary(), deps=['controllers', 'client', 'templates', 'main.go'])
 
 docker_build_with_restart(IMG, '.', 
  dockerfile='tilt.docker',

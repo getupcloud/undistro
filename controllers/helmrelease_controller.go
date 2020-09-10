@@ -155,7 +155,7 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 	curRel, err := h.Get(hr.GetReleaseName(), helm.GetOptions{Namespace: hr.GetTargetNamespace()})
 	if err != nil {
 		if strings.Contains(err.Error(), "no such host") {
-
+			log.Info("cluster is unreachable.", "err", err.Error(), "name", hr.GetClusterNamespacedName().String())
 			return ctrl.Result{Requeue: true}, nil
 		}
 		log.Error(err, "failed to get release", "name", hr.Name)

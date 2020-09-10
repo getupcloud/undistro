@@ -22,20 +22,18 @@ spec:
       - name: AWS_SECRET_ACCESS_KEY
         value: ""
 ---
-
 apiVersion: getupcloud.com/v1alpha1
 kind: HelmRelease
 metadata:
-  name: rabbitmq
+  name: nginx
   namespace: default
 spec:
   clusterName: default/undistro-quickstart
   chart:
-    repository: https://charts.bitnami.com/bitnami
-    name: bitnami/rabbitmq
-    version: 3.3.6
-  values:
-    replicas: 1
+    repository: https://kubernetes.github.io/ingress-nginx
+    name: ingress-nginx
+    version: 2.15.0
+
 ---
 apiVersion: getupcloud.com/v1alpha1
 kind: HelmRelease

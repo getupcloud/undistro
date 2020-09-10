@@ -5,9 +5,12 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package repository
 
 import (
+	"path/filepath"
+
 	"github.com/getupcloud/undistro/client/config"
 	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
 	logf "github.com/getupcloud/undistro/log"
+	"github.com/getupcloud/undistro/templates"
 	"github.com/pkg/errors"
 )
 
@@ -49,6 +52,16 @@ func newTemplateClient(input TemplateClientInput) *templateClient {
 	}
 }
 
+func (c *templateClient) getEmbeddedTemplate(name string) []byte {
+	path := filepath.Join("templates", "yaml", c.provider.Name(), name)
+	byt, err := templates.Asset(path)
+	if err != nil {
+		logf.Log.V(5).Info("cluster template is not embedded", "provider", c.provider.Name(), "err", err.Error())
+		return nil
+	}
+	return byt
+}
+
 // Get return the template for the flavor specified.
 // In case the template does not exists, an error is returned.
 // Get assumes the following naming convention for templates: cluster-template[-<flavor_name>].yaml
@@ -74,10 +87,13 @@ func (c *templateClient) Get(flavor, targetNamespace string, listVariablesOnly b
 	}
 
 	if rawArtifact == nil {
-		log.V(5).Info("Fetching", "File", name, "Provider", c.provider.ManifestLabel(), "Version", version)
-		rawArtifact, err = c.repository.GetFile(version, name)
-		if err != nil {
-			return nil, errors.Wrapf(err, "failed to read %q from provider's repository %q", name, c.provider.ManifestLabel())
+		rawArtifact = c.getEmbeddedTemplate(name)
+		if rawArtifact == nil {
+			log.V(5).Info("Fetching", "File", name, "Provider", c.provider.ManifestLabel(), "Version", version)
+			rawArtifact, err = c.repository.GetFile(version, name)
+			if err != nil {
+				return nil, errors.Wrapf(err, "failed to read %q from provider's repository %q", name, c.provider.ManifestLabel())
+			}
 		}
 	} else {
 		log.V(1).Info("Using", "Override", name, "Provider", c.provider.ManifestLabel(), "Version", version)

@@ -134,7 +134,7 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		log.Info("generanting cluster-api configuration", "name", req.NamespacedName)
 		if err = r.config(ctx, &cluster, undistroClient); err != nil {
 			if client.IgnoreNotFound(err) != nil {
-				log.Error(err, "couldn't initialize or update the mangement cluster", "name", req.NamespacedName)
+				log.Error(err, "couldn't install cluster config", "name", req.NamespacedName)
 				return ctrl.Result{}, err
 			}
 			return ctrl.Result{}, nil
@@ -265,7 +265,9 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 				return errors.Errorf("couldn't set reference: %v", err)
 			}
 		}
-		err = r.Create(ctx, &o)
+		_, err = controllerutil.CreateOrUpdate(ctx, r.Client, &o, func() error {
+			return nil
+		})
 		if err != nil {
 			return err
 		}
