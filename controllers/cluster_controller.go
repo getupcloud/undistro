@@ -363,10 +363,7 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl *undistrov1.Clust
 	}
 	objs = utilresource.SortForCreate(objs)
 	for _, o := range objs {
-		err = workloadClient.Patch(ctx, &o, client.Apply, client.FieldOwner("undistro"))
-		if err != nil {
-			return err
-		}
+		workloadClient.Patch(ctx, &o, client.Apply, client.FieldOwner("undistro"))
 	}
 	return nil
 }
