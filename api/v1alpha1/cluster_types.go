@@ -44,7 +44,7 @@ const (
 )
 
 var cniMapAddr = map[CNI]string{
-	CalicoCNI: "https://docs.projectcalico.org/v3.15/manifests/calico.yaml",
+	CalicoCNI: "https://docs.projectcalico.org/v3.16/manifests/calico.yaml",
 }
 
 // ClusterSpec defines the desired state of Cluster
