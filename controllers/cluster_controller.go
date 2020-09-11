@@ -265,9 +265,7 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 				return errors.Errorf("couldn't set reference: %v", err)
 			}
 		}
-		_, err = controllerutil.CreateOrUpdate(ctx, r.Client, &o, func() error {
-			return nil
-		})
+		err = r.Patch(ctx, &o, client.Apply, client.FieldOwner("undistro"))
 		if err != nil {
 			return err
 		}
@@ -365,9 +363,7 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl *undistrov1.Clust
 	}
 	objs = utilresource.SortForCreate(objs)
 	for _, o := range objs {
-		_, err = controllerutil.CreateOrUpdate(ctx, workloadClient, &o, func() error {
-			return nil
-		})
+		err = workloadClient.Patch(ctx, &o, client.Apply, client.FieldOwner("undistro"))
 		if err != nil {
 			return err
 		}

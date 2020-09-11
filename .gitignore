@@ -32,3 +32,4 @@ undistro.yaml
 helmcharts/
 __debug_bin
 .restart-proc
+dash-token-demo.sh

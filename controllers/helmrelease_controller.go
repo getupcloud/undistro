@@ -17,7 +17,9 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
+	"sigs.k8s.io/cluster-api/util/yaml"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
@@ -31,6 +33,33 @@ type HelmReleaseReconciler struct {
 	Log        logr.Logger
 	Scheme     *runtime.Scheme
 	RestConfig *rest.Config
+}
+
+func (r *HelmReleaseReconciler) clusterClient(ctx context.Context, wc cluster.WorkloadCluster, nm types.NamespacedName) (client.Client, error) {
+	workloadCfg, err := wc.GetRestConfig(nm.Name, nm.Namespace)
+	if err != nil {
+		return nil, err
+	}
+	return client.New(workloadCfg, client.Options{Scheme: r.Scheme})
+}
+
+func (r *HelmReleaseReconciler) execAnnotation(ctx context.Context, c client.Client, hr *undistrov1.HelmRelease, annot string) error {
+	if v, ok := hr.GetAnnotations()[annot]; ok {
+		objs, err := yaml.ToUnstructured([]byte(v))
+		if err != nil {
+			return err
+		}
+		for _, o := range objs {
+			if o.GetNamespace() == "" {
+				o.SetNamespace("default")
+			}
+			err = c.Patch(ctx, &o, client.Apply, client.FieldOwner("undistro"))
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 // +kubebuilder:rbac:groups=getupcloud.com,resources=*,verbs=get;list;watch;create;update;patch;delete
@@ -66,6 +95,10 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 		}
 		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
+	}
+	wClient, err := r.clusterClient(ctx, wc, nm)
+	if err != nil {
+		return ctrl.Result{}, err
 	}
 	h, err := wc.GetHelm(nm.Name, nm.Namespace)
 	if err != nil {
@@ -140,7 +173,23 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		}
 		log.Error(err, "failed to get release", "name", hr.Name)
 		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
-		hr.Status.Revision = ""
+		hr.Status.LastAttemptedRevision = ""
+		serr := r.Status().Update(ctx, &hr)
+		if serr != nil {
+			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+			return ctrl.Result{}, serr
+		}
+		serr = r.Update(ctx, &hr)
+		if serr != nil {
+			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+			return ctrl.Result{}, serr
+		}
+		return ctrl.Result{}, err
+	}
+	err = r.execAnnotation(ctx, wClient, &hr, undistrov1.HelmApplyBefore)
+	if err != nil {
+		log.Error(err, "failed to exec annotation", "name", hr.Name, "annotation", undistrov1.HelmApplyBefore)
+		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
 		hr.Status.LastAttemptedRevision = ""
 		serr := r.Status().Update(ctx, &hr)
 		if serr != nil {
@@ -201,6 +250,22 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 				return ctrl.Result{}, serr
 			}
+		}
+		err = r.execAnnotation(ctx, wClient, &hr, undistrov1.HelmApplyAfter)
+		if err != nil {
+			log.Error(err, "failed to exec annotation", "name", hr.Name, "annotation", undistrov1.HelmApplyAfter)
+			hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
+			serr := r.Status().Update(ctx, &hr)
+			if serr != nil {
+				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+				return ctrl.Result{}, serr
+			}
+			serr = r.Update(ctx, &hr)
+			if serr != nil {
+				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+				return ctrl.Result{}, serr
+			}
+			return ctrl.Result{}, err
 		}
 		hr.Status.Phase = undistrov1.HelmReleasePhaseDeployed
 		hr.Status.ReleaseName = hr.GetReleaseName()
