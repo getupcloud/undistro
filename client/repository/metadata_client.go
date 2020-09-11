@@ -5,6 +5,8 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package repository
 
 import (
+	"strings"
+
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/getupcloud/undistro/client/config"
 	"github.com/getupcloud/undistro/internal/scheme"
@@ -13,6 +15,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
+	"sigs.k8s.io/cluster-api/util/yaml"
 )
 
 // MetadataClient has methods to work with metadata hosted on a provider repository.
@@ -61,12 +64,23 @@ func (f *metadataClient) Get() (*undistrov1.Metadata, error) {
 	}
 	if file == nil {
 		log.V(5).Info("Fetching", "File", name, "Provider", f.provider.ManifestLabel(), "Version", version)
-		if obj := f.getEmbeddedMetadata(); obj != nil {
-			return obj, nil
-		}
 		file, err = f.repository.GetFile(version, name)
 		if err != nil {
+			if obj := f.getEmbeddedMetadata(); obj != nil {
+				return obj, nil
+			}
 			return nil, errors.Wrapf(err, "failed to read %q from the repository for provider %q", name, f.provider.ManifestLabel())
+		}
+		objs, err := yaml.ToUnstructured(file)
+		if err != nil {
+			return nil, err
+		}
+		for _, o := range objs {
+			if !strings.Contains(o.GetAPIVersion(), "getupcloud.com") {
+				if obj := f.getEmbeddedMetadata(); obj != nil {
+					return obj, nil
+				}
+			}
 		}
 	} else {
 		log.V(1).Info("Using", "Override", name, "Provider", f.provider.ManifestLabel(), "Version", version)
