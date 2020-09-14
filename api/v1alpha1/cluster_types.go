@@ -34,6 +34,19 @@ func (i *InfrastructureProvider) NameVersion() string {
 	return i.Name
 }
 
+type BootstrapProvider struct {
+	// +kubebuilder:validation:MinLength=1
+	Name    string  `json:"name,omitempty"`
+	Version *string `json:"version,omitempty"`
+}
+
+func (b *BootstrapProvider) NameVersion() string {
+	if b.Version != nil {
+		return fmt.Sprintf("%s:%s", b.Name, *b.Version)
+	}
+	return b.Name
+}
+
 // +kubebuilder:validation:Enum=calico
 type CNI string
 
@@ -52,6 +65,7 @@ type ClusterSpec struct {
 	// +kubebuilder:validation:MinLength=1
 	KubernetesVersion      string                 `json:"kubernetesVersion,omitempty"`
 	InfrastructureProvider InfrastructureProvider `json:"infrastructureProvider,omitempty"`
+	BootstrapProvider      *BootstrapProvider     `json:"bootstrapProvider,omitempty"`
 	ControlPlaneNode       Node                   `json:"controlPlaneNode,omitempty"`
 	WorkerNode             Node                   `json:"workerNode,omitempty"`
 	CniName                CNI                    `json:"cniName,omitempty"`

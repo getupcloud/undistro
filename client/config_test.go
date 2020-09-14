@@ -44,6 +44,7 @@ func Test_undistroClient_GetProvidersConfig(t *testing.T) {
 			wantProviders: []string{
 				config.ClusterAPIProviderName,
 				config.UndistroProviderName,
+				config.EKSBootstrapProviderName,
 				config.KubeadmBootstrapProviderName,
 				config.TalosBootstrapProviderName,
 				config.KubeadmControlPlaneProviderName,
@@ -67,6 +68,7 @@ func Test_undistroClient_GetProvidersConfig(t *testing.T) {
 				config.ClusterAPIProviderName,
 				config.UndistroProviderName,
 				customProviderConfig.Name(),
+				config.EKSBootstrapProviderName,
 				config.KubeadmBootstrapProviderName,
 				config.TalosBootstrapProviderName,
 				config.KubeadmControlPlaneProviderName,
