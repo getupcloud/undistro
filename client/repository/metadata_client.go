@@ -120,6 +120,7 @@ func (f *metadataClient) getEmbeddedMetadata() *undistrov1.Metadata {
 				{Major: 0, Minor: 7, Contract: "v1alpha1"},
 				{Major: 0, Minor: 8, Contract: "v1alpha1"},
 				{Major: 0, Minor: 9, Contract: "v1alpha1"},
+				{Major: 0, Minor: 10, Contract: "v1alpha1"},
 			},
 		}
 	case undistrov1.CoreProviderType:
@@ -169,6 +170,17 @@ func (f *metadataClient) getEmbeddedMetadata() *undistrov1.Metadata {
 					// v1alpha2 release series are supported only for upgrades
 					{Major: 0, Minor: 1, Contract: "v1alpha2"},
 					// older version are not supported by undistro
+				},
+			}
+		case config.EKSBootstrapProviderName:
+			return &undistrov1.Metadata{
+				TypeMeta: metav1.TypeMeta{
+					APIVersion: undistrov1.GroupVersion.String(),
+					Kind:       "Metadata",
+				},
+				ReleaseSeries: []undistrov1.ReleaseSeries{
+					// v1alpha3 release series
+					{Major: 0, Minor: 6, Contract: "v1alpha3"},
 				},
 			}
 		default:

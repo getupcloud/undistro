@@ -175,6 +175,10 @@ func (i *providerInstaller) Validate() error {
 	}
 	// remove already installed components
 	for _, index := range alreadyInstalled {
+		if len(i.installQueue) == 1 {
+			i.installQueue = make([]repository.Components, 0)
+			continue
+		}
 		copy(i.installQueue[index:], i.installQueue[index+1:])
 		i.installQueue[len(i.installQueue)-1] = nil
 		i.installQueue = i.installQueue[:len(i.installQueue)-1]

@@ -55,6 +55,14 @@ spec:
           spec:
             description: ClusterSpec defines the desired state of Cluster
             properties:
+              bootstrapProvider:
+                properties:
+                  name:
+                    minLength: 1
+                    type: string
+                  version:
+                    type: string
+                type: object
               cniName:
                 enum:
                 - calico

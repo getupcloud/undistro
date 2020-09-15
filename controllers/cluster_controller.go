@@ -44,6 +44,7 @@ type ClusterReconciler struct {
 	RestConfig *rest.Config
 }
 
+// +kubebuilder:rbac:urls=/metrics,verbs=get;
 // +kubebuilder:rbac:groups=route.openshift.io,resources=routes/custom-host,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
@@ -65,7 +66,7 @@ type ClusterReconciler struct {
 // +kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch;create;patch
 // +kubebuilder:rbac:groups=core,resources=nodes,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io;bootstrap.cluster.x-k8s.io;controlplane.cluster.x-k8s.io,resources=*,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=cluster.x-k8s.io,resources=clusters;clusters/status,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=cluster.x-k8s.io,resources=*,verbs=get;list;watch;create;update;patch;delete
 
 func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
@@ -193,14 +194,18 @@ func (r *ClusterReconciler) delete(ctx context.Context, cl *undistrov1.Cluster) 
 
 func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {
 	log := r.Log
-	components, err := c.Init(uclient.InitOptions{
+	opts := uclient.InitOptions{
 		Kubeconfig: uclient.Kubeconfig{
 			RestConfig: r.RestConfig,
 		},
 		InfrastructureProviders: []string{cl.Spec.InfrastructureProvider.NameVersion()},
 		TargetNamespace:         "undistro-system",
 		LogUsageInstructions:    false,
-	})
+	}
+	if cl.Spec.BootstrapProvider != nil {
+		opts.BootstrapProviders = []string{cl.Spec.BootstrapProvider.NameVersion()}
+	}
+	components, err := c.Init(opts)
 	if err != nil {
 		return err
 	}
@@ -241,6 +246,10 @@ func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c 
 }
 
 func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {
+	flavor := ""
+	if cl.Spec.BootstrapProvider != nil {
+		flavor = cl.Spec.BootstrapProvider.Name
+	}
 	tpl, err := c.GetClusterTemplate(uclient.GetClusterTemplateOptions{
 		Kubeconfig: uclient.Kubeconfig{
 			RestConfig: r.RestConfig,
@@ -251,6 +260,10 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 		KubernetesVersion:        cl.Spec.KubernetesVersion,
 		ControlPlaneMachineCount: cl.Spec.ControlPlaneNode.Replicas,
 		WorkerMachineCount:       cl.Spec.WorkerNode.Replicas,
+		ProviderRepositorySource: &uclient.ProviderRepositorySourceOptions{
+			InfrastructureProvider: cl.Spec.InfrastructureProvider.Name,
+			Flavor:                 flavor,
+		},
 	})
 	if err != nil {
 		return err
