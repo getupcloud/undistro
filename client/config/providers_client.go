@@ -12,6 +12,7 @@ import (
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/validation"
+	"sigs.k8s.io/yaml"
 )
 
 const (
@@ -156,6 +157,43 @@ type configProvider struct {
 	Name string                  `json:"name,omitempty"`
 	URL  string                  `json:"url,omitempty"`
 	Type undistrov1.ProviderType `json:"type,omitempty"`
+}
+
+func TrySetCustomTemplates(cl *undistrov1.Cluster, v VariablesClient) error {
+	pvs := make([]configProvider, 0)
+	if cl.Spec.InfrastructureProvider.File != nil {
+		pvs = append(pvs, configProvider{
+			Name: cl.Spec.InfrastructureProvider.Name,
+			URL:  *cl.Spec.InfrastructureProvider.File,
+			Type: undistrov1.InfrastructureProviderType,
+		})
+	}
+	if cl.Spec.BootstrapProvider != nil {
+		if cl.Spec.BootstrapProvider.File != nil {
+			pvs = append(pvs, configProvider{
+				Name: cl.Spec.BootstrapProvider.Name,
+				URL:  *cl.Spec.BootstrapProvider.File,
+				Type: undistrov1.BootstrapProviderType,
+			})
+		}
+	}
+	if cl.Spec.ControlPlaneProvider != nil {
+		if cl.Spec.ControlPlaneProvider.File != nil {
+			pvs = append(pvs, configProvider{
+				Name: cl.Spec.ControlPlaneProvider.Name,
+				URL:  *cl.Spec.ControlPlaneProvider.File,
+				Type: undistrov1.ControlPlaneProviderType,
+			})
+		}
+	}
+	if len(pvs) > 0 {
+		byt, err := yaml.Marshal(pvs)
+		if err != nil {
+			return err
+		}
+		v.Set(ProvidersConfigKey, string(byt))
+	}
+	return nil
 }
 
 func (p *providersClient) List() ([]Provider, error) {

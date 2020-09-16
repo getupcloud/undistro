@@ -13,6 +13,7 @@ import (
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
 	uclient "github.com/getupcloud/undistro/client"
+	"github.com/getupcloud/undistro/client/config"
 	"github.com/getupcloud/undistro/internal/util"
 	"github.com/go-logr/logr"
 	"github.com/pkg/errors"
@@ -113,6 +114,10 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		NamespacedName:  req.NamespacedName,
 		EnvVars:         cluster.Spec.InfrastructureProvider.Env,
 	})
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	err = config.TrySetCustomTemplates(&cluster, undistroClient.GetVariables())
 	if err != nil {
 		return ctrl.Result{}, err
 	}
@@ -246,11 +251,7 @@ func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c 
 }
 
 func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {
-	flavor := ""
-	if cl.Spec.BootstrapProvider != nil {
-		flavor = cl.Spec.BootstrapProvider.Name
-	}
-	tpl, err := c.GetClusterTemplate(uclient.GetClusterTemplateOptions{
+	opts := uclient.GetClusterTemplateOptions{
 		Kubeconfig: uclient.Kubeconfig{
 			RestConfig: r.RestConfig,
 		},
@@ -260,11 +261,19 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 		KubernetesVersion:        cl.Spec.KubernetesVersion,
 		ControlPlaneMachineCount: cl.Spec.ControlPlaneNode.Replicas,
 		WorkerMachineCount:       cl.Spec.WorkerNode.Replicas,
-		ProviderRepositorySource: &uclient.ProviderRepositorySourceOptions{
+	}
+	if cl.Spec.Template != nil {
+		opts.URLSource = &uclient.URLSourceOptions{
+			URL: *cl.Spec.Template,
+		}
+	}
+	if cl.Spec.BootstrapProvider != nil && cl.Spec.Template == nil {
+		opts.ProviderRepositorySource = &uclient.ProviderRepositorySourceOptions{
 			InfrastructureProvider: cl.Spec.InfrastructureProvider.Name,
-			Flavor:                 flavor,
-		},
-	})
+			Flavor:                 cl.Spec.BootstrapProvider.Name,
+		}
+	}
+	tpl, err := c.GetClusterTemplate(opts)
 	if err != nil {
 		return err
 	}

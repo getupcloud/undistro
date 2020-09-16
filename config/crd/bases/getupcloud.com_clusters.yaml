@@ -57,6 +57,8 @@ spec:
             properties:
               bootstrapProvider:
                 properties:
+                  file:
+                    type: string
                   name:
                     minLength: 1
                     type: string
@@ -76,6 +78,16 @@ spec:
                     format: int64
                     minimum: 1
                     type: integer
+                type: object
+              controlPlaneProvider:
+                properties:
+                  file:
+                    type: string
+                  name:
+                    minLength: 1
+                    type: string
+                  version:
+                    type: string
                 type: object
               infrastructureProvider:
                 properties:
@@ -158,6 +170,8 @@ spec:
                       - name
                       type: object
                     type: array
+                  file:
+                    type: string
                   name:
                     minLength: 1
                     type: string
@@ -169,6 +183,8 @@ spec:
                 type: object
               kubernetesVersion:
                 minLength: 1
+                type: string
+              template:
                 type: string
               workerNode:
                 properties:

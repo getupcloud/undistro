@@ -22,6 +22,7 @@ type InfrastructureProvider struct {
 	// +kubebuilder:validation:MinLength=1
 	Name    string  `json:"name,omitempty"`
 	Version *string `json:"version,omitempty"`
+	File    *string `json:"file,omitempty"`
 	// +kubebuilder:validation:MinLength=1
 	SSHKey string          `json:"sshKey,omitempty"`
 	Env    []corev1.EnvVar `json:"env,omitempty"`
@@ -38,6 +39,7 @@ type BootstrapProvider struct {
 	// +kubebuilder:validation:MinLength=1
 	Name    string  `json:"name,omitempty"`
 	Version *string `json:"version,omitempty"`
+	File    *string `json:"file,omitempty"`
 }
 
 func (b *BootstrapProvider) NameVersion() string {
@@ -45,6 +47,20 @@ func (b *BootstrapProvider) NameVersion() string {
 		return fmt.Sprintf("%s:%s", b.Name, *b.Version)
 	}
 	return b.Name
+}
+
+type ControlPlaneProvider struct {
+	// +kubebuilder:validation:MinLength=1
+	Name    string  `json:"name,omitempty"`
+	Version *string `json:"version,omitempty"`
+	File    *string `json:"file,omitempty"`
+}
+
+func (c *ControlPlaneProvider) NameVersion() string {
+	if c.Version != nil {
+		return fmt.Sprintf("%s:%s", c.Name, *c.Version)
+	}
+	return c.Name
 }
 
 // +kubebuilder:validation:Enum=calico
@@ -64,8 +80,10 @@ var cniMapAddr = map[CNI]string{
 type ClusterSpec struct {
 	// +kubebuilder:validation:MinLength=1
 	KubernetesVersion      string                 `json:"kubernetesVersion,omitempty"`
+	Template               *string                `json:"template,omitempty"`
 	InfrastructureProvider InfrastructureProvider `json:"infrastructureProvider,omitempty"`
 	BootstrapProvider      *BootstrapProvider     `json:"bootstrapProvider,omitempty"`
+	ControlPlaneProvider   *ControlPlaneProvider  `json:"controlPlaneProvider,omitempty"`
 	ControlPlaneNode       Node                   `json:"controlPlaneNode,omitempty"`
 	WorkerNode             Node                   `json:"workerNode,omitempty"`
 	CniName                CNI                    `json:"cniName,omitempty"`
