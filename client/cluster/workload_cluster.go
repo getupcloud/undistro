@@ -13,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	utilkubeconfig "sigs.k8s.io/cluster-api/util/kubeconfig"
+	utilkubeconfig "github.com/getupcloud/undistro/internal/kubeconfig"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
