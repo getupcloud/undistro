@@ -24,6 +24,8 @@ spec:
         value: "true"
       - name: EXP_EKS_IAM
         value: "true"
+      - name: EXP_EKS_ADD_ROLES
+        value: "true"
       
 ---
 apiVersion: getupcloud.com/v1alpha1

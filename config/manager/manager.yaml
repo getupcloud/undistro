@@ -29,6 +29,9 @@ spec:
         - --enable-leader-election
         image: controller:latest
         name: manager
+        env:
+        - name: AWS_SHARED_CREDENTIALS_FILE
+          value: /home/.aws/credentials-aws
         resources:
           limits:
             cpu: "1"

@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"text/template"
 
@@ -10,11 +11,21 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	cfn "github.com/aws/aws-sdk-go/service/cloudformation"
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/cluster-api-provider-aws/cmd/clusterawsadm/cloudformation/bootstrap"
 	cloudformation "sigs.k8s.io/cluster-api-provider-aws/cmd/clusterawsadm/cloudformation/service"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
+	undistroNamespace             = "undistro-system"
+	deployName                    = "undistro-controller-manager"
+	containerName                 = "manager"
+	volumeName                    = "credentials-aws"
+	secretName                    = "capa-manager-bootstrap-credentials"
+	mountPath                     = "/home/.aws"
 	defaultAWSRegion              = "us-east-1"
 	awsSshKeyNameKey              = "AWS_SSH_KEY_NAME"
 	awsControlPlaneMachineTypeKey = "AWS_CONTROL_PLANE_MACHINE_TYPE"
@@ -81,10 +92,52 @@ func (c awsCredentials) createCloudFormation() error {
 	return cfnSvc.ReconcileBootstrapStack(t.Spec.StackName, *t.RenderCloudFormation())
 }
 
-func awsPreConfig(cl *undistrov1.Cluster, v VariablesClient) error {
+func awsPreConfig(ctx context.Context, cl *undistrov1.Cluster, v VariablesClient, c client.Client) error {
 	v.Set(awsSshKeyNameKey, cl.Spec.InfrastructureProvider.SSHKey)
 	v.Set(awsControlPlaneMachineTypeKey, cl.Spec.ControlPlaneNode.MachineType)
 	v.Set(awsWorkerMachineTypeKey, cl.Spec.WorkerNode.MachineType)
+	deploy := appsv1.Deployment{}
+	nm := types.NamespacedName{
+		Name:      deployName,
+		Namespace: undistroNamespace,
+	}
+	err := c.Get(ctx, nm, &deploy)
+	if err != nil {
+		if client.IgnoreNotFound(err) != nil {
+			return err
+		}
+		return nil
+	}
+	for _, vol := range deploy.Spec.Template.Spec.Volumes {
+		if vol.Name == volumeName {
+			return nil
+		}
+	}
+	vol := corev1.Volume{
+		Name: volumeName,
+		VolumeSource: corev1.VolumeSource{
+			Secret: &corev1.SecretVolumeSource{
+				SecretName: secretName,
+			},
+		},
+	}
+	deploy.Spec.Template.Spec.Volumes = append(deploy.Spec.Template.Spec.Volumes, vol)
+	var index *int
+	for i := range deploy.Spec.Template.Spec.Containers {
+		if deploy.Spec.Template.Spec.Containers[i].Name == containerName {
+			index = &i
+		}
+	}
+	if index != nil {
+		vm := corev1.VolumeMount{
+			Name:      volumeName,
+			MountPath: mountPath,
+			ReadOnly:  true,
+		}
+		deploy.Spec.Template.Spec.Containers[*index].VolumeMounts = append(deploy.Spec.Template.Spec.Containers[*index].VolumeMounts, vm)
+		deploy.ObjectMeta.ManagedFields = nil
+		return c.Patch(ctx, &deploy, client.Apply, client.FieldOwner("undistro"))
+	}
 	return nil
 }
 

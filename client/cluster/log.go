@@ -19,8 +19,10 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	kubeinformers "k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -91,29 +93,58 @@ func (l *logStreamer) Stream(ctx context.Context, c *rest.Config, w io.Writer, n
 	}
 }
 
+func containReq(reqs []logRequest, pod string) bool {
+	for _, req := range reqs {
+		if req.podName == pod {
+			return true
+		}
+	}
+	return false
+}
+
 func (l *logStreamer) streamLogs(ctx context.Context, reqs []logRequest, writer io.Writer) error {
 	wg := &sync.WaitGroup{}
 	wg.Add(len(reqs))
 	r, w := io.Pipe()
+	kubeInformerFactory := kubeinformers.NewSharedInformerFactory(l.client, time.Second*30)
+	podsInformer := kubeInformerFactory.Core().V1().Pods().Informer()
+	podsInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc: func(obj interface{}) {
+			pod, ok := obj.(*corev1.Pod)
+			if !ok {
+				return
+			}
+			if pod.Namespace != undistroNamespace || containReq(reqs, pod.Name) {
+				return
+			}
+			reader, err := l.client.CoreV1().Pods(undistroNamespace).
+				GetLogs(pod.Name, &corev1.PodLogOptions{
+					Container: "manager",
+					Follow:    true,
+					SinceTime: &metav1.Time{
+						Time: time.Now(),
+					},
+				}).Stream(ctx)
+			if err != nil {
+				log.Log.Error(err, "fail get pod log", "name", pod.Name)
+				return
+			}
+			wg.Add(1)
+			go l.streamLog(ctx, wg, reader, w, pod.Name)
+		},
+	})
+	stop := make(chan struct{})
+	kubeInformerFactory.Start(stop)
 	for _, req := range reqs {
 		reader, err := req.req.Stream(ctx)
 		if err != nil {
 			return err
 		}
-		pw := &prefixingWriter{
-			writer: w,
-			prefix: []byte(fmt.Sprintf("[%s] ", req.podName)),
-		}
-		go func(ctx context.Context, pod string) {
-			defer wg.Done()
-			err = l.readLog(ctx, reader, pw)
-			if err != nil {
-				log.Log.Error(err, "fail read log", "name", pod)
-			}
-		}(ctx, req.podName)
+		go l.streamLog(ctx, wg, reader, w, req.podName)
 	}
 	go func(ctx context.Context) {
 		wg.Wait()
+		close(stop)
 		w.Close()
 	}(ctx)
 	_, err := io.Copy(writer, r)
@@ -129,7 +160,7 @@ func (l *logStreamer) readLog(ctx context.Context, reader io.ReadCloser, writer 
 			return err
 		}
 		if err != nil {
-			if err != io.EOF {
+			if err != io.EOF && err != context.Canceled && err != context.DeadlineExceeded {
 				return err
 			}
 			return nil
@@ -150,6 +181,18 @@ func IsDeleted(ctx context.Context, c client.Client, nm types.NamespacedName) (b
 	var cl undistrov1.Cluster
 	err := c.Get(ctx, nm, &cl)
 	return apierrors.IsNotFound(err), nil
+}
+
+func (l logStreamer) streamLog(ctx context.Context, wg *sync.WaitGroup, reader io.ReadCloser, w io.Writer, pod string) {
+	defer wg.Done()
+	pw := &prefixingWriter{
+		writer: w,
+		prefix: []byte(fmt.Sprintf("[%s] ", pod)),
+	}
+	err := l.readLog(ctx, reader, pw)
+	if err != nil {
+		log.Log.Error(err, "fail read log", "name", pod)
+	}
 }
 
 func (l *logStreamer) getLogs(ctx context.Context, pods []corev1.Pod) []logRequest {

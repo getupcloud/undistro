@@ -5,10 +5,12 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package config
 
 import (
+	"context"
 	"encoding/json"
 	"path/filepath"
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // Provider defines a provider configuration.
@@ -44,7 +46,7 @@ type Provider interface {
 
 type InitFunc func(Client, bool) error
 
-type PreConfigFunc func(*undistrov1.Cluster, VariablesClient) error
+type PreConfigFunc func(context.Context, *undistrov1.Cluster, VariablesClient, client.Client) error
 
 // provider implements provider
 type provider struct {

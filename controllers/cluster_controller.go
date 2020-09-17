@@ -229,7 +229,7 @@ func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c 
 		preConfigFunc := component.GetPreConfigFunc()
 		if preConfigFunc != nil {
 			log.Info("executing pre config func", "component", component.Name())
-			err = preConfigFunc(cl, c.GetVariables())
+			err = preConfigFunc(ctx, cl, c.GetVariables(), r.Client)
 			if err != nil {
 				return err
 			}
