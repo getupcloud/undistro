@@ -198,7 +198,6 @@ func (r *ClusterReconciler) delete(ctx context.Context, cl *undistrov1.Cluster) 
 }
 
 func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {
-	log := r.Log
 	opts := uclient.InitOptions{
 		Kubeconfig: uclient.Kubeconfig{
 			RestConfig: r.RestConfig,
@@ -209,6 +208,9 @@ func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c 
 	}
 	if cl.Spec.BootstrapProvider != nil {
 		opts.BootstrapProviders = []string{cl.Spec.BootstrapProvider.NameVersion()}
+	}
+	if cl.Spec.ControlPlaneProvider != nil {
+		opts.ControlPlaneProviders = []string{cl.Spec.ControlPlaneProvider.NameVersion()}
 	}
 	components, err := c.Init(opts)
 	if err != nil {
@@ -226,14 +228,6 @@ func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c 
 	}
 	cl.Status.InstalledComponents = make([]undistrov1.InstalledComponent, len(components))
 	for i, component := range components {
-		preConfigFunc := component.GetPreConfigFunc()
-		if preConfigFunc != nil {
-			log.Info("executing pre config func", "component", component.Name())
-			err = preConfigFunc(ctx, cl, c.GetVariables(), r.Client)
-			if err != nil {
-				return err
-			}
-		}
 		ic := undistrov1.InstalledComponent{
 			Name:    component.Name(),
 			Version: component.Version(),
@@ -251,6 +245,21 @@ func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c 
 }
 
 func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {
+	log := r.Log
+	for _, ic := range cl.Status.InstalledComponents {
+		comp, err := uclient.GetProvider(c, ic.Name, ic.Type)
+		if err != nil {
+			return err
+		}
+		preConfigFunc := comp.GetPreConfigFunc()
+		if preConfigFunc != nil {
+			log.Info("executing pre config func", "component", comp.Name())
+			err = preConfigFunc(ctx, cl, c.GetVariables(), r.Client)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	opts := uclient.GetClusterTemplateOptions{
 		Kubeconfig: uclient.Kubeconfig{
 			RestConfig: r.RestConfig,

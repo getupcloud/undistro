@@ -9,6 +9,7 @@ import (
 	"github.com/getupcloud/undistro/client/cluster"
 	"github.com/getupcloud/undistro/client/config"
 	"github.com/getupcloud/undistro/client/repository"
+	"github.com/pkg/errors"
 )
 
 // Client is exposes the undistro high-level client library.
@@ -178,4 +179,17 @@ func defaultClusterFactory(configClient config.Client) ClusterClientFactory {
 			cluster.InjectYamlProcessor(input.processor),
 		), nil
 	}
+}
+
+func GetProvider(c Client, name string, t undistrov1.ProviderType) (Provider, error) {
+	providers, err := c.GetProvidersConfig()
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range providers {
+		if p.Name() == name && p.Type() == t {
+			return p, nil
+		}
+	}
+	return nil, errors.Errorf("provider name: %s type %v not found", name, t)
 }

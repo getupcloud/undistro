@@ -31,7 +31,7 @@ spec:
         name: manager
         env:
         - name: AWS_SHARED_CREDENTIALS_FILE
-          value: /home/.aws/credentials-aws
+          value: /home/.aws/credentials
         resources:
           limits:
             cpu: "1"

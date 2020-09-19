@@ -107,7 +107,8 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 		}
 		err = k8sClient.Delete(context.Background(), &o)
 		if err != nil {
-			return err
+			fmt.Println(err)
+			continue
 		}
 		fmt.Printf("%s.%s %q deleted\n", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}

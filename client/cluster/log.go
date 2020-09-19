@@ -117,16 +117,26 @@ func (l *logStreamer) streamLogs(ctx context.Context, reqs []logRequest, writer 
 			if pod.Namespace != undistroNamespace || containReq(reqs, pod.Name) {
 				return
 			}
-			reader, err := l.client.CoreV1().Pods(undistroNamespace).
-				GetLogs(pod.Name, &corev1.PodLogOptions{
-					Container: "manager",
-					Follow:    true,
-					SinceTime: &metav1.Time{
-						Time: time.Now(),
-					},
-				}).Stream(ctx)
+			var (
+				reader io.ReadCloser
+				err    error
+			)
+			err = retryWithExponentialBackoff(newConnectBackoff(), func() error {
+				reader, err = l.client.CoreV1().Pods(undistroNamespace).
+					GetLogs(pod.Name, &corev1.PodLogOptions{
+						Container: "manager",
+						Follow:    true,
+						SinceTime: &metav1.Time{
+							Time: time.Now(),
+						},
+					}).Stream(ctx)
+				if err != nil {
+					return err
+				}
+				return nil
+			})
 			if err != nil {
-				log.Log.Error(err, "fail get pod log", "name", pod.Name)
+				log.Log.Error(err, "fail to get pod logs", "name", pod.Name)
 				return
 			}
 			wg.Add(1)
@@ -155,8 +165,8 @@ func (l *logStreamer) readLog(ctx context.Context, reader io.ReadCloser, writer 
 	defer reader.Close()
 	r := bufio.NewReader(reader)
 	for {
-		bytes, err := r.ReadBytes('\n')
-		if _, err := writer.Write(bytes); err != nil {
+		byt, err := r.ReadBytes('\n')
+		if _, err := writer.Write(byt); err != nil {
 			return err
 		}
 		if err != nil {
