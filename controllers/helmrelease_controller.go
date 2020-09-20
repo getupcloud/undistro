@@ -239,7 +239,6 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 			log.Error(err, "fail to get status")
 			hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
 			hr.Status.LastAttemptedRevision = ""
-
 			serr := r.Status().Update(ctx, &hr)
 			if serr != nil {
 				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
@@ -250,6 +249,7 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 				return ctrl.Result{}, serr
 			}
+			return ctrl.Result{}, err
 		}
 		err = r.execAnnotation(ctx, wClient, &hr, undistrov1.HelmApplyAfter)
 		if err != nil {

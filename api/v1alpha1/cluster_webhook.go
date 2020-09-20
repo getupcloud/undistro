@@ -38,9 +38,13 @@ func (r *Cluster) Default() {
 	if r.Spec.KubernetesVersion == "" {
 		r.Spec.KubernetesVersion = defaultKubernetesVersion
 	}
-	if r.Spec.ControlPlaneNode.Replicas == nil {
+	if r.Spec.ControlPlaneNode.Replicas == nil && r.Spec.BootstrapProvider == nil {
 		r.Spec.ControlPlaneNode.Replicas = new(int64)
 		*r.Spec.ControlPlaneNode.Replicas = defaultControlPlaneReplicas
+	}
+	if r.Spec.ControlPlaneNode.Replicas == nil && r.Spec.BootstrapProvider != nil {
+		r.Spec.ControlPlaneNode.Replicas = new(int64)
+		*r.Spec.ControlPlaneNode.Replicas = 3
 	}
 	if r.Spec.WorkerNode.Replicas == nil {
 		r.Spec.WorkerNode.Replicas = new(int64)

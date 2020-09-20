@@ -68,6 +68,7 @@ spec:
               cniName:
                 enum:
                 - calico
+                - provider
                 type: string
               controlPlaneNode:
                 properties:

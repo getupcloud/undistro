@@ -63,12 +63,13 @@ func (c *ControlPlaneProvider) NameVersion() string {
 	return c.Name
 }
 
-// +kubebuilder:validation:Enum=calico
+// +kubebuilder:validation:Enum=calico;provider
 type CNI string
 
 const (
 	CalicoCNI        = CNI("calico")
 	EmptyCNI         = CNI("")
+	ProviderCNI      = CNI("provider")
 	ClusterFinalizer = "getupcloud.com"
 )
 

@@ -334,7 +334,7 @@ func (r *ClusterReconciler) provisioning(ctx context.Context, cl *undistrov1.Clu
 		}
 		return ctrl.Result{}, nil
 	}
-	if capi.Status.ControlPlaneInitialized && !capi.Status.ControlPlaneReady {
+	if capi.Status.ControlPlaneInitialized && !capi.Status.ControlPlaneReady && cl.Spec.CniName != undistrov1.ProviderCNI {
 		if err := r.installCNI(ctx, cl, c); err != nil {
 			return ctrl.Result{}, err
 		}

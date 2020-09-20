@@ -28,8 +28,10 @@ func main() {
 		metricsAddr          string
 		enableLeaderElection bool
 		maxConcurrency       int
+		maxConcurrencyHelm   int
 	)
 	flag.IntVar(&maxConcurrency, "concurrency", 10, "Number of clusters to process simultaneously")
+	flag.IntVar(&maxConcurrencyHelm, "helm-concurrency", 5, "Number of helm releases to process simultaneously")
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
 	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
 		"Enable leader election for controller manager. "+
@@ -66,7 +68,7 @@ func main() {
 		Log:        ctrl.Log.WithName("controllers").WithName("HelmRelease"),
 		Scheme:     mgr.GetScheme(),
 		RestConfig: restCfg,
-	}).SetupWithManager(mgr, concurrency(maxConcurrency)); err != nil {
+	}).SetupWithManager(mgr, concurrency(maxConcurrencyHelm)); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "HelmRelease")
 		os.Exit(1)
 	}
