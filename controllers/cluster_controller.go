@@ -16,9 +16,11 @@ import (
 	"github.com/getupcloud/undistro/client/config"
 	"github.com/getupcloud/undistro/internal/util"
 	"github.com/go-logr/logr"
+	"github.com/google/go-cmp/cmp"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
@@ -121,7 +123,7 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	if cluster.Status.Phase == undistrov1.NewPhase {
+	if cluster.Status.Phase == undistrov1.NewPhase || cluster.Status.Phase == undistrov1.UpgradingPhase {
 		log.Info("ensure mangement cluster is initialized and updated", "name", req.NamespacedName)
 		if err = r.init(ctx, &cluster, undistroClient); err != nil {
 			if client.IgnoreNotFound(err) != nil {
@@ -159,7 +161,31 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		}
 		return res, nil
 	}
+	if r.hasDiff(ctx, &cluster) {
+		cluster.Status.Phase = undistrov1.UpgradingPhase
+		cluster.Status.Ready = false
+		if err = r.Status().Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
+			log.Error(err, "couldn't update status", "name", req.NamespacedName)
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{Requeue: true}, nil
+	}
 	return ctrl.Result{}, nil
+}
+
+func (r *ClusterReconciler) hasDiff(ctx context.Context, cl *undistrov1.Cluster) bool {
+	diffCP := cmp.Diff(cl.Spec.ControlPlaneNode, cl.Status.ControlPlaneNode)
+	diffW := cmp.Diff(cl.Spec.WorkerNode, cl.Status.WorkerNode)
+	switch {
+	case cl.Spec.KubernetesVersion != cl.Status.KubernetesVersion:
+		return true
+	case diffCP != "":
+		return true
+	case diffW != "":
+		return true
+	default:
+		return false
+	}
 }
 
 func (r *ClusterReconciler) delete(ctx context.Context, cl *undistrov1.Cluster) error {
@@ -287,7 +313,18 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 		return err
 	}
 	objs := utilresource.SortForCreate(tpl.Objs())
+	upgrade := false
+	if cl.Status.ClusterAPIRef != nil {
+		upgrade = true
+	}
 	for _, o := range objs {
+		if upgrade {
+			err = r.upgrade(ctx, cl, o)
+			if err != nil {
+				return err
+			}
+			continue
+		}
 		isCluster := false
 		if o.GetKind() == "Cluster" && o.GroupVersionKind().GroupVersion().String() == clusterApi.GroupVersion.String() {
 			isCluster = true
@@ -313,6 +350,20 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 	}
 	cl.Status.Phase = undistrov1.ProvisioningPhase
 	return nil
+}
+
+func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster, o unstructured.Unstructured) error {
+	nm := types.NamespacedName{
+		Name:      o.GetName(),
+		Namespace: o.GetNamespace(),
+	}
+	oldObj := unstructured.Unstructured{}
+	oldObj.SetGroupVersionKind(o.GroupVersionKind())
+	err := r.Get(ctx, nm, &oldObj)
+	if err != nil {
+		return err
+	}
+	return r.Patch(ctx, &oldObj, client.MergeFrom(&o))
 }
 
 func (r *ClusterReconciler) provisioning(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) (ctrl.Result, error) {

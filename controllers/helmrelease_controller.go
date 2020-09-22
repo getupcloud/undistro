@@ -203,6 +203,7 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		}
 		return ctrl.Result{}, err
 	}
+	rollback := false
 	if curRel == nil {
 		log.Info("running instalation")
 		_, err = h.UpgradeFromPath(ch.ChartPath, hr.GetReleaseName(), values, helm.UpgradeOptions{
@@ -215,7 +216,21 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 			Wait:              hr.GetWait(),
 			DisableValidation: false,
 		})
-		if err != nil {
+	} else {
+		log.Info("running upgrade")
+		_, err = h.UpgradeFromPath(ch.ChartPath, hr.GetReleaseName(), values, helm.UpgradeOptions{
+			Namespace:         hr.GetTargetNamespace(),
+			Timeout:           hr.GetTimeout(),
+			Install:           false,
+			Force:             hr.Spec.ForceUpgrade,
+			SkipCRDs:          hr.Spec.SkipCRDs,
+			MaxHistory:        hr.GetMaxHistory(),
+			Wait:              hr.GetWait(),
+			DisableValidation: false,
+		})
+	}
+	if err != nil {
+		if curRel == nil {
 			log.Error(err, "fail to install")
 			hr.Status.Phase = undistrov1.HelmReleasePhaseDeployFailed
 			hr.Status.Revision = ""
@@ -232,12 +247,18 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 			}
 			return ctrl.Result{}, err
 		}
-		status, err := h.Status(hr.GetReleaseName(), helm.StatusOptions{
-			Namespace: hr.GetTargetNamespace(),
+		rollback = true
+		_, err = h.Rollback(hr.GetReleaseName(), helm.RollbackOptions{
+			Namespace:    hr.GetTargetNamespace(),
+			Timeout:      hr.Spec.Rollback.GetTimeout(),
+			Wait:         hr.Spec.Rollback.Wait,
+			DisableHooks: hr.Spec.Rollback.DisableHooks,
+			Recreate:     hr.Spec.Rollback.Recreate,
+			Force:        hr.Spec.Rollback.Force,
 		})
 		if err != nil {
-			log.Error(err, "fail to get status")
-			hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
+			hr.Status.Phase = undistrov1.HelmReleasePhaseRollbackFailed
+			hr.Status.Revision = ""
 			hr.Status.LastAttemptedRevision = ""
 			serr := r.Status().Update(ctx, &hr)
 			if serr != nil {
@@ -251,25 +272,15 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 			}
 			return ctrl.Result{}, err
 		}
-		err = r.execAnnotation(ctx, wClient, &hr, undistrov1.HelmApplyAfter)
-		if err != nil {
-			log.Error(err, "failed to exec annotation", "name", hr.Name, "annotation", undistrov1.HelmApplyAfter)
-			hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
-			serr := r.Status().Update(ctx, &hr)
-			if serr != nil {
-				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
-				return ctrl.Result{}, serr
-			}
-			serr = r.Update(ctx, &hr)
-			if serr != nil {
-				log.Error(serr, "couldn't update status", "name", req.NamespacedName)
-				return ctrl.Result{}, serr
-			}
-			return ctrl.Result{}, err
-		}
-		hr.Status.Phase = undistrov1.HelmReleasePhaseDeployed
-		hr.Status.ReleaseName = hr.GetReleaseName()
-		hr.Status.ReleaseStatus = status.String()
+
+	}
+	status, err := h.Status(hr.GetReleaseName(), helm.StatusOptions{
+		Namespace: hr.GetTargetNamespace(),
+	})
+	if err != nil {
+		log.Error(err, "fail to get status")
+		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
+		hr.Status.LastAttemptedRevision = ""
 		serr := r.Status().Update(ctx, &hr)
 		if serr != nil {
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
@@ -280,6 +291,40 @@ func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
 			return ctrl.Result{}, serr
 		}
+		return ctrl.Result{}, err
+	}
+	err = r.execAnnotation(ctx, wClient, &hr, undistrov1.HelmApplyAfter)
+	if err != nil {
+		log.Error(err, "failed to exec annotation", "name", hr.Name, "annotation", undistrov1.HelmApplyAfter)
+		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
+		serr := r.Status().Update(ctx, &hr)
+		if serr != nil {
+			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+			return ctrl.Result{}, serr
+		}
+		serr = r.Update(ctx, &hr)
+		if serr != nil {
+			log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+			return ctrl.Result{}, serr
+		}
+		return ctrl.Result{}, err
+	}
+	if rollback {
+		hr.Status.Phase = undistrov1.HelmReleasePhaseRolledBack
+	} else {
+		hr.Status.Phase = undistrov1.HelmReleasePhaseDeployed
+	}
+	hr.Status.ReleaseName = hr.GetReleaseName()
+	hr.Status.ReleaseStatus = status.String()
+	serr := r.Status().Update(ctx, &hr)
+	if serr != nil {
+		log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+		return ctrl.Result{}, serr
+	}
+	serr = r.Update(ctx, &hr)
+	if serr != nil {
+		log.Error(serr, "couldn't update status", "name", req.NamespacedName)
+		return ctrl.Result{}, serr
 	}
 	return ctrl.Result{}, nil
 

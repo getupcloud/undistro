@@ -10,4 +10,5 @@ const (
 	FailedPhase       = ClusterPhase("Failed")
 	DeletingPhase     = ClusterPhase("Deleting")
 	DeletedPhase      = ClusterPhase("Deleted")
+	UpgradingPhase    = ClusterPhase("Upgrading")
 )

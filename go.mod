@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
-	github.com/aws/aws-sdk-go v1.34.26
+	github.com/aws/aws-sdk-go v1.34.28
 	github.com/drone/envsubst v1.0.3-0.20200709223903-efdb65b94e5a
 	github.com/go-logr/logr v0.1.0
 	github.com/google/go-cmp v0.5.2
@@ -17,7 +17,7 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.1
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43
-	helm.sh/helm/v3 v3.3.2
+	helm.sh/helm/v3 v3.3.3
 	k8s.io/api v0.18.9
 	k8s.io/apiextensions-apiserver v0.18.9
 	k8s.io/apimachinery v0.18.9
