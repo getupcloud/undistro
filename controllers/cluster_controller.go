@@ -123,7 +123,7 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	if cluster.Status.Phase == undistrov1.NewPhase || cluster.Status.Phase == undistrov1.UpgradingPhase {
+	if cluster.Status.Phase == undistrov1.NewPhase {
 		log.Info("ensure mangement cluster is initialized and updated", "name", req.NamespacedName)
 		if err = r.init(ctx, &cluster, undistroClient); err != nil {
 			if client.IgnoreNotFound(err) != nil {
@@ -161,7 +161,7 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		}
 		return res, nil
 	}
-	if r.hasDiff(ctx, &cluster) {
+	if r.hasDiff(ctx, &cluster) && cluster.Status.Phase != undistrov1.UpgradingPhase {
 		cluster.Status.Phase = undistrov1.UpgradingPhase
 		cluster.Status.Ready = false
 		if err = r.Status().Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
@@ -169,6 +169,9 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 			return ctrl.Result{}, err
 		}
 		return ctrl.Result{Requeue: true}, nil
+	}
+	if r.hasDiff(ctx, &cluster) {
+		return r.upgrade(ctx, &cluster, undistroClient)
 	}
 	return ctrl.Result{}, nil
 }
@@ -313,18 +316,7 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 		return err
 	}
 	objs := utilresource.SortForCreate(tpl.Objs())
-	upgrade := false
-	if cl.Status.ClusterAPIRef != nil {
-		upgrade = true
-	}
 	for _, o := range objs {
-		if upgrade {
-			err = r.upgrade(ctx, cl, o)
-			if err != nil {
-				return err
-			}
-			continue
-		}
 		isCluster := false
 		if o.GetKind() == "Cluster" && o.GroupVersionKind().GroupVersion().String() == clusterApi.GroupVersion.String() {
 			isCluster = true
@@ -352,18 +344,80 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 	return nil
 }
 
-func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster, o unstructured.Unstructured) error {
-	nm := types.NamespacedName{
-		Name:      o.GetName(),
-		Namespace: o.GetNamespace(),
+func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster, uc uclient.Client) (ctrl.Result, error) {
+	if cl.Status.ClusterAPIRef == nil {
+		return ctrl.Result{}, errors.New("cluster API reference is nil")
 	}
-	oldObj := unstructured.Unstructured{}
-	oldObj.SetGroupVersionKind(o.GroupVersionKind())
-	err := r.Get(ctx, nm, &oldObj)
+	capi := clusterApi.Cluster{}
+	nm := types.NamespacedName{
+		Name:      cl.Status.ClusterAPIRef.Name,
+		Namespace: cl.Status.ClusterAPIRef.Namespace,
+	}
+	if err := r.Get(ctx, nm, &capi); err != nil {
+		return ctrl.Result{}, err
+	}
+	cl.Status.KubernetesVersion = cl.Spec.KubernetesVersion
+	cl.Status.WorkerNode = cl.Spec.WorkerNode
+	cl.Status.ControlPlaneNode = cl.Spec.ControlPlaneNode
+	cl.Status.InfrastructureName = cl.Spec.InfrastructureProvider.Name
+	if err := r.Status().Update(ctx, cl); err != nil {
+		return ctrl.Result{}, err
+	}
+	return ctrl.Result{}, r.upgradeObjs(ctx, cl, &capi, uc)
+}
+
+func (r *ClusterReconciler) upgradeObjs(ctx context.Context, cl *undistrov1.Cluster, capi *clusterApi.Cluster, uc uclient.Client) error {
+	log := r.Log
+	p, err := uclient.GetProvider(uc, cl.Spec.InfrastructureProvider.Name, undistrov1.InfrastructureProviderType)
 	if err != nil {
 		return err
 	}
-	return r.Patch(ctx, &oldObj, client.MergeFrom(&o))
+	upgradeFunc := p.GetUpgradeFunc()
+	if upgradeFunc != nil {
+		log.Info("executing upgrade func", "component", p.Name())
+		err = upgradeFunc(ctx, cl, capi, r.Client)
+		if err != nil {
+			return err
+		}
+	} else {
+		o := unstructured.Unstructured{}
+		o.SetGroupVersionKind(capi.Spec.ControlPlaneRef.GroupVersionKind())
+		nm := types.NamespacedName{
+			Name:      capi.Spec.ControlPlaneRef.Name,
+			Namespace: capi.Spec.ControlPlaneRef.Namespace,
+		}
+		err := r.Get(ctx, nm, &o)
+		if err != nil {
+			return err
+		}
+		err = unstructured.SetNestedField(o.Object, cl.Spec.KubernetesVersion, "spec", "version")
+		if err != nil {
+			return err
+		}
+		err = unstructured.SetNestedField(o.Object, cl.Spec.ControlPlaneNode.Replicas, "spec", "replicas")
+		if err != nil {
+			return err
+		}
+		o.SetResourceVersion(capi.Spec.ControlPlaneRef.ResourceVersion)
+		err = r.Update(ctx, &o)
+		if err != nil {
+			return err
+		}
+	}
+	// upgrade worker nodes
+	md := clusterApi.MachineDeployment{}
+	nm := types.NamespacedName{
+		Name:      fmt.Sprintf("%s-md-0", cl.Name),
+		Namespace: cl.Namespace,
+	}
+	err = r.Get(ctx, nm, &md)
+	if err != nil {
+		return err
+	}
+	md.Spec.Template.Spec.Version = &cl.Spec.KubernetesVersion
+	workerReplicas := int32(*cl.Spec.WorkerNode.Replicas)
+	md.Spec.Replicas = &workerReplicas
+	return r.Update(ctx, &md)
 }
 
 func (r *ClusterReconciler) provisioning(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) (ctrl.Result, error) {
@@ -496,6 +550,9 @@ func (r *ClusterReconciler) capiToUndistro(o handler.MapObject) []ctrl.Request {
 		if client.IgnoreNotFound(err) != nil {
 			r.Log.Error(err, "couldn't get undistro cluster")
 		}
+		return nil
+	}
+	if uc.Status.Phase == undistrov1.ClusterPhase(c.Status.Phase) {
 		return nil
 	}
 	uc.Status.Phase = undistrov1.ClusterPhase(c.Status.Phase)

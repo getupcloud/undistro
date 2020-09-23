@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	clusterApi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -42,11 +43,16 @@ type Provider interface {
 
 	// GetPreConfigFunc return preConfigFunc
 	GetPreConfigFunc() PreConfigFunc
+
+	// GetUpgradeFunc return UpgradeFunc
+	GetUpgradeFunc() UpgradeFunc
 }
 
 type InitFunc func(Client, bool) error
 
 type PreConfigFunc func(context.Context, *undistrov1.Cluster, VariablesClient, client.Client) error
+
+type UpgradeFunc func(context.Context, *undistrov1.Cluster, *clusterApi.Cluster, client.Client) error
 
 // provider implements provider
 type provider struct {
@@ -55,6 +61,7 @@ type provider struct {
 	providerType  undistrov1.ProviderType
 	initFunc      InitFunc
 	preConfigFunc PreConfigFunc
+	upgradeFunc   UpgradeFunc
 }
 
 // ensure provider implements provider
@@ -91,6 +98,10 @@ func (p *provider) GetInitFunc() InitFunc {
 
 func (p *provider) GetPreConfigFunc() PreConfigFunc {
 	return p.preConfigFunc
+}
+
+func (p *provider) GetUpgradeFunc() UpgradeFunc {
+	return p.upgradeFunc
 }
 
 func NewProvider(name string, url string, ttype undistrov1.ProviderType, initFunc InitFunc, preConfigFunc PreConfigFunc) Provider {

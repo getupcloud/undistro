@@ -4,11 +4,12 @@ go 1.13
 
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
-	github.com/aws/aws-sdk-go v1.34.28
+	github.com/aws/aws-sdk-go v1.34.26
 	github.com/drone/envsubst v1.0.3-0.20200709223903-efdb65b94e5a
 	github.com/go-logr/logr v0.1.0
 	github.com/google/go-cmp v0.5.2
 	github.com/google/go-github/v32 v32.1.0
+	github.com/google/uuid v1.1.1
 	github.com/gophercloud/gophercloud v0.12.0 // indirect
 	github.com/ncabatoff/go-seq v0.0.0-20180805175032-b08ef85ed833
 	github.com/onsi/ginkgo v1.14.1
