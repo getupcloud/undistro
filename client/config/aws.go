@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	cfn "github.com/aws/aws-sdk-go/service/cloudformation"
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	"github.com/getupcloud/undistro/internal/scheme"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -25,6 +26,7 @@ import (
 	cloudformation "sigs.k8s.io/cluster-api-provider-aws/cmd/clusterawsadm/cloudformation/service"
 	clusterApi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	kubeadmApi "sigs.k8s.io/cluster-api/controlplane/kubeadm/api/v1alpha3"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -208,18 +210,16 @@ func awsUpgrade(ctx context.Context, cl *undistrov1.Cluster, capi *clusterApi.Cl
 			Spec: tmpl.Spec,
 		}
 		newTmpl.Spec.Template.Spec.AMI = awsApi.AWSResourceReference{}
+		err = ctrl.SetControllerReference(cl, &newTmpl, scheme.Scheme)
+		if err != nil {
+			return errors.Errorf("couldn't set reference: %v", err)
+		}
 		err = c.Create(ctx, &newTmpl)
 		if err != nil {
 			return err
 		}
-		kubeadmCP.Spec.InfrastructureTemplate = corev1.ObjectReference{
-			Kind:            newTmpl.Kind,
-			Namespace:       newTmpl.Namespace,
-			Name:            newTmpl.Name,
-			UID:             newTmpl.UID,
-			APIVersion:      newTmpl.APIVersion,
-			ResourceVersion: newTmpl.ResourceVersion,
-		}
+		kubeadmCP.Spec.InfrastructureTemplate.Name = newTmpl.Name
+		kubeadmCP.Spec.InfrastructureTemplate.Namespace = newTmpl.Namespace
 		kubeadmCP.Spec.Version = cl.Spec.KubernetesVersion
 		replicas := int32(*cl.Spec.ControlPlaneNode.Replicas)
 		kubeadmCP.Spec.Replicas = &replicas

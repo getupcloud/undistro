@@ -163,15 +163,6 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		}
 		return res, nil
 	}
-	if r.hasDiff(ctx, &cluster) && cluster.Status.Phase != undistrov1.UpgradingPhase {
-		cluster.Status.Phase = undistrov1.UpgradingPhase
-		cluster.Status.Ready = false
-		if err = r.Status().Update(ctx, &cluster); client.IgnoreNotFound(err) != nil {
-			log.Error(err, "couldn't update status", "name", req.NamespacedName)
-			return ctrl.Result{}, err
-		}
-		return ctrl.Result{Requeue: true}, nil
-	}
 	if r.hasDiff(ctx, &cluster) {
 		return r.upgrade(ctx, &cluster, undistroClient)
 	}
@@ -366,6 +357,9 @@ func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster,
 	if err := r.Status().Update(ctx, cl); err != nil {
 		return ctrl.Result{}, err
 	}
+	if cl.Namespace == "" {
+		cl.Namespace = "default"
+	}
 	switch {
 	case actual.KubernetesVersion != cl.Spec.KubernetesVersion,
 		actual.ControlPlaneNode.Replicas != cl.Spec.ControlPlaneNode.Replicas,
@@ -405,18 +399,13 @@ func (r *ClusterReconciler) upgradeInstance(ctx context.Context, cl *undistrov1.
 		if err != nil {
 			return err
 		}
+
 		err = r.Create(ctx, newObj)
 		if err != nil {
 			return err
 		}
-		kubeadmCP.Spec.InfrastructureTemplate = corev1.ObjectReference{
-			Kind:            newObj.GetKind(),
-			Namespace:       newObj.GetNamespace(),
-			Name:            newObj.GetName(),
-			UID:             newObj.GetUID(),
-			APIVersion:      newObj.GetAPIVersion(),
-			ResourceVersion: newObj.GetResourceVersion(),
-		}
+		kubeadmCP.Spec.InfrastructureTemplate.Name = newObj.GetName()
+		kubeadmCP.Spec.InfrastructureTemplate.Namespace = newObj.GetNamespace()
 		return r.Update(ctx, &kubeadmCP)
 	case actual.WorkerNode.MachineType != cl.Spec.WorkerNode.MachineType:
 		md := clusterApi.MachineDeployment{}
@@ -443,18 +432,16 @@ func (r *ClusterReconciler) upgradeInstance(ctx context.Context, cl *undistrov1.
 		if err != nil {
 			return err
 		}
+		err = ctrl.SetControllerReference(cl, newObj, r.Scheme)
+		if err != nil {
+			return errors.Errorf("couldn't set reference: %v", err)
+		}
 		err = r.Create(ctx, newObj)
 		if err != nil {
 			return err
 		}
-		md.Spec.Template.Spec.InfrastructureRef = corev1.ObjectReference{
-			Kind:            newObj.GetKind(),
-			Namespace:       newObj.GetNamespace(),
-			Name:            newObj.GetName(),
-			UID:             newObj.GetUID(),
-			APIVersion:      newObj.GetAPIVersion(),
-			ResourceVersion: newObj.GetResourceVersion(),
-		}
+		md.Spec.Template.Spec.InfrastructureRef.Name = newObj.GetName()
+		md.Spec.Template.Spec.InfrastructureRef.Namespace = newObj.GetNamespace()
 		return r.Update(ctx, &md)
 	}
 	return nil
