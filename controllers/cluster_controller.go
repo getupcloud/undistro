@@ -17,6 +17,7 @@ import (
 	"github.com/getupcloud/undistro/internal/util"
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -25,6 +26,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
 	clusterApi "sigs.k8s.io/cluster-api/api/v1alpha3"
+	kubeadmApi "sigs.k8s.io/cluster-api/controlplane/kubeadm/api/v1alpha3"
 	utilresource "sigs.k8s.io/cluster-api/util/resource"
 	"sigs.k8s.io/cluster-api/util/yaml"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -356,6 +358,7 @@ func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster,
 	if err := r.Get(ctx, nm, &capi); err != nil {
 		return ctrl.Result{}, err
 	}
+	actual := cl.Status.DeepCopy()
 	cl.Status.KubernetesVersion = cl.Spec.KubernetesVersion
 	cl.Status.WorkerNode = cl.Spec.WorkerNode
 	cl.Status.ControlPlaneNode = cl.Spec.ControlPlaneNode
@@ -363,10 +366,101 @@ func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster,
 	if err := r.Status().Update(ctx, cl); err != nil {
 		return ctrl.Result{}, err
 	}
-	return ctrl.Result{}, r.upgradeObjs(ctx, cl, &capi, uc)
+	switch {
+	case actual.KubernetesVersion != cl.Spec.KubernetesVersion,
+		actual.ControlPlaneNode.Replicas != cl.Spec.ControlPlaneNode.Replicas,
+		actual.WorkerNode.Replicas != cl.Spec.WorkerNode.Replicas:
+		return ctrl.Result{}, r.upgradeRefs(ctx, cl, &capi, uc)
+	case actual.ControlPlaneNode.MachineType != cl.Spec.ControlPlaneNode.MachineType,
+		actual.WorkerNode.MachineType != cl.Spec.WorkerNode.MachineType:
+		return ctrl.Result{}, r.upgradeInstance(ctx, cl, &capi, actual)
+	}
+	return ctrl.Result{}, nil
 }
 
-func (r *ClusterReconciler) upgradeObjs(ctx context.Context, cl *undistrov1.Cluster, capi *clusterApi.Cluster, uc uclient.Client) error {
+func (r *ClusterReconciler) upgradeInstance(ctx context.Context, cl *undistrov1.Cluster, capi *clusterApi.Cluster, actual *undistrov1.ClusterStatus) error {
+	switch {
+	case actual.ControlPlaneNode.MachineType != cl.Spec.ControlPlaneNode.MachineType:
+		nm := types.NamespacedName{
+			Name:      capi.Spec.ControlPlaneRef.Name,
+			Namespace: capi.Spec.ControlPlaneRef.Namespace,
+		}
+		kubeadmCP := kubeadmApi.KubeadmControlPlane{}
+		err := r.Get(ctx, nm, &kubeadmCP)
+		if err != nil {
+			return err
+		}
+		nm.Name = kubeadmCP.Spec.InfrastructureTemplate.Name
+		nm.Namespace = kubeadmCP.Spec.InfrastructureTemplate.Namespace
+		o := unstructured.Unstructured{}
+		o.SetGroupVersionKind(kubeadmCP.Spec.InfrastructureTemplate.GroupVersionKind())
+		err = r.Get(ctx, nm, &o)
+		if err != nil {
+			return err
+		}
+		newObj := o.DeepCopy()
+		newObj.SetName(fmt.Sprintf("%s-control-plane-%s", cl.Name, uuid.New().String()))
+		newObj.SetNamespace(cl.Namespace)
+		err = unstructured.SetNestedField(newObj.Object, cl.Spec.ControlPlaneNode.MachineType, "spec", "template", "spec", "instanceType")
+		if err != nil {
+			return err
+		}
+		err = r.Create(ctx, newObj)
+		if err != nil {
+			return err
+		}
+		kubeadmCP.Spec.InfrastructureTemplate = corev1.ObjectReference{
+			Kind:            newObj.GetKind(),
+			Namespace:       newObj.GetNamespace(),
+			Name:            newObj.GetName(),
+			UID:             newObj.GetUID(),
+			APIVersion:      newObj.GetAPIVersion(),
+			ResourceVersion: newObj.GetResourceVersion(),
+		}
+		return r.Update(ctx, &kubeadmCP)
+	case actual.WorkerNode.MachineType != cl.Spec.WorkerNode.MachineType:
+		md := clusterApi.MachineDeployment{}
+		nm := types.NamespacedName{
+			Name:      fmt.Sprintf("%s-md-0", cl.Name),
+			Namespace: cl.Namespace,
+		}
+		err := r.Get(ctx, nm, &md)
+		if err != nil {
+			return err
+		}
+		nm.Name = md.Spec.Template.Spec.InfrastructureRef.Name
+		nm.Namespace = md.Spec.Template.Spec.InfrastructureRef.Namespace
+		o := unstructured.Unstructured{}
+		o.SetGroupVersionKind(md.Spec.Template.Spec.InfrastructureRef.GroupVersionKind())
+		err = r.Get(ctx, nm, &o)
+		if err != nil {
+			return err
+		}
+		newObj := o.DeepCopy()
+		newObj.SetName(fmt.Sprintf("%s-md-0-%s", cl.Name, uuid.New().String()))
+		newObj.SetNamespace(cl.Namespace)
+		err = unstructured.SetNestedField(newObj.Object, cl.Spec.WorkerNode.MachineType, "spec", "template", "spec", "instanceType")
+		if err != nil {
+			return err
+		}
+		err = r.Create(ctx, newObj)
+		if err != nil {
+			return err
+		}
+		md.Spec.Template.Spec.InfrastructureRef = corev1.ObjectReference{
+			Kind:            newObj.GetKind(),
+			Namespace:       newObj.GetNamespace(),
+			Name:            newObj.GetName(),
+			UID:             newObj.GetUID(),
+			APIVersion:      newObj.GetAPIVersion(),
+			ResourceVersion: newObj.GetResourceVersion(),
+		}
+		return r.Update(ctx, &md)
+	}
+	return nil
+}
+
+func (r *ClusterReconciler) upgradeRefs(ctx context.Context, cl *undistrov1.Cluster, capi *clusterApi.Cluster, uc uclient.Client) error {
 	log := r.Log
 	p, err := uclient.GetProvider(uc, cl.Spec.InfrastructureProvider.Name, undistrov1.InfrastructureProviderType)
 	if err != nil {
