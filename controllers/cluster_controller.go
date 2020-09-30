@@ -5,6 +5,7 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package controllers
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io/ioutil"
@@ -15,6 +16,7 @@ import (
 	uclient "github.com/getupcloud/undistro/client"
 	"github.com/getupcloud/undistro/client/config"
 	"github.com/getupcloud/undistro/internal/patch"
+	"github.com/getupcloud/undistro/internal/template"
 	"github.com/getupcloud/undistro/internal/util"
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp"
@@ -121,7 +123,7 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (res ctrl.Result, err er
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	err = config.TrySetCustomTemplates(&cluster, undistroClient.GetVariables())
+	opts, err := config.SetupTemplates(&cluster, undistroClient.GetVariables())
 	if err != nil {
 		return ctrl.Result{}, err
 	}
@@ -138,7 +140,7 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (res ctrl.Result, err er
 	}
 	if cluster.Status.Phase == undistrov1.InitializedPhase {
 		log.Info("generanting cluster-api configuration", "name", req.NamespacedName)
-		if err = r.config(ctx, &cluster, undistroClient); err != nil {
+		if err = r.config(ctx, &cluster, opts, undistroClient); err != nil {
 			if client.IgnoreNotFound(err) != nil {
 				log.Error(err, "couldn't install cluster config", "name", req.NamespacedName)
 				return ctrl.Result{}, err
@@ -257,7 +259,7 @@ func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c 
 	return nil
 }
 
-func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {
+func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, opts template.Options, c uclient.Client) error {
 	log := r.Log
 	for _, ic := range cl.Status.InstalledComponents {
 		comp, err := uclient.GetProvider(c, ic.Name, ic.Type)
@@ -273,33 +275,20 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 			}
 		}
 	}
-	opts := uclient.GetClusterTemplateOptions{
-		Kubeconfig: uclient.Kubeconfig{
-			RestConfig: r.RestConfig,
-		},
-		ClusterName:              cl.Name,
-		TargetNamespace:          cl.Namespace,
-		ListVariablesOnly:        false,
-		KubernetesVersion:        cl.Spec.KubernetesVersion,
-		ControlPlaneMachineCount: cl.Spec.ControlPlaneNode.Replicas,
-		WorkerMachineCount:       cl.Spec.WorkerNode.Replicas,
+	tpl := template.New(opts)
+	buff := bytes.Buffer{}
+	vars := map[string]interface{}{
+		"Cluster": *cl,
 	}
-	if cl.Spec.Template != nil {
-		opts.URLSource = &uclient.URLSourceOptions{
-			URL: *cl.Spec.Template,
-		}
-	}
-	if cl.Spec.BootstrapProvider != nil && cl.Spec.Template == nil {
-		opts.ProviderRepositorySource = &uclient.ProviderRepositorySourceOptions{
-			InfrastructureProvider: cl.Spec.InfrastructureProvider.Name,
-			Flavor:                 cl.Spec.BootstrapProvider.Name,
-		}
-	}
-	tpl, err := c.GetClusterTemplate(opts)
+	err := tpl.YAML(&buff, cl.Spec.InfrastructureProvider.Name, vars)
 	if err != nil {
 		return err
 	}
-	objs := utilresource.SortForCreate(tpl.Objs())
+	objs, err := yaml.ToUnstructured(buff.Bytes())
+	if err != nil {
+		return err
+	}
+	objs = utilresource.SortForCreate(objs)
 	for _, o := range objs {
 		isCluster := false
 		if o.GetKind() == "Cluster" && o.GroupVersionKind().GroupVersion().String() == clusterApi.GroupVersion.String() {

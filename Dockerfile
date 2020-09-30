@@ -26,6 +26,7 @@ RUN mkdir -p /home/.aws
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
 FROM gcr.io/distroless/static:nonroot
 COPY --from=builder --chown=nonroot:nonroot /app /app
+COPY --from=builder --chown=nonroot:nonroot /workspace/clustertemplates /app/clustertemplates
 COPY --from=builder --chown=nonroot:nonroot /home/.aws /home/.aws
 COPY --from=builder /go/bin/aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
 COPY --from=builder /workspace/manager /app/manager

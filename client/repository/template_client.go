@@ -7,6 +7,7 @@ package repository
 import (
 	"github.com/getupcloud/undistro/client/config"
 	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
+	logf "github.com/getupcloud/undistro/log"
 	"github.com/pkg/errors"
 )
 
@@ -52,6 +53,7 @@ func newTemplateClient(input TemplateClientInput) *templateClient {
 // In case the template does not exists, an error is returned.
 // Get assumes the following naming convention for templates: cluster-template[-<flavor_name>].yaml
 func (c *templateClient) Get(flavor, targetNamespace string, listVariablesOnly bool) (Template, error) {
+	log := logf.Log
 	if targetNamespace == "" {
 		return nil, errors.New("invalid arguments: please provide a targetNamespace")
 	}
@@ -68,6 +70,16 @@ func (c *templateClient) Get(flavor, targetNamespace string, listVariablesOnly b
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if rawArtifact == nil {
+		log.V(5).Info("Fetching", "File", name, "Provider", c.provider.ManifestLabel(), "Version", version)
+		rawArtifact, err = c.repository.GetFile(version, name)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to read %q from provider's repository %q", name, c.provider.ManifestLabel())
+		}
+	} else {
+		log.V(1).Info("Using", "Override", name, "Provider", c.provider.ManifestLabel(), "Version", version)
 	}
 
 	return NewTemplate(TemplateInput{rawArtifact, c.configVariablesClient, c.processor, targetNamespace, listVariablesOnly})

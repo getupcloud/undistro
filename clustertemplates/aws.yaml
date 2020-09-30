@@ -1,0 +1,5 @@
+{{if .Cluster.IsManaged}}
+{{template "aws/eks" .}}
+{{else}}
+{{template "aws/default" .}}
+{{end}}

@@ -133,6 +133,10 @@ func (c *Cluster) GetCNITemplateURL() string {
 	return cniMapAddr[c.Spec.CniName]
 }
 
+func (c *Cluster) IsManaged() bool {
+	return c.Spec.BootstrapProvider != nil && c.Spec.ControlPlaneProvider != nil
+}
+
 // +kubebuilder:object:root=true
 
 // ClusterList contains a list of Cluster

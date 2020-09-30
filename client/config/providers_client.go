@@ -5,11 +5,16 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package config
 
 import (
+	"fmt"
+	"io/ioutil"
+	"net/http"
 	"net/url"
 	"sort"
 	"strings"
+	gotemplate "text/template"
 
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	"github.com/getupcloud/undistro/internal/template"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/validation"
 	"sigs.k8s.io/yaml"
@@ -160,7 +165,19 @@ type configProvider struct {
 	Type undistrov1.ProviderType `json:"type,omitempty"`
 }
 
-func TrySetCustomTemplates(cl *undistrov1.Cluster, v VariablesClient) error {
+func SetupTemplates(cl *undistrov1.Cluster, v VariablesClient) (template.Options, error) {
+	variable := func(vr string) string {
+		s, err := v.Get(vr)
+		if err != nil {
+			return ""
+		}
+		return s
+	}
+	opts := template.Options{
+		Funcs: []gotemplate.FuncMap{{
+			"variable": variable,
+		}},
+	}
 	pvs := make([]configProvider, 0)
 	if cl.Spec.InfrastructureProvider.File != nil {
 		pvs = append(pvs, configProvider{
@@ -190,11 +207,37 @@ func TrySetCustomTemplates(cl *undistrov1.Cluster, v VariablesClient) error {
 	if len(pvs) > 0 {
 		byt, err := yaml.Marshal(pvs)
 		if err != nil {
-			return err
+			return opts, err
 		}
 		v.Set(ProvidersConfigKey, string(byt))
 	}
-	return nil
+	if cl.Spec.Template != nil {
+		res, err := http.Get(*cl.Spec.Template)
+		if err != nil {
+			return opts, err
+		}
+		if res.StatusCode != http.StatusOK {
+			return opts, errors.Errorf("bad response code sended by %s: %d", *cl.Spec.Template, res.StatusCode)
+		}
+		byt, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return opts, err
+		}
+		defer res.Body.Close()
+		name := fmt.Sprintf("clustertemplates/%s.yaml", cl.Spec.InfrastructureProvider.Name)
+		opts.Asset = func(file string) ([]byte, error) {
+			switch file {
+			case name:
+				return byt, nil
+			default:
+				return nil, errors.Errorf("file not found: %s", file)
+			}
+		}
+		opts.AssetNames = func() []string {
+			return []string{name}
+		}
+	}
+	return opts, nil
 }
 
 func (p *providersClient) List() ([]Provider, error) {
