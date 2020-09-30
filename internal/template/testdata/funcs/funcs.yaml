@@ -1,0 +1,2 @@
+testfunc: test-{{func}}
+testdefault: test-{{env "TEST_ENV"}}

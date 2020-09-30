@@ -65,7 +65,7 @@ help:  ## Display this help
 
 .PHONY: test
 test: ## Run tests
-	source ./scripts/fetch_ext_bins.sh; fetch_tools; setup_envs; go test -v ./... $(TEST_ARGS)
+	source ./scripts/fetch_ext_bins.sh; fetch_tools; setup_envs; go test -race -v ./... $(TEST_ARGS)
 
 .PHONY: test-cover
 test-cover: ## Run tests with code coverage and code generate reports
