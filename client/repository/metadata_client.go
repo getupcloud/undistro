@@ -75,11 +75,9 @@ func (f *metadataClient) Get() (*undistrov1.Metadata, error) {
 		if err != nil {
 			return nil, err
 		}
-		for _, o := range objs {
-			if !strings.Contains(o.GetAPIVersion(), "getupcloud.com") {
-				if obj := f.getEmbeddedMetadata(); obj != nil {
-					return obj, nil
-				}
+		for index := range objs {
+			if !strings.Contains(objs[index].GetAPIVersion(), "getupcloud.com") {
+				objs[index].SetAPIVersion("getupcloud.com")
 			}
 		}
 	} else {
