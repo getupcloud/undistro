@@ -1,4 +1,5 @@
-{{if .Cluster.IsManaged}}
+{{$managed := .IsManaged}}
+{{if $managed}}
 {{template "aws/eks" .}}
 {{else}}
 {{template "aws/default" .}}

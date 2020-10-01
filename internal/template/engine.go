@@ -1,11 +1,10 @@
 package template
 
 import (
-	"bufio"
 	"io"
 	"text/template"
 
-	"k8s.io/apimachinery/pkg/util/yaml"
+	"sigs.k8s.io/yaml"
 )
 
 // Engine is the generic interface for all responses.
@@ -27,11 +26,11 @@ func (y YAML) Render(w io.Writer, binding interface{}) error {
 	if err != nil {
 		return err
 	}
-	b, err := yaml.NewYAMLReader(bufio.NewReader(out)).Read()
+	_, err = yaml.YAMLToJSON(out.Bytes())
 	if err != nil {
 		return err
 	}
-	_, err = w.Write(b)
+	_, err = out.WriteTo(w)
 	if err != nil {
 		return err
 	}

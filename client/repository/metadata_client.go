@@ -16,6 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"sigs.k8s.io/cluster-api/util/yaml"
+	apiyaml "sigs.k8s.io/yaml"
 )
 
 // MetadataClient has methods to work with metadata hosted on a provider repository.
@@ -75,9 +76,13 @@ func (f *metadataClient) Get() (*undistrov1.Metadata, error) {
 		if err != nil {
 			return nil, err
 		}
-		for index := range objs {
-			if !strings.Contains(objs[index].GetAPIVersion(), "getupcloud.com") {
-				objs[index].SetAPIVersion("getupcloud.com")
+		for _, o := range objs {
+			if !strings.Contains(o.GetAPIVersion(), "getupcloud.com") {
+				o.SetAPIVersion(undistrov1.GroupVersion.String())
+				file, err = apiyaml.Marshal(o.Object)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 	} else {

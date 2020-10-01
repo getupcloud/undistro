@@ -28,8 +28,9 @@ local_resource('recompile', generate() + binary(), deps=['controllers', 'client'
 docker_build_with_restart(IMG, '.', 
  dockerfile='tilt.docker',
  entrypoint='/app/manager',
- only=['./bin/manager'],
+ only=['./bin/manager', './clustertemplates'],
  live_update=[
        sync('./bin/manager', '/app/manager'),
+       sync('./clustertemplates', '/app/clustertemplates'),
    ]
 )

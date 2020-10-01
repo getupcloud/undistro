@@ -133,7 +133,7 @@ func (c *Cluster) GetCNITemplateURL() string {
 	return cniMapAddr[c.Spec.CniName]
 }
 
-func (c *Cluster) IsManaged() bool {
+func (c Cluster) IsManaged() bool {
 	return c.Spec.BootstrapProvider != nil && c.Spec.ControlPlaneProvider != nil
 }
 

@@ -44,7 +44,15 @@ func TestRender(t *testing.T) {
 			directory: "testdata/basic",
 			fileName:  "hello",
 			wantErr:   false,
-			out:       "hello: test-k8s\n",
+			out:       "hello: test-k8s",
+			values:    "k8s",
+		},
+		{
+			name:      "valid import",
+			directory: "testdata/basic",
+			fileName:  "import",
+			wantErr:   false,
+			out:       "hello: test-k8s\nadmin: test-k8s",
 			values:    "k8s",
 		},
 		{
@@ -52,7 +60,7 @@ func TestRender(t *testing.T) {
 			directory: "testdata/funcs",
 			fileName:  "funcs",
 			wantErr:   false,
-			out:       "testfunc: test-TEST\ntestdefault: test-env\n",
+			out:       "testfunc: test-TEST\ntestdefault: test-env",
 			funcs:     []template.FuncMap{{"func": upperTest}},
 		},
 		{
@@ -60,14 +68,14 @@ func TestRender(t *testing.T) {
 			directory: "testdata/basic",
 			fileName:  "funcs-default",
 			wantErr:   false,
-			out:       "testdefault: test-env\n",
+			out:       "testdefault: test-env",
 		},
 		{
 			name:      "nested",
 			directory: "testdata/basic",
 			fileName:  "admin/admin",
 			wantErr:   false,
-			out:       "admin: test-k8s\n",
+			out:       "admin: test-k8s",
 			values:    "k8s",
 		},
 	}
@@ -108,7 +116,7 @@ func TestFromAssets(t *testing.T) {
 	buff := bytes.Buffer{}
 	err := render.YAML(&buff, "test", nil)
 	g.Expect(err).ToNot(HaveOccurred())
-	g.Expect(buff.String()).To(Equal("testassets: test\n"))
+	g.Expect(buff.String()).To(Equal("testassets: test"))
 }
 
 func TestRace(t *testing.T) {
@@ -121,7 +129,7 @@ func TestRace(t *testing.T) {
 		buff := bytes.Buffer{}
 		err := render.YAML(&buff, "hello", "k8s")
 		g.Expect(err).ToNot(HaveOccurred())
-		g.Expect(buff.String()).To(Equal("hello: test-k8s\n"))
+		g.Expect(buff.String()).To(Equal("hello: test-k8s"))
 		done <- struct{}{}
 	}
 	go req()

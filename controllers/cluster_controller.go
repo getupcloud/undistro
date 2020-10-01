@@ -277,10 +277,11 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 	}
 	tpl := template.New(opts)
 	buff := bytes.Buffer{}
-	vars := map[string]interface{}{
-		"Cluster": *cl,
+	tplCluster := cl.DeepCopy()
+	if tplCluster.Namespace == "" {
+		tplCluster.Namespace = "default"
 	}
-	err := tpl.YAML(&buff, cl.Spec.InfrastructureProvider.Name, vars)
+	err := tpl.YAML(&buff, cl.Spec.InfrastructureProvider.Name, *tplCluster)
 	if err != nil {
 		return err
 	}
@@ -298,7 +299,7 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 				return errors.Errorf("couldn't set reference: %v", err)
 			}
 		}
-		err = r.Patch(ctx, &o, client.Apply, client.FieldOwner("undistro"))
+		err = r.Create(ctx, &o)
 		if err != nil {
 			return err
 		}

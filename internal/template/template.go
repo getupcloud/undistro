@@ -140,7 +140,7 @@ func (r *Render) compileTemplatesFromDir() {
 		if ext == extension {
 			buf, err := ioutil.ReadFile(path)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			name := (rel[0 : len(rel)-len(ext)])
