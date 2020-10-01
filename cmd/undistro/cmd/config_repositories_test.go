@@ -93,6 +93,7 @@ another-provider    BootstrapProvider        ./                                 
 eks                 BootstrapProvider        https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/                 eks-bootstrap-components.yaml
 kubeadm             BootstrapProvider        https://github.com/kubernetes-sigs/cluster-api/releases/latest/                              bootstrap-components.yaml
 talos               BootstrapProvider        https://github.com/talos-systems/cluster-api-bootstrap-provider-talos/releases/latest/       bootstrap-components.yaml
+eks                 ControlPlaneProvider     https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/                 eks-controlplane-components.yaml
 kubeadm             ControlPlaneProvider     https://github.com/kubernetes-sigs/cluster-api/releases/latest/                              control-plane-components.yaml
 talos               ControlPlaneProvider     https://github.com/talos-systems/cluster-api-control-plane-provider-talos/releases/latest/   control-plane-components.yaml
 aws                 InfrastructureProvider                                                                                                my-aws-infrastructure-components.yaml
@@ -128,6 +129,10 @@ var expectedOutputYaml = `- File: core_components.yaml
   Name: talos
   ProviderType: BootstrapProvider
   URL: https://github.com/talos-systems/cluster-api-bootstrap-provider-talos/releases/latest/
+- File: eks-controlplane-components.yaml
+  Name: eks
+  ProviderType: ControlPlaneProvider
+  URL: https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/
 - File: control-plane-components.yaml
   Name: kubeadm
   ProviderType: ControlPlaneProvider

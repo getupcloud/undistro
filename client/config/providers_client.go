@@ -41,6 +41,7 @@ const (
 	// ControlPlane providers
 	KubeadmControlPlaneProviderName = "kubeadm"
 	TalosControlPlaneProviderName   = "talos"
+	EKSControlPlaneProviderName     = "eks"
 
 	// Other
 	ProvidersConfigKey = "providers"
@@ -151,6 +152,11 @@ func (p *providersClient) defaults() []Provider {
 		&provider{
 			name:         TalosControlPlaneProviderName,
 			url:          "https://github.com/talos-systems/cluster-api-control-plane-provider-talos/releases/latest/control-plane-components.yaml",
+			providerType: undistrov1.ControlPlaneProviderType,
+		},
+		&provider{
+			name:         EKSControlPlaneProviderName,
+			url:          "https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/eks-controlplane-components.yaml",
 			providerType: undistrov1.ControlPlaneProviderType,
 		},
 	}

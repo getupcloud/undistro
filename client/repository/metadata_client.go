@@ -215,6 +215,17 @@ func (f *metadataClient) getEmbeddedMetadata() *undistrov1.Metadata {
 					// there are no older version for Talos controlplane
 				},
 			}
+		case config.EKSControlPlaneProviderName:
+			return &undistrov1.Metadata{
+				TypeMeta: metav1.TypeMeta{
+					APIVersion: undistrov1.GroupVersion.String(),
+					Kind:       "Metadata",
+				},
+				ReleaseSeries: []undistrov1.ReleaseSeries{
+					// v1alpha3 release series
+					{Major: 0, Minor: 6, Contract: "v1alpha3"},
+				},
+			}
 		default:
 			return nil
 		}
