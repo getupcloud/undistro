@@ -16,6 +16,7 @@ type Node struct {
 	Replicas *int64 `json:"replicas,omitempty"`
 	// +kubebuilder:validation:MinLength=1
 	MachineType string `json:"machineType,omitempty"`
+	Subnet      string `json:"subnet,omitempty"`
 }
 
 type InfrastructureProvider struct {
@@ -88,6 +89,12 @@ type ClusterSpec struct {
 	ControlPlaneNode       Node                   `json:"controlPlaneNode,omitempty"`
 	WorkerNode             Node                   `json:"workerNode,omitempty"`
 	CniName                CNI                    `json:"cniName,omitempty"`
+	Network                *Network               `json:"network,omitempty"`
+}
+
+type Network struct {
+	VPC     string   `json:"vpc,omitempty"`
+	Subnets []string `json:"subnets,omitempty"`
 }
 
 type InstalledComponent struct {

@@ -35,6 +35,16 @@ spec:
   sshKeyName: "{{.Spec.InfrastructureProvider.SSHKey}}"
   region: '{{variable "AWS_REGION"}}'
   version: "{{.Spec.KubernetesVersion}}"
+  {{if .Spec.Network}}
+  networkSpec:
+    vpc:
+      id: {{.Spec.Network.VPC}}
+    subnets:
+    {{range .Spec.Network.Subnets}}
+    - id: {{.}}
+    {{end}}
+  {{end}}
+---
 ---
 apiVersion: cluster.x-k8s.io/v1alpha3
 kind: MachineDeployment
@@ -73,6 +83,9 @@ spec:
       instanceType: "{{.Spec.WorkerNode.MachineType}}"
       iamInstanceProfile: "nodes.cluster-api-provider-aws.sigs.k8s.io"
       sshKeyName: "{{.Spec.InfrastructureProvider.SSHKey}}"
+      {{if .Spec.WorkerNode.Subnet}}
+      subnet: {{.Spec.WorkerNode.Subnet}}
+      {{end}}
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: EKSConfigTemplate

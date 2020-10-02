@@ -27,6 +27,15 @@ metadata:
 spec:
   region: '{{variable "AWS_REGION"}}'
   sshKeyName: "{{.Spec.InfrastructureProvider.SSHKey}}"
+  {{if .Spec.Network}}
+  networkSpec:
+    vpc:
+      id: {{.Spec.Network.VPC}}
+    subnets:
+    {{range .Spec.Network.Subnets}}
+    - id: {{.}}
+    {{end}}
+  {{end}}
 ---
 kind: KubeadmControlPlane
 apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
@@ -71,6 +80,9 @@ spec:
       instanceType: "{{.Spec.ControlPlaneNode.MachineType}}"
       iamInstanceProfile: "control-plane.cluster-api-provider-aws.sigs.k8s.io"
       sshKeyName: "{{.Spec.InfrastructureProvider.SSHKey}}"
+      {{if .Spec.ControlPlaneNode.Subnet}}
+      subnet: {{.Spec.ControlPlaneNode.Subnet}}
+      {{end}}
 ---
 apiVersion: cluster.x-k8s.io/v1alpha3
 kind: MachineDeployment
@@ -109,6 +121,9 @@ spec:
       instanceType: "{{.Spec.WorkerNode.MachineType}}"
       iamInstanceProfile: "nodes.cluster-api-provider-aws.sigs.k8s.io"
       sshKeyName: "{{.Spec.InfrastructureProvider.SSHKey}}"
+      {{if .Spec.WorkerNode.Subnet}}
+      subnet: {{.Spec.WorkerNode.Subnet}}
+      {{end}}
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: KubeadmConfigTemplate

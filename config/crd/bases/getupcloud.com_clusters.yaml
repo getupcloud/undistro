@@ -79,6 +79,8 @@ spec:
                     format: int64
                     minimum: 1
                     type: integer
+                  subnet:
+                    type: string
                 type: object
               controlPlaneProvider:
                 properties:
@@ -185,6 +187,15 @@ spec:
               kubernetesVersion:
                 minLength: 1
                 type: string
+              network:
+                properties:
+                  subnets:
+                    items:
+                      type: string
+                    type: array
+                  vpc:
+                    type: string
+                type: object
               template:
                 type: string
               workerNode:
@@ -196,6 +207,8 @@ spec:
                     format: int64
                     minimum: 1
                     type: integer
+                  subnet:
+                    type: string
                 type: object
             type: object
           status:
@@ -235,6 +248,8 @@ spec:
                     format: int64
                     minimum: 1
                     type: integer
+                  subnet:
+                    type: string
                 type: object
               infrastructureName:
                 type: string
@@ -267,6 +282,8 @@ spec:
                     format: int64
                     minimum: 1
                     type: integer
+                  subnet:
+                    type: string
                 type: object
             type: object
         type: object
