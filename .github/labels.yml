@@ -1,0 +1,23 @@
+area:
+  - 'cluster'
+  - 'helm'
+  - 'cluster-api'
+  - 'CLI'
+  - 'Security'
+
+kind:
+  - 'bug'
+  - 'feature'
+  - 'chore'
+
+priority:
+  - 'low'
+  - 'mid'
+  - 'high'
+
+# File globs for PR labeler
+tests:
+  - '*/test.go'
+
+source:
+  - '*'
