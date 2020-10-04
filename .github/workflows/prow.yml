@@ -7,6 +7,6 @@ jobs:
   execute:
     runs-on: ubuntu-latest
     steps:
-      - uses: jpmcb/prow-github-actions@v1
+      - uses: jpmcb/prow-github-actions@v1.1.0
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
