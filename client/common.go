@@ -7,8 +7,8 @@ package client
 import (
 	"strings"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/repository"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/repository"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/validation"
 )

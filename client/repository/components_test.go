@@ -10,8 +10,8 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/config"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/config"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1alpha3"
 )

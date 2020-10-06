@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/internal/scheme"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/internal/scheme"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"k8s.io/client-go/rest"

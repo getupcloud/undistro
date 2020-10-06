@@ -7,7 +7,7 @@ package helm
 import (
 	"fmt"
 
-	"github.com/getupcloud/undistro/log"
+	"github.com/getupio-undistro/undistro/log"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/getter"

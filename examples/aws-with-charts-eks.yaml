@@ -1,5 +1,5 @@
 ---
-apiVersion: getupcloud.com/v1alpha1
+apiVersion: undistro.io/v1alpha1
 kind: Cluster
 metadata:
   name: undistro-quickstart
@@ -28,7 +28,7 @@ spec:
         value: "true"
       
 ---
-apiVersion: getupcloud.com/v1alpha1
+apiVersion: undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
   name: alb
@@ -45,7 +45,7 @@ spec:
       clusterName: undistro-quickstart
       
 ---
-apiVersion: getupcloud.com/v1alpha1
+apiVersion: undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
   name: kubernetes-dashboard

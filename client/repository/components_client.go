@@ -5,9 +5,9 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package repository
 
 import (
-	"github.com/getupcloud/undistro/client/config"
-	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
-	logf "github.com/getupcloud/undistro/log"
+	"github.com/getupio-undistro/undistro/client/config"
+	yaml "github.com/getupio-undistro/undistro/client/yamlprocessor"
+	logf "github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 )
 

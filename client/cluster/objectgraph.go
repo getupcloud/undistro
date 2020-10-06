@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	clusterctlv1 "github.com/getupcloud/undistro/api/v1alpha1"
-	logf "github.com/getupcloud/undistro/log"
+	clusterctlv1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	logf "github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"

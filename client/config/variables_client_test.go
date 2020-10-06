@@ -9,7 +9,7 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	"github.com/getupcloud/undistro/internal/test"
+	"github.com/getupio-undistro/undistro/internal/test"
 )
 
 // Ensures FakeReader implements the Reader interface.

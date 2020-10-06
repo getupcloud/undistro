@@ -5,8 +5,8 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package client
 
 import (
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/cluster"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/cluster"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

@@ -7,9 +7,9 @@ package repository
 import (
 	"net/url"
 
-	"github.com/getupcloud/undistro/client/config"
-	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
-	"github.com/getupcloud/undistro/internal/test"
+	"github.com/getupio-undistro/undistro/client/config"
+	yaml "github.com/getupio-undistro/undistro/client/yamlprocessor"
+	"github.com/getupio-undistro/undistro/internal/test"
 	"github.com/pkg/errors"
 )
 

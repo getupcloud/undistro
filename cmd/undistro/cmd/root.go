@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
-	"github.com/getupcloud/undistro/client/config"
-	logf "github.com/getupcloud/undistro/log"
+	"github.com/getupio-undistro/undistro/client/config"
+	logf "github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

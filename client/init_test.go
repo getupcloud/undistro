@@ -11,10 +11,10 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/pkg/errors"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/cluster"
-	"github.com/getupcloud/undistro/client/config"
-	"github.com/getupcloud/undistro/internal/test"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/cluster"
+	"github.com/getupio-undistro/undistro/client/config"
+	"github.com/getupio-undistro/undistro/internal/test"
 	utilyaml "sigs.k8s.io/cluster-api/util/yaml"
 )
 

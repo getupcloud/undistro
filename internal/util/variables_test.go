@@ -9,9 +9,9 @@ import (
 	"encoding/base64"
 	"testing"
 
-	uclient "github.com/getupcloud/undistro/client"
-	"github.com/getupcloud/undistro/internal/scheme"
-	"github.com/getupcloud/undistro/internal/util"
+	uclient "github.com/getupio-undistro/undistro/client"
+	"github.com/getupio-undistro/undistro/internal/scheme"
+	"github.com/getupio-undistro/undistro/internal/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"

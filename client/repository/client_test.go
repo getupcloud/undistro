@@ -10,10 +10,10 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/config"
-	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
-	"github.com/getupcloud/undistro/internal/test"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/config"
+	yaml "github.com/getupio-undistro/undistro/client/yamlprocessor"
+	"github.com/getupio-undistro/undistro/internal/test"
 )
 
 func Test_newRepositoryClient_LocalFileSystemRepository(t *testing.T) {

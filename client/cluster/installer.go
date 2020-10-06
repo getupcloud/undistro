@@ -7,10 +7,10 @@ package cluster
 import (
 	"strings"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/config"
-	"github.com/getupcloud/undistro/client/repository"
-	logf "github.com/getupcloud/undistro/log"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/config"
+	"github.com/getupio-undistro/undistro/client/repository"
+	logf "github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/version"

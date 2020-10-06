@@ -8,7 +8,7 @@ import (
 	"context"
 	"encoding/base64"
 
-	"github.com/getupcloud/undistro/client/config"
+	"github.com/getupio-undistro/undistro/client/config"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"

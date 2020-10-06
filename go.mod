@@ -1,4 +1,4 @@
-module github.com/getupcloud/undistro
+module github.com/getupio-undistro/undistro
 
 go 1.15
 

@@ -5,7 +5,7 @@ metadata:
   name: helmrelease-editor-role
 rules:
 - apiGroups:
-  - getupcloud.com
+  - undistro.io
   resources:
   - helmreleases
   verbs:
@@ -17,7 +17,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - getupcloud.com
+  - undistro.io
   resources:
   - helmreleases/status
   verbs:

@@ -13,8 +13,8 @@ import (
 	"strings"
 	gotemplate "text/template"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/internal/template"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/internal/template"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/validation"
 	"sigs.k8s.io/yaml"
@@ -87,7 +87,7 @@ func (p *providersClient) defaults() []Provider {
 
 		&provider{
 			name:         UndistroProviderName,
-			url:          "https://github.com/getupcloud/undistro/releases/latest/core-components.yaml",
+			url:          "https://github.com/getupio-undistro/undistro/releases/latest/core-components.yaml",
 			providerType: undistrov1.UndistroProviderType,
 		},
 

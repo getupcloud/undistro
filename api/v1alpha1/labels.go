@@ -23,19 +23,19 @@ const (
 	ClusterctlMoveLabelName = "clusterctl.cluster.x-k8s.io/move"
 
 	// UndisroLabelName is applied to all components managed by undistro.
-	UndistroLabelName = "getupcloud.com"
+	UndistroLabelName = "undistro.io"
 
 	// UndistroCoreLabelName is applied to all the core objects managed by undistro.
-	UndistroCoreLabelName = "getupcloud.com/core"
+	UndistroCoreLabelName = "undistro.io/core"
 
 	// UndistroResourceLifecyleLabelName describes the lifecyle for a specific resource.
 	//
 	// Example: resources shared between instances of the same provider:  CRDs,
 	// ValidatingWebhookConfiguration, MutatingWebhookConfiguration, and so on.
-	UndistroResourceLifecyleLabelName = "getupcloud.com/lifecycle"
+	UndistroResourceLifecyleLabelName = "undistro.io/lifecycle"
 
 	// UndistroMoveLabelName can be set on CRDs that providers wish to move that are not part of a cluster
-	UndistroMoveLabelName = "getupcloud.com/move"
+	UndistroMoveLabelName = "undistro.io/move"
 )
 
 // ResourceLifecycle configures the lifecycle of a resource

@@ -7,8 +7,8 @@ package cluster
 import (
 	"testing"
 
-	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
-	"github.com/getupcloud/undistro/internal/test"
+	yaml "github.com/getupio-undistro/undistro/client/yamlprocessor"
+	"github.com/getupio-undistro/undistro/internal/test"
 	. "github.com/onsi/gomega"
 )
 

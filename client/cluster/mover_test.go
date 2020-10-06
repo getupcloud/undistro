@@ -7,8 +7,8 @@ package cluster
 import (
 	"testing"
 
-	clusterctlv1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/internal/test"
+	clusterctlv1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/internal/test"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"

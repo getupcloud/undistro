@@ -7,10 +7,10 @@ package repository
 import (
 	"strings"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/config"
-	"github.com/getupcloud/undistro/internal/scheme"
-	logf "github.com/getupcloud/undistro/log"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/config"
+	"github.com/getupio-undistro/undistro/internal/scheme"
+	logf "github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -77,7 +77,7 @@ func (f *metadataClient) Get() (*undistrov1.Metadata, error) {
 			return nil, err
 		}
 		for _, o := range objs {
-			if !strings.Contains(o.GetAPIVersion(), "getupcloud.com") {
+			if !strings.Contains(o.GetAPIVersion(), "undistro.io") {
 				o.SetAPIVersion(undistrov1.GroupVersion.String())
 				file, err = apiyaml.Marshal(o.Object)
 				if err != nil {

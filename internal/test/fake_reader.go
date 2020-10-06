@@ -5,7 +5,7 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package test
 
 import (
-	clusterctlv1 "github.com/getupcloud/undistro/api/v1alpha1"
+	clusterctlv1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/pkg/errors"
 	"sigs.k8s.io/yaml"
 )

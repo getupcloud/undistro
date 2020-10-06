@@ -5,10 +5,10 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package client
 
 import (
-	"github.com/getupcloud/undistro/client/cluster"
-	"github.com/getupcloud/undistro/client/config"
-	"github.com/getupcloud/undistro/client/repository"
-	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
+	"github.com/getupio-undistro/undistro/client/cluster"
+	"github.com/getupio-undistro/undistro/client/config"
+	"github.com/getupio-undistro/undistro/client/repository"
+	yaml "github.com/getupio-undistro/undistro/client/yamlprocessor"
 )
 
 // Alias creates local aliases for types defined in the low-level libraries.

@@ -1,4 +1,4 @@
-apiVersion: getupcloud.com/v1alpha1
+apiVersion: undistro.io/v1alpha1
 kind: Cluster
 metadata:
   name: undistro-quickstart
@@ -22,7 +22,7 @@ spec:
         value: ""
 
 ---
-apiVersion: getupcloud.com/v1alpha1
+apiVersion: undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
   name: nginx
@@ -35,7 +35,7 @@ spec:
     version: 2.15.0
 
 ---
-apiVersion: getupcloud.com/v1alpha1
+apiVersion: undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
   name: kubernetes-dashboard
@@ -44,7 +44,7 @@ spec:
   clusterName: default/undistro-quickstart
   dependencies:
     -
-      apiVersion: getupcloud.com/v1alpha1
+      apiVersion: undistro.io/v1alpha1
       kind: HelmRelease
       name: nginx
   afterApplyObjects:

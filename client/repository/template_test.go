@@ -10,9 +10,9 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	"github.com/getupcloud/undistro/client/config"
-	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
-	"github.com/getupcloud/undistro/internal/test"
+	"github.com/getupio-undistro/undistro/client/config"
+	yaml "github.com/getupio-undistro/undistro/client/yamlprocessor"
+	"github.com/getupio-undistro/undistro/internal/test"
 )
 
 // Nb.We are using core objects vs Machines/Cluster etc. because it is easier to test (you don't have to deal with CRDs

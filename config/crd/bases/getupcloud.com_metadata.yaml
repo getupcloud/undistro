@@ -6,9 +6,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.4.0
   creationTimestamp: null
-  name: metadata.getupcloud.com
+  name: metadata.undistro.io
 spec:
-  group: getupcloud.com
+  group: undistro.io
   names:
     kind: Metadata
     listKind: MetadataList

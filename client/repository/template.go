@@ -5,8 +5,8 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package repository
 
 import (
-	"github.com/getupcloud/undistro/client/config"
-	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
+	"github.com/getupio-undistro/undistro/client/config"
+	yaml "github.com/getupio-undistro/undistro/client/yamlprocessor"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	utilyaml "sigs.k8s.io/cluster-api/util/yaml"

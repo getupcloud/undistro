@@ -13,9 +13,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	getupcloudcomv1alpha1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/controllers"
-	"github.com/getupcloud/undistro/internal/scheme"
+	getupcloudcomv1alpha1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/controllers"
+	"github.com/getupio-undistro/undistro/internal/scheme"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -46,7 +46,7 @@ func main() {
 		MetricsBindAddress: metricsAddr,
 		Port:               9443,
 		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "getupcloud.com",
+		LeaderElectionID:   "undistro.io",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")

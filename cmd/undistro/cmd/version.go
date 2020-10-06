@@ -8,9 +8,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/getupio-undistro/undistro/cmd/version"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/getupcloud/undistro/cmd/version"
 	"sigs.k8s.io/yaml"
 )
 

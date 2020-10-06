@@ -85,7 +85,7 @@ version::ldflags() {
         local key=${1}
         local val=${2}
         ldflags+=(
-            "-X 'github.com/getupcloud/undistro/cmd/version.${key}=${val}'"
+            "-X 'github.com/getupio-undistro/undistro/cmd/version.${key}=${val}'"
         )
     }
 

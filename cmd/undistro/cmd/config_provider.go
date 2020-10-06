@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

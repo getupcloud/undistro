@@ -5,7 +5,7 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package cmd
 
 import (
-	"github.com/getupcloud/undistro/client"
+	"github.com/getupio-undistro/undistro/client"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

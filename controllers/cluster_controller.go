@@ -12,12 +12,12 @@ import (
 	"net/http"
 	"time"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	uclient "github.com/getupcloud/undistro/client"
-	"github.com/getupcloud/undistro/client/config"
-	"github.com/getupcloud/undistro/internal/patch"
-	"github.com/getupcloud/undistro/internal/template"
-	"github.com/getupcloud/undistro/internal/util"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	uclient "github.com/getupio-undistro/undistro/client"
+	"github.com/getupio-undistro/undistro/client/config"
+	"github.com/getupio-undistro/undistro/internal/patch"
+	"github.com/getupio-undistro/undistro/internal/template"
+	"github.com/getupio-undistro/undistro/internal/util"
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp"
 	"github.com/pkg/errors"
@@ -63,9 +63,9 @@ type ClusterReconciler struct {
 // +kubebuilder:rbac:groups=admissionregistration.k8s.io,resources=*,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=*,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apiextensions.k8s.io,resources=customresourcedefinitions,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=getupcloud.com,resources=*,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=getupcloud.com,resources=clusters/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=getupcloud.com,resources=providers/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=undistro.io,resources=*,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=undistro.io,resources=clusters/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=undistro.io,resources=providers/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=core,resources=events,verbs=get;list;watch;create;patch
 // +kubebuilder:rbac:groups=core,resources=serviceaccounts,verbs=get;list;watch;create;patch
 // +kubebuilder:rbac:groups=core,resources=namespaces,verbs=delete;get;list;watch;create;patch

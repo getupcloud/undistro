@@ -9,9 +9,9 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/repository"
-	"github.com/getupcloud/undistro/internal/test"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/repository"
+	"github.com/getupio-undistro/undistro/internal/test"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"

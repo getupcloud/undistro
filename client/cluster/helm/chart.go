@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/ncabatoff/go-seq/seq"
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/action"

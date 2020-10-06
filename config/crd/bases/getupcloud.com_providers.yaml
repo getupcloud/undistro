@@ -6,9 +6,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.4.0
   creationTimestamp: null
-  name: providers.getupcloud.com
+  name: providers.undistro.io
 spec:
-  group: getupcloud.com
+  group: undistro.io
   names:
     categories:
     - cluster-api

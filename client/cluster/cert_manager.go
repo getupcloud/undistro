@@ -12,11 +12,11 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	clusterctlv1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/config"
-	manifests "github.com/getupcloud/undistro/config"
-	"github.com/getupcloud/undistro/internal/util"
-	logf "github.com/getupcloud/undistro/log"
+	clusterctlv1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/config"
+	manifests "github.com/getupio-undistro/undistro/config"
+	"github.com/getupio-undistro/undistro/internal/util"
+	logf "github.com/getupio-undistro/undistro/log"
 	utilresource "sigs.k8s.io/cluster-api/util/resource"
 	utilyaml "sigs.k8s.io/cluster-api/util/yaml"
 )

@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	logf "github.com/getupcloud/undistro/log"
+	logf "github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"

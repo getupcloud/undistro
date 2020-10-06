@@ -7,7 +7,7 @@ package helm
 import (
 	"time"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/google/go-cmp/cmp"
 	"helm.sh/helm/v3/pkg/chartutil"
 )

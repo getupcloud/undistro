@@ -7,7 +7,7 @@ package cluster
 import (
 	"strings"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/pkg/errors"
 )
 

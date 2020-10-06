@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"strings"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/repository"
-	"github.com/getupcloud/undistro/internal/util"
-	logf "github.com/getupcloud/undistro/log"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/repository"
+	"github.com/getupio-undistro/undistro/internal/util"
+	logf "github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -146,7 +146,7 @@ func (p *providerComponents) Delete(options DeleteOptions) error {
 				continue
 			}
 			// If the  Namespace should NOT be deleted, skip it, otherwise keep track of the namespaces we are deleting;
-			// NB. Skipping Namespaces deletion ensures that also the objects hosted in the namespace but without the "getupcloud.com" and the "cluster.x-k8s.io/provider" label are not deleted.
+			// NB. Skipping Namespaces deletion ensures that also the objects hosted in the namespace but without the "undistro.io" and the "cluster.x-k8s.io/provider" label are not deleted.
 			if !options.IncludeNamespace {
 				continue
 			}

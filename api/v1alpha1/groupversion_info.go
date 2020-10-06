@@ -4,7 +4,7 @@ Copyright 2020 Getup Cloud. All rights reserved.
 
 // Package v1alpha1 contains API Schema definitions for the undistro v1alpha1 API group
 // +kubebuilder:object:generate=true
-// +groupName=getupcloud.com
+// +groupName=undistro.io
 package v1alpha1
 
 import (
@@ -14,7 +14,7 @@ import (
 
 var (
 	// GroupVersion is group version used to register these objects
-	GroupVersion = schema.GroupVersion{Group: "getupcloud.com", Version: "v1alpha1"}
+	GroupVersion = schema.GroupVersion{Group: "undistro.io", Version: "v1alpha1"}
 
 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme
 	SchemeBuilder = &scheme.Builder{GroupVersion: GroupVersion}

@@ -7,7 +7,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/getupcloud/undistro/client"
+	"github.com/getupio-undistro/undistro/client"
 	"github.com/spf13/cobra"
 )
 

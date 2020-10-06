@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sort"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/version"

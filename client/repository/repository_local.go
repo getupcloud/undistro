@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/getupcloud/undistro/client/config"
+	"github.com/getupio-undistro/undistro/client/config"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/version"
 )

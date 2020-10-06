@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/getupcloud/undistro/internal/scheme"
+	"github.com/getupio-undistro/undistro/internal/scheme"
 	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"

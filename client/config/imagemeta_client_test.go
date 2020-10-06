@@ -9,7 +9,7 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	"github.com/getupcloud/undistro/internal/test"
+	"github.com/getupio-undistro/undistro/internal/test"
 )
 
 func Test_imageMetaClient_AlterImage(t *testing.T) {

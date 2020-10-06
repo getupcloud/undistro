@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/getupcloud/undistro/client/config"
+	"github.com/getupio-undistro/undistro/client/config"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/util/homedir"
 )

@@ -7,8 +7,8 @@ package yamlprocessor
 import (
 	"testing"
 
-	"github.com/getupcloud/undistro/client/config"
-	"github.com/getupcloud/undistro/internal/test"
+	"github.com/getupio-undistro/undistro/client/config"
+	"github.com/getupio-undistro/undistro/internal/test"
 	. "github.com/onsi/gomega"
 )
 

@@ -5,10 +5,10 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package client
 
 import (
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/cluster"
-	"github.com/getupcloud/undistro/client/config"
-	"github.com/getupcloud/undistro/client/repository"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/cluster"
+	"github.com/getupio-undistro/undistro/client/config"
+	"github.com/getupio-undistro/undistro/client/repository"
 	"github.com/pkg/errors"
 )
 

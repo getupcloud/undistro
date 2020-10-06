@@ -9,11 +9,11 @@ import (
 	"os"
 	"time"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	uclient "github.com/getupcloud/undistro/client"
-	"github.com/getupcloud/undistro/client/cluster"
-	"github.com/getupcloud/undistro/client/cluster/helm"
-	"github.com/getupcloud/undistro/internal/patch"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	uclient "github.com/getupio-undistro/undistro/client"
+	"github.com/getupio-undistro/undistro/client/cluster"
+	"github.com/getupio-undistro/undistro/client/cluster/helm"
+	"github.com/getupio-undistro/undistro/internal/patch"
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -121,8 +121,8 @@ func (r *HelmReleaseReconciler) hasNonDeployedDeps(ctx context.Context, hr *undi
 	return false
 }
 
-// +kubebuilder:rbac:groups=getupcloud.com,resources=*,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=getupcloud.com,resources=*,verbs=get;update;patch
+// +kubebuilder:rbac:groups=undistro.io,resources=*,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=undistro.io,resources=*,verbs=get;update;patch
 
 func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (res ctrl.Result, err error) {
 	ctx := context.Background()

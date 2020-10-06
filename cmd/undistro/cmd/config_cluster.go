@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/getupcloud/undistro/client"
+	"github.com/getupio-undistro/undistro/client"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

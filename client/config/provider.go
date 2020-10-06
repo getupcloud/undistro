@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 

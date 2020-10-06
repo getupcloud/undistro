@@ -7,9 +7,9 @@ package client
 import (
 	"testing"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/cluster"
-	"github.com/getupcloud/undistro/client/config"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/cluster"
+	"github.com/getupio-undistro/undistro/client/config"
 	. "github.com/onsi/gomega"
 )
 

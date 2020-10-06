@@ -9,11 +9,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/getupcloud/undistro/client/cluster/helm"
+	"github.com/getupio-undistro/undistro/client/cluster/helm"
+	utilkubeconfig "github.com/getupio-undistro/undistro/internal/kubeconfig"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	utilkubeconfig "github.com/getupcloud/undistro/internal/kubeconfig"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 

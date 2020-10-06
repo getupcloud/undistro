@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client"
-	"github.com/getupcloud/undistro/client/cluster"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client"
+	"github.com/getupio-undistro/undistro/client/cluster"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/types"
 	utilresource "sigs.k8s.io/cluster-api/util/resource"

@@ -7,8 +7,8 @@ package client
 import (
 	"testing"
 
-	"github.com/getupcloud/undistro/client/cluster"
-	"github.com/getupcloud/undistro/internal/test"
+	"github.com/getupio-undistro/undistro/client/cluster"
+	"github.com/getupio-undistro/undistro/internal/test"
 	. "github.com/onsi/gomega"
 	"github.com/pkg/errors"
 )

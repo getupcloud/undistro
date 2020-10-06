@@ -213,7 +213,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - getupcloud.com
+  - undistro.io
   resources:
   - '*'
   verbs:
@@ -225,7 +225,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - getupcloud.com
+  - undistro.io
   resources:
   - clusters/status
   verbs:
@@ -233,7 +233,7 @@ rules:
   - patch
   - update
 - apiGroups:
-  - getupcloud.com
+  - undistro.io
   resources:
   - providers/status
   verbs:

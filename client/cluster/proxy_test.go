@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/getupcloud/undistro/internal/test"
+	"github.com/getupio-undistro/undistro/internal/test"
 	. "github.com/onsi/gomega"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/cluster-api/cmd/version"

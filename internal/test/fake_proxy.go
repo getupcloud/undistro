@@ -5,11 +5,11 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package test
 
 import (
-	clusterctlv1 "github.com/getupcloud/undistro/api/v1alpha1"
-	fakebootstrap "github.com/getupcloud/undistro/internal/test/providers/bootstrap"
-	fakecontrolplane "github.com/getupcloud/undistro/internal/test/providers/controlplane"
-	fakeexternal "github.com/getupcloud/undistro/internal/test/providers/external"
-	fakeinfrastructure "github.com/getupcloud/undistro/internal/test/providers/infrastructure"
+	clusterctlv1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	fakebootstrap "github.com/getupio-undistro/undistro/internal/test/providers/bootstrap"
+	fakecontrolplane "github.com/getupio-undistro/undistro/internal/test/providers/controlplane"
+	fakeexternal "github.com/getupio-undistro/undistro/internal/test/providers/external"
+	fakeinfrastructure "github.com/getupio-undistro/undistro/internal/test/providers/infrastructure"
 	apiextensionslv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"

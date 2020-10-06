@@ -1,4 +1,4 @@
-module github.com/getupcloud/undistro/hack/tools
+module github.com/getupio-undistro/undistro/hack/tools
 
 go 1.13
 

@@ -1,9 +1,9 @@
-repo: github.com/getupcloud/undistro
+repo: github.com/getupio-undistro/undistro
 resources:
-- group: getupcloud.com
+- group: undistro.io
   kind: Cluster
   version: v1alpha1
-- group: getupcloud.com
+- group: undistro.io
   kind: HelmRelease
   version: v1alpha1
 version: "2"

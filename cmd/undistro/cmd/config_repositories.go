@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"text/tabwriter"
 
-	"github.com/getupcloud/undistro/client"
+	"github.com/getupio-undistro/undistro/client"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"sigs.k8s.io/yaml"

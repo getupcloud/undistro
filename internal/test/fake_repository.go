@@ -7,7 +7,7 @@ package test
 import (
 	"fmt"
 
-	clusterctlv1 "github.com/getupcloud/undistro/api/v1alpha1"
+	clusterctlv1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"

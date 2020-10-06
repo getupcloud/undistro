@@ -13,10 +13,10 @@ webhooks:
       namespace: system
       path: /mutate-getupcloud-com-v1alpha1-cluster
   failurePolicy: Ignore
-  name: mcluster.getupcloud.com
+  name: mcluster.undistro.io
   rules:
   - apiGroups:
-    - getupcloud.com
+    - undistro.io
     apiVersions:
     - v1alpha1
     operations:

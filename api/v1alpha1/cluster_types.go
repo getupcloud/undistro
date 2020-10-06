@@ -71,7 +71,7 @@ const (
 	CalicoCNI        = CNI("calico")
 	EmptyCNI         = CNI("")
 	ProviderCNI      = CNI("provider")
-	ClusterFinalizer = "getupcloud.com"
+	ClusterFinalizer = "undistro.io"
 )
 
 var cniMapAddr = map[CNI]string{

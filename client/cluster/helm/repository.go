@@ -4,7 +4,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/getupcloud/undistro/log"
+	"github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/repo"
 )

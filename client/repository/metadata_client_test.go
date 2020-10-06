@@ -9,13 +9,13 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/getupcloud/undistro/client/config"
-	"github.com/getupcloud/undistro/internal/test"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	"github.com/getupio-undistro/undistro/client/config"
+	"github.com/getupio-undistro/undistro/internal/test"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var metadataYaml = []byte("apiVersion: getupcloud.com/v1alpha1\n" +
+var metadataYaml = []byte("apiVersion: undistro.io/v1alpha1\n" +
 	"kind: Metadata\n" +
 	"releaseSeries:\n" +
 	" - major: 1\n" +
@@ -47,7 +47,7 @@ func Test_metadataClient_Get(t *testing.T) {
 			},
 			want: &undistrov1.Metadata{
 				TypeMeta: metav1.TypeMeta{
-					APIVersion: "getupcloud.com/v1alpha1",
+					APIVersion: "undistro.io/v1alpha1",
 					Kind:       "Metadata",
 				},
 				ReleaseSeries: []undistrov1.ReleaseSeries{

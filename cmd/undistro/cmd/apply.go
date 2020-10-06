@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/getupcloud/undistro/client"
+	"github.com/getupio-undistro/undistro/client"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/types"

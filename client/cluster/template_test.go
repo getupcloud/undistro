@@ -16,10 +16,10 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	"github.com/getupcloud/undistro/client/config"
-	"github.com/getupcloud/undistro/client/repository"
-	yaml "github.com/getupcloud/undistro/client/yamlprocessor"
-	"github.com/getupcloud/undistro/internal/test"
+	"github.com/getupio-undistro/undistro/client/config"
+	"github.com/getupio-undistro/undistro/client/repository"
+	yaml "github.com/getupio-undistro/undistro/client/yamlprocessor"
+	"github.com/getupio-undistro/undistro/internal/test"
 	"github.com/google/go-github/v32/github"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
