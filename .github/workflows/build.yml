@@ -46,8 +46,8 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
         echo $DOCKER_PASSWORD | docker login -u $DOCKER_LOGIN --password-stdin
-        docker build -t getupcloud/undistro:$GIT_VERSION .
-        docker push getupcloud/undistro:$GIT_VERSION
+        docker build -t getupioundistro/undistro:$GIT_VERSION .
+        docker push getupioundistro/undistro:$GIT_VERSION
     
     - name: install kustomize
       if: startsWith(github.ref, 'refs/tags/')

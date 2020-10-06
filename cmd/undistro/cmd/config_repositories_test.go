@@ -88,7 +88,7 @@ providers:
 
 var expectedOutputText = `NAME                TYPE                     URL                                                                                          FILE
 cluster-api         CoreProvider             https://github.com/myorg/myforkofclusterapi/releases/latest/                                 core_components.yaml
-undistro            UndistroProvider         https://github.com/getupio-undistro/undistro/releases/latest/                                      core-components.yaml
+undistro            UndistroProvider         https://github.com/getupio-undistro/undistro/releases/latest/                                core-components.yaml
 another-provider    BootstrapProvider        ./                                                                                           bootstrap-components.yaml
 eks                 BootstrapProvider        https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/                 eks-bootstrap-components.yaml
 kubeadm             BootstrapProvider        https://github.com/kubernetes-sigs/cluster-api/releases/latest/                              bootstrap-components.yaml
