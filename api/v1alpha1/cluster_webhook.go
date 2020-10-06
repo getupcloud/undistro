@@ -46,8 +46,10 @@ func (r *Cluster) Default() {
 		r.Spec.ControlPlaneNode.Replicas = new(int64)
 		*r.Spec.ControlPlaneNode.Replicas = 3
 	}
-	if r.Spec.WorkerNode.Replicas == nil {
-		r.Spec.WorkerNode.Replicas = new(int64)
-		*r.Spec.WorkerNode.Replicas = defaultWorkerReplicas
+	for i := range r.Spec.WorkerNodes {
+		if r.Spec.WorkerNodes[i].Replicas == nil {
+			r.Spec.WorkerNodes[i].Replicas = new(int64)
+			*r.Spec.WorkerNodes[i].Replicas = defaultWorkerReplicas
+		}
 	}
 }

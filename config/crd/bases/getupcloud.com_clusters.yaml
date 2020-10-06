@@ -27,10 +27,13 @@ spec:
     - jsonPath: .status.kubernetesVersion
       name: K8s
       type: string
+    - jsonPath: .status.totalWorkerPools
+      name: Worker Pools
+      type: integer
     - jsonPath: .status.controlPlaneNode.replicas
       name: Control Plane Replicas
       type: integer
-    - jsonPath: .status.workerNode.replicas
+    - jsonPath: .status.totalWorkerReplicas
       name: Worker Replicas
       type: integer
     - jsonPath: .status.phase
@@ -198,18 +201,20 @@ spec:
                 type: object
               template:
                 type: string
-              workerNode:
-                properties:
-                  machineType:
-                    minLength: 1
-                    type: string
-                  replicas:
-                    format: int64
-                    minimum: 1
-                    type: integer
-                  subnet:
-                    type: string
-                type: object
+              workerNodes:
+                items:
+                  properties:
+                    machineType:
+                      minLength: 1
+                      type: string
+                    replicas:
+                      format: int64
+                      minimum: 1
+                      type: integer
+                    subnet:
+                      type: string
+                  type: object
+                type: array
             type: object
           status:
             description: ClusterStatus defines the observed state of Cluster
@@ -273,18 +278,26 @@ spec:
                 type: string
               ready:
                 type: boolean
-              workerNode:
-                properties:
-                  machineType:
-                    minLength: 1
-                    type: string
-                  replicas:
-                    format: int64
-                    minimum: 1
-                    type: integer
-                  subnet:
-                    type: string
-                type: object
+              totalWorkerPools:
+                format: int64
+                type: integer
+              totalWorkerReplicas:
+                format: int64
+                type: integer
+              workerNodes:
+                items:
+                  properties:
+                    machineType:
+                      minLength: 1
+                      type: string
+                    replicas:
+                      format: int64
+                      minimum: 1
+                      type: integer
+                    subnet:
+                      type: string
+                  type: object
+                type: array
             type: object
         type: object
     served: true

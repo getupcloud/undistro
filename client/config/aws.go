@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"text/template"
@@ -14,17 +13,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	cfn "github.com/aws/aws-sdk-go/service/cloudformation"
 	undistrov1 "github.com/getupcloud/undistro/api/v1alpha1"
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/types"
-	awsApi "sigs.k8s.io/cluster-api-provider-aws/api/v1alpha3"
 	"sigs.k8s.io/cluster-api-provider-aws/cmd/clusterawsadm/cloudformation/bootstrap"
 	cloudformation "sigs.k8s.io/cluster-api-provider-aws/cmd/clusterawsadm/cloudformation/service"
-	clusterApi "sigs.k8s.io/cluster-api/api/v1alpha3"
-	kubeadmApi "sigs.k8s.io/cluster-api/controlplane/kubeadm/api/v1alpha3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -102,7 +95,9 @@ func (c awsCredentials) createCloudFormation() error {
 func awsPreConfig(ctx context.Context, cl *undistrov1.Cluster, v VariablesClient, c client.Client) error {
 	v.Set(awsSshKeyNameKey, cl.Spec.InfrastructureProvider.SSHKey)
 	v.Set(awsControlPlaneMachineTypeKey, cl.Spec.ControlPlaneNode.MachineType)
-	v.Set(awsWorkerMachineTypeKey, cl.Spec.WorkerNode.MachineType)
+	if len(cl.Spec.WorkerNodes) > 0 {
+		v.Set(awsWorkerMachineTypeKey, cl.Spec.WorkerNodes[0].MachineType)
+	}
 	_, err := v.Get(awsRegionKey)
 	if err != nil {
 		v.Set(awsRegionKey, defaultAWSRegion)
@@ -179,64 +174,4 @@ func awsInit(c Client, firstRun bool) error {
 	}
 
 	return creds.createCloudFormation()
-}
-
-func awsUpgrade(ctx context.Context, cl *undistrov1.Cluster, capi *clusterApi.Cluster, c client.Client) error {
-	if capi.Spec.ControlPlaneRef.Kind == "KubeadmControlPlane" {
-		nm := types.NamespacedName{
-			Name:      capi.Spec.ControlPlaneRef.Name,
-			Namespace: capi.Spec.ControlPlaneRef.Namespace,
-		}
-		kubeadmCP := kubeadmApi.KubeadmControlPlane{}
-		err := c.Get(ctx, nm, &kubeadmCP)
-		if err != nil {
-			return err
-		}
-		nm.Name = kubeadmCP.Name
-		nm.Namespace = kubeadmCP.Namespace
-		tmpl := awsApi.AWSMachineTemplate{}
-		err = c.Get(ctx, nm, &tmpl)
-		if err != nil {
-			return err
-		}
-		newTmpl := awsApi.AWSMachineTemplate{
-			TypeMeta: tmpl.TypeMeta,
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      fmt.Sprintf("%s-control-plane-%s", cl.Name, uuid.New().String()),
-				Namespace: cl.Namespace,
-			},
-			Spec: tmpl.Spec,
-		}
-		newTmpl.Spec.Template.Spec.AMI = awsApi.AWSResourceReference{}
-		err = c.Create(ctx, &newTmpl)
-		if err != nil {
-			return err
-		}
-		kubeadmCP.Spec.InfrastructureTemplate.Name = newTmpl.Name
-		kubeadmCP.Spec.InfrastructureTemplate.Namespace = newTmpl.Namespace
-		kubeadmCP.Spec.Version = cl.Spec.KubernetesVersion
-		replicas := int32(*cl.Spec.ControlPlaneNode.Replicas)
-		kubeadmCP.Spec.Replicas = &replicas
-		return c.Update(ctx, &kubeadmCP)
-	}
-	o := unstructured.Unstructured{}
-	o.SetGroupVersionKind(capi.Spec.ControlPlaneRef.GroupVersionKind())
-	nm := types.NamespacedName{
-		Name:      capi.Spec.ControlPlaneRef.Name,
-		Namespace: capi.Spec.ControlPlaneRef.Namespace,
-	}
-	err := c.Get(ctx, nm, &o)
-	if err != nil {
-		return err
-	}
-	err = unstructured.SetNestedField(o.Object, cl.Spec.KubernetesVersion, "spec", "version")
-	if err != nil {
-		return err
-	}
-	err = unstructured.SetNestedField(o.Object, cl.Spec.ControlPlaneNode.Replicas, "spec", "replicas")
-	if err != nil {
-		return err
-	}
-	o.SetResourceVersion(capi.Spec.ControlPlaneRef.ResourceVersion)
-	return c.Update(ctx, &o)
 }

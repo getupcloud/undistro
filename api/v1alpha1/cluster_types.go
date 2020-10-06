@@ -87,7 +87,7 @@ type ClusterSpec struct {
 	BootstrapProvider      *BootstrapProvider     `json:"bootstrapProvider,omitempty"`
 	ControlPlaneProvider   *ControlPlaneProvider  `json:"controlPlaneProvider,omitempty"`
 	ControlPlaneNode       Node                   `json:"controlPlaneNode,omitempty"`
-	WorkerNode             Node                   `json:"workerNode,omitempty"`
+	WorkerNodes            []Node                 `json:"workerNodes,omitempty"`
 	CniName                CNI                    `json:"cniName,omitempty"`
 	Network                *Network               `json:"network,omitempty"`
 }
@@ -112,8 +112,10 @@ type ClusterStatus struct {
 	ClusterAPIRef       *corev1.ObjectReference `json:"clusterAPIRef,omitempty"`
 	KubernetesVersion   string                  `json:"kubernetesVersion,omitempty"`
 	ControlPlaneNode    Node                    `json:"controlPlaneNode,omitempty"`
-	WorkerNode          Node                    `json:"workerNode,omitempty"`
+	WorkerNodes         []Node                  `json:"workerNodes,omitempty"`
 	InfrastructureName  string                  `json:"infrastructureName,omitempty"`
+	TotalWorkerReplicas int64                   `json:"totalWorkerReplicas,omitempty"`
+	TotalWorkerPools    int64                   `json:"totalWorkerPools,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -122,8 +124,9 @@ type ClusterStatus struct {
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Infra",type="string",JSONPath=".status.infrastructureName"
 // +kubebuilder:printcolumn:name="K8s",type="string",JSONPath=".status.kubernetesVersion"
+// +kubebuilder:printcolumn:name="Worker Pools",type="integer",JSONPath=".status.totalWorkerPools"
 // +kubebuilder:printcolumn:name="Control Plane Replicas",type="integer",JSONPath=".status.controlPlaneNode.replicas"
-// +kubebuilder:printcolumn:name="Worker Replicas",type="integer",JSONPath=".status.workerNode.replicas"
+// +kubebuilder:printcolumn:name="Worker Replicas",type="integer",JSONPath=".status.totalWorkerReplicas"
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
 // +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.ready"
 

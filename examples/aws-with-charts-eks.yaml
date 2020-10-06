@@ -7,9 +7,9 @@ metadata:
 spec:
   kubernetesVersion: v1.16.13
   cniName: calico
-  workerNode:
-    replicas: 3
-    machineType: t3.large
+  workerNodes:
+    - replicas: 3
+      machineType: t3.large
   bootstrapProvider:
     name: eks
   infrastructureProvider:

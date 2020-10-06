@@ -23,8 +23,10 @@ func TestCluster_Default(t *testing.T) {
 			ControlPlaneNode: Node{
 				MachineType: "test",
 			},
-			WorkerNode: Node{
-				MachineType: "testWorker",
+			WorkerNodes: []Node{
+				{
+					MachineType: "testWorker",
+				},
 			},
 		},
 	}
@@ -32,5 +34,5 @@ func TestCluster_Default(t *testing.T) {
 
 	g.Expect(c.Spec.KubernetesVersion).To(Equal(defaultKubernetesVersion))
 	g.Expect(*c.Spec.ControlPlaneNode.Replicas).To(Equal(defaultControlPlaneReplicas))
-	g.Expect(*c.Spec.WorkerNode.Replicas).To(Equal(defaultWorkerReplicas))
+	g.Expect(*c.Spec.WorkerNodes[0].Replicas).To(Equal(defaultWorkerReplicas))
 }

@@ -1,4 +1,5 @@
 ---
+{{$uuid := uuidv4}}
 apiVersion: cluster.x-k8s.io/v1alpha3
 kind: Cluster
 metadata:
@@ -44,53 +45,59 @@ spec:
     - id: {{.}}
     {{end}}
   {{end}}
----
+
+{{$name := .Name}}
+{{$namespace := .Namespace}}
+{{$k8s := .Spec.KubernetesVersion}}
+{{$sshKey := .Spec.InfrastructureProvider.SSHKey}}
+{{range $index, $element := .Spec.WorkerNodes}}
 ---
 apiVersion: cluster.x-k8s.io/v1alpha3
 kind: MachineDeployment
 metadata:
-  name: "{{.Name}}-md-0"
-  namespace: "{{.Namespace}}"
+  name: "{{$name}}-md-{{$index}}"
+  namespace: "{{$namespace}}"
 spec:
-  clusterName: "{{.Name}}"
-  replicas: {{.Spec.WorkerNode.Replicas}}
+  clusterName: "{{$name}}"
+  replicas: {{$element.Replicas}}
   selector:
     matchLabels:
   template:
     spec:
-      clusterName: "{{.Name}}"
-      version: "{{.Spec.KubernetesVersion}}"
+      clusterName: "{{$name}}"
+      version: "{{$k8s}}"
       bootstrap:
         configRef:
-          name: "{{.Name}}-md-0"
+          name: "{{$name}}-md-{{$index}}"
           apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
           kind: EKSConfigTemplate
-          namespace: "{{.Namespace}}"
+          namespace: "{{$namespace}}"
       infrastructureRef:
-        name: "{{.Name}}-md-0"
+        name: "{{$name}}-md-{{$index}}"
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: AWSMachineTemplate
-        namespace: "{{.Namespace}}"
+        namespace: "{{$namespace}}"
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
 kind: AWSMachineTemplate
 metadata:
-  name: "{{.Name}}-md-0"
-  namespace: "{{.Namespace}}"
+  name: "{{$name}}-md-{{$index}}"
+  namespace: "{{$namespace}}"
 spec:
   template:
     spec:
-      instanceType: "{{.Spec.WorkerNode.MachineType}}"
+      instanceType: "{{$element.MachineType}}"
       iamInstanceProfile: "nodes.cluster-api-provider-aws.sigs.k8s.io"
-      sshKeyName: "{{.Spec.InfrastructureProvider.SSHKey}}"
-      {{if .Spec.WorkerNode.Subnet}}
-      subnet: {{.Spec.WorkerNode.Subnet}}
+      sshKeyName: "{{$sshKey}}"
+      {{if $element.Subnet}}
+      subnet: {{$element.Subnet}}
       {{end}}
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: EKSConfigTemplate
 metadata:
-  name: "{{.Name}}-md-0"
-  namespace: "{{.Namespace}}"
+  name: "{{$name}}-md-{{$index}}"
+  namespace: "{{$namespace}}"
 spec:
   template: {}
+{{end}}

@@ -98,7 +98,6 @@ func (p *providersClient) defaults() []Provider {
 			providerType:  undistrov1.InfrastructureProviderType,
 			preConfigFunc: awsPreConfig,
 			initFunc:      awsInit,
-			upgradeFunc:   awsUpgrade,
 		},
 		&provider{
 			name:         AzureProviderName,
