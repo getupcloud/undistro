@@ -19,6 +19,8 @@ spec:
     apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
     name: "{{.Name}}-control-plane"
     namespace: "{{.Namespace}}"
+
+{{$bastion := .GetBastion}}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
 kind: AWSCluster
@@ -28,6 +30,14 @@ metadata:
 spec:
   region: '{{variable "AWS_REGION"}}'
   sshKeyName: "{{.Spec.InfrastructureProvider.SSHKey}}"
+  bastion:
+    enabled: {{$bastion.Enabled}}
+    disableIngressRules: {{$bastion.DisableIngressRules}}
+    instanceType: {{$bastion.InstanceType}}
+    allowedCIDRBlocks:
+    {{range $bastion.AllowedCIDRBlocks}}
+      - {{.}}
+    {{end}}
   {{if .Spec.Network}}
   networkSpec:
     vpc:

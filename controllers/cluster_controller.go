@@ -23,6 +23,7 @@ import (
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
@@ -162,12 +163,12 @@ func (r *ClusterReconciler) Reconcile(req ctrl.Request) (res ctrl.Result, err er
 func (r *ClusterReconciler) hasDiff(ctx context.Context, cl *undistrov1.Cluster) bool {
 	diffCP := cmp.Diff(cl.Spec.ControlPlaneNode, cl.Status.ControlPlaneNode)
 	diffW := cmp.Diff(cl.Spec.WorkerNodes, cl.Status.WorkerNodes)
+	diffBastion := cmp.Diff(cl.Spec.Bastion, cl.Status.BastionConfig)
 	switch {
-	case cl.Spec.KubernetesVersion != cl.Status.KubernetesVersion:
-		return true
-	case diffCP != "":
-		return true
-	case diffW != "":
+	case cl.Spec.KubernetesVersion != cl.Status.KubernetesVersion,
+		diffCP != "",
+		diffW != "",
+		diffBastion != "":
 		return true
 	default:
 		return false
@@ -254,6 +255,7 @@ func (r *ClusterReconciler) init(ctx context.Context, cl *undistrov1.Cluster, c 
 	cl.Status.ControlPlaneNode = cl.Spec.ControlPlaneNode
 	cl.Status.InfrastructureName = cl.Spec.InfrastructureProvider.Name
 	cl.Status.TotalWorkerPools = int64(len(cl.Spec.WorkerNodes))
+	cl.Status.BastionConfig = cl.Spec.Bastion
 	cl.Status.TotalWorkerReplicas = 0
 	for _, w := range cl.Spec.WorkerNodes {
 		cl.Status.TotalWorkerReplicas += *w.Replicas
@@ -360,6 +362,7 @@ func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster,
 	cl.Status.ControlPlaneNode = cl.Spec.ControlPlaneNode
 	cl.Status.InfrastructureName = cl.Spec.InfrastructureProvider.Name
 	cl.Status.TotalWorkerPools = int64(len(cl.Spec.WorkerNodes))
+	cl.Status.BastionConfig = cl.Spec.Bastion
 	cl.Status.TotalWorkerReplicas = 0
 	for _, w := range cl.Spec.WorkerNodes {
 		cl.Status.TotalWorkerReplicas += *w.Replicas
@@ -387,11 +390,43 @@ func (r *ClusterReconciler) provisioning(ctx context.Context, cl *undistrov1.Clu
 			return ctrl.Result{}, err
 		}
 	}
+	bastionIP, err := r.getClusterBastionIP(ctx, cl, capi)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 	if capi.Status.ControlPlaneReady && capi.Status.InfrastructureReady && undistrov1.ClusterPhase(capi.Status.Phase) == undistrov1.ProvisionedPhase {
+		if cl.GetBastion().Enabled && bastionIP == "" {
+			return ctrl.Result{Requeue: true}, nil
+		}
 		cl.Status.Phase = undistrov1.ProvisionedPhase
 		cl.Status.Ready = true
+		cl.Status.BastionPublicIP = bastionIP
 	}
 	return ctrl.Result{}, nil
+}
+
+func (r *ClusterReconciler) getClusterBastionIP(ctx context.Context, cl *undistrov1.Cluster, capi *clusterApi.Cluster) (string, error) {
+	var ref *corev1.ObjectReference
+	if capi.Spec.InfrastructureRef == nil || capi.Spec.ControlPlaneRef == nil {
+		return "", errors.New("nil provider cluster reference")
+	}
+	if cl.IsManaged() {
+		ref = capi.Spec.ControlPlaneRef
+	} else {
+		ref = capi.Spec.InfrastructureRef
+	}
+	nm := client.ObjectKey{
+		Name:      ref.Name,
+		Namespace: ref.Namespace,
+	}
+	o := unstructured.Unstructured{}
+	o.SetGroupVersionKind(ref.GroupVersionKind())
+	err := r.Get(ctx, nm, &o)
+	if err != nil {
+		return "", client.IgnoreNotFound(err)
+	}
+	ip, _, err := unstructured.NestedString(o.Object, "status", "bastion", "publicIp")
+	return ip, err
 }
 
 func (r *ClusterReconciler) installCNI(ctx context.Context, cl *undistrov1.Cluster, c uclient.Client) error {

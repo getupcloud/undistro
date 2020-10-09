@@ -52,4 +52,9 @@ func (r *Cluster) Default() {
 			*r.Spec.WorkerNodes[i].Replicas = defaultWorkerReplicas
 		}
 	}
+	if r.Spec.Bastion == nil {
+		r.Spec.Bastion = &Bastion{
+			Enabled: true,
+		}
+	}
 }

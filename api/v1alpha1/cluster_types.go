@@ -90,6 +90,14 @@ type ClusterSpec struct {
 	WorkerNodes            []Node                 `json:"workerNodes,omitempty"`
 	CniName                CNI                    `json:"cniName,omitempty"`
 	Network                *Network               `json:"network,omitempty"`
+	Bastion                *Bastion               `json:"bastion,omitempty"`
+}
+
+type Bastion struct {
+	Enabled             bool     `json:"enabled,omitempty"`
+	DisableIngressRules bool     `json:"disableIngressRules,omitempty"`
+	AllowedCIDRBlocks   []string `json:"allowedCIDRBlocks,omitempty"`
+	InstanceType        string   `json:"instanceType,omitempty"`
 }
 
 type Network struct {
@@ -116,6 +124,8 @@ type ClusterStatus struct {
 	InfrastructureName  string                  `json:"infrastructureName,omitempty"`
 	TotalWorkerReplicas int64                   `json:"totalWorkerReplicas,omitempty"`
 	TotalWorkerPools    int64                   `json:"totalWorkerPools,omitempty"`
+	BastionPublicIP     string                  `json:"bastionPublicIP,omitempty"`
+	BastionConfig       *Bastion                `json:"bastionConfig,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -128,6 +138,7 @@ type ClusterStatus struct {
 // +kubebuilder:printcolumn:name="Control Plane Replicas",type="integer",JSONPath=".status.controlPlaneNode.replicas"
 // +kubebuilder:printcolumn:name="Worker Replicas",type="integer",JSONPath=".status.totalWorkerReplicas"
 // +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
+// +kubebuilder:printcolumn:name="Bastion IP",type="string",JSONPath=".status.bastionPublicIP"
 // +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.ready"
 
 // Cluster is the Schema for the clusters API
@@ -141,6 +152,15 @@ type Cluster struct {
 
 func (c *Cluster) GetCNITemplateURL() string {
 	return cniMapAddr[c.Spec.CniName]
+}
+
+func (c Cluster) GetBastion() Bastion {
+	if c.Spec.Bastion == nil {
+		return Bastion{
+			Enabled: true,
+		}
+	}
+	return *c.Spec.Bastion
 }
 
 func (c Cluster) IsManaged() bool {
