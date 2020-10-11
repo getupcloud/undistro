@@ -5,12 +5,11 @@ go 1.15
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/Masterminds/sprig/v3 v3.1.0
-	github.com/aws/aws-sdk-go v1.35.3
+	github.com/aws/aws-sdk-go v1.35.7
 	github.com/drone/envsubst v1.0.3-0.20200709223903-efdb65b94e5a
-	github.com/go-logr/logr v0.1.0
+	github.com/go-logr/logr v0.2.1
 	github.com/google/go-cmp v0.5.2
 	github.com/google/go-github/v32 v32.1.0
-	github.com/gophercloud/gophercloud v0.13.0 // indirect
 	github.com/ncabatoff/go-seq v0.0.0-20180805175032-b08ef85ed833
 	github.com/onsi/ginkgo v1.14.1
 	github.com/onsi/gomega v1.10.2
@@ -18,18 +17,18 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.1
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43
-	helm.sh/helm/v3 v3.3.4
-	k8s.io/api v0.18.9
-	k8s.io/apiextensions-apiserver v0.18.9
-	k8s.io/apimachinery v0.18.9
-	k8s.io/cli-runtime v0.18.9
-	k8s.io/client-go v0.18.9
-	k8s.io/kubectl v0.18.9
-	k8s.io/utils v0.0.0-20200821003339-5e75c0163111
+	helm.sh/helm/v3 v3.1.0-rc.1.0.20201005141519-fc9b46067f8f
+	k8s.io/api v0.19.2
+	k8s.io/apiextensions-apiserver v0.19.2
+	k8s.io/apimachinery v0.19.2
+	k8s.io/cli-runtime v0.19.2
+	k8s.io/client-go v0.19.2
+	k8s.io/kubectl v0.19.2
+	k8s.io/utils v0.0.0-20200912215256-4140de9c8800
 	rsc.io/letsencrypt v0.0.3 // indirect
-	sigs.k8s.io/cluster-api v0.3.9
-	sigs.k8s.io/cluster-api-provider-aws v0.6.1-0.20201001171519-25226ca60b6a
-	sigs.k8s.io/controller-runtime v0.6.3
+	sigs.k8s.io/cluster-api v0.3.11-0.20201009213249-3dd38537ad8e
+	sigs.k8s.io/cluster-api-provider-aws v0.6.1-0.20201009133706-28800c833935
+	sigs.k8s.io/controller-runtime v0.7.0-alpha.2
 	sigs.k8s.io/yaml v1.2.0
 )
 

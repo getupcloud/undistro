@@ -9,11 +9,11 @@ import (
 	"time"
 
 	. "github.com/onsi/gomega"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/getupio-undistro/undistro/internal/test"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
@@ -69,7 +69,7 @@ var fooProvider = undistrov1.Provider{ObjectMeta: metav1.ObjectMeta{Name: "foo",
 
 func Test_inventoryClient_List(t *testing.T) {
 	type fields struct {
-		initObjs []runtime.Object
+		initObjs []client.Object
 	}
 	tests := []struct {
 		name    string
@@ -80,7 +80,7 @@ func Test_inventoryClient_List(t *testing.T) {
 		{
 			name: "Get list",
 			fields: fields{
-				initObjs: []runtime.Object{
+				initObjs: []client.Object{
 					&fooProvider,
 				},
 			},

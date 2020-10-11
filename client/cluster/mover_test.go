@@ -7,20 +7,19 @@ package cluster
 import (
 	"testing"
 
-	clusterctlv1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/getupio-undistro/undistro/internal/test"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime"
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1alpha3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type moveTestsFields struct {
-	objs []runtime.Object
+	objs []client.Object
 }
 
 var moveTests = []struct {
@@ -252,8 +251,8 @@ var moveTests = []struct {
 	{
 		name: "Two clusters",
 		fields: moveTestsFields{
-			objs: func() []runtime.Object {
-				objs := []runtime.Object{}
+			objs: func() []client.Object {
+				objs := []client.Object{}
 				objs = append(objs, test.NewFakeCluster("ns1", "foo").Objs()...)
 				objs = append(objs, test.NewFakeCluster("ns1", "bar").Objs()...)
 				return objs
@@ -278,10 +277,10 @@ var moveTests = []struct {
 	{
 		name: "Two clusters with a shared object",
 		fields: moveTestsFields{
-			objs: func() []runtime.Object {
+			objs: func() []client.Object {
 				sharedInfrastructureTemplate := test.NewFakeInfrastructureTemplate("shared")
 
-				objs := []runtime.Object{
+				objs := []client.Object{
 					sharedInfrastructureTemplate,
 				}
 
@@ -347,8 +346,8 @@ var moveTests = []struct {
 	{
 		name: "A ClusterResourceSet applied to a cluster",
 		fields: moveTestsFields{
-			objs: func() []runtime.Object {
-				objs := []runtime.Object{}
+			objs: func() []client.Object {
+				objs := []client.Object{}
 				objs = append(objs, test.NewFakeCluster("ns1", "cluster1").Objs()...)
 
 				objs = append(objs, test.NewFakeClusterResourceSet("ns1", "crs1").
@@ -383,8 +382,8 @@ var moveTests = []struct {
 	{
 		name: "Cluster and global + namespaced external objects with force-move label",
 		fields: moveTestsFields{
-			func() []runtime.Object {
-				objs := []runtime.Object{}
+			func() []client.Object {
+				objs := []client.Object{}
 				objs = append(objs, test.NewFakeCluster("ns1", "foo").Objs()...)
 				objs = append(objs, test.NewFakeExternalObject("ns1", "externalTest1").Objs()...)
 				objs = append(objs, test.NewFakeExternalObject("", "externalTest2").Objs()...)
@@ -406,38 +405,6 @@ var moveTests = []struct {
 		},
 		wantErr: false,
 	},
-}
-
-func Test_getMoveSequence(t *testing.T) {
-	// NB. we are testing the move and move sequence using the same set of moveTests, but checking the results at different stages of the move process
-	for _, tt := range moveTests {
-		t.Run(tt.name, func(t *testing.T) {
-			g := NewWithT(t)
-
-			// Create an objectGraph bound a source cluster with all the CRDs for the types involved in the test.
-			graph := getObjectGraphWithObjs(tt.fields.objs)
-
-			// Get all the types to be considered for discovery
-			err := getFakeDiscoveryTypes(graph)
-			g.Expect(err).NotTo(HaveOccurred())
-
-			// trigger discovery the content of the source cluster
-			g.Expect(graph.Discovery("")).To(Succeed())
-
-			moveSequence := getMoveSequence(graph)
-			g.Expect(moveSequence.groups).To(HaveLen(len(tt.wantMoveGroups)))
-
-			for i, gotGroup := range moveSequence.groups {
-				wantGroup := tt.wantMoveGroups[i]
-				gotNodes := []string{}
-				for _, node := range gotGroup {
-					gotNodes = append(gotNodes, string(node.identity.UID))
-				}
-
-				g.Expect(gotNodes).To(ConsistOf(wantGroup))
-			}
-		})
-	}
 }
 
 func Test_objectMover_move(t *testing.T) {
@@ -517,7 +484,7 @@ func Test_objectMover_move(t *testing.T) {
 
 func Test_objectMover_checkProvisioningCompleted(t *testing.T) {
 	type fields struct {
-		objs []runtime.Object
+		objs []client.Object
 	}
 	tests := []struct {
 		name    string
@@ -527,7 +494,7 @@ func Test_objectMover_checkProvisioningCompleted(t *testing.T) {
 		{
 			name: "Blocks with a cluster without InfrastructureReady",
 			fields: fields{
-				objs: []runtime.Object{
+				objs: []client.Object{
 					&clusterv1.Cluster{
 						TypeMeta: metav1.TypeMeta{
 							Kind:       "Cluster",
@@ -549,7 +516,7 @@ func Test_objectMover_checkProvisioningCompleted(t *testing.T) {
 		{
 			name: "Blocks with a cluster without ControlPlaneInitialized",
 			fields: fields{
-				objs: []runtime.Object{
+				objs: []client.Object{
 					&clusterv1.Cluster{
 						TypeMeta: metav1.TypeMeta{
 							Kind:       "Cluster",
@@ -571,7 +538,7 @@ func Test_objectMover_checkProvisioningCompleted(t *testing.T) {
 		{
 			name: "Blocks with a cluster without ControlPlaneReady",
 			fields: fields{
-				objs: []runtime.Object{
+				objs: []client.Object{
 					&clusterv1.Cluster{
 						TypeMeta: metav1.TypeMeta{
 							Kind:       "Cluster",
@@ -597,7 +564,7 @@ func Test_objectMover_checkProvisioningCompleted(t *testing.T) {
 		{
 			name: "Blocks with a Machine Without NodeRef",
 			fields: fields{
-				objs: []runtime.Object{
+				objs: []client.Object{
 					&clusterv1.Cluster{
 						TypeMeta: metav1.TypeMeta{
 							Kind:       "Cluster",
@@ -641,7 +608,7 @@ func Test_objectMover_checkProvisioningCompleted(t *testing.T) {
 		{
 			name: "Pass",
 			fields: fields{
-				objs: []runtime.Object{
+				objs: []client.Object{
 					&clusterv1.Cluster{
 						TypeMeta: metav1.TypeMeta{
 							Kind:       "Cluster",
@@ -728,16 +695,16 @@ func Test_objectsMoverService_checkTargetProviders(t *testing.T) {
 			name: "move objects in single namespace, all the providers in place (lazy matching)",
 			fields: fields{
 				fromProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v1.0.0", "capi-system", "").
-					WithProviderInventory("kubeadm", clusterctlv1.BootstrapProviderType, "v1.0.0", "cabpk-system", "").
-					WithProviderInventory("capa", clusterctlv1.InfrastructureProviderType, "v1.0.0", "capa-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v1.0.0", "capi-system", "").
+					WithProviderInventory("kubeadm", undistrov1.BootstrapProviderType, "v1.0.0", "cabpk-system", "").
+					WithProviderInventory("capa", undistrov1.InfrastructureProviderType, "v1.0.0", "capa-system", ""),
 			},
 			args: args{
 				namespace: "ns1", // a single namespaces
 				toProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v1.0.0", "capi-system", "ns1").
-					WithProviderInventory("kubeadm", clusterctlv1.BootstrapProviderType, "v1.0.0", "cabpk-system", "ns1").
-					WithProviderInventory("capa", clusterctlv1.InfrastructureProviderType, "v1.0.0", "capa-system", "ns1"),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v1.0.0", "capi-system", "ns1").
+					WithProviderInventory("kubeadm", undistrov1.BootstrapProviderType, "v1.0.0", "cabpk-system", "ns1").
+					WithProviderInventory("capa", undistrov1.InfrastructureProviderType, "v1.0.0", "capa-system", "ns1"),
 			},
 			wantErr: false,
 		},
@@ -745,12 +712,12 @@ func Test_objectsMoverService_checkTargetProviders(t *testing.T) {
 			name: "move objects in single namespace, all the providers in place but with a newer version (lazy matching)",
 			fields: fields{
 				fromProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v2.0.0", "capi-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v2.0.0", "capi-system", ""),
 			},
 			args: args{
 				namespace: "ns1", // a single namespaces
 				toProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v2.1.0", "capi-system", "ns1"), // Lazy matching
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v2.1.0", "capi-system", "ns1"), // Lazy matching
 			},
 			wantErr: false,
 		},
@@ -758,16 +725,16 @@ func Test_objectsMoverService_checkTargetProviders(t *testing.T) {
 			name: "move objects in all namespaces, all the providers in place (exact matching)",
 			fields: fields{
 				fromProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v1.0.0", "capi-system", "").
-					WithProviderInventory("kubeadm", clusterctlv1.BootstrapProviderType, "v1.0.0", "cabpk-system", "").
-					WithProviderInventory("capa", clusterctlv1.InfrastructureProviderType, "v1.0.0", "capa-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v1.0.0", "capi-system", "").
+					WithProviderInventory("kubeadm", undistrov1.BootstrapProviderType, "v1.0.0", "cabpk-system", "").
+					WithProviderInventory("capa", undistrov1.InfrastructureProviderType, "v1.0.0", "capa-system", ""),
 			},
 			args: args{
 				namespace: "", // all namespaces
 				toProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v1.0.0", "capi-system", "").
-					WithProviderInventory("kubeadm", clusterctlv1.BootstrapProviderType, "v1.0.0", "cabpk-system", "").
-					WithProviderInventory("capa", clusterctlv1.InfrastructureProviderType, "v1.0.0", "capa-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v1.0.0", "capi-system", "").
+					WithProviderInventory("kubeadm", undistrov1.BootstrapProviderType, "v1.0.0", "cabpk-system", "").
+					WithProviderInventory("capa", undistrov1.InfrastructureProviderType, "v1.0.0", "capa-system", ""),
 			},
 			wantErr: false,
 		},
@@ -775,12 +742,12 @@ func Test_objectsMoverService_checkTargetProviders(t *testing.T) {
 			name: "move objects in all namespaces, all the providers in place but with a newer version (exact matching)",
 			fields: fields{
 				fromProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v2.0.0", "capi-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v2.0.0", "capi-system", ""),
 			},
 			args: args{
 				namespace: "", // all namespaces
 				toProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v2.1.0", "capi-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v2.1.0", "capi-system", ""),
 			},
 			wantErr: false,
 		},
@@ -788,12 +755,12 @@ func Test_objectsMoverService_checkTargetProviders(t *testing.T) {
 			name: "move objects in all namespaces, not exact matching",
 			fields: fields{
 				fromProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v2.0.0", "capi-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v2.0.0", "capi-system", ""),
 			},
 			args: args{
 				namespace: "", // all namespaces
 				toProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v2.1.0", "capi-system", "ns1"), // Lazy matching only
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v2.1.0", "capi-system", "ns1"), // Lazy matching only
 			},
 			wantErr: true,
 		},
@@ -801,7 +768,7 @@ func Test_objectsMoverService_checkTargetProviders(t *testing.T) {
 			name: "fails if a provider is missing",
 			fields: fields{
 				fromProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v2.0.0", "capi-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v2.0.0", "capi-system", ""),
 			},
 			args: args{
 				namespace: "", // all namespaces
@@ -813,12 +780,12 @@ func Test_objectsMoverService_checkTargetProviders(t *testing.T) {
 			name: "fails if a provider version is older than expected",
 			fields: fields{
 				fromProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v2.0.0", "capi-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v2.0.0", "capi-system", ""),
 			},
 			args: args{
 				namespace: "", // all namespaces
 				toProxy: test.NewFakeProxy().
-					WithProviderInventory("capi", clusterctlv1.CoreProviderType, "v1.0.0", "capi1-system", ""),
+					WithProviderInventory("capi", undistrov1.CoreProviderType, "v1.0.0", "capi1-system", ""),
 			},
 			wantErr: true,
 		},
@@ -909,7 +876,7 @@ func Test_objectMoverService_ensureNamespaces(t *testing.T) {
 		toProxy Proxy
 	}
 	type fields struct {
-		objs []runtime.Object
+		objs []client.Object
 	}
 
 	// Create some test runtime objects to be used in the tests

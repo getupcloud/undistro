@@ -17,11 +17,11 @@ import (
 	apiextensionslv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1alpha3"
 	addonsv1alpha3 "sigs.k8s.io/cluster-api/exp/addons/api/v1alpha3"
 	expv1 "sigs.k8s.io/cluster-api/exp/api/v1alpha3"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type FakeCluster struct {
@@ -72,7 +72,7 @@ func (f *FakeCluster) WithMachines(fakeMachine ...*FakeMachine) *FakeCluster {
 	return f
 }
 
-func (f *FakeCluster) Objs() []runtime.Object {
+func (f *FakeCluster) Objs() []client.Object {
 	clusterInfrastructure := &fakeinfrastructure.GenericInfrastructureCluster{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: fakeinfrastructure.GroupVersion.String(),
@@ -132,7 +132,7 @@ func (f *FakeCluster) Objs() []runtime.Object {
 		},
 	}
 
-	objs := []runtime.Object{
+	objs := []client.Object{
 		cluster,
 		clusterInfrastructure,
 		caSecret,
@@ -221,7 +221,7 @@ func (f *FakeControlPlane) WithMachines(fakeMachine ...*FakeMachine) *FakeContro
 	return f
 }
 
-func (f *FakeControlPlane) Objs(cluster *clusterv1.Cluster) []runtime.Object {
+func (f *FakeControlPlane) Objs(cluster *clusterv1.Cluster) []client.Object {
 
 	controlPlaneInfrastructure := &fakeinfrastructure.GenericInfrastructureMachineTemplate{
 		TypeMeta: metav1.TypeMeta{
@@ -312,7 +312,7 @@ func (f *FakeControlPlane) Objs(cluster *clusterv1.Cluster) []runtime.Object {
 	}
 	saSecret.SetOwnerReferences([]metav1.OwnerReference{*metav1.NewControllerRef(controlPlane, controlPlane.GroupVersionKind())})
 
-	objs := []runtime.Object{
+	objs := []client.Object{
 		controlPlane,
 		controlPlaneInfrastructure,
 		kubeconfigSecret,
@@ -340,7 +340,7 @@ func NewFakeMachinePool(name string) *FakeMachinePool {
 	}
 }
 
-func (f *FakeMachinePool) Objs(cluster *clusterv1.Cluster) []runtime.Object {
+func (f *FakeMachinePool) Objs(cluster *clusterv1.Cluster) []client.Object {
 	machinePoolInfrastructure := &fakeinfrastructure.GenericInfrastructureMachineTemplate{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: fakeinfrastructure.GroupVersion.String(),
@@ -427,7 +427,7 @@ func (f *FakeMachinePool) Objs(cluster *clusterv1.Cluster) []runtime.Object {
 	// Ensure the machinePool gets a UID to be used by dependant objects for creating OwnerReferences.
 	setUID(machinePool)
 
-	objs := []runtime.Object{
+	objs := []client.Object{
 		machinePool,
 		machinePoolInfrastructure,
 		machinePoolBootstrap,
@@ -476,7 +476,7 @@ func (f *FakeMachineDeployment) WithInfrastructureTemplate(infrastructureTemplat
 	return f
 }
 
-func (f *FakeMachineDeployment) Objs(cluster *clusterv1.Cluster) []runtime.Object {
+func (f *FakeMachineDeployment) Objs(cluster *clusterv1.Cluster) []client.Object {
 	// infra template can be either shared or specific to the machine deployment
 	machineDeploymentInfrastructure := f.sharedInfrastructureTemplate
 	if machineDeploymentInfrastructure == nil {
@@ -559,7 +559,7 @@ func (f *FakeMachineDeployment) Objs(cluster *clusterv1.Cluster) []runtime.Objec
 	// Ensure the machineDeployment gets a UID to be used by dependant objects for creating OwnerReferences.
 	setUID(machineDeployment)
 
-	objs := []runtime.Object{
+	objs := []client.Object{
 		machineDeployment,
 		machineDeploymentBootstrap,
 	}
@@ -602,7 +602,7 @@ func (f *FakeMachineSet) WithInfrastructureTemplate(infrastructureTemplate *fake
 	return f
 }
 
-func (f *FakeMachineSet) Objs(cluster *clusterv1.Cluster, machineDeployment *clusterv1.MachineDeployment) []runtime.Object {
+func (f *FakeMachineSet) Objs(cluster *clusterv1.Cluster, machineDeployment *clusterv1.MachineDeployment) []client.Object {
 	machineSet := &clusterv1.MachineSet{ // Created by machineDeployment controller
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "MachineSet",
@@ -624,7 +624,7 @@ func (f *FakeMachineSet) Objs(cluster *clusterv1.Cluster, machineDeployment *clu
 	// Ensure the machineSet gets a UID to be used by dependant objects for creating OwnerReferences.
 	setUID(machineSet)
 
-	objs := make([]runtime.Object, 0)
+	objs := make([]client.Object, 0)
 
 	if machineDeployment != nil {
 		// If this machineSet belong to a machineDeployment, it is controlled by it / ownership set by the machineDeployment controller  -- ** NOT RECONCILED **
@@ -728,7 +728,7 @@ func NewFakeMachine(name string) *FakeMachine {
 	}
 }
 
-func (f *FakeMachine) Objs(cluster *clusterv1.Cluster, generateCerts bool, machineSet *clusterv1.MachineSet, controlPlane *fakecontrolplane.GenericControlPlane) []runtime.Object {
+func (f *FakeMachine) Objs(cluster *clusterv1.Cluster, generateCerts bool, machineSet *clusterv1.MachineSet, controlPlane *fakecontrolplane.GenericControlPlane) []client.Object {
 
 	machineInfrastructure := &fakeinfrastructure.GenericInfrastructureMachine{
 		TypeMeta: metav1.TypeMeta{
@@ -817,7 +817,7 @@ func (f *FakeMachine) Objs(cluster *clusterv1.Cluster, generateCerts bool, machi
 	// Ensure the machine gets a UID to be used by dependant objects for creating OwnerReferences.
 	setUID(machine)
 
-	var additionalObjs []runtime.Object
+	var additionalObjs []client.Object
 
 	switch {
 	case machineSet != nil:
@@ -881,7 +881,7 @@ func (f *FakeMachine) Objs(cluster *clusterv1.Cluster, generateCerts bool, machi
 		clusterv1.ClusterLabelName: machine.Spec.ClusterName,
 	})
 
-	objs := []runtime.Object{
+	objs := []client.Object{
 		machine,
 		machineInfrastructure,
 		machineBootstrap,
@@ -949,7 +949,7 @@ func (f *FakeClusterResourceSet) ApplyToCluster(cluster *clusterv1.Cluster) *Fak
 	return f
 }
 
-func (f *FakeClusterResourceSet) Objs() []runtime.Object {
+func (f *FakeClusterResourceSet) Objs() []client.Object {
 	crs := &addonsv1alpha3.ClusterResourceSet{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ClusterResourceSet",
@@ -967,7 +967,7 @@ func (f *FakeClusterResourceSet) Objs() []runtime.Object {
 	// Ensure the ClusterResourceSet gets a UID to be used by dependant objects for creating OwnerReferences.
 	setUID(crs)
 
-	objs := []runtime.Object{crs}
+	objs := []client.Object{crs}
 
 	// Ensures all the resources of type Secret are created and listed as a ClusterResourceSet resources
 	for i := range f.secrets {
@@ -1093,7 +1093,7 @@ func NewFakeExternalObject(namespace, name string) *FakeExternalObject {
 	}
 }
 
-func (f *FakeExternalObject) Objs() []runtime.Object {
+func (f *FakeExternalObject) Objs() []client.Object {
 	externalObj := &fakeexternal.GenericExternalObject{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: fakeexternal.GroupVersion.String(),
@@ -1107,10 +1107,10 @@ func (f *FakeExternalObject) Objs() []runtime.Object {
 
 	setUID(externalObj)
 
-	return []runtime.Object{externalObj}
+	return []client.Object{externalObj}
 }
 
-func SelectClusterObj(objs []runtime.Object, namespace, name string) *clusterv1.Cluster {
+func SelectClusterObj(objs []client.Object, namespace, name string) *clusterv1.Cluster {
 	for _, o := range objs {
 		if o.GetObjectKind().GroupVersionKind().GroupKind() != clusterv1.GroupVersion.WithKind("Cluster").GroupKind() {
 			continue
@@ -1139,7 +1139,7 @@ func SelectClusterObj(objs []runtime.Object, namespace, name string) *clusterv1.
 
 // setUID assigns a UID to the object, so test objects are uniquely identified.
 // NB. In order to make debugging easier we are using a human readable, deterministic string (instead of a random UID).
-func setUID(obj runtime.Object) {
+func setUID(obj client.Object) {
 	accessor, err := meta.Accessor(obj)
 	if err != nil {
 		panic(fmt.Sprintf("failde to get accessor for test object: %v", err))

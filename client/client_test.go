@@ -22,6 +22,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/rest"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // TestNewFakeClient is a fake test to document fakeClient usage
@@ -204,8 +205,9 @@ func newFakeCertManagerClient(imagesReturnImages []string, imagesReturnError err
 }
 
 type fakeCertManagerClient struct {
-	images      []string
-	imagesError error
+	images          []string
+	imagesError     error
+	certManagerPlan cluster.CertManagerUpgradePlan
 }
 
 var _ cluster.CertManagerClient = &fakeCertManagerClient{}
@@ -214,8 +216,21 @@ func (p *fakeCertManagerClient) EnsureInstalled() error {
 	return nil
 }
 
+func (p *fakeCertManagerClient) EnsureLatestVersion() error {
+	return nil
+}
+
+func (p *fakeCertManagerClient) PlanUpgrade() (cluster.CertManagerUpgradePlan, error) {
+	return p.certManagerPlan, nil
+}
+
 func (p *fakeCertManagerClient) Images() ([]string, error) {
 	return p.images, p.imagesError
+}
+
+func (p *fakeCertManagerClient) WithCertManagerPlan(plan CertManagerUpgradePlan) *fakeCertManagerClient {
+	p.certManagerPlan = cluster.CertManagerUpgradePlan(plan)
+	return p
 }
 
 type fakeWorkloadCluster struct {
@@ -291,7 +306,7 @@ func (f *fakeClusterClient) Template() cluster.TemplateClient {
 	return f.internalclient.Template()
 }
 
-func (f *fakeClusterClient) WithObjs(objs ...runtime.Object) *fakeClusterClient {
+func (f *fakeClusterClient) WithObjs(objs ...client.Object) *fakeClusterClient {
 	f.fakeProxy.WithObjs(objs...)
 	return f
 }

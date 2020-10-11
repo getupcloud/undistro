@@ -17,7 +17,6 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime"
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1alpha3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -44,7 +43,7 @@ func Test_providerComponents_Delete(t *testing.T) {
 	mutatingWebhook.SetName("mwh1")
 	mutatingWebhook.SetLabels(sharedLabels)
 
-	initObjs := []runtime.Object{
+	initObjs := []client.Object{
 		// Namespace (should be deleted only if includeNamespace)
 		&corev1.Namespace{
 			TypeMeta: metav1.TypeMeta{

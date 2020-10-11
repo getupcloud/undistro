@@ -74,8 +74,7 @@ type ClusterReconciler struct {
 // +kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io;bootstrap.cluster.x-k8s.io;controlplane.cluster.x-k8s.io,resources=*,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=cluster.x-k8s.io,resources=*,verbs=get;list;watch;create;update;patch;delete
 
-func (r *ClusterReconciler) Reconcile(req ctrl.Request) (res ctrl.Result, err error) {
-	ctx := context.Background()
+func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (res ctrl.Result, err error) {
 	log := r.Log.WithValues("cluster", req.NamespacedName)
 	var cluster undistrov1.Cluster
 	if err := r.Get(ctx, req.NamespacedName, &cluster); err != nil {
@@ -481,7 +480,7 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl *undistrov1.Clust
 }
 
 func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager, opts controller.Options) error {
-	if err := mgr.GetFieldIndexer().IndexField(context.TODO(), &clusterApi.Cluster{}, jobOwnerKey, func(rawObj runtime.Object) []string {
+	if err := mgr.GetFieldIndexer().IndexField(context.TODO(), &clusterApi.Cluster{}, jobOwnerKey, func(rawObj client.Object) []string {
 		cluster := rawObj.(*clusterApi.Cluster)
 		owner := metav1.GetControllerOf(cluster)
 		if owner == nil {
@@ -500,18 +499,16 @@ func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager, opts controller.O
 		Owns(&clusterApi.Cluster{}).
 		Watches(
 			&source.Kind{Type: &clusterApi.Cluster{}},
-			&handler.EnqueueRequestsFromMapFunc{
-				ToRequests: handler.ToRequestsFunc(r.capiToUndistro),
-			},
+			handler.EnqueueRequestsFromMapFunc(r.capiToUndistro),
 		).
 		Complete(r)
 }
 
-func (r *ClusterReconciler) capiToUndistro(o handler.MapObject) []ctrl.Request {
+func (r *ClusterReconciler) capiToUndistro(o client.Object) []ctrl.Request {
 	ctx := context.TODO()
-	c, ok := o.Object.(*clusterApi.Cluster)
+	c, ok := o.(*clusterApi.Cluster)
 	if !ok {
-		r.Log.Error(nil, fmt.Sprintf("expected a Cluster but got a %T", o.Object))
+		r.Log.Error(nil, fmt.Sprintf("expected a Cluster but got a %T", o))
 		return nil
 	}
 	if c.Status.Phase == "" {

@@ -45,4 +45,8 @@ type Proxy cluster.Proxy
 // Logs of providers controller
 type Logs cluster.LogStreamer
 
+// CertManagerUpgradePlan defines the upgrade plan if cert-manager needs to be
+// upgraded to a different version.
+type CertManagerUpgradePlan cluster.CertManagerUpgradePlan
+
 type WorkloadCluster cluster.WorkloadCluster

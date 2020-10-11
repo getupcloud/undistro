@@ -124,8 +124,7 @@ func (r *HelmReleaseReconciler) hasNonDeployedDeps(ctx context.Context, hr *undi
 // +kubebuilder:rbac:groups=undistro.io,resources=*,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=undistro.io,resources=*,verbs=get;update;patch
 
-func (r *HelmReleaseReconciler) Reconcile(req ctrl.Request) (res ctrl.Result, err error) {
-	ctx := context.Background()
+func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request) (res ctrl.Result, err error) {
 	log := r.Log.WithValues("helmrelease", req.NamespacedName)
 	var hr undistrov1.HelmRelease
 	if err := r.Get(ctx, req.NamespacedName, &hr); err != nil {

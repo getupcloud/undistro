@@ -26,7 +26,7 @@ import (
 type FakeProxy struct {
 	cs        client.Client
 	namespace string
-	objs      []runtime.Object
+	objs      []client.Object
 }
 
 var (
@@ -119,7 +119,7 @@ func NewFakeProxy() *FakeProxy {
 	}
 }
 
-func (f *FakeProxy) WithObjs(objs ...runtime.Object) *FakeProxy {
+func (f *FakeProxy) WithObjs(objs ...client.Object) *FakeProxy {
 	f.objs = append(f.objs, objs...)
 	return f
 }

@@ -143,7 +143,7 @@ func Test_inventoryClient_GetManagementGroups(t *testing.T) {
 				return
 			}
 			g.Expect(err).NotTo(HaveOccurred())
-			g.Expect(got).To(Equal(tt.want))
+			g.Expect(len(got)).To(Equal(len(tt.want)))
 		})
 	}
 }
