@@ -28,7 +28,7 @@ require (
 	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/cluster-api v0.3.11-0.20201009213249-3dd38537ad8e
 	sigs.k8s.io/cluster-api-provider-aws v0.6.1-0.20201009133706-28800c833935
-	sigs.k8s.io/controller-runtime v0.7.0-alpha.2
+	sigs.k8s.io/controller-runtime v0.7.0-alpha.2.0.20201009200249-bd97e08c43d5
 	sigs.k8s.io/yaml v1.2.0
 )
 
