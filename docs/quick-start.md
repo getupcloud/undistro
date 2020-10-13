@@ -52,6 +52,7 @@ Create the kind cluster:
 ```bash
 kind create cluster
 ```
+
 Test to ensure the local kind cluster is ready:
 
 ```bash
@@ -64,11 +65,13 @@ Export the variable **KIND_EXPERIMENTAL_DOCKER_NETWORK=bridge** to let kind run 
 ```bash
 export KIND_EXPERIMENTAL_DOCKER_NETWORK=bridge
 ```
+
 Create the kind cluster:
 
 ```bash
 kind create cluster
 ```
+
 Test to ensure the local kind cluster is ready:
 
 ```bash
@@ -135,7 +138,9 @@ spec:
 
 ### Installing Helm Charts on the cluster
 
+
 In this tutorial we will install the Nginx ingress controller and the Kubernestes Dashboard
+
 
 ```yaml
 ---
@@ -159,15 +164,36 @@ metadata:
   namespace: default
 spec:
   clusterName: default/undistro-quickstart
+  dependencies:
+    -
+      apiVersion: undistro.io/v1alpha1
+      kind: HelmRelease
+      name: nginx
+  afterApplyObjects:
+    -
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: dashboard-access
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+        - kind: ServiceAccount
+          name: undistro-quickstart-dash
+          namespace: default  
   chart:
     repository: https://kubernetes.github.io/dashboard
     name: kubernetes-dashboard
-    version: 2.0.4
+    version: 2.6.0
   values:
-    rbac: true
     ingress:
       enabled: true
+    serviceAccount:
+      name: undistro-quickstart-dash
 ```
+
 create a file with content above.
 
 ```
