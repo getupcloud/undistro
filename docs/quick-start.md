@@ -217,4 +217,13 @@ bastion:
   allowedCIDRBlocks:
     - <YOUR CIDR> OR 0.0.0.0/0 TO ACCEPT ALL
 ```
-**friendly remainder** the SSH with name that referenced in YAML is always necessary to access the nodes via SSH
+**friendly remainder** the SSH with name that referenced in YAML is always necessary to access the nodes via SSH.
+
+### Cleanup
+
+We'll delete all resources created by this cluster on AWS
+
+
+```bash
+ubdistro delete cluster -f cluster-aws.yaml
+```
