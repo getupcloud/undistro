@@ -587,7 +587,7 @@ func Test_certManagerClient_PlanUpgrade(t *testing.T) {
 			},
 			expectErr: false,
 			expectedPlan: CertManagerUpgradePlan{
-				From:          "v0.16.1 (some-other-hash)",
+				From:          "v1.0.3 (some-other-hash)",
 				To:            embeddedCertManagerManifestVersion,
 				ShouldUpgrade: true,
 			},

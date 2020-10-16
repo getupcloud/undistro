@@ -24,10 +24,10 @@ require (
 	k8s.io/cli-runtime v0.19.2
 	k8s.io/client-go v0.19.2
 	k8s.io/kubectl v0.19.2
-	k8s.io/utils v0.0.0-20201005171033-6301aaf42dc7
+	k8s.io/utils v0.0.0-20201015054608-420da100c033
 	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/cluster-api v0.3.11-0.20201009213249-3dd38537ad8e
-	sigs.k8s.io/cluster-api-provider-aws v0.6.1-0.20201009133706-28800c833935
+	sigs.k8s.io/cluster-api-provider-aws v0.6.1
 	sigs.k8s.io/controller-runtime v0.7.0-alpha.3
 	sigs.k8s.io/yaml v1.2.0
 )
