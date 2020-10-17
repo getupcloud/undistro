@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"path/filepath"
 	"testing"
 
@@ -69,12 +70,12 @@ var _ = BeforeSuite(func(done Done) {
 		Log:        ctrl.Log.WithName("controllers").WithName("Cluster"),
 		Scheme:     mgr.GetScheme(),
 		RestConfig: cfg,
-	}).SetupWithManager(mgr, controller.Options{})
+	}).SetupWithManager(context.Background(), mgr, controller.Options{})
 	(&HelmReleaseReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("HelmRelease"),
 		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr, controller.Options{})
+	}).SetupWithManager(context.Background(), mgr, controller.Options{})
 	go func() {
 		err = mgr.Start(ctrl.SetupSignalHandler())
 		Expect(err).ToNot(HaveOccurred())

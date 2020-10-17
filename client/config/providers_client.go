@@ -137,9 +137,11 @@ func (p *providersClient) defaults() []Provider {
 			providerType: undistrov1.BootstrapProviderType,
 		},
 		&provider{
-			name:         EKSBootstrapProviderName,
-			url:          "https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/eks-bootstrap-components.yaml",
-			providerType: undistrov1.BootstrapProviderType,
+			name:          EKSBootstrapProviderName,
+			url:           "https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/eks-bootstrap-components.yaml",
+			providerType:  undistrov1.BootstrapProviderType,
+			preConfigFunc: awsPreConfig,
+			initFunc:      awsInit,
 		},
 
 		// ControlPlane providers
@@ -154,9 +156,11 @@ func (p *providersClient) defaults() []Provider {
 			providerType: undistrov1.ControlPlaneProviderType,
 		},
 		&provider{
-			name:         EKSControlPlaneProviderName,
-			url:          "https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/eks-controlplane-components.yaml",
-			providerType: undistrov1.ControlPlaneProviderType,
+			name:          EKSControlPlaneProviderName,
+			url:           "https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/latest/eks-controlplane-components.yaml",
+			providerType:  undistrov1.ControlPlaneProviderType,
+			preConfigFunc: awsPreConfig,
+			initFunc:      awsInit,
 		},
 	}
 

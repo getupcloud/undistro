@@ -12,6 +12,8 @@ spec:
       machineType: t3.large
   bootstrapProvider:
     name: eks
+  controlPlaneProvider:
+    name: eks
   infrastructureProvider:
     name: aws
     sshKey: undistro

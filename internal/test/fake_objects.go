@@ -1115,7 +1115,6 @@ func SelectClusterObj(objs []client.Object, namespace, name string) *clusterv1.C
 		if o.GetObjectKind().GroupVersionKind().GroupKind() != clusterv1.GroupVersion.WithKind("Cluster").GroupKind() {
 			continue
 		}
-
 		if o.GetName() == name && o.GetNamespace() == namespace {
 			// Converts the object to cluster
 			// NB. Convert returns an object without version/kind, so we are enforcing those values back.

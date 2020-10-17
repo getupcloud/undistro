@@ -15,8 +15,10 @@ import (
 	"helm.sh/helm/v3/pkg/kube"
 	"helm.sh/helm/v3/pkg/storage"
 	"helm.sh/helm/v3/pkg/storage/driver"
+	apiextv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/kubectl/pkg/cmd/util"
 )
 
@@ -41,6 +43,12 @@ type infoLogFunc func(string, ...interface{})
 
 // New creates a new HelmV3 client
 func New(path string) Client {
+	// Add CRDs to the scheme. They are missing by default but required
+	// by Helm v3.
+	if err := apiextv1beta1.AddToScheme(scheme.Scheme); err != nil {
+		// This should never happen.
+		panic(err)
+	}
 	return &HelmV3{
 		path: path,
 	}

@@ -52,13 +52,13 @@ func main() {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
 	}
-
+	ctx := ctrl.SetupSignalHandler()
 	if err = (&controllers.ClusterReconciler{
 		Client:     mgr.GetClient(),
 		Log:        ctrl.Log.WithName("controllers").WithName("Cluster"),
 		Scheme:     mgr.GetScheme(),
 		RestConfig: restCfg,
-	}).SetupWithManager(mgr, concurrency(maxConcurrency)); err != nil {
+	}).SetupWithManager(ctx, mgr, concurrency(maxConcurrency)); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Cluster")
 		os.Exit(1)
 	}
@@ -68,7 +68,7 @@ func main() {
 		Log:        ctrl.Log.WithName("controllers").WithName("HelmRelease"),
 		Scheme:     mgr.GetScheme(),
 		RestConfig: restCfg,
-	}).SetupWithManager(mgr, concurrency(maxConcurrencyHelm)); err != nil {
+	}).SetupWithManager(ctx, mgr, concurrency(maxConcurrencyHelm)); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "HelmRelease")
 		os.Exit(1)
 	}
@@ -82,7 +82,7 @@ func main() {
 	// +kubebuilder:scaffold:builder
 
 	setupLog.Info("starting manager")
-	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+	if err := mgr.Start(ctx); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}

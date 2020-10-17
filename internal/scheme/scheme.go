@@ -7,6 +7,7 @@ package scheme
 import (
 	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	admissionregistration "k8s.io/api/admissionregistration/v1"
+	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -30,5 +31,6 @@ func init() {
 	_ = kubeadmcpv1.AddToScheme(Scheme)
 	_ = awsv1.AddToScheme(Scheme)
 	_ = admissionregistration.AddToScheme(Scheme)
+	_ = admissionregistrationv1beta1.AddToScheme(Scheme)
 	// +kubebuilder:scaffold:scheme
 }
