@@ -64,6 +64,7 @@ func (c *undistroClient) defaultVariables() {
 	v.Set("EXP_EKS_IAM", "true")
 	v.Set("EXP_EKS_ADD_ROLES", "true")
 	v.Set("EXP_MACHINE_POOL", "true")
+	v.Set("EXP_CLUSTER_RESOURCE_SET", "true")
 }
 
 // Init initializes a management cluster by adding the requested list of providers.
