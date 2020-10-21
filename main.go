@@ -13,7 +13,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	getupcloudcomv1alpha1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	undistroiov1alpha1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/getupio-undistro/undistro/controllers"
 	"github.com/getupio-undistro/undistro/internal/scheme"
 	// +kubebuilder:scaffold:imports
@@ -74,7 +74,7 @@ func main() {
 	}
 	_, ok := os.LookupEnv("UNDISTRO_DEBUG")
 	if !ok {
-		if err = (&getupcloudcomv1alpha1.Cluster{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&undistroiov1alpha1.Cluster{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Cluster")
 			os.Exit(1)
 		}

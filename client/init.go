@@ -58,10 +58,19 @@ type InitOptions struct {
 	skipVariables bool
 }
 
+func (c *undistroClient) defaultVariables() {
+	v := c.GetVariables()
+	v.Set("EXP_EKS", "true")
+	v.Set("EXP_EKS_IAM", "true")
+	v.Set("EXP_EKS_ADD_ROLES", "true")
+	v.Set("EXP_MACHINE_POOL", "true")
+}
+
 // Init initializes a management cluster by adding the requested list of providers.
 func (c *undistroClient) Init(options InitOptions) ([]Components, error) {
 	log := logf.Log
-
+	// set default variables
+	c.defaultVariables()
 	// gets access to the management cluster
 	cluster, err := c.clusterClientFactory(ClusterClientFactoryInput{kubeconfig: options.Kubeconfig})
 	if err != nil {

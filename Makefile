@@ -93,6 +93,17 @@ undistro: ## Build undistro binary
 # $(GOBINDATA): $(TOOLS_DIR)/go.mod # Build go-bindata from tools folder.
 # 	cd $(TOOLS_DIR); go build -tags=tools -o $(BIN_DIR)/go-bindata github.com/go-bindata/go-bindata/go-bindata
 
+
+## --------------------------------------
+## Dev Environment
+## --------------------------------------
+
+.PHONY: dev
+dev: ## start dev environment
+	./hack/kind.sh
+	kubectl cluster-info --context kind-kind
+	tilt up --host 0.0.0.0
+
 ## --------------------------------------
 ## Linting
 ## --------------------------------------
@@ -137,7 +148,7 @@ generate-manifests: $(CONTROLLER_GEN) ## Generate manifests e.g. CRD, RBAC etc.
 	$(CONTROLLER_GEN) \
 		paths=./api/... \
 		paths=./controllers/... \
-		crd:crdVersions=v1 \
+		crd:crdVersions=v1beta1 \
 		rbac:roleName=manager-role \
 		output:crd:dir=./config/crd/bases \
 		output:webhook:dir=./config/webhook \

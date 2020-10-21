@@ -22,12 +22,6 @@ spec:
         value: ""
       - name: AWS_SECRET_ACCESS_KEY
         value: ""
-      - name: EXP_EKS
-        value: "true"
-      - name: EXP_EKS_IAM
-        value: "true"
-      - name: EXP_EKS_ADD_ROLES
-        value: "true"
       
 ---
 apiVersion: undistro.io/v1alpha1

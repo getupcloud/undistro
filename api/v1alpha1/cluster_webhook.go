@@ -25,7 +25,7 @@ func (r *Cluster) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:path=/mutate-getupcloud-com-v1alpha1-cluster,mutating=true,failurePolicy=fail,groups=undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=mcluster.undistro.io,sideEffects=None,admissionReviewVersions=v1beta1
+// +kubebuilder:webhook:path=/mutate-undistro-io-v1alpha1-cluster,mutating=true,failurePolicy=fail,groups=undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=mcluster.undistro.io,sideEffects=None,admissionReviewVersions=v1beta1
 
 var _ webhook.Defaulter = &Cluster{}
 

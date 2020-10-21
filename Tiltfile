@@ -1,10 +1,7 @@
 load('ext://restart_process', 'docker_build_with_restart')
-load('ext://cert_manager', 'deploy_cert_manager')
 
 
 IMG = 'controller:latest'
-
-deploy_cert_manager()
 
 def yaml():
     return local('cd config/manager; kustomize edit set image controller=' + IMG + '; cd ../..; kustomize build config/default')
@@ -21,11 +18,11 @@ def vetfmt():
 def binary():
     return 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o bin/manager main.go'
 
-def capi():
-    print('Installing Cluster API')
-    return local('kubectl apply -f https://github.com/kubernetes-sigs/cluster-api/releases/download/v0.3.10/core-components.yaml', quiet=True, echo_off=True)
+def init():
+    print('Init undistro')
+    return local('make undistro && ./bin/undistro --config undistro.yaml init')
 
-capi()
+init()
 
 local(manifests() + generate())
 

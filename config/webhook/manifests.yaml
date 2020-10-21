@@ -1,6 +1,6 @@
 
 ---
-apiVersion: admissionregistration.k8s.io/v1
+apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
   creationTimestamp: null
@@ -13,7 +13,7 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-getupcloud-com-v1alpha1-cluster
+      path: /mutate-undistro-io-v1alpha1-cluster
   failurePolicy: Fail
   name: mcluster.undistro.io
   rules:
