@@ -1,0 +1,35 @@
+apiVersion: undistro.io/v1alpha1
+kind: Cluster
+metadata:
+  name: undistro-quickstart
+  namespace: default
+spec:
+  kubernetesVersion: v1.19.1
+  cniName: calico
+  network:
+    vpc: network1
+  controlPlaneNode:
+    replicas: 3
+    machineType: ubuntu-1804-kube-v1.19.1
+    endpointIP: "" # the IP used for k8s API
+  workerNodes:
+    - replicas: 3
+      machineType: ubuntu-1804-kube-v1.19.1
+  infrastructureProvider:
+    name: vsphere
+    env:
+      - name: VSPHERE_USERNAME # The username used to access the remote vSphere endpoint
+        value: ""
+      - name: VSPHERE_PASSWORD # The password used to access the remote vSphere endpoint
+        value: ""
+      - name: VSPHERE_SERVER # The vCenter server IP or FQDN
+        value: ""
+      - name: VSPHERE_DATACENTER # The vSphere datacenter to deploy
+        value: ""
+      - name: VSPHERE_DATASTORE # The vSphere datastore to deploy
+        value: ""
+      - name: VSPHERE_RESOURCE_POOL # The vSphere resource pool for your VMs
+        value: ""
+      - name: VSPHERE_SSH_AUTHORIZED_KEY # The public ssh authorized key on all machines
+        value: ""
+      

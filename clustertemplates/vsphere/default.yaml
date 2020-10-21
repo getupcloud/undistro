@@ -45,11 +45,10 @@ spec:
     workspace:
       datacenter: {{variable "VSPHERE_DATACENTER"}}
       datastore: {{variable "VSPHERE_DATASTORE"}}
-      folder: {{variable "VSPHERE_FOLDER"}}
       resourcePool: {{variable "VSPHERE_RESOURCE_POOL"}}
       server: {{variable "VSPHERE_SERVER"}}
   controlPlaneEndpoint:
-    host: {{variable "CONTROL_PLANE_ENDPOINT_IP"}}
+    host: {{.Spec.ControlPlaneNode.EndpointIP}}
     port: 6443
   server: {{variable "VSPHERE_SERVER"}}
 ---
@@ -61,11 +60,10 @@ metadata:
 spec:
   template:
     spec:
-      cloneMode: linkedClone
+      cloneMode: fullClone
       datacenter: {{variable "VSPHERE_DATACENTER"}}
       datastore: {{variable "VSPHERE_DATASTORE"}}
       diskGiB: 25
-      folder: {{variable "VSPHERE_FOLDER"}}
       memoryMiB: 8192
       network:
         devices:
@@ -113,7 +111,7 @@ spec:
             - name: vip_leaderelection
               value: "true"
             - name: vip_address
-              value: {{variable "CONTROL_PLANE_ENDPOINT_IP"}}
+              value: {{.Spec.ControlPlaneNode.EndpointIP}}
             - name: vip_interface
               value: eth0
             image: plndr/kube-vip:0.1.7
@@ -235,11 +233,10 @@ metadata:
 spec:
   template:
     spec:
-      cloneMode: linkedClone
+      cloneMode: fullClone
       datacenter: {{variable "VSPHERE_DATACENTER"}}
       datastore: {{variable "VSPHERE_DATASTORE"}}
       diskGiB: 25
-      folder: {{variable "VSPHERE_FOLDER"}}
       memoryMiB: 8192
       network:
         devices:
@@ -249,18 +246,19 @@ spec:
       resourcePool: {{variable "VSPHERE_RESOURCE_POOL"}}
       server: {{variable "VSPHERE_SERVER"}}
       template: "{{$element.MachineType}}"
+{{end}}
 ---
 apiVersion: addons.cluster.x-k8s.io/v1alpha3
 kind: ClusterResourceSet
 metadata:
   labels:
-    cluster.x-k8s.io/cluster-name: "{{$name}}"
-  name: "{{$name}}-{{$uuid}}-crs-{{$index}}"
-  namespace: "{{$namespace}}"
+    cluster.x-k8s.io/cluster-name: "{{.Name}}"
+  name: "{{.Name}}-{{$uuid}}-crs"
+  namespace: "{{.Namespace}}"
 spec:
   clusterSelector:
     matchLabels:
-      cluster.x-k8s.io/cluster-name: "{{$name}}"
+      cluster.x-k8s.io/cluster-name: "{{.Name}}"
   resources:
   - kind: Secret
     name: vsphere-csi-controller
@@ -276,7 +274,6 @@ spec:
     name: vsphere-csi-node
   - kind: ConfigMap
     name: vsphere-csi-controller
-{{end}}
 ---
 apiVersion: v1
 kind: Secret

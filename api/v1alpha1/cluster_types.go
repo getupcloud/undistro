@@ -19,6 +19,11 @@ type Node struct {
 	Subnet      string `json:"subnet,omitempty"`
 }
 
+type ControlPlaneNode struct {
+	Node       `json:",inline,omitempty"`
+	EndpointIP string `json:"endpointIP,omitempty"`
+}
+
 type InfrastructureProvider struct {
 	// +kubebuilder:validation:MinLength=1
 	Name    string  `json:"name,omitempty"`
@@ -86,7 +91,7 @@ type ClusterSpec struct {
 	InfrastructureProvider InfrastructureProvider `json:"infrastructureProvider,omitempty"`
 	BootstrapProvider      *BootstrapProvider     `json:"bootstrapProvider,omitempty"`
 	ControlPlaneProvider   *ControlPlaneProvider  `json:"controlPlaneProvider,omitempty"`
-	ControlPlaneNode       Node                   `json:"controlPlaneNode,omitempty"`
+	ControlPlaneNode       ControlPlaneNode       `json:"controlPlaneNode,omitempty"`
 	WorkerNodes            []Node                 `json:"workerNodes,omitempty"`
 	CniName                CNI                    `json:"cniName,omitempty"`
 	Network                *Network               `json:"network,omitempty"`
@@ -119,7 +124,7 @@ type ClusterStatus struct {
 	Ready               bool                    `json:"ready,omitempty"`
 	ClusterAPIRef       *corev1.ObjectReference `json:"clusterAPIRef,omitempty"`
 	KubernetesVersion   string                  `json:"kubernetesVersion,omitempty"`
-	ControlPlaneNode    Node                    `json:"controlPlaneNode,omitempty"`
+	ControlPlaneNode    ControlPlaneNode        `json:"controlPlaneNode,omitempty"`
 	WorkerNodes         []Node                  `json:"workerNodes,omitempty"`
 	InfrastructureName  string                  `json:"infrastructureName,omitempty"`
 	TotalWorkerReplicas int64                   `json:"totalWorkerReplicas,omitempty"`

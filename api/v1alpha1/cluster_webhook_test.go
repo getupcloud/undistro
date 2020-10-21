@@ -20,8 +20,10 @@ func TestCluster_Default(t *testing.T) {
 			Name:      "test",
 		},
 		Spec: ClusterSpec{
-			ControlPlaneNode: Node{
-				MachineType: "test",
+			ControlPlaneNode: ControlPlaneNode{
+				Node: Node{
+					MachineType: "test",
+				},
 			},
 			WorkerNodes: []Node{
 				{

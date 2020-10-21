@@ -91,6 +91,8 @@ spec:
                 type: string
               controlPlaneNode:
                 properties:
+                  endpointIP:
+                    type: string
                   machineType:
                     minLength: 1
                     type: string
@@ -277,6 +279,8 @@ spec:
                 type: object
               controlPlaneNode:
                 properties:
+                  endpointIP:
+                    type: string
                   machineType:
                     minLength: 1
                     type: string
