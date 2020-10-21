@@ -103,7 +103,7 @@ and then
 undistro --config undistro.yaml init
 ```
 
-### Adding on AWS account
+### Adding SSH key on AWS account
 
 Follow the AWS documentation https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html
 
