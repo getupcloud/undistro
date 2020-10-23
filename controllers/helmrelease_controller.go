@@ -7,6 +7,7 @@ package controllers
 import (
 	"context"
 	"os"
+	"strings"
 	"time"
 
 	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
@@ -14,6 +15,7 @@ import (
 	"github.com/getupio-undistro/undistro/client/cluster"
 	"github.com/getupio-undistro/undistro/client/cluster/helm"
 	"github.com/getupio-undistro/undistro/internal/patch"
+	"github.com/getupio-undistro/undistro/internal/util"
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -25,6 +27,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
@@ -53,29 +56,7 @@ func (r *HelmReleaseReconciler) execObjs(ctx context.Context, c client.Client, o
 				return err
 			}
 			for _, o := range st {
-				old := unstructured.Unstructured{}
-				old.SetGroupVersionKind(o.GroupVersionKind())
-				namespace := o.GetNamespace()
-				if namespace == "" {
-					namespace = "default"
-				}
-				nm := types.NamespacedName{
-					Name:      o.GetName(),
-					Namespace: o.GetNamespace(),
-				}
-				err = c.Get(ctx, nm, &old)
-				if err != nil {
-					if client.IgnoreNotFound(err) != nil {
-						return err
-					}
-					o.SetNamespace(namespace)
-					err = c.Create(ctx, &o)
-					if err != nil {
-						return err
-					}
-					continue
-				}
-				err = c.Patch(ctx, &o, client.MergeFrom(&old))
+				err = util.CreateOrUpdate(ctx, c, o)
 				if err != nil {
 					return err
 				}
@@ -121,6 +102,33 @@ func (r *HelmReleaseReconciler) hasNonDeployedDeps(ctx context.Context, hr *undi
 	return false
 }
 
+func (r *HelmReleaseReconciler) delete(ctx context.Context, hr *undistrov1.HelmRelease, h helm.Client) error {
+	s, err := h.Status(hr.GetReleaseName(), helm.StatusOptions{
+		Namespace: hr.GetTargetNamespace(),
+	})
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			hr.Status.Phase = undistrov1.HelmReleasePhaseUninstalled
+			return nil
+		}
+		return err
+	}
+	if s == helm.StatusUninstalling {
+		hr.Status.Phase = undistrov1.HelmReleasePhaseUninstalling
+		return nil
+	}
+	err = h.Uninstall(hr.GetReleaseName(), helm.UninstallOptions{
+		Namespace:   hr.GetTargetNamespace(),
+		KeepHistory: false,
+		Timeout:     hr.GetTimeout(),
+	})
+	if err != nil {
+		return err
+	}
+	hr.Status.Phase = undistrov1.HelmReleasePhaseUninstalling
+	return nil
+}
+
 // +kubebuilder:rbac:groups=undistro.io,resources=*,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=undistro.io,resources=*,verbs=get;update;patch
 
@@ -142,6 +150,10 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	defer func() {
 		err = patch.ControllerObject(ctx, patchHelper, &hr, err)
 	}()
+	if !controllerutil.ContainsFinalizer(&hr, undistrov1.Finalizer) {
+		controllerutil.AddFinalizer(&hr, undistrov1.Finalizer)
+		return ctrl.Result{}, nil
+	}
 	undistroClient, err := uclient.New("")
 	if err != nil {
 		return ctrl.Result{}, err
@@ -153,7 +165,12 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, err
 	}
 	nm := hr.GetClusterNamespacedName()
+
 	if ok, _ := cluster.IsReady(ctx, r.Client, nm); !ok {
+		if !hr.DeletionTimestamp.IsZero() {
+			controllerutil.RemoveFinalizer(&hr, undistrov1.Finalizer)
+			return ctrl.Result{}, nil
+		}
 		log.Info("cluster is not ready yet", "namespaced name", nm.String())
 		hr.Status.Phase = undistrov1.HelmReleasePhaseWaitClusterReady
 		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
@@ -179,16 +196,16 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	}
 	if !hr.DeletionTimestamp.IsZero() {
 		log.Info("running uninstall")
-		err = h.Uninstall(hr.GetReleaseName(), helm.UninstallOptions{
-			Namespace:   hr.GetTargetNamespace(),
-			KeepHistory: false,
-			Timeout:     hr.GetTimeout(),
-		})
+		err = r.delete(ctx, &hr, h)
 		if err != nil {
 			return ctrl.Result{}, err
 		}
-		os.RemoveAll(ch.ChartPath)
-		return ctrl.Result{}, nil
+		if hr.Status.Phase == undistrov1.HelmReleasePhaseUninstalled {
+			controllerutil.RemoveFinalizer(&hr, undistrov1.Finalizer)
+			os.RemoveAll(ch.ChartPath)
+			return ctrl.Result{}, nil
+		}
+		return ctrl.Result{Requeue: true}, nil
 	}
 	if ch.Changed {
 		hr.Status.Phase = undistrov1.HelmReleasePhaseChartFetched
@@ -310,6 +327,9 @@ func (r *HelmReleaseReconciler) updateFilter(e event.UpdateEvent) bool {
 	oldHr, ok := e.ObjectOld.(*undistrov1.HelmRelease)
 	if !ok {
 		return false
+	}
+	if !controllerutil.ContainsFinalizer(oldHr, undistrov1.Finalizer) && controllerutil.ContainsFinalizer(newHr, undistrov1.Finalizer) {
+		return true
 	}
 	if newHr.Status.Phase == undistrov1.HelmReleasePhaseChartFetched || newHr.Status.Phase == undistrov1.HelmReleasePhaseWaitClusterReady {
 		return true

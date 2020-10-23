@@ -92,8 +92,8 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 	defer func() {
 		err = patch.ControllerObject(ctx, patchHelper, &cluster, err)
 	}()
-	if !controllerutil.ContainsFinalizer(&cluster, undistrov1.ClusterFinalizer) {
-		controllerutil.AddFinalizer(&cluster, undistrov1.ClusterFinalizer)
+	if !controllerutil.ContainsFinalizer(&cluster, undistrov1.Finalizer) {
+		controllerutil.AddFinalizer(&cluster, undistrov1.Finalizer)
 		return ctrl.Result{}, nil
 	}
 	if !cluster.DeletionTimestamp.IsZero() {
@@ -104,7 +104,7 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 		if cluster.Status.Phase == undistrov1.DeletingPhase {
 			return ctrl.Result{Requeue: true}, nil
 		}
-		controllerutil.RemoveFinalizer(&cluster, undistrov1.ClusterFinalizer)
+		controllerutil.RemoveFinalizer(&cluster, undistrov1.Finalizer)
 		return ctrl.Result{}, nil
 	}
 	undistroClient, err := uclient.New("")

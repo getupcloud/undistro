@@ -32,6 +32,9 @@ const (
 	// Tested means the test for the HelmRelease succeeded.
 	HelmReleasePhaseTested HelmReleasePhase = "Tested"
 
+	HelmReleasePhaseUninstalling HelmReleasePhase = "Uninstalling"
+	HelmReleasePhaseUninstalled  HelmReleasePhase = "Uninstalled"
+
 	// Succeeded means the chart release, as specified in this
 	// HelmRelease, has been processed by Helm.
 	HelmReleasePhaseSucceeded HelmReleasePhase = "Succeeded"

@@ -73,10 +73,10 @@ func (c *ControlPlaneProvider) NameVersion() string {
 type CNI string
 
 const (
-	CalicoCNI        = CNI("calico")
-	EmptyCNI         = CNI("")
-	ProviderCNI      = CNI("provider")
-	ClusterFinalizer = "undistro.io"
+	CalicoCNI   = CNI("calico")
+	EmptyCNI    = CNI("")
+	ProviderCNI = CNI("provider")
+	Finalizer   = "undistro.io"
 )
 
 var cniMapAddr = map[CNI]string{
