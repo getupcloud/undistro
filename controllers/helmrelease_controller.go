@@ -15,6 +15,7 @@ import (
 	"github.com/getupio-undistro/undistro/client/cluster"
 	"github.com/getupio-undistro/undistro/client/cluster/helm"
 	"github.com/getupio-undistro/undistro/internal/patch"
+	"github.com/getupio-undistro/undistro/internal/record"
 	"github.com/getupio-undistro/undistro/internal/util"
 	"github.com/go-logr/logr"
 	"github.com/google/go-cmp/cmp"
@@ -191,9 +192,11 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	ch, err := helm.PrepareChart(h, &hr)
 	if err != nil {
 		log.Error(err, "couldn't prepare chart", "chartPath", ch.ChartPath, "revision", ch.Revision)
+		record.Warn(&hr, "FailledDownloadChart", "chart template failed to downloaded")
 		hr.Status.Phase = undistrov1.HelmReleasePhaseChartFetchFailed
 		return ctrl.Result{}, err
 	}
+	record.Event(&hr, "DownloadChart", "chart template downloaded successfully")
 	if !hr.DeletionTimestamp.IsZero() {
 		log.Info("running uninstall")
 		err = r.delete(ctx, &hr, h)
@@ -216,9 +219,11 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	values, err := helm.ComposeValues(ctx, r.Client, &hr, ch.ChartPath)
 	if err != nil {
 		log.Error(err, "failed to compose values for release", "name", hr.Name)
+		record.Warn(&hr, "FailledSetValues", "failed to set chart values")
 		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
 		return ctrl.Result{}, err
 	}
+	record.Event(&hr, "SetValues", "values setted successfully")
 	curRel, err := h.Get(hr.GetReleaseName(), helm.GetOptions{Namespace: hr.GetTargetNamespace()})
 	if err != nil {
 		log.Error(err, "failed to get release", "name", hr.Name)
@@ -228,6 +233,7 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	}
 	err = r.execObjs(ctx, wClient, hr.Spec.BeforeApplyObjects)
 	if err != nil {
+		record.Warn(&hr, "FailedExecBefore", "failed to apply objects before instalation")
 		log.Error(err, "failed to exec before", "name", hr.Name)
 		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
 		hr.Status.LastAttemptedRevision = ""
@@ -242,6 +248,7 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{Requeue: true}, nil
 	default:
 		if curRel == nil {
+			record.Event(&hr, "InstallChart", "installing chart")
 			log.Info("running instalation")
 			_, err = h.UpgradeFromPath(ch.ChartPath, hr.GetReleaseName(), values, helm.UpgradeOptions{
 				Namespace:         hr.GetTargetNamespace(),
@@ -254,6 +261,7 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 				DisableValidation: false,
 			})
 		} else {
+			record.Event(&hr, "UpgradeChart", "upgrading chart")
 			log.Info("running upgrade")
 			_, err = h.UpgradeFromPath(ch.ChartPath, hr.GetReleaseName(), values, helm.UpgradeOptions{
 				Namespace:         hr.GetTargetNamespace(),
@@ -273,6 +281,7 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 				hr.Status.Revision = ""
 				hr.Status.LastAttemptedRevision = ""
 			}
+			record.Event(&hr, "RollbackChart", "rollingback chart")
 			rollback = true
 			_, err = h.Rollback(hr.GetReleaseName(), helm.RollbackOptions{
 				Namespace:    hr.GetTargetNamespace(),
@@ -302,17 +311,21 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	}
 	err = r.execObjs(ctx, wClient, hr.Spec.AfterApplyObjects)
 	if err != nil {
+		record.Warn(&hr, "FailedExecAfter", "failed to apply objects after instalation")
 		log.Error(err, "failed to exec after", "name", hr.Name)
 		hr.Status.Phase = undistrov1.HelmReleasePhaseFailed
 		return ctrl.Result{}, err
 	}
 	if rollback {
+		record.Event(&hr, "ChartRolledBack", "chart is rolledback")
 		hr.Status.Phase = undistrov1.HelmReleasePhaseRolledBack
 	} else {
+		record.Event(&hr, "ChartDeployed", "chart is deployed")
 		hr.Status.Phase = undistrov1.HelmReleasePhaseDeployed
 	}
 	hr.Status.ReleaseName = hr.GetReleaseName()
 	hr.Status.ReleaseStatus = status.String()
+
 	return ctrl.Result{}, nil
 
 }
