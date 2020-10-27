@@ -8,6 +8,7 @@ import (
 	"flag"
 	"os"
 
+	"github.com/getupio-undistro/undistro/internal/record"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
@@ -53,6 +54,7 @@ func main() {
 		os.Exit(1)
 	}
 	ctx := ctrl.SetupSignalHandler()
+	record.InitFromRecorder(mgr.GetEventRecorderFor("undistro"))
 	if err = (&controllers.ClusterReconciler{
 		Client:     mgr.GetClient(),
 		Log:        ctrl.Log.WithName("controllers").WithName("Cluster"),
