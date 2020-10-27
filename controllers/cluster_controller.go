@@ -16,6 +16,7 @@ import (
 	uclient "github.com/getupio-undistro/undistro/client"
 	"github.com/getupio-undistro/undistro/client/config"
 	"github.com/getupio-undistro/undistro/internal/patch"
+	"github.com/getupio-undistro/undistro/internal/record"
 	"github.com/getupio-undistro/undistro/internal/template"
 	"github.com/getupio-undistro/undistro/internal/util"
 	"github.com/go-logr/logr"
@@ -118,6 +119,7 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 		EnvVars:         cluster.Spec.InfrastructureProvider.Env,
 	})
 	if err != nil {
+		record.Warn(&cluster, "FailedPrepareEnvironment", "failed to prepare environment to Cluster API")
 		return ctrl.Result{}, err
 	}
 	opts, err := config.SetupTemplates(&cluster, undistroClient.GetVariables())
@@ -128,21 +130,26 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 		log.Info("ensure mangement cluster is initialized and updated", "name", req.NamespacedName)
 		if err = r.init(ctx, &cluster, undistroClient); err != nil {
 			if client.IgnoreNotFound(err) != nil {
+				record.Warn(&cluster, "FailedInitialize", "failed to initalize Cluster API")
 				log.Error(err, "couldn't initialize or update the mangement cluster", "name", req.NamespacedName)
 				return ctrl.Result{}, err
 			}
 			return ctrl.Result{}, nil
 		}
+		record.Event(&cluster, "ClusterInitialized", "Cluster API is successfully initialized")
 		return ctrl.Result{Requeue: true}, nil
 	}
 	if cluster.Status.Phase == undistrov1.InitializedPhase {
 		log.Info("generanting cluster-api configuration", "name", req.NamespacedName)
 		if err = r.config(ctx, &cluster, opts, undistroClient); err != nil {
 			if client.IgnoreNotFound(err) != nil {
+				record.Warn(&cluster, "FailedInstallConfig", "failed to install Cluster API objects")
 				log.Error(err, "couldn't install cluster config", "name", req.NamespacedName)
 				return ctrl.Result{}, err
 			}
+			return ctrl.Result{}, nil
 		}
+		record.Event(&cluster, "ClusterInstalled", "Cluster API is successfully configured")
 		return ctrl.Result{}, nil
 	}
 	if cluster.Status.Phase == undistrov1.ProvisioningPhase {
@@ -353,6 +360,7 @@ func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster,
 		}
 		err = util.CreateOrUpdate(ctx, r.Client, o)
 		if err != nil {
+			record.Warn(cl, "FailedUpgrade", "failed to upgrade Cluster API objects")
 			return ctrl.Result{}, err
 		}
 	}
@@ -366,6 +374,7 @@ func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster,
 	for _, w := range cl.Spec.WorkerNodes {
 		cl.Status.TotalWorkerReplicas += *w.Replicas
 	}
+	record.Event(cl, "ClusterUpgrade", "Cluster API object has updated")
 	return ctrl.Result{}, nil
 }
 
@@ -382,12 +391,16 @@ func (r *ClusterReconciler) provisioning(ctx context.Context, cl *undistrov1.Clu
 	capi := &clusterList.Items[0]
 	if undistrov1.ClusterPhase(capi.Status.Phase) == undistrov1.FailedPhase {
 		cl.Status.Phase = undistrov1.FailedPhase
+		if len(capi.Status.Conditions) > 0 {
+			record.Warn(cl, capi.Status.Conditions[len(capi.Status.Conditions)-1].Reason, capi.Status.Conditions[len(capi.Status.Conditions)-1].Message)
+		}
 		return ctrl.Result{}, nil
 	}
 	if capi.Status.ControlPlaneInitialized && !capi.Status.ControlPlaneReady && cl.Spec.CniName != undistrov1.ProviderCNI {
 		if err := r.installCNI(ctx, cl, c); err != nil {
 			return ctrl.Result{}, err
 		}
+		record.Event(cl, "CNIInstalled", "CNI installed")
 	}
 	bastionIP, err := r.getClusterBastionIP(ctx, cl, capi)
 	if err != nil {
@@ -400,6 +413,9 @@ func (r *ClusterReconciler) provisioning(ctx context.Context, cl *undistrov1.Clu
 		cl.Status.Phase = undistrov1.ProvisionedPhase
 		cl.Status.Ready = true
 		cl.Status.BastionPublicIP = bastionIP
+	}
+	if len(capi.Status.Conditions) > 0 {
+		record.Event(cl, capi.Status.Conditions[len(capi.Status.Conditions)-1].Reason, capi.Status.Conditions[len(capi.Status.Conditions)-1].Message)
 	}
 	return ctrl.Result{}, nil
 }
