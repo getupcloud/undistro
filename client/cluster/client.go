@@ -81,6 +81,8 @@ type Client interface {
 	WorkloadCluster() WorkloadCluster
 
 	LogStreamer() LogStreamer
+
+	EventListener() EventListener
 }
 
 // PollImmediateWaiter tries a condition func until it returns true, an error, or the timeout is reached.
@@ -95,6 +97,7 @@ type clusterClient struct {
 	pollImmediateWaiter     PollImmediateWaiter
 	processor               yaml.Processor
 	logStreamer             LogStreamer
+	eventListener           EventListener
 }
 
 type RepositoryClientFactory func(provider config.Provider, configClient config.Client, options ...repository.Option) (repository.Client, error)
@@ -104,6 +107,10 @@ var _ Client = &clusterClient{}
 
 func (c *clusterClient) LogStreamer() LogStreamer {
 	return c.logStreamer
+}
+
+func (c *clusterClient) EventListener() EventListener {
+	return c.eventListener
 }
 
 func (c *clusterClient) Kubeconfig() Kubeconfig {
@@ -189,10 +196,11 @@ func New(kubeconfig Kubeconfig, configClient config.Client, options ...Option) C
 
 func newClusterClient(kubeconfig Kubeconfig, configClient config.Client, options ...Option) *clusterClient {
 	client := &clusterClient{
-		configClient: configClient,
-		kubeconfig:   kubeconfig,
-		processor:    yaml.NewSimpleProcessor(),
-		logStreamer:  NewLogStreamer(),
+		configClient:  configClient,
+		kubeconfig:    kubeconfig,
+		processor:     yaml.NewSimpleProcessor(),
+		logStreamer:   NewLogStreamer(),
+		eventListener: NewEventListener(),
 	}
 	for _, o := range options {
 		o(client)
