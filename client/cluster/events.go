@@ -38,8 +38,8 @@ func (e *eventListener) Listen(ctx context.Context, cfg *rest.Config, obj runtim
 		return nil, errors.Errorf("can't get object reference: %v", err)
 	}
 	uid := string(ref.UID)
-	sec := e.getter.Events(undistroNamespace).GetFieldSelector(&ref.Name, &ref.Namespace, &ref.Kind, &uid)
-	return e.getter.Events(undistroNamespace).Watch(ctx, metav1.ListOptions{
+	sec := e.getter.Events("").GetFieldSelector(&ref.Name, &ref.Namespace, &ref.Kind, &uid)
+	return e.getter.Events("").Watch(ctx, metav1.ListOptions{
 		Watch:         true,
 		FieldSelector: sec.String(),
 	})

@@ -12,6 +12,17 @@ import (
 	"github.com/pkg/errors"
 )
 
+var MessageReason = map[string]string{
+	"ClusterInitialized":       "Cluster API initialized",
+	"ClusterInstalled":         "Cluster API is successfully configured",
+	"WaitingForInfrastructure": "Creating infrastructure on provider",
+	"BastionCreationStarted":   "Creating bastion",
+	"WaitForDNSNameResolve":    "Waiting for DNS resolution",
+	"CNIInstalled":             "CNI installed",
+	"ClusterDeleted":           "Cluster deleted",
+	"ClusterReady":             "Cluster ready",
+}
+
 // Client is exposes the undistro high-level client library.
 type Client interface {
 	// GetProvidersConfig returns the list of providers configured for this instance of undistro.
@@ -60,6 +71,9 @@ type Client interface {
 
 	// GetLogs of controller providers
 	GetLogs(Kubeconfig) (Logs, error)
+
+	// GetEventListener returns event listener
+	GetEventListener(Kubeconfig) (EventListener, error)
 }
 
 // YamlPrinter exposes methods that prints the processed template and

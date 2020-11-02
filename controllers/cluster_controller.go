@@ -214,9 +214,6 @@ func (r *ClusterReconciler) delete(ctx context.Context, cl *undistrov1.Cluster) 
 			return nil
 		}
 	}
-	if len(capi.Status.Conditions) > 0 {
-		record.Event(cl, capi.Status.Conditions[len(capi.Status.Conditions)-1].Reason, capi.Status.Conditions[len(capi.Status.Conditions)-1].Message)
-	}
 	cl.Status.Phase = undistrov1.DeletingPhase
 	return nil
 }
@@ -319,6 +316,31 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 		if err != nil {
 			return err
 		}
+		go func(ctx context.Context) {
+			listener, ierr := c.GetEventListener(uclient.Kubeconfig{})
+			if ierr != nil {
+				log.V(2).Info("unable to create listener")
+				return
+			}
+			ch, ierr := listener.Listen(ctx, r.RestConfig, &o)
+			if ierr != nil {
+				log.V(2).Info("unable to listen object", "kind", o.GetKind())
+				return
+			}
+			select {
+			case ev := <-ch.ResultChan():
+				e, ok := ev.Object.(*corev1.Event)
+				if ok {
+					if e.Type == corev1.EventTypeNormal {
+						record.Event(cl, e.Reason, e.Message)
+					} else {
+						record.Warn(cl, e.Reason, e.Message)
+					}
+				}
+			case <-ctx.Done():
+				ch.Stop()
+			}
+		}(ctx)
 		if isCluster {
 			cl.Status.ClusterAPIRef = &corev1.ObjectReference{
 				Kind:            o.GetKind(),
@@ -397,13 +419,7 @@ func (r *ClusterReconciler) provisioning(ctx context.Context, cl *undistrov1.Clu
 	capi := &clusterList.Items[0]
 	if undistrov1.ClusterPhase(capi.Status.Phase) == undistrov1.FailedPhase {
 		cl.Status.Phase = undistrov1.FailedPhase
-		if len(capi.Status.Conditions) > 0 {
-			record.Warn(cl, capi.Status.Conditions[len(capi.Status.Conditions)-1].Reason, capi.Status.Conditions[len(capi.Status.Conditions)-1].Message)
-		}
 		return ctrl.Result{}, nil
-	}
-	if len(capi.Status.Conditions) > 0 {
-		record.Event(cl, capi.Status.Conditions[len(capi.Status.Conditions)-1].Reason, capi.Status.Conditions[len(capi.Status.Conditions)-1].Message)
 	}
 	if capi.Status.ControlPlaneInitialized && !capi.Status.ControlPlaneReady && cl.Spec.CniName != undistrov1.ProviderCNI {
 		if err := r.installCNI(ctx, cl, c); err != nil {
@@ -422,8 +438,8 @@ func (r *ClusterReconciler) provisioning(ctx context.Context, cl *undistrov1.Clu
 		cl.Status.Phase = undistrov1.ProvisionedPhase
 		cl.Status.Ready = true
 		cl.Status.BastionPublicIP = bastionIP
+		record.Event(cl, "ClusterReady", "Cluster ready")
 	}
-	record.Event(cl, "ClusterReady", "Cluster ready")
 	return ctrl.Result{}, nil
 }
 

@@ -7,11 +7,14 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	"github.com/getupio-undistro/undistro/client"
-	"github.com/getupio-undistro/undistro/client/cluster"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/watch"
 	utilresource "sigs.k8s.io/cluster-api/util/resource"
 	"sigs.k8s.io/cluster-api/util/yaml"
 )
@@ -94,8 +97,16 @@ func createCluster(r io.Reader, w io.Writer) error {
 	if err != nil {
 		return err
 	}
+	cfg, err := proxy.GetConfig()
+	if err != nil {
+		return err
+	}
 	objs = utilresource.SortForCreate(objs)
 	nm := types.NamespacedName{}
+	var (
+		watchch       watch.Interface
+		eventListener client.EventListener
+	)
 	for _, o := range objs {
 		if o.GetNamespace() == "" {
 			o.SetNamespace("default")
@@ -103,27 +114,41 @@ func createCluster(r io.Reader, w io.Writer) error {
 		if o.GetKind() == "Cluster" && o.GetAPIVersion() == undistrov1.GroupVersion.String() {
 			nm.Name = o.GetName()
 			nm.Namespace = o.GetNamespace()
+			eventListener, err = c.GetEventListener(client.Kubeconfig{
+				Path: ccOpts.kubeconfig,
+			})
+			if err != nil {
+				return err
+			}
 		}
 		err = k8sClient.Create(context.Background(), &o)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("%s.%s %q created\n", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
+		if eventListener != nil {
+			watchch, err = eventListener.Listen(context.Background(), cfg, &o)
+			if err != nil {
+				return err
+			}
+		}
+		fmt.Fprintf(os.Stdout, "%s.%s %q created\n", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}
-	logStreamer, err := c.GetLogs(client.Kubeconfig{
-		Path: ccOpts.kubeconfig,
-	})
-	if err != nil {
-		return err
+	eventch := watchch.ResultChan()
+	for e := range eventch {
+		ev, ok := e.Object.(*corev1.Event)
+		if !ok {
+			return errors.New("not an event")
+		}
+		switch ev.Type {
+		case corev1.EventTypeNormal:
+			fmt.Fprintln(os.Stdout, color.GreenString(ev.Message))
+		case corev1.EventTypeWarning:
+			fmt.Fprintln(os.Stdout, color.RedString(ev.Message))
+		}
+		if ev.Reason == "ClusterReady" {
+			watchch.Stop()
+		}
 	}
-	cfg, err := proxy.GetConfig()
-	if err != nil {
-		return err
-	}
-	err = logStreamer.Stream(context.Background(), cfg, os.Stdout, nm, cluster.IsReady, false)
-	if err != nil {
-		return err
-	}
-	fmt.Fprintf(os.Stdout, "\n\nCluster %s is ready. \nRun undistro get kubeconfig %s -n %s to get the Kubeconfig\n\n", nm.String(), nm.Name, nm.Namespace)
+	fmt.Fprintf(os.Stdout, "\n\nCluster %s is ready. \nRun command below to get the Kubeconfig\n undistro get kubeconfig %s -n %s\n\n", nm.String(), nm.Name, nm.Namespace)
 	return nil
 }
