@@ -46,9 +46,10 @@ var (
 // ClusterReconciler reconciles a Cluster object
 type ClusterReconciler struct {
 	client.Client
-	Log        logr.Logger
-	Scheme     *runtime.Scheme
-	RestConfig *rest.Config
+	Log          logr.Logger
+	Scheme       *runtime.Scheme
+	RestConfig   *rest.Config
+	EventWatcher chan record.WatcherResource
 }
 
 // +kubebuilder:rbac:urls=/metrics,verbs=get;
@@ -316,31 +317,6 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 		if err != nil {
 			return err
 		}
-		go func(ctx context.Context) {
-			listener, ierr := c.GetEventListener(uclient.Kubeconfig{})
-			if ierr != nil {
-				log.V(2).Info("unable to create listener")
-				return
-			}
-			ch, ierr := listener.Listen(ctx, r.RestConfig, &o)
-			if ierr != nil {
-				log.V(2).Info("unable to listen object", "kind", o.GetKind())
-				return
-			}
-			select {
-			case ev := <-ch.ResultChan():
-				e, ok := ev.Object.(*corev1.Event)
-				if ok {
-					if e.Type == corev1.EventTypeNormal {
-						record.Event(cl, e.Reason, e.Message)
-					} else {
-						record.Warn(cl, e.Reason, e.Message)
-					}
-				}
-			case <-ctx.Done():
-				ch.Stop()
-			}
-		}(ctx)
 		if isCluster {
 			cl.Status.ClusterAPIRef = &corev1.ObjectReference{
 				Kind:            o.GetKind(),
@@ -350,6 +326,10 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 				ResourceVersion: o.GetResourceVersion(),
 				APIVersion:      o.GetAPIVersion(),
 			}
+		}
+		r.EventWatcher <- record.WatcherResource{
+			Cluster: cl,
+			Obj:     &o,
 		}
 	}
 	cl.Status.Phase = undistrov1.ProvisioningPhase

@@ -106,6 +106,7 @@ func createCluster(r io.Reader, w io.Writer) error {
 	var (
 		watchch       watch.Interface
 		eventListener client.EventListener
+		isCluster     bool
 	)
 	for _, o := range objs {
 		if o.GetNamespace() == "" {
@@ -120,16 +121,18 @@ func createCluster(r io.Reader, w io.Writer) error {
 			if err != nil {
 				return err
 			}
+			isCluster = true
 		}
 		err = k8sClient.Create(context.Background(), &o)
 		if err != nil {
 			return err
 		}
-		if eventListener != nil {
+		if isCluster {
 			watchch, err = eventListener.Listen(context.Background(), cfg, &o)
 			if err != nil {
 				return err
 			}
+			isCluster = false
 		}
 		fmt.Fprintf(os.Stdout, "%s.%s %q created\n", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}
@@ -141,14 +144,14 @@ func createCluster(r io.Reader, w io.Writer) error {
 		}
 		switch ev.Type {
 		case corev1.EventTypeNormal:
-			fmt.Fprintln(os.Stdout, color.GreenString(ev.Message))
+			fmt.Fprintln(os.Stdout, color.GreenString("\u2714 %s", ev.Message))
 		case corev1.EventTypeWarning:
-			fmt.Fprintln(os.Stdout, color.RedString(ev.Message))
+			fmt.Fprintln(os.Stdout, color.RedString("\u271d %s", ev.Message))
 		}
 		if ev.Reason == "ClusterReady" {
 			watchch.Stop()
 		}
 	}
-	fmt.Fprintf(os.Stdout, "\n\nCluster %s is ready. \nRun command below to get the Kubeconfig\n undistro get kubeconfig %s -n %s\n\n", nm.String(), nm.Name, nm.Namespace)
+	fmt.Fprintf(os.Stdout, "\n\nCluster %s is ready. Run command below to get the Kubeconfig\n\nundistro get kubeconfig %s -n %s\n\n", nm.String(), nm.Name, nm.Namespace)
 	return nil
 }

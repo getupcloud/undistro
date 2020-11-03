@@ -105,6 +105,7 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 	var (
 		watchch       watch.Interface
 		eventListener client.EventListener
+		isCluster     bool
 	)
 	nm := types.NamespacedName{}
 	objs = util.ReverseObjs(utilresource.SortForCreate(objs))
@@ -121,17 +122,19 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 			if err != nil {
 				return err
 			}
+			isCluster = true
 		}
 		err = k8sClient.Delete(context.Background(), &o)
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
-		if eventListener != nil {
+		if isCluster {
 			watchch, err = eventListener.Listen(context.Background(), cfg, &o)
 			if err != nil {
 				return err
 			}
+			isCluster = false
 		}
 		fmt.Fprintf(os.Stdout, "%s.%s %q deleted\n", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}
@@ -143,9 +146,9 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 		}
 		switch ev.Type {
 		case corev1.EventTypeNormal:
-			fmt.Fprintln(os.Stdout, color.GreenString(ev.Message))
+			fmt.Fprintln(os.Stdout, color.GreenString("\u2714 %s", ev.Message))
 		case corev1.EventTypeWarning:
-			fmt.Fprintln(os.Stdout, color.RedString(ev.Message))
+			fmt.Fprintln(os.Stdout, color.RedString("\u271d %s", ev.Message))
 		}
 		if ev.Reason == "ClusterDeleted" {
 			watchch.Stop()
