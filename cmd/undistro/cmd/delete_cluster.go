@@ -107,10 +107,10 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 		watchch       watch.Interface
 		eventListener client.EventListener
 		isCluster     bool
+		dd            time.Time
 	)
 	nm := types.NamespacedName{}
 	objs = util.ReverseObjs(utilresource.SortForCreate(objs))
-	dd := time.Now()
 	for _, o := range objs {
 		if o.GetNamespace() == "" {
 			o.SetNamespace("default")
@@ -125,6 +125,7 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 				return err
 			}
 			isCluster = true
+			dd = time.Now()
 		}
 		err = k8sClient.Delete(context.Background(), &o)
 		if err != nil {
