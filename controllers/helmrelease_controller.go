@@ -36,10 +36,9 @@ import (
 // HelmReleaseReconciler reconciles a HelmRelease object
 type HelmReleaseReconciler struct {
 	client.Client
-	Log          logr.Logger
-	Scheme       *runtime.Scheme
-	RestConfig   *rest.Config
-	EventWatcher chan record.WatcherResource
+	Log        logr.Logger
+	Scheme     *runtime.Scheme
+	RestConfig *rest.Config
 }
 
 func (r *HelmReleaseReconciler) clusterClient(ctx context.Context, wc cluster.WorkloadCluster, nm types.NamespacedName) (client.Client, error) {

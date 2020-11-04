@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/fatih/color"
 	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
@@ -107,6 +108,7 @@ func createCluster(r io.Reader, w io.Writer) error {
 		watchch       watch.Interface
 		eventListener client.EventListener
 		isCluster     bool
+		dd            time.Time
 	)
 	for _, o := range objs {
 		if o.GetNamespace() == "" {
@@ -122,6 +124,7 @@ func createCluster(r io.Reader, w io.Writer) error {
 				return err
 			}
 			isCluster = true
+			dd = time.Now()
 		}
 		err = k8sClient.Create(context.Background(), &o)
 		if err != nil {
@@ -137,19 +140,22 @@ func createCluster(r io.Reader, w io.Writer) error {
 		fmt.Fprintf(os.Stdout, "%s.%s %q created\n", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}
 	eventch := watchch.ResultChan()
+	fmt.Fprintln(os.Stdout, color.GreenString("\u2714 %s", "Cluster creation started"))
 	for e := range eventch {
 		ev, ok := e.Object.(*corev1.Event)
 		if !ok {
 			return errors.New("not an event")
 		}
-		switch ev.Type {
-		case corev1.EventTypeNormal:
-			fmt.Fprintln(os.Stdout, color.GreenString("\u2714 %s", ev.Message))
-		case corev1.EventTypeWarning:
-			fmt.Fprintln(os.Stdout, color.RedString("\u271d %s", ev.Message))
-		}
-		if ev.Reason == "ClusterReady" {
-			watchch.Stop()
+		if ev.GetCreationTimestamp().After(dd) && ev.Count == 1 {
+			switch ev.Type {
+			case corev1.EventTypeNormal:
+				fmt.Fprintln(os.Stdout, color.GreenString("\u2714 %s", ev.Message))
+			case corev1.EventTypeWarning:
+				fmt.Fprintln(os.Stdout, color.RedString("\u271d %s", ev.Message))
+			}
+			if ev.Reason == "ClusterReady" {
+				watchch.Stop()
+			}
 		}
 	}
 	fmt.Fprintf(os.Stdout, "\n\nCluster %s is ready. Run command below to get the Kubeconfig\n\nundistro get kubeconfig %s -n %s\n\n", nm.String(), nm.Name, nm.Namespace)

@@ -36,6 +36,9 @@ const (
 
 	// UndistroMoveLabelName can be set on CRDs that providers wish to move that are not part of a cluster
 	UndistroMoveLabelName = "undistro.io/move"
+
+	UndistroClusterName      = "undistro.io/cluster-name"
+	UndistroClusterNamespace = "undistro.io/cluster-namespace"
 )
 
 // ResourceLifecycle configures the lifecycle of a resource

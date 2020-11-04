@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/fatih/color"
 	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
@@ -109,6 +110,7 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 	)
 	nm := types.NamespacedName{}
 	objs = util.ReverseObjs(utilresource.SortForCreate(objs))
+	dd := time.Now()
 	for _, o := range objs {
 		if o.GetNamespace() == "" {
 			o.SetNamespace("default")
@@ -126,8 +128,7 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 		}
 		err = k8sClient.Delete(context.Background(), &o)
 		if err != nil {
-			fmt.Println(err)
-			continue
+			return err
 		}
 		if isCluster {
 			watchch, err = eventListener.Listen(context.Background(), cfg, &o)
@@ -139,19 +140,22 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 		fmt.Fprintf(os.Stdout, "%s.%s %q deleted\n", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}
 	eventch := watchch.ResultChan()
+	fmt.Fprintln(os.Stdout, color.GreenString("\u2714 %s", "Cluster deletion started"))
 	for e := range eventch {
 		ev, ok := e.Object.(*corev1.Event)
 		if !ok {
 			return errors.New("not an event")
 		}
-		switch ev.Type {
-		case corev1.EventTypeNormal:
-			fmt.Fprintln(os.Stdout, color.GreenString("\u2714 %s", ev.Message))
-		case corev1.EventTypeWarning:
-			fmt.Fprintln(os.Stdout, color.RedString("\u271d %s", ev.Message))
-		}
-		if ev.Reason == "ClusterDeleted" {
-			watchch.Stop()
+		if ev.GetCreationTimestamp().After(dd) && ev.Count == 1 {
+			switch ev.Type {
+			case corev1.EventTypeNormal:
+				fmt.Fprintln(os.Stdout, color.GreenString("\u2714 %s", ev.Message))
+			case corev1.EventTypeWarning:
+				fmt.Fprintln(os.Stdout, color.RedString("\u271d %s", ev.Message))
+			}
+			if ev.Reason == "ClusterDeleted" {
+				watchch.Stop()
+			}
 		}
 	}
 	fmt.Fprintf(os.Stdout, "\n\nCluster %s is deleted.\n\n", nm.String())

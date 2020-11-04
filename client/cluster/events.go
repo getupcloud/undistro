@@ -2,16 +2,15 @@ package cluster
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/getupio-undistro/undistro/internal/scheme"
-	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/reference"
 )
 
 type EventListener interface {
@@ -32,15 +31,16 @@ func (e *eventListener) Listen(ctx context.Context, cfg *rest.Config, obj runtim
 	if err != nil {
 		return nil, err
 	}
-	e.getter = c.CoreV1()
-	ref, err := reference.GetReference(scheme.Scheme, obj)
+	o, err := runtime.DefaultUnstructuredConverter.ToUnstructured(obj)
 	if err != nil {
-		return nil, errors.Errorf("can't get object reference: %v", err)
+		return nil, err
 	}
-	uid := string(ref.UID)
-	sec := e.getter.Events("").GetFieldSelector(&ref.Name, &ref.Namespace, &ref.Kind, &uid)
+	u := unstructured.Unstructured{
+		Object: o,
+	}
+	e.getter = c.CoreV1()
 	return e.getter.Events("").Watch(ctx, metav1.ListOptions{
 		Watch:         true,
-		FieldSelector: sec.String(),
+		FieldSelector: fmt.Sprintf("involvedObject.name=%s", u.GetName()),
 	})
 }

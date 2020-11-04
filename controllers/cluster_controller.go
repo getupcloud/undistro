@@ -46,10 +46,9 @@ var (
 // ClusterReconciler reconciles a Cluster object
 type ClusterReconciler struct {
 	client.Client
-	Log          logr.Logger
-	Scheme       *runtime.Scheme
-	RestConfig   *rest.Config
-	EventWatcher chan record.WatcherResource
+	Log        logr.Logger
+	Scheme     *runtime.Scheme
+	RestConfig *rest.Config
 }
 
 // +kubebuilder:rbac:urls=/metrics,verbs=get;
@@ -313,6 +312,10 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 				return errors.Errorf("couldn't set reference: %v", err)
 			}
 		}
+		o.SetLabels(map[string]string{
+			undistrov1.UndistroClusterName:      cl.Name,
+			undistrov1.UndistroClusterNamespace: cl.Namespace,
+		})
 		err = util.CreateOrUpdate(ctx, r.Client, o)
 		if err != nil {
 			return err
@@ -327,10 +330,7 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 				APIVersion:      o.GetAPIVersion(),
 			}
 		}
-		r.EventWatcher <- record.WatcherResource{
-			Cluster: cl,
-			Obj:     &o,
-		}
+
 	}
 	cl.Status.Phase = undistrov1.ProvisioningPhase
 	return nil

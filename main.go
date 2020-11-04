@@ -55,28 +55,21 @@ func main() {
 	}
 	ctx := ctrl.SetupSignalHandler()
 	record.InitFromRecorder(mgr.GetEventRecorderFor("undistro"))
-	ew, err := record.EventWatcher(ctx, restCfg)
-	if err != nil {
-		setupLog.Error(err, "unable to create watcher")
-		os.Exit(1)
-	}
 	if err = (&controllers.ClusterReconciler{
-		Client:       mgr.GetClient(),
-		Log:          ctrl.Log.WithName("controllers").WithName("Cluster"),
-		Scheme:       mgr.GetScheme(),
-		RestConfig:   restCfg,
-		EventWatcher: ew,
+		Client:     mgr.GetClient(),
+		Log:        ctrl.Log.WithName("controllers").WithName("Cluster"),
+		Scheme:     mgr.GetScheme(),
+		RestConfig: restCfg,
 	}).SetupWithManager(ctx, mgr, concurrency(maxConcurrency)); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Cluster")
 		os.Exit(1)
 	}
 
 	if err = (&controllers.HelmReleaseReconciler{
-		Client:       mgr.GetClient(),
-		Log:          ctrl.Log.WithName("controllers").WithName("HelmRelease"),
-		Scheme:       mgr.GetScheme(),
-		RestConfig:   restCfg,
-		EventWatcher: ew,
+		Client:     mgr.GetClient(),
+		Log:        ctrl.Log.WithName("controllers").WithName("HelmRelease"),
+		Scheme:     mgr.GetScheme(),
+		RestConfig: restCfg,
 	}).SetupWithManager(ctx, mgr, concurrency(maxConcurrencyHelm)); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "HelmRelease")
 		os.Exit(1)
