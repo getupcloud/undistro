@@ -22,6 +22,7 @@ type Node struct {
 type ControlPlaneNode struct {
 	Node       `json:",inline,omitempty"`
 	EndpointIP string `json:"endpointIP,omitempty"`
+	InternalLB bool   `json:"internalLB,omitempty"`
 }
 
 type InfrastructureProvider struct {
@@ -106,8 +107,10 @@ type Bastion struct {
 }
 
 type Network struct {
-	VPC     string   `json:"vpc,omitempty"`
-	Subnets []string `json:"subnets,omitempty"`
+	VPC          string   `json:"vpc,omitempty"`
+	Subnets      []string `json:"subnets,omitempty"`
+	PodsCIDR     []string `json:"podsCIDR,omitempty"`
+	ServicesCIDR string   `json:"servicesCIDR,omitempty"`
 }
 
 type InstalledComponent struct {

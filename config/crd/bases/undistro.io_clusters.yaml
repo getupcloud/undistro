@@ -93,6 +93,8 @@ spec:
                 properties:
                   endpointIP:
                     type: string
+                  internalLB:
+                    type: boolean
                   machineType:
                     minLength: 1
                     type: string
@@ -210,6 +212,12 @@ spec:
                 type: string
               network:
                 properties:
+                  podsCIDR:
+                    items:
+                      type: string
+                    type: array
+                  servicesCIDR:
+                    type: string
                   subnets:
                     items:
                       type: string
@@ -281,6 +289,8 @@ spec:
                 properties:
                   endpointIP:
                     type: string
+                  internalLB:
+                    type: boolean
                   machineType:
                     minLength: 1
                     type: string

@@ -6,9 +6,23 @@ metadata:
   name: "{{.Name}}"
   namespace: "{{.Namespace}}"
 spec:
+  {{if .Spec.Network}}
   clusterNetwork:
+    {{if .Spec.Network.PodsCIDR}}
     pods:
-      cidrBlocks: ["192.168.0.0/16"]
+      {{range .Spec.Network.PodsCIDR}}
+      cidrBlocks:
+        - {{. | quote}}
+      {{end}}
+    {{end}}
+    {{if .Spec.Network.ServicesCIDR}}
+    services:
+      {{range .Spec.Network.ServicesCIDR}}
+      cidrBlocks:
+        - {{. | quote}}
+      {{end}}
+    {{end}}
+  {{end}}
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
     kind: AWSCluster
@@ -30,6 +44,10 @@ metadata:
 spec:
   region: '{{variable "AWS_REGION"}}'
   sshKeyName: "{{.Spec.InfrastructureProvider.SSHKey}}"
+  {{if .Spec.ControlPlaneNode.InternalLB}}
+  controlPlaneLoadBalancer:
+    scheme: internal
+  {{end}}
   bastion:
     enabled: {{$bastion.Enabled}}
     disableIngressRules: {{$bastion.DisableIngressRules}}

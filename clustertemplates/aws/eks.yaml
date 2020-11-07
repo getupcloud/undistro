@@ -6,9 +6,23 @@ metadata:
   name: "{{.Name}}"
   namespace: "{{.Namespace}}"
 spec:
+  {{if .Spec.Network}}
   clusterNetwork:
+    {{if .Spec.Network.PodsCIDR}}
     pods:
-      cidrBlocks: ["192.168.0.0/16"]
+      {{range .Spec.Network.PodsCIDR}}
+      cidrBlocks:
+        - {{. | quote}}
+      {{end}}
+    {{end}}
+    {{if .Spec.Network.ServicesCIDR}}
+    services:
+      {{range .Spec.Network.ServicesCIDR}}
+      cidrBlocks:
+        - {{. | quote}}
+      {{end}}
+    {{end}}
+  {{end}}
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
     kind: AWSManagedCluster
@@ -34,6 +48,10 @@ metadata:
   name: "{{.Name}}"
   namespace: "{{.Namespace}}"
 spec:
+  {{if .Spec.ControlPlaneNode.InternalLB}}
+  endpointAccess:
+    private: true
+  {{end}}
   sshKeyName: "{{.Spec.InfrastructureProvider.SSHKey}}"
   region: '{{variable "AWS_REGION"}}'
   version: "{{.Spec.KubernetesVersion}}"
