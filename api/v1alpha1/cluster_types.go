@@ -30,6 +30,7 @@ type InfrastructureProvider struct {
 	Name    string  `json:"name,omitempty"`
 	Version *string `json:"version,omitempty"`
 	File    *string `json:"file,omitempty"`
+	Managed bool    `json:"managed,omitempty"`
 	// +kubebuilder:validation:MinLength=1
 	SSHKey string          `json:"sshKey,omitempty"`
 	Env    []corev1.EnvVar `json:"env,omitempty"`
@@ -40,34 +41,6 @@ func (i *InfrastructureProvider) NameVersion() string {
 		return fmt.Sprintf("%s:%s", i.Name, *i.Version)
 	}
 	return i.Name
-}
-
-type BootstrapProvider struct {
-	// +kubebuilder:validation:MinLength=1
-	Name    string  `json:"name,omitempty"`
-	Version *string `json:"version,omitempty"`
-	File    *string `json:"file,omitempty"`
-}
-
-func (b *BootstrapProvider) NameVersion() string {
-	if b.Version != nil {
-		return fmt.Sprintf("%s:%s", b.Name, *b.Version)
-	}
-	return b.Name
-}
-
-type ControlPlaneProvider struct {
-	// +kubebuilder:validation:MinLength=1
-	Name    string  `json:"name,omitempty"`
-	Version *string `json:"version,omitempty"`
-	File    *string `json:"file,omitempty"`
-}
-
-func (c *ControlPlaneProvider) NameVersion() string {
-	if c.Version != nil {
-		return fmt.Sprintf("%s:%s", c.Name, *c.Version)
-	}
-	return c.Name
 }
 
 // +kubebuilder:validation:Enum=calico;provider
@@ -90,8 +63,6 @@ type ClusterSpec struct {
 	KubernetesVersion      string                 `json:"kubernetesVersion,omitempty"`
 	Template               *string                `json:"template,omitempty"`
 	InfrastructureProvider InfrastructureProvider `json:"infrastructureProvider,omitempty"`
-	BootstrapProvider      *BootstrapProvider     `json:"bootstrapProvider,omitempty"`
-	ControlPlaneProvider   *ControlPlaneProvider  `json:"controlPlaneProvider,omitempty"`
 	ControlPlaneNode       ControlPlaneNode       `json:"controlPlaneNode,omitempty"`
 	WorkerNodes            []Node                 `json:"workerNodes,omitempty"`
 	CniName                CNI                    `json:"cniName,omitempty"`
@@ -181,7 +152,7 @@ func (c Cluster) GetBastion() Bastion {
 }
 
 func (c Cluster) IsManaged() bool {
-	return c.Spec.BootstrapProvider != nil && c.Spec.ControlPlaneProvider != nil
+	return c.Spec.InfrastructureProvider.Managed
 }
 
 // +kubebuilder:object:root=true

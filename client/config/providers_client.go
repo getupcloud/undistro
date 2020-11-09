@@ -195,24 +195,6 @@ func SetupTemplates(cl *undistrov1.Cluster, v VariablesClient) (template.Options
 			Type: undistrov1.InfrastructureProviderType,
 		})
 	}
-	if cl.Spec.BootstrapProvider != nil {
-		if cl.Spec.BootstrapProvider.File != nil {
-			pvs = append(pvs, configProvider{
-				Name: cl.Spec.BootstrapProvider.Name,
-				URL:  *cl.Spec.BootstrapProvider.File,
-				Type: undistrov1.BootstrapProviderType,
-			})
-		}
-	}
-	if cl.Spec.ControlPlaneProvider != nil {
-		if cl.Spec.ControlPlaneProvider.File != nil {
-			pvs = append(pvs, configProvider{
-				Name: cl.Spec.ControlPlaneProvider.Name,
-				URL:  *cl.Spec.ControlPlaneProvider.File,
-				Type: undistrov1.ControlPlaneProviderType,
-			})
-		}
-	}
 	if len(pvs) > 0 {
 		byt, err := yaml.Marshal(pvs)
 		if err != nil {

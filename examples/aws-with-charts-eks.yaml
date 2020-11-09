@@ -10,12 +10,9 @@ spec:
   workerNodes:
     - replicas: 3
       machineType: t3.large
-  bootstrapProvider:
-    name: eks
-  controlPlaneProvider:
-    name: eks
   infrastructureProvider:
     name: aws
+    managed: true
     sshKey: undistro
     env:
       - name: AWS_ACCESS_KEY_ID

@@ -74,16 +74,6 @@ spec:
                   instanceType:
                     type: string
                 type: object
-              bootstrapProvider:
-                properties:
-                  file:
-                    type: string
-                  name:
-                    minLength: 1
-                    type: string
-                  version:
-                    type: string
-                type: object
               cniName:
                 enum:
                 - calico
@@ -103,16 +93,6 @@ spec:
                     minimum: 1
                     type: integer
                   subnet:
-                    type: string
-                type: object
-              controlPlaneProvider:
-                properties:
-                  file:
-                    type: string
-                  name:
-                    minLength: 1
-                    type: string
-                  version:
                     type: string
                 type: object
               infrastructureProvider:
@@ -198,6 +178,8 @@ spec:
                     type: array
                   file:
                     type: string
+                  managed:
+                    type: boolean
                   name:
                     minLength: 1
                     type: string
