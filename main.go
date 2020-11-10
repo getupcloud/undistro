@@ -7,6 +7,7 @@ package main
 import (
 	"flag"
 	"os"
+	"time"
 
 	"github.com/getupio-undistro/undistro/internal/record"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -30,7 +31,10 @@ func main() {
 		enableLeaderElection bool
 		maxConcurrency       int
 		maxConcurrencyHelm   int
+		syncPeriod           time.Duration
 	)
+	flag.DurationVar(&syncPeriod, "sync-period", 15*time.Minute,
+		"The minimum interval at which watched resources are reconciled (e.g. 15m)")
 	flag.IntVar(&maxConcurrency, "concurrency", 10, "Number of clusters to process simultaneously")
 	flag.IntVar(&maxConcurrencyHelm, "helm-concurrency", 5, "Number of helm releases to process simultaneously")
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
@@ -48,6 +52,7 @@ func main() {
 		Port:               9443,
 		LeaderElection:     enableLeaderElection,
 		LeaderElectionID:   "undistro.io",
+		SyncPeriod:         &syncPeriod,
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
