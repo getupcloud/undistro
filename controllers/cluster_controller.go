@@ -29,6 +29,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
 	clusterApi "sigs.k8s.io/cluster-api/api/v1alpha3"
+	clusterApiExp "sigs.k8s.io/cluster-api/exp/api/v1alpha3"
 	utilresource "sigs.k8s.io/cluster-api/util/resource"
 	"sigs.k8s.io/cluster-api/util/yaml"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -162,6 +163,10 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 	}
 	if r.hasDiff(ctx, &cluster) {
 		return r.upgrade(ctx, &cluster, undistroClient, opts)
+	}
+	if err = r.reconcileTotalReplicas(ctx, &cluster); client.IgnoreNotFound(err) != nil {
+		log.Error(err, "couldn't update autoscale status", "name", req.NamespacedName)
+		return ctrl.Result{}, err
 	}
 	return ctrl.Result{}, nil
 }
@@ -493,6 +498,32 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl *undistrov1.Clust
 		err = util.CreateOrUpdate(ctx, workloadClient, o)
 		if err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func (r *ClusterReconciler) reconcileTotalReplicas(ctx context.Context, cl *undistrov1.Cluster) error {
+	if cl.Status.Ready {
+		total := int64(0)
+		autoscaleEnabled := false
+		for i, w := range cl.Spec.WorkerNodes {
+			if w.Autoscale.Enabled {
+				autoscaleEnabled = true
+				mp := clusterApiExp.MachinePool{}
+				nm := types.NamespacedName{
+					Name:      fmt.Sprintf("%s-mp-%d", cl.Name, i),
+					Namespace: cl.Namespace,
+				}
+				err := r.Get(ctx, nm, &mp)
+				if err != nil {
+					return err
+				}
+				total += int64(mp.Status.Replicas)
+			}
+		}
+		if autoscaleEnabled {
+			cl.Status.TotalWorkerReplicas = total
 		}
 	}
 	return nil
