@@ -25,9 +25,12 @@ func TestCluster_Default(t *testing.T) {
 					MachineType: "test",
 				},
 			},
-			WorkerNodes: []Node{
+			WorkerNodes: []WorkerNode{
 				{
-					MachineType: "testWorker",
+					Node{
+						MachineType: "testWorker",
+					},
+					Autoscale{},
 				},
 			},
 		},

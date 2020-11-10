@@ -25,6 +25,24 @@ type ControlPlaneNode struct {
 	InternalLB bool   `json:"internalLB,omitempty"`
 }
 
+type WorkerNode struct {
+	Node      `json:",inline,omitempty"`
+	Autoscale Autoscale `json:"autoscale,omitempty"`
+}
+
+type Autoscale struct {
+	Enabled bool `json:"enabled,omitempty"`
+	// The minimum size of the group.
+	// +kubebuilder:default=1
+	// +kubebuilder:validation:Minimum=1
+	MinSize int64 `json:"minSize,omitempty"`
+
+	// The maximum size of the group.
+	// +kubebuilder:default=1
+	// +kubebuilder:validation:Minimum=1
+	MaxSize int64 `json:"maxSize,omitempty"`
+}
+
 type InfrastructureProvider struct {
 	// +kubebuilder:validation:MinLength=1
 	Name    string  `json:"name,omitempty"`
@@ -64,7 +82,7 @@ type ClusterSpec struct {
 	Template               *string                `json:"template,omitempty"`
 	InfrastructureProvider InfrastructureProvider `json:"infrastructureProvider,omitempty"`
 	ControlPlaneNode       ControlPlaneNode       `json:"controlPlaneNode,omitempty"`
-	WorkerNodes            []Node                 `json:"workerNodes,omitempty"`
+	WorkerNodes            []WorkerNode           `json:"workerNodes,omitempty"`
 	CniName                CNI                    `json:"cniName,omitempty"`
 	Network                *Network               `json:"network,omitempty"`
 	Bastion                *Bastion               `json:"bastion,omitempty"`
@@ -99,7 +117,7 @@ type ClusterStatus struct {
 	ClusterAPIRef       *corev1.ObjectReference `json:"clusterAPIRef,omitempty"`
 	KubernetesVersion   string                  `json:"kubernetesVersion,omitempty"`
 	ControlPlaneNode    ControlPlaneNode        `json:"controlPlaneNode,omitempty"`
-	WorkerNodes         []Node                  `json:"workerNodes,omitempty"`
+	WorkerNodes         []WorkerNode            `json:"workerNodes,omitempty"`
 	InfrastructureName  string                  `json:"infrastructureName,omitempty"`
 	TotalWorkerReplicas int64                   `json:"totalWorkerReplicas,omitempty"`
 	TotalWorkerPools    int64                   `json:"totalWorkerPools,omitempty"`

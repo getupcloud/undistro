@@ -212,6 +212,23 @@ spec:
               workerNodes:
                 items:
                   properties:
+                    autoscale:
+                      properties:
+                        enabled:
+                          type: boolean
+                        maxSize:
+                          default: 1
+                          description: The maximum size of the group.
+                          format: int64
+                          minimum: 1
+                          type: integer
+                        minSize:
+                          default: 1
+                          description: The minimum size of the group.
+                          format: int64
+                          minimum: 1
+                          type: integer
+                      type: object
                     machineType:
                       minLength: 1
                       type: string
@@ -314,6 +331,23 @@ spec:
               workerNodes:
                 items:
                   properties:
+                    autoscale:
+                      properties:
+                        enabled:
+                          type: boolean
+                        maxSize:
+                          default: 1
+                          description: The maximum size of the group.
+                          format: int64
+                          minimum: 1
+                          type: integer
+                        minSize:
+                          default: 1
+                          description: The minimum size of the group.
+                          format: int64
+                          minimum: 1
+                          type: integer
+                      type: object
                     machineType:
                       minLength: 1
                       type: string
