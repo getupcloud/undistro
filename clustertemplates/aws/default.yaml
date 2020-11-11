@@ -123,59 +123,63 @@ spec:
 {{$sshKey := .Spec.InfrastructureProvider.SSHKey}}
 {{range $index, $element := .Spec.WorkerNodes}}
 ---
-apiVersion: cluster.x-k8s.io/v1alpha3
-kind: MachineDeployment
+apiVersion: exp.cluster.x-k8s.io/v1alpha3
+kind: MachinePool
 metadata:
-  name: "{{$name}}-md-{{$index}}"
+  name: "{{$name}}-mp-{{$index}}"
   namespace: "{{$namespace}}"
 spec:
-  clusterName: "{{$name}}"
+  clusterName: {{$name}}
   replicas: {{$element.Replicas}}
-  selector:
-    matchLabels:
   template:
     spec:
-      clusterName: "{{$name}}"
-      version: "{{$k8s}}"
-      {{if $element.Subnet}}
-      subnet:
-        id: {{$element.Subnet}}
-      {{end}}
       bootstrap:
         configRef:
-          name: "{{$name}}-{{$uuid}}-md-{{$index}}"
           apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
-          kind: KubeadmConfigTemplate
+          kind: KubeadmConfig
+          name: "{{$name}}-mp-{{$index}}"
           namespace: "{{$namespace}}"
+      clusterName: {{$name}}
       infrastructureRef:
-        name: "{{$name}}-{{$uuid}}-md-{{$index}}"
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
-        kind: AWSMachineTemplate
+        kind: AWSMachinePool
+        name: "{{$name}}-mp-{{$index}}"
         namespace: "{{$namespace}}"
+      version: "{{$k8s}}"
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
-kind: AWSMachineTemplate
+kind: AWSMachinePool
 metadata:
-  name: "{{$name}}-{{$uuid}}-md-{{$index}}"
+  name: "{{$name}}-mp-{{$index}}"
   namespace: "{{$namespace}}"
 spec:
-  template:
-    spec:
-      instanceType: "{{$element.MachineType}}"
-      iamInstanceProfile: "nodes.cluster-api-provider-aws.sigs.k8s.io"
-      sshKeyName: "{{$sshKey}}"
+  {{if $element.Autoscale.Enabled}}
+  minSize: {{$element.Autoscale.MinSize}}
+  maxSize: {{$element.Autoscale.MaxSize}}
+  {{else}}
+  minSize: {{$element.Replicas}}
+  maxSize: {{$element.Replicas}}
+  {{end}}
+  availabilityZones: 
+    - '{{variable "AWS_REGION"}}'
+  awsLaunchTemplate:
+    instanceType: "{{$element.MachineType}}"
+    sshKeyName: "{{$sshKey}}"
+    iamInstanceProfile: "nodes.cluster-api-provider-aws.sigs.k8s.io"
+  {{if $element.Subnet}}
+  subnets:
+    - {{$element.Subnet}}
+  {{end}}
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
-kind: KubeadmConfigTemplate
+kind: KubeadmConfig
 metadata:
-  name: "{{$name}}-{{$uuid}}-md-{{$index}}"
+  name: "{{$name}}-mp-{{$index}}"
   namespace: "{{$namespace}}"
 spec:
-  template:
-    spec:
-      joinConfiguration:
-        nodeRegistration:
-          name: {{"'{{ ds.meta_data.local_hostname }}'"}}
-          kubeletExtraArgs:
-            cloud-provider: aws
+  joinConfiguration:
+    nodeRegistration:
+      name: {{"'{{ ds.meta_data.local_hostname }}'"}}
+      kubeletExtraArgs:
+        cloud-provider: aws
 {{end}}

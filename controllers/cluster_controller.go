@@ -342,6 +342,7 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 }
 
 func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster, uc uclient.Client, opts template.Options) (ctrl.Result, error) {
+	log := r.Log
 	if cl.Status.ClusterAPIRef == nil {
 		return ctrl.Result{}, errors.New("cluster API reference is nil")
 	}
@@ -374,6 +375,7 @@ func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster,
 		err = util.CreateOrUpdate(ctx, r.Client, o)
 		if err != nil {
 			record.Warn(cl, "FailedUpgrade", "failed to upgrade Cluster API objects")
+			log.Error(err, "couldn't upgrade", "name", cl.Name)
 			return ctrl.Result{}, err
 		}
 	}
@@ -524,6 +526,7 @@ func (r *ClusterReconciler) reconcileTotalReplicas(ctx context.Context, cl *undi
 		}
 		if autoscaleEnabled {
 			cl.Status.TotalWorkerReplicas = total
+			record.Eventf(cl, "UpdateReplicas", "update total worker replicas to %d", cl.Status.TotalWorkerReplicas)
 		}
 	}
 	return nil
