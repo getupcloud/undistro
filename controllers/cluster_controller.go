@@ -343,6 +343,9 @@ func (r *ClusterReconciler) config(ctx context.Context, cl *undistrov1.Cluster, 
 
 func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster, uc uclient.Client, opts template.Options) (ctrl.Result, error) {
 	log := r.Log
+	if !cl.Status.Ready {
+		return ctrl.Result{}, nil
+	}
 	if cl.Status.ClusterAPIRef == nil {
 		return ctrl.Result{}, errors.New("cluster API reference is nil")
 	}
@@ -356,6 +359,18 @@ func (r *ClusterReconciler) upgrade(ctx context.Context, cl *undistrov1.Cluster,
 	}
 	if cl.Namespace == "" {
 		cl.Namespace = "default"
+	}
+	p, err := uclient.GetProvider(uc, cl.Status.InfrastructureName, undistrov1.InfrastructureProviderType)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	fn := p.GetPreConfigFunc()
+	if fn != nil {
+		log.Info("executing pre config func", "component", p.Name())
+		err = fn(ctx, cl, uc.GetVariables(), r.Client)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
 	}
 	tpl := template.New(opts)
 	buff := bytes.Buffer{}

@@ -109,6 +109,7 @@ metadata:
   name: "{{$name}}-mp-{{$index}}"
   namespace: "{{$namespace}}"
 spec:
+  eksNodegroupName: "{{$name}}-mp-{{$index}}"
   scaling:
     {{if $element.Autoscale.Enabled}}
     minSize: {{$element.Autoscale.MinSize}}
