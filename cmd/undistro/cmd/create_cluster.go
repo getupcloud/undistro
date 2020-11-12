@@ -14,8 +14,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/apimachinery/pkg/watch"
 	utilresource "sigs.k8s.io/cluster-api/util/resource"
 	"sigs.k8s.io/cluster-api/util/yaml"
 )
@@ -105,10 +105,8 @@ func createCluster(r io.Reader, w io.Writer) error {
 	objs = utilresource.SortForCreate(objs)
 	nm := types.NamespacedName{}
 	var (
-		watchch       watch.Interface
-		eventListener client.EventListener
-		isCluster     bool
-		dd            time.Time
+		dd       time.Time
+		objNames = make([]string, 0)
 	)
 	for _, o := range objs {
 		if o.GetNamespace() == "" {
@@ -117,31 +115,35 @@ func createCluster(r io.Reader, w io.Writer) error {
 		if o.GetKind() == "Cluster" && o.GetAPIVersion() == undistrov1.GroupVersion.String() {
 			nm.Name = o.GetName()
 			nm.Namespace = o.GetNamespace()
-			eventListener, err = c.GetEventListener(client.Kubeconfig{
-				Path: ccOpts.kubeconfig,
-			})
+			cl := undistrov1.Cluster{}
+			err = runtime.DefaultUnstructuredConverter.FromUnstructured(o.Object, &cl)
 			if err != nil {
 				return err
 			}
-			isCluster = true
+			objNames = append(objNames, cl.Name)
+			for i := 0; i < len(cl.Spec.WorkerNodes); i++ {
+				objNames = append(objNames, fmt.Sprintf("%s-mp-%d", cl.Name, i))
+			}
 			dd = time.Now()
 		}
 		err = k8sClient.Create(context.Background(), &o)
 		if err != nil {
 			return err
 		}
-		if isCluster {
-			watchch, err = eventListener.Listen(context.Background(), cfg, &o)
-			if err != nil {
-				return err
-			}
-			isCluster = false
-		}
 		fmt.Fprintf(os.Stdout, "%s.%s %q created\n", strings.ToLower(o.GetKind()), o.GetObjectKind().GroupVersionKind().Group, o.GetName())
 	}
-	eventch := watchch.ResultChan()
+	listener, err := c.GetEventListener(client.Kubeconfig{
+		Path: ccOpts.kubeconfig,
+	})
+	if err != nil {
+		return err
+	}
+	watchch, err := listener.Listen(context.Background(), cfg, objNames...)
+	if err != nil {
+		return err
+	}
 	fmt.Fprintln(os.Stdout, color.GreenString("\u2714 %s", "Cluster creation started"))
-	for e := range eventch {
+	for e := range watchch.ResultChan() {
 		ev, ok := e.Object.(*corev1.Event)
 		if !ok {
 			return errors.New("not an event")
