@@ -1,4 +1,4 @@
-# Networh
+# Network
 
 UnDistro provides an easy way to configure CIDR blocks for pods and services and, is also possible to create a cluster without any communication to the internet.
 
