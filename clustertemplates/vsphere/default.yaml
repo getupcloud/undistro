@@ -140,12 +140,28 @@ spec:
         criSocket: /var/run/containerd/containerd.sock
         kubeletExtraArgs:
           cloud-provider: external
+          {{$taints := .Spec.ControlPlaneNode.TaintTmpl}}
+          {{if $taints}}
+          register-with-taints: "{{$taints}}"
+          {{end}}
+          {{$labels := .Spec.ControlPlaneNode.LabelsTmpl}}
+          {{if $labels}}
+          node-labels: "{{$labels}}"
+          {{end}}
         name: {{"'{{ ds.meta_data.hostname }}'"}}
     joinConfiguration:
       nodeRegistration:
         criSocket: /var/run/containerd/containerd.sock
         kubeletExtraArgs:
           cloud-provider: external
+          {{$taints := .Spec.ControlPlaneNode.TaintTmpl}}
+          {{if $taints}}
+          register-with-taints: "{{$taints}}"
+          {{end}}
+          {{$labels := .Spec.ControlPlaneNode.LabelsTmpl}}
+          {{if $labels}}
+          node-labels: "{{$labels}}"
+          {{end}}
         name: {{"'{{ ds.meta_data.hostname }}'"}}
     preKubeadmCommands:
     - hostname {{"{{ ds.meta_data.hostname }}" | quote}}
@@ -181,6 +197,14 @@ spec:
           criSocket: /var/run/containerd/containerd.sock
           kubeletExtraArgs:
             cloud-provider: external
+            {{$taints := $element.TaintTmpl}}
+            {{if $taints}}
+            register-with-taints: "{{$taints}}"
+            {{end}}
+            {{$labels := $element.LabelsTmpl}}
+            {{if $labels}}
+            node-labels: "{{$labels}}"
+            {{end}}
           name: {{"'{{ ds.meta_data.hostname }}'"}}
       preKubeadmCommands:
       - hostname {{"{{ ds.meta_data.hostname }}" | quote}}

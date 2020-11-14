@@ -107,6 +107,14 @@ spec:
         name: {{"'{{ ds.meta_data.local_hostname }}'"}}
         kubeletExtraArgs:
           cloud-provider: aws
+          {{$taints := .Spec.ControlPlaneNode.TaintTmpl}}
+          {{if $taints}}
+          register-with-taints: "{{$taints}}"
+          {{end}}
+          {{$labels := .Spec.ControlPlaneNode.LabelsTmpl}}
+          {{if $labels}}
+          node-labels: "{{$labels}}"
+          {{end}}
   version: "{{.Spec.KubernetesVersion}}"
 ---
 kind: AWSMachineTemplate
@@ -123,7 +131,7 @@ spec:
       {{if .Spec.ControlPlaneNode.ProviderTags}}
       additionalTags:
         {{range $key, $value := .Spec.ControlPlaneNode.ProviderTags}}
-        {{$key}}: {{$value}}
+        {{$key}}: {{$value | quote}}
         {{end}}
       {{end}}
       {{if .Spec.ControlPlaneNode.Subnet}}
@@ -177,7 +185,7 @@ spec:
   {{if $element.ProviderTags}}
   additionalTags:
     {{range $key, $value := $element.ProviderTags}}
-    {{$key}}: {{$value}}
+    {{$key}}: {{$value | quote}}
     {{end}}
   {{end}}
   availabilityZones: 

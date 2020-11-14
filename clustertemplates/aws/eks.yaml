@@ -113,7 +113,7 @@ spec:
   {{if $element.ProviderTags}}
   additionalTags:
     {{range $key, $value := $element.ProviderTags}}
-    {{$key}}: {{$value}}
+    {{$key}}: {{$value | quote}}
     {{end}}
   {{end}}
   scaling:
