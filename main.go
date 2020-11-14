@@ -36,7 +36,7 @@ func main() {
 	flag.DurationVar(&syncPeriod, "sync-period", 10*time.Minute,
 		"The minimum interval at which watched resources are reconciled (e.g. 15m)")
 	flag.IntVar(&maxConcurrency, "concurrency", 10, "Number of clusters to process simultaneously")
-	flag.IntVar(&maxConcurrencyHelm, "helm-concurrency", 5, "Number of helm releases to process simultaneously")
+	flag.IntVar(&maxConcurrencyHelm, "helm-concurrency", 10, "Number of helm releases to process simultaneously")
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
 	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
 		"Enable leader election for controller manager. "+

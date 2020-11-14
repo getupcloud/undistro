@@ -125,6 +125,11 @@ func (f *metadataClient) getEmbeddedMetadata() *undistrov1.Metadata {
 				{Major: 0, Minor: 13, Contract: "v1alpha1"},
 				{Major: 0, Minor: 14, Contract: "v1alpha1"},
 				{Major: 0, Minor: 15, Contract: "v1alpha1"},
+				{Major: 0, Minor: 16, Contract: "v1alpha1"},
+				{Major: 0, Minor: 17, Contract: "v1alpha1"},
+				{Major: 0, Minor: 18, Contract: "v1alpha1"},
+				{Major: 0, Minor: 19, Contract: "v1alpha1"},
+				{Major: 0, Minor: 20, Contract: "v1alpha1"},
 			},
 		}
 	case undistrov1.CoreProviderType:

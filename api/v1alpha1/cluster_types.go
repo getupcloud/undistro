@@ -6,6 +6,7 @@ package v1alpha1
 
 import (
 	"fmt"
+	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -15,8 +16,37 @@ type Node struct {
 	// +kubebuilder:validation:Minimum=1
 	Replicas *int64 `json:"replicas,omitempty"`
 	// +kubebuilder:validation:MinLength=1
-	MachineType string `json:"machineType,omitempty"`
-	Subnet      string `json:"subnet,omitempty"`
+	MachineType  string            `json:"machineType,omitempty"`
+	Subnet       string            `json:"subnet,omitempty"`
+	Taints       []corev1.Taint    `json:"taints,omitempty"`
+	Labels       map[string]string `json:"labels,omitempty"`
+	ProviderTags map[string]string `json:"providerTags,omitempty"`
+}
+
+func (n Node) TaintTmpl() string {
+	has := len(n.Taints) > 0
+	if !has {
+		return ""
+	}
+	tstr := make([]string, len(n.Taints))
+	for i, t := range n.Taints {
+		tstr[i] = fmt.Sprintf("%s=%s:%v", t.Key, t.Value, t.Effect)
+	}
+	return strings.Join(tstr, ",")
+}
+
+func (n Node) LabelsTmpl() string {
+	has := len(n.Labels) > 0
+	if !has {
+		return ""
+	}
+	lstr := make([]string, len(n.Labels))
+	i := 0
+	for k, v := range n.Labels {
+		lstr[i] = fmt.Sprintf("%s=%s", k, v)
+		i++
+	}
+	return strings.Join(lstr, ",")
 }
 
 type ControlPlaneNode struct {

@@ -110,6 +110,12 @@ metadata:
   namespace: "{{$namespace}}"
 spec:
   eksNodegroupName: "{{$name}}-mp-{{$index}}"
+  {{if $element.ProviderTags}}
+  additionalTags:
+    {{range $key, $value := $element.ProviderTags}}
+    {{$key}}: {{$value}}
+    {{end}}
+  {{end}}
   scaling:
     {{if $element.Autoscale.Enabled}}
     minSize: {{$element.Autoscale.MinSize}}
@@ -132,5 +138,14 @@ kind: EKSConfig
 metadata:
   name: "{{$name}}-mp-{{$index}}"
   namespace: "{{$namespace}}"
-spec: {}
+spec:
+  KubeletExtraArgs:
+    {{$taints := $element.TaintTmpl}}
+    {{if $taints}}
+    register-with-taints: "{{$taints}}"
+    {{end}}
+    {{$labels := $element.LabelsTmpl}}
+    {{if $labels}}
+    node-labels: "{{$labels}}"
+    {{end}}
 {{end}}
