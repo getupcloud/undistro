@@ -1,5 +1,17 @@
 /*
-Copyright 2020 Getup Cloud. All rights reserved.
+Copyright 2020 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 
 package client
@@ -19,6 +31,21 @@ type PlanUpgradeOptions struct {
 	Kubeconfig Kubeconfig
 }
 
+func (c *undistroClient) PlanCertManagerUpgrade(options PlanUpgradeOptions) (CertManagerUpgradePlan, error) {
+	// Get the client for interacting with the management cluster.
+	cluster, err := c.clusterClientFactory(ClusterClientFactoryInput{kubeconfig: options.Kubeconfig})
+	if err != nil {
+		return CertManagerUpgradePlan{}, err
+	}
+
+	certManager, err := cluster.CertManager()
+	if err != nil {
+		return CertManagerUpgradePlan{}, err
+	}
+	plan, err := certManager.PlanUpgrade()
+	return CertManagerUpgradePlan(plan), err
+}
+
 func (c *undistroClient) PlanUpgrade(options PlanUpgradeOptions) ([]UpgradePlan, error) {
 	// Get the client for interacting with the management cluster.
 	cluster, err := c.clusterClientFactory(ClusterClientFactoryInput{kubeconfig: options.Kubeconfig})
@@ -26,7 +53,7 @@ func (c *undistroClient) PlanUpgrade(options PlanUpgradeOptions) ([]UpgradePlan,
 		return nil, err
 	}
 
-	// Ensures the custom resource definitions required by undistro are in place.
+	// Ensures the custom resource definitions required by clusterctl are in place.
 	if err := cluster.ProviderInventory().EnsureCustomResourceDefinitions(); err != nil {
 		return nil, err
 	}
@@ -82,7 +109,7 @@ func (c *undistroClient) ApplyUpgrade(options ApplyUpgradeOptions) error {
 		return err
 	}
 
-	// Ensures the custom resource definitions required by undistro are in place.
+	// Ensures the custom resource definitions required by clusterctl are in place.
 	if err := clusterClient.ProviderInventory().EnsureCustomResourceDefinitions(); err != nil {
 		return err
 	}
@@ -94,6 +121,19 @@ func (c *undistroClient) ApplyUpgrade(options ApplyUpgradeOptions) error {
 		return err
 	}
 	coreProvider := coreUpgradeItem.Provider
+
+	// Ensures the latest version of cert-manager.
+	// NOTE: it is safe to upgrade to latest version of cert-manager given that it provides
+	// conversion web-hooks around Issuer/Certificate kinds, so installing an older versions of providers
+	// should continue to work with the latest cert-manager.
+	certManager, err := clusterClient.CertManager()
+	if err != nil {
+		return err
+	}
+
+	if err := certManager.EnsureLatestVersion(); err != nil {
+		return err
+	}
 
 	// Check if the user want a custom upgrade
 	isCustomUpgrade := options.CoreProvider != "" ||
@@ -133,7 +173,7 @@ func (c *undistroClient) ApplyUpgrade(options ApplyUpgradeOptions) error {
 		return nil
 	}
 
-	// Otherwise we are upgrading a whole management group according to a undistro generated upgrade plan.
+	// Otherwise we are upgrading a whole management group according to a clusterctl generated upgrade plan.
 	if err := clusterClient.ProviderUpgrader().ApplyPlan(coreProvider, options.Contract); err != nil {
 		return err
 	}
@@ -179,6 +219,9 @@ func parseUpgradeItem(ref string, providerType undistrov1.ProviderType) (*cluste
 			},
 			ProviderName: name,
 			Type:         string(providerType),
+			// The value for the following fields will be retrieved while
+			// creating the custom upgrade plan.
+			WatchedNamespace: "",
 		},
 		NextVersion: version,
 	}, nil

@@ -72,6 +72,10 @@ func (f fakeClient) GetProvidersConfig() ([]Provider, error) {
 	return f.internalClient.GetProvidersConfig()
 }
 
+func (f fakeClient) PlanCertManagerUpgrade(options PlanUpgradeOptions) (CertManagerUpgradePlan, error) {
+	return f.internalClient.PlanCertManagerUpgrade(options)
+}
+
 func (f fakeClient) GetProviderComponents(provider string, providerType undistrov1.ProviderType, options ComponentsOptions) (Components, error) {
 	return f.internalClient.GetProviderComponents(provider, providerType, options)
 }
@@ -175,10 +179,11 @@ func (f *fakeClient) WithRepository(repositoryClient repository.Client) *fakeCli
 // internally uses a FakeProxy (based on the controller-runtime FakeClient).
 // You can use WithObjs to pre-load a set of runtime objects in the cluster.
 func newFakeCluster(kubeconfig cluster.Kubeconfig, configClient config.Client) *fakeClusterClient {
+	cm, _ := newFakeCertManagerClient(nil, nil)
 	fake := &fakeClusterClient{
 		kubeconfig:   kubeconfig,
 		repositories: map[string]repository.Client{},
-		certManager:  newFakeCertManagerClient(nil, nil),
+		certManager:  cm,
 	}
 
 	fake.fakeProxy = test.NewFakeProxy()
@@ -201,11 +206,11 @@ func newFakeCluster(kubeconfig cluster.Kubeconfig, configClient config.Client) *
 
 // newFakeCertManagerClient creates a new CertManagerClient
 // allows the caller to define which images are needed for the manager to run
-func newFakeCertManagerClient(imagesReturnImages []string, imagesReturnError error) cluster.CertManagerClient {
+func newFakeCertManagerClient(imagesReturnImages []string, imagesReturnError error) (*fakeCertManagerClient, error) {
 	return &fakeCertManagerClient{
 		images:      imagesReturnImages,
 		imagesError: imagesReturnError,
-	}
+	}, nil
 }
 
 type fakeCertManagerClient struct {
@@ -283,8 +288,8 @@ func (f fakeClusterClient) Proxy() cluster.Proxy {
 	return f.fakeProxy
 }
 
-func (f *fakeClusterClient) CertManager() cluster.CertManagerClient {
-	return f.certManager
+func (f *fakeClusterClient) CertManager() (cluster.CertManagerClient, error) {
+	return f.certManager, nil
 }
 
 func (f fakeClusterClient) ProviderComponents() cluster.ComponentsClient {

@@ -1,5 +1,17 @@
 /*
-Copyright 2020 Getup Cloud. All rights reserved.
+Copyright 2020 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 
 package client
@@ -17,6 +29,67 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1alpha3"
 )
+
+func Test_undistroClient_PlanCertUpgrade(t *testing.T) {
+	// create a fake config with a provider named P1 and a variable named var
+	repository1Config := config.NewProvider("p1", "url", undistrov1.CoreProviderType, nil, nil)
+
+	config1 := newFakeConfig().
+		WithVar("var", "value").
+		WithProvider(repository1Config)
+
+	// create a fake repository with some YAML files in it (usually matching
+	// the list of providers defined in the config)
+	repository1 := newFakeRepository(repository1Config, config1).
+		WithPaths("root", "components").
+		WithDefaultVersion("v1.0").
+		WithFile("v1.0", "components.yaml", []byte("content"))
+
+	certManagerPlan := CertManagerUpgradePlan{
+		From:          "v0.16.0",
+		To:            "v0.16.1",
+		ShouldUpgrade: true,
+	}
+	// create a fake cluster, with a cert manager client that has an upgrade
+	// plan
+	cm, _ := newFakeCertManagerClient(nil, nil)
+	cluster1 := newFakeCluster(cluster.Kubeconfig{Path: "cluster1"}, config1).
+		WithCertManagerClient(cm.WithCertManagerPlan(certManagerPlan))
+
+	client := newFakeClient(config1).
+		WithRepository(repository1).
+		WithCluster(cluster1)
+
+	tests := []struct {
+		name      string
+		client    *fakeClient
+		expectErr bool
+	}{
+		{
+			name:      "returns plan for upgrading cert-manager",
+			client:    client,
+			expectErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := NewWithT(t)
+			options := PlanUpgradeOptions{
+				Kubeconfig: Kubeconfig{Path: "cluster1"},
+			}
+			actualPlan, err := tt.client.PlanCertManagerUpgrade(options)
+			if tt.expectErr {
+				g.Expect(err).To(HaveOccurred())
+				g.Expect(actualPlan).To(Equal(CertManagerUpgradePlan{}))
+				return
+			}
+			g.Expect(err).ToNot(HaveOccurred())
+			g.Expect(actualPlan).To(Equal(certManagerPlan))
+		})
+	}
+
+}
 
 func Test_undistroClient_PlanUpgrade(t *testing.T) {
 	type fields struct {
@@ -194,7 +267,7 @@ func Test_undistroClient_ApplyUpgrade(t *testing.T) {
 					Kind:       "ProviderList",
 				},
 				ListMeta: metav1.ListMeta{},
-				Items: []undistrov1.Provider{ // only one provider should be upgraded
+				Items: []undistrov1.Provider{
 					fakeProvider("cluster-api", undistrov1.CoreProviderType, "v1.0.1", "cluster-api-system"),
 					fakeProvider("infra", undistrov1.InfrastructureProviderType, "v2.0.1", "infra-system"),
 				},
@@ -269,8 +342,8 @@ func fakeClientForUpgrade() *fakeClient {
 	cluster1 := newFakeCluster(cluster.Kubeconfig{Path: "kubeconfig", Context: "mgmt-context"}, config1).
 		WithRepository(repository1).
 		WithRepository(repository2).
-		WithProviderInventory(core.Name(), core.Type(), "v1.0.0", "cluster-api-system", "").
-		WithProviderInventory(infra.Name(), infra.Type(), "v2.0.0", "infra-system", "")
+		WithProviderInventory(core.Name(), core.Type(), "v1.0.0", "cluster-api-system", "watchingNS").
+		WithProviderInventory(infra.Name(), infra.Type(), "v2.0.0", "infra-system", "watchingNS")
 
 	client := newFakeClient(config1).
 		WithRepository(repository1).
@@ -291,16 +364,14 @@ func fakeProvider(name string, providerType undistrov1.ProviderType, version, ta
 			Name:      undistrov1.ManifestLabel(name, providerType),
 			Labels: map[string]string{
 				undistrov1.ClusterctlLabelName:     "",
-				undistrov1.UndistroLabelName:       "",
 				clusterv1.ProviderLabelName:        undistrov1.ManifestLabel(name, providerType),
 				undistrov1.ClusterctlCoreLabelName: "inventory",
-				undistrov1.UndistroCoreLabelName:   "inventory",
 			},
 		},
 		ProviderName:     name,
 		Type:             string(providerType),
 		Version:          version,
-		WatchedNamespace: "",
+		WatchedNamespace: "watchingNS",
 	}
 }
 

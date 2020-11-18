@@ -145,7 +145,8 @@ func Test_undistroClient_InitImages(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		_, fc := setupCluster(tt.additionalProviders, newFakeCertManagerClient(tt.certManagerImages, tt.certManagerImagesErr))
+		cm, _ := newFakeCertManagerClient(tt.certManagerImages, tt.certManagerImagesErr)
+		_, fc := setupCluster(tt.additionalProviders, cm)
 		if tt.field.client == nil {
 			tt.field.client = fc
 		}
@@ -184,7 +185,8 @@ func Test_undistroClient_Init(t *testing.T) {
 		WithProvider(capiProviderConfig).
 		WithProvider(infraProviderConfig)
 	frepositories := fakeRepositories(fconfig, nil)
-	fcluster := fakeCluster(fconfig, frepositories, newFakeCertManagerClient(nil, nil))
+	cm, _ := newFakeCertManagerClient(nil, nil)
+	fcluster := fakeCluster(fconfig, frepositories, cm)
 	fclient := fakeClusterCtlClient(fconfig, frepositories, []*fakeClusterClient{fcluster})
 
 	type field struct {
@@ -594,7 +596,8 @@ func fakeEmptyCluster() *fakeClient {
 	repositories := fakeRepositories(config1, nil)
 	// fake empty cluster from fake repository for capi, bootstrap and infra
 	// provider (matching provider's config)
-	cluster1 := fakeCluster(config1, repositories, newFakeCertManagerClient(nil, nil))
+	cm, _ := newFakeCertManagerClient(nil, nil)
+	cluster1 := fakeCluster(config1, repositories, cm)
 
 	client := fakeClusterCtlClient(config1, repositories, []*fakeClusterClient{cluster1})
 	return client
