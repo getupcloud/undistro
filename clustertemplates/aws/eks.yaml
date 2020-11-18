@@ -65,11 +65,30 @@ spec:
     {{end}}
   {{if .Spec.Network}}
   networkSpec:
+    {{if .Sepc.Network.VPC}}
     vpc:
-      id: {{.Spec.Network.VPC}}
+      {{if .Spec.Network.VPC.ID}}
+      id: {{.Spec.Network.VPC.ID}}
+      {{end}}
+      {{if .Spec.Network.VPC.CIDRBlock}}
+      cidrBlock: {{.Spec.Network.VPC.CIDRBlock}}
+      {{end}}
+    {{end}}
     subnets:
     {{range .Spec.Network.Subnets}}
-    - id: {{.}}
+    -
+     {{if .ID}}
+     id: {{.ID}}
+     {{end}}
+     {{if .CIDRBlock}}
+     cidrBlock: {{.CIDRBlock}}
+     {{end}}
+     {{if .Zone}}
+     availabilityZone: {{.Zone}}
+     {{end}}
+     {{if .IsPublic}}
+     isPublic: {{.IsPublic}}
+     {{end}}
     {{end}}
   {{end}}
 

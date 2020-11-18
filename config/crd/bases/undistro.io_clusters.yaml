@@ -232,10 +232,28 @@ spec:
                     type: string
                   subnets:
                     items:
-                      type: string
+                      properties:
+                        cidrBlock:
+                          type: string
+                        id:
+                          type: string
+                        isPublic:
+                          type: boolean
+                        zone:
+                          type: string
+                      type: object
                     type: array
                   vpc:
-                    type: string
+                    properties:
+                      cidrBlock:
+                        type: string
+                      id:
+                        type: string
+                      isPublic:
+                        type: boolean
+                      zone:
+                        type: string
+                    type: object
                 type: object
               template:
                 type: string

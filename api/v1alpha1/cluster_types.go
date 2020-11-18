@@ -121,10 +121,17 @@ type Bastion struct {
 }
 
 type Network struct {
-	VPC          string   `json:"vpc,omitempty"`
-	Subnets      []string `json:"subnets,omitempty"`
-	PodsCIDR     []string `json:"podsCIDR,omitempty"`
-	ServicesCIDR string   `json:"servicesCIDR,omitempty"`
+	VPC          NetworkSpec   `json:"vpc,omitempty"`
+	Subnets      []NetworkSpec `json:"subnets,omitempty"`
+	PodsCIDR     []string      `json:"podsCIDR,omitempty"`
+	ServicesCIDR string        `json:"servicesCIDR,omitempty"`
+}
+
+type NetworkSpec struct {
+	ID        string `json:"id,omitempty"`
+	CIDRBlock string `json:"cidrBlock,omitempty"`
+	Zone      string `json:"zone,omitempty"`
+	IsPublic  bool   `json:"isPublic,omitempty"`
 }
 
 type InstalledComponent struct {
