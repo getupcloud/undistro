@@ -58,7 +58,7 @@ spec:
     {{end}}
   {{if .Spec.Network}}
   networkSpec:
-    {{if .Sepc.Network.VPC}}
+    {{if .Spec.Network.VPC}}
     vpc:
       {{if .Spec.Network.VPC.ID}}
       id: {{.Spec.Network.VPC.ID}}

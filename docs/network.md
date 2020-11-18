@@ -1,6 +1,6 @@
 # Network
 
-UnDistro provides an easy way to configure CIDR blocks for pods and services and, is also possible to create a cluster without any communication to the internet.
+UnDistro provides an easy way to configure CIDR blocks for pods, services, vpcs, subnets and is also possible to create a cluster without any communication to the internet.
 
 ## Configuring custom CIDR for pods
 
@@ -16,9 +16,23 @@ network:
 Add a valid CIDR to `servicesCIDR`
 
 ```yaml
-network:
+  network:
     servicesCIDR: ["192.168.0.0/16"]
 ```
+
+## VPCs and Subnets
+
+Add a valid CIDR to `cidrBlock`
+
+```yaml
+  network:
+    vpc:
+      cidrBlock: "192.168.0.0/16"
+    subnets:
+      -
+        cidrBlock: "10.0.0.0/16"
+```
+
 
 ## Creating an internal cluster
 

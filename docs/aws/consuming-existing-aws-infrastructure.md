@@ -40,10 +40,13 @@ spec:
   cniName: calico
   network:
     podsCIDR: ["192.168.0.0/16"]
-    vpc: vpc-045d216e54ab45efd
+    vpc:
+      id: vpc-045d216e54ab45efd
     subnets:
-      - subnet-0caf0ecba2c28e452
-      - subnet-0eba6f266a091a0ea
+      -
+        id: subnet-0caf0ecba2c28e452
+      - 
+        id: subnet-0eba6f266a091a0ea
   controlPlaneNode:
     replicas: 3
     machineType: m5.large
