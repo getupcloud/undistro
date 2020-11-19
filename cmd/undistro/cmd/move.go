@@ -16,6 +16,7 @@ type moveOptions struct {
 	toKubeconfig          string
 	toKubeconfigContext   string
 	namespace             string
+	skipInit              bool
 }
 
 var mo = &moveOptions{}
@@ -48,6 +49,7 @@ func init() {
 		"Context to be used within the kubeconfig file for the destination management cluster. If empty, current context will be used.")
 	moveCmd.Flags().StringVarP(&mo.namespace, "namespace", "n", "",
 		"The namespace where the workload cluster is hosted. If unspecified, the current context's namespace is used.")
+	moveCmd.Flags().BoolVar(&mo.skipInit, "skip-init", false, "skip new cluster initialization")
 
 	RootCmd.AddCommand(moveCmd)
 }
@@ -66,6 +68,7 @@ func runMove() error {
 		FromKubeconfig: client.Kubeconfig{Path: mo.fromKubeconfig, Context: mo.fromKubeconfigContext},
 		ToKubeconfig:   client.Kubeconfig{Path: mo.toKubeconfig, Context: mo.toKubeconfigContext},
 		Namespace:      mo.namespace,
+		SkipInit:       mo.skipInit,
 	}); err != nil {
 		return err
 	}
