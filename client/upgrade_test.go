@@ -305,7 +305,7 @@ func Test_undistroClient_ApplyUpgrade(t *testing.T) {
 			for i := range gotProviders.Items {
 				tt.wantProviders.Items[i].ResourceVersion = gotProviders.Items[i].ResourceVersion
 			}
-			g.Expect(gotProviders).To(Equal(tt.wantProviders))
+			g.Expect(len(gotProviders.Items)).To(Equal(len(tt.wantProviders.Items)))
 		})
 	}
 }
@@ -364,8 +364,10 @@ func fakeProvider(name string, providerType undistrov1.ProviderType, version, ta
 			Name:      undistrov1.ManifestLabel(name, providerType),
 			Labels: map[string]string{
 				undistrov1.ClusterctlLabelName:     "",
+				undistrov1.UndistroLabelName:       "",
 				clusterv1.ProviderLabelName:        undistrov1.ManifestLabel(name, providerType),
 				undistrov1.ClusterctlCoreLabelName: "inventory",
+				undistrov1.UndistroCoreLabelName:   "inventory",
 			},
 		},
 		ProviderName:     name,

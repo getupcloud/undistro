@@ -27,6 +27,7 @@ import (
 	"github.com/getupio-undistro/undistro/internal/test"
 	. "github.com/onsi/gomega"
 	admissionregistration "k8s.io/api/admissionregistration/v1"
+	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -81,23 +82,40 @@ func Test_certManagerClient_getManifestObjects(t *testing.T) {
 				found := false
 				for i := range objs {
 					o := objs[i]
-					if o.GetKind() == "MutatingWebhookConfiguration" && o.GetName() == "cert-manager-webhook" {
-						w := &admissionregistration.MutatingWebhookConfiguration{}
-						err := scheme.Scheme.Convert(&o, w, nil)
-						if err != nil {
-							t.Errorf("did not expect err, got %s", err)
-						}
-						if len(w.Webhooks) != 1 {
-							t.Error("expected 1 webhook to be configured")
-						}
-						wh := w.Webhooks[0]
-						if wh.SideEffects != nil && *wh.SideEffects == admissionregistration.SideEffectClassNone {
-							found = true
+					gvk := o.GroupVersionKind()
+					if gvk.Kind == "MutatingWebhookConfiguration" && o.GetName() == "cert-manager-webhook" {
+						switch gvk.Version {
+						case "v1beta1":
+							w := &admissionregistrationv1beta1.MutatingWebhookConfiguration{}
+							err := scheme.Scheme.Convert(&o, w, nil)
+							if err != nil {
+								t.Errorf("did not expect err, got %s", err)
+							}
+							if len(w.Webhooks) != 1 {
+								t.Error("expected 1 webhook to be configured")
+							}
+							wh := w.Webhooks[0]
+							if wh.SideEffects != nil && *wh.SideEffects == admissionregistrationv1beta1.SideEffectClassNone {
+								found = true
+							}
+						case "v1":
+							w := &admissionregistration.MutatingWebhookConfiguration{}
+							err := scheme.Scheme.Convert(&o, w, nil)
+							if err != nil {
+								t.Errorf("did not expect err, got %s", err)
+							}
+							if len(w.Webhooks) != 1 {
+								t.Error("expected 1 webhook to be configured")
+							}
+							wh := w.Webhooks[0]
+							if wh.SideEffects != nil && *wh.SideEffects == admissionregistration.SideEffectClassNone {
+								found = true
+							}
 						}
 					}
 				}
 				if !found {
-					t.Error("Expected to find cert-manager-webhook MutatingWebhookConfiguration with sideEffects=None")
+					t.Error("Expected to find cert-manager-webhook MutatingWebhookConfiguration/v1beta1 with sideEffects=None")
 				}
 			},
 		},
@@ -108,23 +126,41 @@ func Test_certManagerClient_getManifestObjects(t *testing.T) {
 				found := false
 				for i := range objs {
 					o := objs[i]
-					if o.GetKind() == "ValidatingWebhookConfiguration" && o.GetName() == "cert-manager-webhook" {
-						w := &admissionregistration.ValidatingWebhookConfiguration{}
-						err := scheme.Scheme.Convert(&o, w, nil)
-						if err != nil {
-							t.Errorf("did not expect err, got %s", err)
+					gvk := o.GroupVersionKind()
+					if gvk.Kind == "ValidatingWebhookConfiguration" && o.GetName() == "cert-manager-webhook" {
+						switch gvk.Version {
+						case "v1beta1":
+							w := &admissionregistrationv1beta1.ValidatingWebhookConfiguration{}
+							err := scheme.Scheme.Convert(&o, w, nil)
+							if err != nil {
+								t.Errorf("did not expect err, got %s", err)
+							}
+							if len(w.Webhooks) != 1 {
+								t.Error("expected 1 webhook to be configured")
+							}
+							wh := w.Webhooks[0]
+							if wh.SideEffects != nil && *wh.SideEffects == admissionregistrationv1beta1.SideEffectClassNone {
+								found = true
+							}
+						case "v1":
+							w := &admissionregistration.ValidatingWebhookConfiguration{}
+							err := scheme.Scheme.Convert(&o, w, nil)
+							if err != nil {
+								t.Errorf("did not expect err, got %s", err)
+							}
+							if len(w.Webhooks) != 1 {
+								t.Error("expected 1 webhook to be configured")
+							}
+							wh := w.Webhooks[0]
+							if wh.SideEffects != nil && *wh.SideEffects == admissionregistration.SideEffectClassNone {
+								found = true
+							}
 						}
-						if len(w.Webhooks) != 1 {
-							t.Error("expected 1 webhook to be configured")
-						}
-						wh := w.Webhooks[0]
-						if wh.SideEffects != nil && *wh.SideEffects == admissionregistration.SideEffectClassNone {
-							found = true
-						}
+
 					}
 				}
 				if !found {
-					t.Error("Expected to find cert-manager-webhook ValidatingWebhookConfiguration with sideEffects=None")
+					t.Error("Expected to find cert-manager-webhook ValidatingWebhookConfiguration/v1beta1 with sideEffects=None")
 				}
 			},
 		},
@@ -497,11 +533,9 @@ func Test_certManagerClient_deleteObjs(t *testing.T) {
 
 				cl, err := proxy.NewClient()
 				g.Expect(err).ToNot(HaveOccurred())
-
-				key, err := client.ObjectKeyFromObject(obj)
+				nm, err := client.ObjectKeyFromObject(obj)
 				g.Expect(err).ToNot(HaveOccurred())
-
-				err = cl.Get(ctx, key, obj)
+				err = cl.Get(ctx, nm, obj)
 				switch objShouldStillExist {
 				case true:
 					g.Expect(err).ToNot(HaveOccurred())

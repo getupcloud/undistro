@@ -10,6 +10,7 @@ import (
 	admissionregistration "k8s.io/api/admissionregistration/v1"
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	awsv1 "sigs.k8s.io/cluster-api-provider-aws/api/v1alpha3"
@@ -34,11 +35,12 @@ func init() {
 	_ = undistrov1.AddToScheme(Scheme)
 	_ = clusterv1.AddToScheme(Scheme)
 	_ = apiextensionsv1.AddToScheme(Scheme)
+	_ = apiextensionsv1beta1.AddToScheme(Scheme)
 	_ = addonsv1alpha3.AddToScheme(Scheme)
 	_ = kubeadmcpv1.AddToScheme(Scheme)
 	_ = awsv1.AddToScheme(Scheme)
-	_ = admissionregistration.AddToScheme(Scheme)
 	_ = admissionregistrationv1beta1.AddToScheme(Scheme)
+	_ = admissionregistration.AddToScheme(Scheme)
 	_ = expv1alpha3.AddToScheme(Scheme)
 	_ = addonsv1alpha3.AddToScheme(Scheme)
 	_ = awsbotstrapv1.AddToScheme(Scheme)
