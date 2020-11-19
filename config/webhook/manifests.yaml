@@ -7,10 +7,8 @@ metadata:
   name: mutating-webhook-configuration
 webhooks:
 - admissionReviewVersions:
-  - v1
   - v1beta1
   clientConfig:
-    caBundle: Cg==
     service:
       name: webhook-service
       namespace: system

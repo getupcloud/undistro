@@ -236,7 +236,7 @@ func (cm *certManagerClient) EnsureLatestVersion() error {
 	log := logf.Log
 	log.Info("Checking cert-manager version...")
 
-	objs, err := cm.proxy.ListResources(map[string]string{undistrov1.ClusterctlCoreLabelName: "cert-manager"}, "cert-manager")
+	objs, err := cm.proxy.ListResources(map[string]string{undistrov1.UndistroCoreLabelName: "cert-manager"}, "cert-manager")
 	if err != nil {
 		return errors.Wrap(err, "failed get cert manager components")
 	}

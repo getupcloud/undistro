@@ -6,6 +6,10 @@ package scheme
 
 import (
 	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	acmev1 "github.com/jetstack/cert-manager/pkg/apis/acme/v1"
+	acmev1beta1 "github.com/jetstack/cert-manager/pkg/apis/acme/v1beta1"
+	certmanagerv1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
+	certmanagerv1beta1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1beta1"
 	admission "k8s.io/api/admission/v1"
 	admissionregistration "k8s.io/api/admissionregistration/v1"
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
@@ -13,6 +17,8 @@ import (
 	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	aggregatorv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
+	aggregatorv1beta1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1beta1"
 	awsv1 "sigs.k8s.io/cluster-api-provider-aws/api/v1alpha3"
 	awsbotstrapv1 "sigs.k8s.io/cluster-api-provider-aws/bootstrap/eks/api/v1alpha3"
 	awscontrolplanev1 "sigs.k8s.io/cluster-api-provider-aws/controlplane/eks/api/v1alpha3"
@@ -49,5 +55,11 @@ func init() {
 	_ = vspherev1.AddToScheme(Scheme)
 	_ = kuneadmbv1.AddToScheme(Scheme)
 	_ = admission.AddToScheme(Scheme)
+	_ = aggregatorv1.AddToScheme(Scheme)
+	_ = aggregatorv1beta1.AddToScheme(Scheme)
+	_ = acmev1beta1.AddToScheme(Scheme)
+	_ = acmev1.AddToScheme(Scheme)
+	_ = certmanagerv1beta1.AddToScheme(Scheme)
+	_ = certmanagerv1.AddToScheme(Scheme)
 	// +kubebuilder:scaffold:scheme
 }
