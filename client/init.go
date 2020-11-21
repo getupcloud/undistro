@@ -264,7 +264,7 @@ func (c *undistroClient) addToInstaller(options addToInstallerOptions, providerT
 			}
 			continue
 		}
-		installedProviders := options.installedProviders.FilterByProviderName(provider)
+		installedProviders := options.installedProviders.FilterByProviderNameAndType(provider, providerType)
 		p, err := c.configClient.Providers().Get(provider, providerType)
 		if err != nil {
 			logf.Log.V(5).Info("failed to get provider config:", "provider", provider, "type", providerType, "error", err)

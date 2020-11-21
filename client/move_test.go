@@ -35,6 +35,7 @@ func Test_undistroClient_Move(t *testing.T) {
 				options: MoveOptions{
 					FromKubeconfig: Kubeconfig{Path: "kubeconfig", Context: "mgmt-context"},
 					ToKubeconfig:   Kubeconfig{Path: "kubeconfig", Context: "worker-context"},
+					SkipInit:       true,
 				},
 			},
 			wantErr: false,
@@ -48,6 +49,7 @@ func Test_undistroClient_Move(t *testing.T) {
 				options: MoveOptions{
 					FromKubeconfig: Kubeconfig{Path: "kubeconfig", Context: "does-not-exist"},
 					ToKubeconfig:   Kubeconfig{Path: "kubeconfig", Context: "worker-context"},
+					SkipInit:       true,
 				},
 			},
 			wantErr: true,
@@ -61,6 +63,7 @@ func Test_undistroClient_Move(t *testing.T) {
 				options: MoveOptions{
 					FromKubeconfig: Kubeconfig{Path: "kubeconfig", Context: "mgmt-context"},
 					ToKubeconfig:   Kubeconfig{Path: "kubeconfig", Context: "does-not-exist"},
+					SkipInit:       true,
 				},
 			},
 			wantErr: true,

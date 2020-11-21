@@ -5,8 +5,6 @@ Copyright 2020 Getup Cloud. All rights reserved.
 package v1alpha1
 
 import (
-	"fmt"
-
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -41,13 +39,6 @@ type Provider struct {
 	// if empty the provider controller is watching for objects in all namespaces.
 	// +optional
 	WatchedNamespace string `json:"watchedNamespace,omitempty"`
-}
-
-func (p *Provider) NameVersion() string {
-	if p.Version == "" {
-		return p.ProviderName
-	}
-	return fmt.Sprintf("%s:%s", p.ProviderName, p.Version)
 }
 
 // ManifestLabel returns the cluster.x-k8s.io/provider label value for an entry in the provider inventory.

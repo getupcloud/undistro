@@ -91,7 +91,9 @@ func deleteCluster(r io.Reader, w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	proxy, err := c.GetProxy()
+	proxy, err := c.GetProxy(client.Kubeconfig{
+		Path: dd.kubeconfig,
+	})
 	if err != nil {
 		return err
 	}

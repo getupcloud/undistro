@@ -64,7 +64,7 @@ func (f fakeClient) GetVariables() Variables {
 	return f.configClient.Variables()
 }
 
-func (f fakeClient) GetProxy() (Proxy, error) {
+func (f fakeClient) GetProxy(Kubeconfig) (Proxy, error) {
 	return test.NewFakeProxy(), nil
 }
 

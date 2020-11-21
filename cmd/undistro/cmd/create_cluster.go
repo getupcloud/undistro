@@ -90,7 +90,9 @@ func createCluster(r io.Reader, w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	proxy, err := c.GetProxy()
+	proxy, err := c.GetProxy(client.Kubeconfig{
+		Path: ccOpts.kubeconfig,
+	})
 	if err != nil {
 		return err
 	}

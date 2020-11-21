@@ -111,6 +111,7 @@ type ClusterSpec struct {
 	CniName                CNI                    `json:"cniName,omitempty"`
 	Network                *Network               `json:"network,omitempty"`
 	Bastion                *Bastion               `json:"bastion,omitempty"`
+	Paused                 bool                   `json:"paused,omitempty"`
 }
 
 type Bastion struct {

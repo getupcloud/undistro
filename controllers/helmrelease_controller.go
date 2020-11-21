@@ -143,6 +143,10 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		}
 		return ctrl.Result{}, nil
 	}
+	if hr.Spec.Paused {
+		log.Info("helm release paused", "key", req.NamespacedName.String())
+		return ctrl.Result{}, nil
+	}
 	// Initialize the patch helper.
 	patchHelper, err := patch.NewHelper(&hr, r.Client)
 	if err != nil {

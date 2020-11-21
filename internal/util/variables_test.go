@@ -46,7 +46,7 @@ var _ = BeforeSuite(func(done Done) {
 	undistroClient, err = uclient.New("")
 	Expect(err).ToNot(HaveOccurred())
 	Expect(undistroClient).ToNot(BeNil())
-	p, err := undistroClient.GetProxy()
+	p, err := undistroClient.GetProxy(uclient.Kubeconfig{})
 	Expect(err).ToNot(HaveOccurred())
 	Expect(p).ToNot(BeNil())
 	p.SetConfig(cfg)

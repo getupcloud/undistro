@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	clusterctlv1 "github.com/getupio-undistro/undistro/api/v1alpha1"
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	logf "github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -111,7 +111,7 @@ func (o *objectGraph) addObj(obj *unstructured.Unstructured) {
 	// Adds the node to the Graph.
 	newNode := o.objToNode(obj)
 
-	// Process OwnerReferences; if the owner object doe not exists yet, create a virtual node as a placeholder for it.
+	// Process OwnerReferences; if the owner object does not exists yet, create a virtual node as a placeholder for it.
 	for _, ownerReference := range obj.GetOwnerReferences() {
 		ownerNode, ok := o.uidToNode[ownerReference.UID]
 		if !ok {
@@ -219,8 +219,8 @@ func (o *objectGraph) getDiscoveryTypes() error {
 			}
 
 			forceMove := false
-			_, okCtl := crd.Labels[clusterctlv1.ClusterctlMoveLabelName]
-			_, okUndistro := crd.Labels[clusterctlv1.UndistroMoveLabelName]
+			_, okCtl := crd.Labels[undistrov1.ClusterctlMoveLabelName]
+			_, okUndistro := crd.Labels[undistrov1.UndistroMoveLabelName]
 			if okCtl || okUndistro {
 				forceMove = true
 			}
@@ -263,7 +263,7 @@ func getCRDList(proxy Proxy, crdList *apiextensionsv1.CustomResourceDefinitionLi
 		return err
 	}
 
-	if err := c.List(ctx, crdList, client.HasLabels{clusterctlv1.ClusterctlLabelName}); err != nil {
+	if err := c.List(ctx, crdList, client.HasLabels{undistrov1.ClusterctlLabelName}); err != nil {
 		return errors.Wrap(err, "failed to get the list of CRDs required for the move discovery phase")
 	}
 	return nil
@@ -340,6 +340,17 @@ func (o *objectGraph) getClusters() []*node {
 	clusters := []*node{}
 	for _, node := range o.uidToNode {
 		if node.identity.GroupVersionKind().GroupKind() == clusterv1.GroupVersion.WithKind("Cluster").GroupKind() {
+			clusters = append(clusters, node)
+		}
+	}
+	return clusters
+}
+
+// getClusters returns the list of Clusters existing in the object graph.
+func (o *objectGraph) getUndistroClusters() []*node {
+	clusters := []*node{}
+	for _, node := range o.uidToNode {
+		if node.identity.GroupVersionKind().GroupKind() == undistrov1.GroupVersion.WithKind("Cluster").GroupKind() {
 			clusters = append(clusters, node)
 		}
 	}
@@ -427,7 +438,7 @@ func (o *objectGraph) setSoftOwnership() {
 
 // setClusterTenants sets the cluster tenants for the clusters itself and all their dependent object tree.
 func (o *objectGraph) setClusterTenants() {
-	for _, cluster := range o.getClusters() {
+	for _, cluster := range o.getUndistroClusters() {
 		o.setClusterTenant(cluster, cluster)
 	}
 }

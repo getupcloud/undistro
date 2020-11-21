@@ -38,7 +38,10 @@ func logsStream(ctx context.Context, w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	proxy, err := c.GetProxy()
+	kcfg := client.Kubeconfig{
+		Path: logOpts.kubeconfig,
+	}
+	proxy, err := c.GetProxy(kcfg)
 	if err != nil {
 		return err
 	}
@@ -46,9 +49,7 @@ func logsStream(ctx context.Context, w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	steamer, err := c.GetLogs(client.Kubeconfig{
-		Path: logOpts.kubeconfig,
-	})
+	steamer, err := c.GetLogs(kcfg)
 	if err != nil {
 		return err
 	}

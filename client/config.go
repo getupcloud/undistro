@@ -22,11 +22,11 @@ func (c *undistroClient) GetVariables() Variables {
 	return c.configClient.Variables()
 }
 
-func (c *undistroClient) GetProxy() (Proxy, error) {
+func (c *undistroClient) GetProxy(cfg Kubeconfig) (Proxy, error) {
 	cluster, err := c.clusterClientFactory(
 		ClusterClientFactoryInput{
 			// use the default kubeconfig
-			kubeconfig: Kubeconfig{},
+			kubeconfig: cfg,
 		},
 	)
 	if err != nil {

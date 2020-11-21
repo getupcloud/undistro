@@ -59,7 +59,7 @@ type Client interface {
 	GetVariables() Variables
 
 	// GetProxy provider a way to get proxy
-	GetProxy() (Proxy, error)
+	GetProxy(Kubeconfig) (Proxy, error)
 
 	// GetLogs of controller providers
 	GetLogs(Kubeconfig) (Logs, error)

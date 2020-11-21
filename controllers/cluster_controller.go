@@ -88,6 +88,10 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 		}
 		return ctrl.Result{}, nil
 	}
+	if cluster.Spec.Paused {
+		log.Info("cluster paused", "key", req.NamespacedName.String())
+		return ctrl.Result{}, nil
+	}
 	// Initialize the patch helper.
 	patchHelper, err := patch.NewHelper(&cluster, r.Client)
 	if err != nil {

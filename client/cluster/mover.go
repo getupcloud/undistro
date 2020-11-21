@@ -7,6 +7,7 @@ package cluster
 import (
 	"fmt"
 
+	undistrov1 "github.com/getupio-undistro/undistro/api/v1alpha1"
 	logf "github.com/getupio-undistro/undistro/log"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -177,7 +178,7 @@ func getMachineObj(proxy Proxy, machine *node, machineObj *clusterv1.Machine) er
 func (o *objectMover) move(graph *objectGraph, toProxy Proxy) error {
 	log := logf.Log
 
-	clusters := graph.getClusters()
+	clusters := graph.getUndistroClusters()
 	log.Info("Moving Cluster API objects", "Clusters", len(clusters))
 
 	// Sets the pause field on the Cluster object in the source management cluster, so the controllers stop reconciling it.
@@ -198,6 +199,7 @@ func (o *objectMover) move(graph *objectGraph, toProxy Proxy) error {
 	// - All the MachineDeployments should be moved second (group 1, processed in parallel)
 	// - then all the MachineSets, then all the Machines, etc.
 	moveSequence := getMoveSequence(graph)
+	fmt.Println(">>>>>>>>", *moveSequence)
 
 	// Create all objects group by group, ensuring all the ownerReferences are re-created.
 	log.Info("Creating objects in the target cluster")
@@ -325,15 +327,28 @@ func patchCluster(proxy Proxy, cluster *node, patch client.Patch) error {
 	if err != nil {
 		return err
 	}
-
-	clusterObj := &clusterv1.Cluster{}
+	if cluster.identity.Namespace == "" {
+		cluster.identity.Namespace = "default"
+	}
+	capi := &clusterv1.Cluster{}
 	clusterObjKey := client.ObjectKey{
 		Namespace: cluster.identity.Namespace,
 		Name:      cluster.identity.Name,
 	}
 
+	if err := cFrom.Get(ctx, clusterObjKey, capi); err != nil {
+		return errors.Wrapf(err, "error reading capi %q %s/%s",
+			capi.GroupVersionKind(), capi.GetNamespace(), capi.GetName())
+	}
+
+	if err := cFrom.Patch(ctx, capi, patch); err != nil {
+		return errors.Wrapf(err, "error pausing reconciliation for %q %s/%s",
+			capi.GroupVersionKind(), capi.GetNamespace(), capi.GetName())
+	}
+
+	clusterObj := &undistrov1.Cluster{}
 	if err := cFrom.Get(ctx, clusterObjKey, clusterObj); err != nil {
-		return errors.Wrapf(err, "error reading %q %s/%s",
+		return errors.Wrapf(err, "error reading undistro %q %s/%s",
 			clusterObj.GroupVersionKind(), clusterObj.GetNamespace(), clusterObj.GetName())
 	}
 
@@ -341,7 +356,6 @@ func patchCluster(proxy Proxy, cluster *node, patch client.Patch) error {
 		return errors.Wrapf(err, "error pausing reconciliation for %q %s/%s",
 			clusterObj.GroupVersionKind(), clusterObj.GetNamespace(), clusterObj.GetName())
 	}
-
 	return nil
 }
 

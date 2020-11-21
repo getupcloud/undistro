@@ -56,10 +56,14 @@ func (c *undistroClient) Move(options MoveOptions) error {
 		if err := clClient.List(ctx, &clList); err != nil {
 			return err
 		}
+		newClClient, err := toCluster.Proxy().NewClient()
+		if err != nil {
+			return err
+		}
 		for _, cl := range clList.Items {
 			err = util.SetVariablesFromEnvVar(ctx, util.VariablesInput{
 				VariablesClient: c.GetVariables(),
-				ClientSet:       clClient,
+				ClientSet:       newClClient,
 				NamespacedName: types.NamespacedName{
 					Name:      cl.Name,
 					Namespace: cl.Namespace,
@@ -69,23 +73,24 @@ func (c *undistroClient) Move(options MoveOptions) error {
 			if err != nil {
 				return err
 			}
-		}
-		fromProviders, err := fromCluster.ProviderInventory().Move()
-		if err != nil {
-			return err
-		}
-
-		initOpts := InitOptions{
-			Kubeconfig:              options.ToKubeconfig,
-			TargetNamespace:         "undistro-system",
-			UndistroProvider:        fromProviders.UndistroProvider,
-			CoreProvider:            fromProviders.CoreProvider,
-			BootstrapProviders:      fromProviders.BootstrapProviders,
-			ControlPlaneProviders:   fromProviders.ControlPlaneProviders,
-			InfrastructureProviders: fromProviders.InfrastructureProviders,
-		}
-		if _, err := c.Init(initOpts); err != nil {
-			return err
+			initOpts := InitOptions{
+				Kubeconfig:              options.ToKubeconfig,
+				TargetNamespace:         "undistro-system",
+				InfrastructureProviders: []string{cl.Spec.InfrastructureProvider.NameVersion()},
+			}
+			firstRun := c.addDefaultProviders(toCluster, &initOpts)
+			if firstRun {
+				bp, cp := cl.GetManagedProvidersInfra()
+				if bp != nil {
+					initOpts.BootstrapProviders = append(initOpts.BootstrapProviders, bp...)
+				}
+				if cp != nil {
+					initOpts.ControlPlaneProviders = append(initOpts.ControlPlaneProviders, cp...)
+				}
+				if _, err := c.Init(initOpts); err != nil {
+					return err
+				}
+			}
 		}
 	}
 

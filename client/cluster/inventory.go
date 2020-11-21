@@ -16,6 +16,7 @@ import (
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/sets"
+	clusterv1 "sigs.k8s.io/cluster-api/api/v1alpha3"
 	utilyaml "sigs.k8s.io/cluster-api/util/yaml"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -29,7 +30,6 @@ const (
 
 // InventoryClient exposes methods to interface with a cluster's provider inventory.
 type InventoryClient interface {
-	Move() (InventoryMove, error)
 	// EnsureCustomResourceDefinitions installs the CRD required for creating inventory items, if necessary.
 	// Nb. In order to provide a simpler out-of-the box experience, the inventory CRD
 	// is embedded in the undistro binary.
@@ -220,6 +220,13 @@ func (p *inventoryClient) createObj(o unstructured.Unstructured) error {
 	}
 	labels[undistrov1.ClusterctlCoreLabelName] = "inventory"
 	labels[undistrov1.UndistroCoreLabelName] = "inventory"
+	kind, ok, _ := unstructured.NestedString(o.Object, "spec", "names", "kind")
+	// it is necessary because undistro CRD is embedded on CLI
+	if ok && kind == "Cluster" || ok && kind == "HelmRelease" {
+		labels[undistrov1.ClusterctlLabelName] = ""
+		labels[undistrov1.UndistroLabelName] = ""
+		labels[clusterv1.ProviderLabelName] = "undistro"
+	}
 	o.SetLabels(labels)
 
 	if err := c.Create(ctx, &o); err != nil {
@@ -266,37 +273,6 @@ func (p *inventoryClient) Create(m undistrov1.Provider) error {
 
 		return nil
 	})
-}
-
-func (p *inventoryClient) Move() (InventoryMove, error) {
-	o := InventoryMove{}
-	list, err := p.List()
-	if err != nil {
-		return o, err
-	}
-	ps := list.FilterByType(undistrov1.UndistroProviderType)
-	if len(ps) > 1 {
-		return o, errors.Errorf("has more than one %v. It may cause an error", undistrov1.UndistroProviderType)
-	}
-	ps = list.FilterByType(undistrov1.CoreProviderType)
-	if len(ps) > 1 {
-		return o, errors.Errorf("has more than one %v. It may cause an error", undistrov1.CoreProviderType)
-	}
-	for _, provider := range list.Items {
-		switch provider.GetProviderType() {
-		case undistrov1.UndistroProviderType:
-			o.UndistroProvider = provider.NameVersion()
-		case undistrov1.CoreProviderType:
-			o.CoreProvider = provider.NameVersion()
-		case undistrov1.BootstrapProviderType:
-			o.BootstrapProviders = append(o.BootstrapProviders, provider.NameVersion())
-		case undistrov1.ControlPlaneProviderType:
-			o.ControlPlaneProviders = append(o.ControlPlaneProviders, provider.NameVersion())
-		case undistrov1.InfrastructureProviderType:
-			o.InfrastructureProviders = append(o.InfrastructureProviders, provider.NameVersion())
-		}
-	}
-	return o, nil
 }
 
 func (p *inventoryClient) List() (*undistrov1.ProviderList, error) {
