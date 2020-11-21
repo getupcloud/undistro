@@ -39,6 +39,7 @@ const (
 
 	UndistroClusterName      = "undistro.io/cluster-name"
 	UndistroClusterNamespace = "undistro.io/cluster-namespace"
+	UndistroClusterMoved     = "undistro.io/moved"
 )
 
 // ResourceLifecycle configures the lifecycle of a resource

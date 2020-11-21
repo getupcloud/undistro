@@ -199,7 +199,6 @@ func (o *objectMover) move(graph *objectGraph, toProxy Proxy) error {
 	// - All the MachineDeployments should be moved second (group 1, processed in parallel)
 	// - then all the MachineSets, then all the Machines, etc.
 	moveSequence := getMoveSequence(graph)
-	fmt.Println(">>>>>>>>", *moveSequence)
 
 	// Create all objects group by group, ensuring all the ownerReferences are re-created.
 	log.Info("Creating objects in the target cluster")
@@ -533,6 +532,13 @@ func (o *objectMover) createTargetObject(nodeToCreate *node, toProxy Proxy) erro
 	if err != nil {
 		return err
 	}
+
+	labels := obj.GetLabels()
+	if labels == nil {
+		labels = make(map[string]string)
+	}
+	labels[undistrov1.UndistroClusterMoved] = "true"
+	obj.SetLabels(labels)
 
 	if err := cTo.Create(ctx, obj); err != nil {
 		if !apierrors.IsAlreadyExists(err) {

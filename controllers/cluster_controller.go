@@ -100,6 +100,10 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 	defer func() {
 		err = patch.ControllerObject(ctx, patchHelper, &cluster, err)
 	}()
+	labels := cluster.GetLabels()
+	if _, ok := labels[undistrov1.UndistroClusterMoved]; ok {
+		return ctrl.Result{Requeue: true}, r.reconcileMove(ctx, &cluster)
+	}
 	if !controllerutil.ContainsFinalizer(&cluster, undistrov1.Finalizer) {
 		controllerutil.AddFinalizer(&cluster, undistrov1.Finalizer)
 		return ctrl.Result{}, nil
@@ -175,6 +179,48 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (re
 		return ctrl.Result{}, err
 	}
 	return ctrl.Result{}, nil
+}
+
+func (r *ClusterReconciler) reconcileMove(ctx context.Context, cl *undistrov1.Cluster) error {
+	if cl.Namespace == "" {
+		cl.Namespace = "default"
+	}
+	capi := clusterApi.Cluster{}
+	key := client.ObjectKey{
+		Name:      cl.Name,
+		Namespace: cl.Namespace,
+	}
+	err := r.Get(ctx, key, &capi)
+	if err != nil {
+		return err
+	}
+	cl.Status.Phase = undistrov1.ClusterPhase(capi.Status.Phase)
+	cl.Status.BastionConfig = cl.Spec.Bastion
+	cl.Status.ControlPlaneNode = cl.Spec.ControlPlaneNode
+	cl.Status.WorkerNodes = cl.Spec.WorkerNodes
+	cl.Status.KubernetesVersion = cl.Spec.KubernetesVersion
+	cl.Status.InfrastructureName = cl.Spec.InfrastructureProvider.Name
+	cl.Status.Ready = capi.Status.InfrastructureReady && capi.Status.ControlPlaneReady
+	cl.Status.TotalWorkerPools = int64(len(cl.Spec.WorkerNodes))
+	cl.Status.ClusterAPIRef = &corev1.ObjectReference{
+		Kind:            capi.Kind,
+		Namespace:       capi.GetNamespace(),
+		Name:            capi.GetName(),
+		UID:             capi.GetUID(),
+		ResourceVersion: capi.GetResourceVersion(),
+		APIVersion:      capi.APIVersion,
+	}
+	cl.Status.BastionPublicIP, err = r.getClusterBastionIP(ctx, cl, &capi)
+	if err != nil {
+		return err
+	}
+	for _, w := range cl.Spec.WorkerNodes {
+		cl.Status.TotalWorkerReplicas += *w.Replicas
+	}
+	labels := cl.GetLabels()
+	delete(labels, undistrov1.UndistroClusterMoved)
+	cl.SetLabels(labels)
+	return nil
 }
 
 func (r *ClusterReconciler) hasDiff(ctx context.Context, cl *undistrov1.Cluster) bool {
