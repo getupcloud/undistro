@@ -53,8 +53,9 @@ var _ = Describe("Varaables", func() {
 				err := template.SetVariablesFromEnvVar(ctx, vi)
 				Expect(err).ToNot(HaveOccurred())
 				value, ok := vi.Variables["UNDISTRO_TEST"]
-				Expect(ok).To(BeTrue())
-				Expect(value).To(Equal("test"))
+				Eventually(func() bool {
+					return ok && value == "test"
+				}).Should(BeTrue())
 			})
 
 			It("should set variable when EnvVar using configMap", func() {
@@ -87,8 +88,9 @@ var _ = Describe("Varaables", func() {
 				err := template.SetVariablesFromEnvVar(ctx, vi)
 				Expect(err).ToNot(HaveOccurred())
 				value, ok := vi.Variables["UNDISTRO_TEST"]
-				Expect(ok).To(BeTrue())
-				Expect(value).To(Equal("testConfigMap"))
+				Eventually(func() bool {
+					return ok && value == "testConfigMap"
+				}).Should(BeTrue())
 			})
 
 			It("should set variable when EnvVar using secret stringData", func() {
@@ -121,8 +123,10 @@ var _ = Describe("Varaables", func() {
 				err := template.SetVariablesFromEnvVar(ctx, vi)
 				Expect(err).ToNot(HaveOccurred())
 				value, ok := vi.Variables["UNDISTRO_TEST"]
-				Expect(ok).To(BeTrue())
 				Expect(value).To(Equal("testSecret"))
+				Eventually(func() bool {
+					return ok && value == "testSecret"
+				}).Should(BeTrue())
 			})
 
 			It("should set variable when EnvVar using secret data", func() {
@@ -156,8 +160,9 @@ var _ = Describe("Varaables", func() {
 				err := template.SetVariablesFromEnvVar(ctx, vi)
 				Expect(err).ToNot(HaveOccurred())
 				value, ok := vi.Variables["UNDISTRO_TEST"]
-				Expect(ok).To(BeTrue())
-				Expect(value).To(Equal("testSecret"))
+				Eventually(func() bool {
+					return ok && value == "testSecret"
+				}).Should(BeTrue())
 			})
 		})
 
@@ -178,8 +183,9 @@ var _ = Describe("Varaables", func() {
 				err := template.SetVariablesFromEnvVar(ctx, vi)
 				Expect(err).ToNot(HaveOccurred())
 				value, ok := vi.Variables["UNDISTRO_TEST"]
-				Expect(ok).To(BeFalse())
-				Expect(value).To(BeNil())
+				Eventually(func() bool {
+					return !ok && value == nil
+				}).Should(BeTrue())
 			})
 
 			It("should return an empty string when secret is not found", func() {
@@ -198,8 +204,9 @@ var _ = Describe("Varaables", func() {
 				err := template.SetVariablesFromEnvVar(ctx, vi)
 				Expect(err).ToNot(HaveOccurred())
 				value, ok := vi.Variables["UNDISTRO_TEST"]
-				Expect(ok).To(BeFalse())
-				Expect(value).To(BeNil())
+				Eventually(func() bool {
+					return !ok && value == nil
+				}).Should(BeTrue())
 			})
 		})
 
