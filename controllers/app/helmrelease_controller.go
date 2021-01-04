@@ -158,7 +158,7 @@ func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, 
 		}
 		if hr.Spec.Chart.Version == "" {
 			hr.Spec.Chart.Version = lv.String()
-			return hr, ctrl.Result{Requeue: true}, nil
+			return hr, ctrl.Result{}, nil
 		}
 		if hr.Spec.AutoUpgrade {
 			acv, err := version.ParseVersion(hr.Spec.Chart.Version)
@@ -167,7 +167,7 @@ func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, 
 			}
 			if lv.GreaterThan(acv) && lv.Major() == acv.Major() {
 				hr.Spec.Chart.Version = lv.String()
-				return hr, ctrl.Result{Requeue: true}, nil
+				return hr, ctrl.Result{}, nil
 			}
 		}
 	}
