@@ -177,12 +177,10 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 	if capiCluster.Spec.ClusterNetwork != nil {
 		if !reflect.DeepEqual(*capiCluster.Spec.ClusterNetwork, capi.ClusterNetwork{}) && reflect.DeepEqual(cl.Spec.Network.ClusterNetwork, capi.ClusterNetwork{}) {
 			cl.Spec.Network.ClusterNetwork = *capiCluster.Spec.ClusterNetwork
-			return cl, ctrl.Result{Requeue: true}, nil
 		}
 	}
 	if !reflect.DeepEqual(capiCluster.Spec.ControlPlaneEndpoint, capi.APIEndpoint{}) && reflect.DeepEqual(cl.Spec.ControlPlane.Endpoint, capi.APIEndpoint{}) {
 		cl.Spec.ControlPlane.Endpoint = capiCluster.Spec.ControlPlaneEndpoint
-		return cl, ctrl.Result{Requeue: true}, nil
 	}
 	vars, err := r.templateVariables(ctx, &capiCluster, &cl)
 	if err != nil {
