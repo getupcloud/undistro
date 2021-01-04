@@ -23,7 +23,6 @@ import (
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
 	"github.com/getupio-undistro/undistro/pkg/meta"
-	"github.com/getupio-undistro/undistro/pkg/predicate"
 	"github.com/getupio-undistro/undistro/pkg/retry"
 	"github.com/getupio-undistro/undistro/pkg/util"
 	"github.com/go-logr/logr"
@@ -34,7 +33,6 @@ import (
 	kerrors "k8s.io/apimachinery/pkg/util/errors"
 	"sigs.k8s.io/cluster-api/util/patch"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -55,36 +53,34 @@ func (r *ProviderReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 	log := r.Log.WithValues("provider", req.NamespacedName)
+	patchHelper, err := patch.NewHelper(&p, r.Client)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	defer func() {
+		patchOpts := []patch.Option{}
+		if err == nil {
+			patchOpts = append(patchOpts, patch.WithStatusObservedGeneration{})
+		}
+		patchErr := patchHelper.Patch(ctx, &p, patchOpts...)
+		if patchErr != nil {
+			err = kerrors.NewAggregate([]error{patchErr, err})
+		}
+	}()
 	// Add our finalizer if it does not exist
 	if !controllerutil.ContainsFinalizer(&p, meta.Finalizer) {
 		controllerutil.AddFinalizer(&p, meta.Finalizer)
-		_, err := util.CreateOrUpdate(ctx, r.Client, &p)
-		if err != nil {
-			log.Error(err, "unable to register finalizer")
-			return ctrl.Result{}, err
-		}
+		return ctrl.Result{}, nil
 	}
 	if p.Spec.Paused {
 		log.Info("Reconciliation is paused for this object")
 		return ctrl.Result{}, nil
 	}
-	// Initialize the patch helper.
-	patchHelper, err := patch.NewHelper(&p, r.Client)
-	if err != nil {
-		return ctrl.Result{}, err
-	}
-	patchOpts := []patch.Option{}
+
 	if !p.DeletionTimestamp.IsZero() {
 		return r.reconcileDelete(ctx, log, p)
 	}
 	p, result, err := r.reconcile(ctx, log, p)
-	if err == nil {
-		patchOpts = append(patchOpts, patch.WithStatusObservedGeneration{})
-	}
-	patchErr := patchHelper.Patch(ctx, &p, patchOpts...)
-	if err != nil {
-		err = kerrors.NewAggregate([]error{patchErr, err})
-	}
 	return result, err
 }
 
@@ -101,9 +97,9 @@ func (r *ProviderReconciler) reconcileDelete(ctx context.Context, logger logr.Lo
 	if apierrors.IsNotFound(err) {
 		// Remove our finalizer from the list and update it.
 		controllerutil.RemoveFinalizer(&p, meta.Finalizer)
-		_, err = util.CreateOrUpdate(ctx, r.Client, &p)
-		if err != nil {
-			return ctrl.Result{Requeue: true}, err
+		err = r.Delete(ctx, &p)
+		if client.IgnoreNotFound(err) != nil {
+			return ctrl.Result{}, err
 		}
 		return ctrl.Result{}, nil
 	}
@@ -115,25 +111,17 @@ func (r *ProviderReconciler) reconcileDelete(ctx context.Context, logger logr.Lo
 }
 
 func (r *ProviderReconciler) reconcile(ctx context.Context, log logr.Logger, p configv1alpha1.Provider) (configv1alpha1.Provider, ctrl.Result, error) {
-	if p.Status.ObservedGeneration < p.Generation {
-		p.Status.ObservedGeneration = p.Generation
-		p = configv1alpha1.ProviderProgressing(p)
-		if _, updateStatusErr := util.CreateOrUpdate(ctx, r.Client, &p); updateStatusErr != nil {
-			log.Error(updateStatusErr, "unable to update status after generation update")
-			return p, ctrl.Result{Requeue: true}, updateStatusErr
-		}
-	}
 	if p.Status.LastAttemptedVersion == "" {
 		p, err := cloud.Init(ctx, r.Client, p)
 		if err != nil {
 			p = configv1alpha1.ProviderNotReady(p, meta.InitFailedReason, err.Error())
-			return p, ctrl.Result{Requeue: true}, err
+			return p, ctrl.Result{}, err
 		}
 	}
 	p, err := r.reconcileChart(ctx, log, p)
 	if err != nil {
 		p = configv1alpha1.ProviderNotReady(p, meta.ChartAppliedFailedReason, err.Error())
-		return p, ctrl.Result{Requeue: true}, err
+		return p, ctrl.Result{}, err
 	}
 	p, err = r.checkState(ctx, log, p)
 	if err != nil {
@@ -141,7 +129,7 @@ func (r *ProviderReconciler) reconcile(ctx context.Context, log logr.Logger, p c
 		if err == errNotReady {
 			err = nil
 		}
-		return p, ctrl.Result{Requeue: true}, err
+		return p, ctrl.Result{}, err
 	}
 	return configv1alpha1.ProviderReady(p), ctrl.Result{}, nil
 }
@@ -159,6 +147,8 @@ func (r *ProviderReconciler) reconcileChart(ctx context.Context, log logr.Logger
 				Labels:    p.Labels,
 			},
 			Spec: appv1alpha1.HelmReleaseSpec{
+				Paused:          p.Spec.Paused,
+				AutoUpgrade:     p.Spec.AutoUpgrade,
 				TargetNamespace: "undistro-system",
 				ReleaseName:     p.Spec.ProviderName,
 				ValuesFrom:      p.Spec.ConfigurationFrom,
@@ -215,7 +205,7 @@ func (r *ProviderReconciler) checkState(ctx context.Context, log logr.Logger, p 
 
 func (r *ProviderReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&configv1alpha1.Provider{}, builder.WithPredicates(predicate.Changed{})).
+		For(&configv1alpha1.Provider{}).
 		WithOptions(controller.Options{MaxConcurrentReconciles: 10}).
 		Complete(r)
 }

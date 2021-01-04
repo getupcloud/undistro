@@ -27,7 +27,6 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/helm"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
-	"github.com/getupio-undistro/undistro/pkg/predicate"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
 	"github.com/getupio-undistro/undistro/pkg/util"
 	"github.com/getupio-undistro/undistro/pkg/version"
@@ -51,7 +50,6 @@ import (
 	"sigs.k8s.io/cluster-api/util/kubeconfig"
 	"sigs.k8s.io/cluster-api/util/patch"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -80,49 +78,39 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 	log := r.Log.WithValues("helmrelease", req.NamespacedName)
-	// Add our finalizer if it does not exist
-	if !controllerutil.ContainsFinalizer(&hr, meta.Finalizer) {
-		controllerutil.AddFinalizer(&hr, meta.Finalizer)
-		_, err := util.CreateOrUpdate(ctx, r.Client, &hr)
-		if err != nil {
-			log.Error(err, "unable to register finalizer")
-			return ctrl.Result{}, err
-		}
-	}
-	if hr.Spec.Paused {
-		log.Info("Reconciliation is paused for this object")
-		return ctrl.Result{}, nil
-	}
 	// Initialize the patch helper.
 	patchHelper, err := patch.NewHelper(&hr, r.Client)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	patchOpts := []patch.Option{}
+	defer func() {
+		patchOpts := []patch.Option{}
+		if err == nil {
+			patchOpts = append(patchOpts, patch.WithStatusObservedGeneration{})
+		}
+		patchErr := patchHelper.Patch(ctx, &hr, patchOpts...)
+		if patchErr != nil {
+			err = kerrors.NewAggregate([]error{patchErr, err})
+		}
+	}()
+	// Add our finalizer if it does not exist
+	if !controllerutil.ContainsFinalizer(&hr, meta.Finalizer) {
+		controllerutil.AddFinalizer(&hr, meta.Finalizer)
+		return ctrl.Result{}, nil
+	}
+	if hr.Spec.Paused {
+		log.Info("Reconciliation is paused for this object")
+		return ctrl.Result{}, nil
+	}
 	if !hr.DeletionTimestamp.IsZero() {
 		return r.reconcileDelete(ctx, log, hr)
 	}
 	hr, result, err := r.reconcile(ctx, log, hr)
-	if err == nil {
-		patchOpts = append(patchOpts, patch.WithStatusObservedGeneration{})
-	}
-	patchErr := patchHelper.Patch(ctx, &hr, patchOpts...)
-	if err != nil {
-		err = kerrors.NewAggregate([]error{patchErr, err})
-	}
 	return result, err
 }
 
 func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, hr appv1alpha1.HelmRelease) (appv1alpha1.HelmRelease, ctrl.Result, error) {
 	var clientOpts []getter.Option
-	if hr.Status.ObservedGeneration < hr.Generation {
-		hr.Status.ObservedGeneration = hr.Generation
-		hr = appv1alpha1.HelmReleaseProgressing(hr)
-		if _, updateStatusErr := util.CreateOrUpdate(ctx, r.Client, &hr); updateStatusErr != nil {
-			log.Error(updateStatusErr, "unable to update status after generation update")
-			return hr, ctrl.Result{Requeue: true}, updateStatusErr
-		}
-	}
 	if hr.Spec.Chart.SecretRef != nil {
 		name := types.NamespacedName{
 			Name:      hr.Spec.Chart.SecretRef.Name,
@@ -166,33 +154,27 @@ func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, 
 		latestVersion := versions[0]
 		lv, err := version.ParseVersion(latestVersion.Version)
 		if err != nil {
-			return hr, ctrl.Result{Requeue: true}, err
+			return hr, ctrl.Result{}, err
 		}
 		if hr.Spec.Chart.Version == "" {
 			hr.Spec.Chart.Version = lv.String()
-			_, err = util.CreateOrUpdate(ctx, r.Client, &hr)
-			if err != nil {
-				return hr, ctrl.Result{Requeue: true}, err
-			}
+			return hr, ctrl.Result{Requeue: true}, nil
 		}
 		if hr.Spec.AutoUpgrade {
 			acv, err := version.ParseVersion(hr.Spec.Chart.Version)
 			if err != nil {
-				return hr, ctrl.Result{Requeue: true}, err
+				return hr, ctrl.Result{}, err
 			}
 			if lv.GreaterThan(acv) && lv.Major() == acv.Major() {
 				hr.Spec.Chart.Version = lv.String()
-				_, err = util.CreateOrUpdate(ctx, r.Client, &hr)
-				if err != nil {
-					return hr, ctrl.Result{Requeue: true}, err
-				}
+				return hr, ctrl.Result{Requeue: true}, nil
 			}
 		}
 	}
 	ch, err := chartRepo.Get(hr.Spec.Chart.Name, hr.Spec.Chart.Version)
 	if err != nil {
 		hr = appv1alpha1.HelmReleaseNotReady(hr, meta.ChartPullFailedReason, err.Error())
-		return hr, ctrl.Result{Requeue: true}, err
+		return hr, ctrl.Result{}, err
 	}
 	res, err := chartRepo.DownloadChart(ch)
 	if err != nil {
@@ -221,40 +203,40 @@ func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, 
 	hc, err := loader.LoadArchive(res)
 	if err != nil {
 		hr = appv1alpha1.HelmReleaseNotReady(hr, meta.StorageOperationFailedReason, err.Error())
-		return hr, ctrl.Result{Requeue: true}, err
+		return hr, ctrl.Result{}, err
 	}
 	getter, err := r.getRESTClientGetter(ctx, hr)
 	if err != nil {
-		return hr, ctrl.Result{Requeue: true}, err
+		return hr, ctrl.Result{}, err
 	}
 	restCfg, err := getter.ToRESTConfig()
 	if err != nil {
-		return hr, ctrl.Result{Requeue: true}, err
+		return hr, ctrl.Result{}, err
 	}
 	workloadClient, err := client.New(restCfg, client.Options{
 		Scheme: scheme.Scheme,
 	})
 	if err != nil {
-		return hr, ctrl.Result{Requeue: true}, err
+		return hr, ctrl.Result{}, err
 	}
 	err = r.applyObjs(ctx, workloadClient, hr.Spec.BeforeApplyObjects)
 	if err != nil {
 		hr = appv1alpha1.HelmReleaseNotReady(hr, meta.ObjectsApliedFailedReason, err.Error())
-		return hr, ctrl.Result{Requeue: true}, err
+		return hr, ctrl.Result{}, err
 	}
 	meta.SetResourceCondition(&hr, meta.ObjectsAppliedCondition, metav1.ConditionTrue, meta.ObjectsAppliedSuccessReason, "objects successfully applied before install")
 	hr, err = r.reconcileRelease(ctx, getter, log, *hr.DeepCopy(), hc, values)
 	if err != nil {
 		hr = appv1alpha1.HelmReleaseNotReady(hr, meta.ReconciliationFailedReason, err.Error())
-		return hr, ctrl.Result{Requeue: true}, err
+		return hr, ctrl.Result{}, err
 	}
 	err = r.applyObjs(ctx, workloadClient, hr.Spec.AfterApplyObjects)
 	if err != nil {
 		hr = appv1alpha1.HelmReleaseNotReady(hr, meta.ObjectsApliedFailedReason, err.Error())
-		return hr, ctrl.Result{Requeue: true}, err
+		return hr, ctrl.Result{}, err
 	}
 	meta.SetResourceCondition(&hr, meta.ObjectsAppliedCondition, metav1.ConditionTrue, meta.ObjectsAppliedSuccessReason, "objects successfully applied after install")
-	return hr, ctrl.Result{RequeueAfter: 10 * time.Minute}, nil
+	return hr, ctrl.Result{}, nil
 }
 
 func (r *HelmReleaseReconciler) applyObjs(ctx context.Context, c client.Client, objs []apiextensionsv1.JSON) error {
@@ -290,10 +272,6 @@ func (r *HelmReleaseReconciler) reconcileRelease(ctx context.Context, getter gen
 	hr, hasNewState := appv1alpha1.HelmReleaseAttempted(hr, revision, releaseRevision, valuesChecksum)
 	if hasNewState {
 		hr = appv1alpha1.HelmReleaseProgressing(hr)
-		if _, updateStatusErr := util.CreateOrUpdate(ctx, r.Client, &hr); updateStatusErr != nil {
-			log.Error(updateStatusErr, "unable to update status after state update")
-			return hr, updateStatusErr
-		}
 	}
 	if hr.Labels[meta.LabelProviderType] == "core" && rel != nil {
 		if rel.Chart.Metadata.Version == hr.Spec.Chart.Version {
@@ -526,18 +504,17 @@ func (r *HelmReleaseReconciler) reconcileDelete(ctx context.Context, logger logr
 	}
 	// Remove our finalizer from the list and update it.
 	controllerutil.RemoveFinalizer(&hr, meta.Finalizer)
-	_, err = util.CreateOrUpdate(ctx, r.Client, &hr)
-	if err != nil {
-		return ctrl.Result{Requeue: true}, err
+	err = r.Delete(ctx, &hr)
+	if client.IgnoreNotFound(err) != nil {
+		return ctrl.Result{}, err
 	}
-
 	return ctrl.Result{}, nil
 }
 
 func (r *HelmReleaseReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	r.config = mgr.GetConfig()
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&appv1alpha1.HelmRelease{}, builder.WithPredicates(predicate.Changed{})).
+		For(&appv1alpha1.HelmRelease{}).
 		WithOptions(controller.Options{MaxConcurrentReconciles: 10}).
 		Complete(r)
 }

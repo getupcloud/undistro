@@ -23,7 +23,7 @@ require (
 	k8s.io/klog v1.0.0
 	k8s.io/kubectl v0.20.1
 	sigs.k8s.io/cluster-api v0.3.11-0.20201216111421-7d01abe6c9e4
-	sigs.k8s.io/controller-runtime v0.7.0
+	sigs.k8s.io/controller-runtime v0.7.1-0.20210102163353-5564be7542e5
 	sigs.k8s.io/yaml v1.2.0
 )
 

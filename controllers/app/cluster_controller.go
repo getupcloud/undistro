@@ -19,6 +19,7 @@ package controllers
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"reflect"
@@ -27,7 +28,6 @@ import (
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
-	"github.com/getupio-undistro/undistro/pkg/predicate"
 	"github.com/getupio-undistro/undistro/pkg/retry"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
 	"github.com/getupio-undistro/undistro/pkg/template"
@@ -43,7 +43,6 @@ import (
 	"sigs.k8s.io/cluster-api/util/kubeconfig"
 	"sigs.k8s.io/cluster-api/util/patch"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -66,43 +65,41 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 	log := r.Log.WithValues("cluster", req.NamespacedName)
-
+	// Initialize the patch helper.
+	patchHelper, err := patch.NewHelper(&cl, r.Client)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	defer func() {
+		patchOpts := []patch.Option{}
+		if err == nil {
+			patchOpts = append(patchOpts, patch.WithStatusObservedGeneration{})
+		}
+		patchErr := patchHelper.Patch(ctx, &cl, patchOpts...)
+		if patchErr != nil {
+			err = kerrors.NewAggregate([]error{patchErr, err})
+		}
+	}()
 	// Add our finalizer if it does not exist
 	if !controllerutil.ContainsFinalizer(&cl, meta.Finalizer) {
 		controllerutil.AddFinalizer(&cl, meta.Finalizer)
-		_, err := util.CreateOrUpdate(ctx, r.Client, &cl)
-		if err != nil {
-			log.Error(err, "unable to register finalizer")
-			return ctrl.Result{Requeue: true}, err
-		}
+		return ctrl.Result{}, nil
 	}
 	if cl.Spec.Paused {
 		log.Info("Reconciliation is paused for this object")
 		return ctrl.Result{}, nil
 	}
-	// Initialize the patch helper.
-	patchHelper, err := patch.NewHelper(&cl, r.Client)
-	if err != nil {
-		return ctrl.Result{Requeue: true}, err
-	}
-	patchOpts := []patch.Option{}
+
 	capiCluster := capi.Cluster{}
 	err = r.Get(ctx, client.ObjectKeyFromObject(&cl), &capiCluster)
 	if client.IgnoreNotFound(err) != nil {
-		return ctrl.Result{Requeue: true}, err
+		return ctrl.Result{}, err
 	}
 	if !cl.DeletionTimestamp.IsZero() {
 		log.Info("Deleting")
 		return r.reconcileDelete(ctx, log, cl, capiCluster)
 	}
 	cl, result, err := r.reconcile(ctx, log, cl, capiCluster)
-	if err == nil {
-		patchOpts = append(patchOpts, patch.WithStatusObservedGeneration{})
-	}
-	patchErr := patchHelper.Patch(ctx, &cl, patchOpts...)
-	if err != nil {
-		err = kerrors.NewAggregate([]error{patchErr, err})
-	}
 	return result, err
 }
 
@@ -152,18 +149,10 @@ func (r *ClusterReconciler) getBastionIP(ctx context.Context, log logr.Logger, c
 }
 
 func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl appv1alpha1.Cluster, capiCluster capi.Cluster) (appv1alpha1.Cluster, ctrl.Result, error) {
-	if cl.Status.ObservedGeneration < cl.Generation {
-		cl.Status.ObservedGeneration = cl.Generation
-		cl = appv1alpha1.ClusterProgressing(cl)
-		cl.Status.TotalWorkerPools = int32(len(cl.Spec.Workers))
-		cl.Status.TotalWorkerReplicas = 0
-		for _, w := range cl.Spec.Workers {
-			cl.Status.TotalWorkerReplicas += *w.Replicas
-		}
-		if _, updateStatusErr := util.CreateOrUpdate(ctx, r.Client, &cl); updateStatusErr != nil {
-			log.Error(updateStatusErr, "unable to update status after generation update")
-			return cl, ctrl.Result{Requeue: true}, updateStatusErr
-		}
+	cl.Status.TotalWorkerPools = int32(len(cl.Spec.Workers))
+	cl.Status.TotalWorkerReplicas = 0
+	for _, w := range cl.Spec.Workers {
+		cl.Status.TotalWorkerReplicas += *w.Replicas
 	}
 	for _, cond := range cl.Status.Conditions {
 		meta.SetResourceCondition(&cl, cond.Type, cond.Status, cond.Reason, cond.Message)
@@ -173,7 +162,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 		err := r.installCNI(ctx, cl)
 		if err != nil {
 			meta.SetResourceCondition(&cl, meta.CNIInstalledCondition, metav1.ConditionFalse, meta.CNIInstalledFailedReason, err.Error())
-			return cl, ctrl.Result{Requeue: true}, err
+			return cl, ctrl.Result{}, err
 		}
 		meta.SetResourceCondition(&cl, meta.CNIInstalledCondition, metav1.ConditionTrue, meta.CNIInstalledSuccessReason, "calico installed")
 	}
@@ -188,19 +177,12 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 	}
 	if capiCluster.Spec.ClusterNetwork != nil {
 		if !reflect.DeepEqual(*capiCluster.Spec.ClusterNetwork, capi.ClusterNetwork{}) && reflect.DeepEqual(cl.Spec.Network.ClusterNetwork, capi.ClusterNetwork{}) {
-			cl.Spec.Network.ClusterNetwork = *capiCluster.Spec.ClusterNetwork
-			_, err := util.CreateOrUpdate(ctx, r.Client, &cl)
-			if err != nil {
-				return cl, ctrl.Result{Requeue: true}, err
-			}
+			return cl, ctrl.Result{Requeue: true}, nil
 		}
 	}
 	if !reflect.DeepEqual(capiCluster.Spec.ControlPlaneEndpoint, capi.APIEndpoint{}) && reflect.DeepEqual(cl.Spec.ControlPlane.Endpoint, capi.APIEndpoint{}) {
 		cl.Spec.ControlPlane.Endpoint = capiCluster.Spec.ControlPlaneEndpoint
-		_, err := util.CreateOrUpdate(ctx, r.Client, &cl)
-		if err != nil {
-			return cl, ctrl.Result{Requeue: true}, err
-		}
+		return cl, ctrl.Result{Requeue: true}, nil
 	}
 	vars, err := r.templateVariables(ctx, &capiCluster, &cl)
 	if err != nil {
@@ -222,7 +204,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 		if o.GetAPIVersion() == capi.GroupVersion.String() && o.GetKind() == "Cluster" {
 			err = ctrl.SetControllerReference(&cl, &o, scheme.Scheme)
 			if err != nil {
-				return cl, ctrl.Result{Requeue: true}, err
+				return cl, ctrl.Result{}, err
 			}
 		}
 		err = retry.WithExponentialBackoff(retry.NewBackoff(), func() error {
@@ -233,7 +215,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 			return nil
 		})
 		if err != nil {
-			return cl, ctrl.Result{Requeue: true}, err
+			return cl, ctrl.Result{}, err
 		}
 	}
 	cl.Status.KubernetesVersion = cl.Spec.KubernetesVersion
@@ -242,10 +224,6 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 	cl.Status.BastionConfig = cl.Spec.Bastion
 	if capiCluster.Status.InfrastructureReady && capiCluster.Status.ControlPlaneReady && capiCluster.Status.GetTypedPhase() == capi.ClusterPhaseProvisioned {
 		cl = appv1alpha1.ClusterReady(cl)
-		if _, updateStatusErr := util.CreateOrUpdate(ctx, r.Client, &cl); updateStatusErr != nil {
-			log.Error(updateStatusErr, "unable to update status")
-			return cl, ctrl.Result{Requeue: true}, updateStatusErr
-		}
 		return cl, ctrl.Result{}, nil
 	}
 	return appv1alpha1.ClusterNotReady(cl, meta.WaitProvisionReason, "wait cluster to be provisioned"), ctrl.Result{Requeue: true}, nil
@@ -318,19 +296,17 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl appv1alpha1.Clust
 
 func (r *ClusterReconciler) reconcileDelete(ctx context.Context, logger logr.Logger, cl appv1alpha1.Cluster, capiCluster capi.Cluster) (ctrl.Result, error) {
 	if capiCluster.Status.GetTypedPhase() != capi.ClusterPhaseUnknown && capiCluster.Status.GetTypedPhase() != capi.ClusterPhaseDeleting {
+		fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>>>>>", 1)
 		return ctrl.Result{Requeue: true}, r.Delete(ctx, &capiCluster)
 	}
 	if capiCluster.Status.GetTypedPhase() == capi.ClusterPhaseDeleting {
 		return ctrl.Result{Requeue: true}, nil
 	}
 	controllerutil.RemoveFinalizer(&cl, meta.Finalizer)
-	_, err := util.CreateOrUpdate(ctx, r.Client, &cl)
-	if err != nil {
-		return ctrl.Result{Requeue: true}, err
-	}
-	err = r.Delete(ctx, &cl)
+	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>>>>>", 3)
+	err := r.Delete(ctx, &cl)
 	if client.IgnoreNotFound(err) != nil {
-		return ctrl.Result{Requeue: true}, err
+		return ctrl.Result{}, err
 	}
 	return ctrl.Result{}, nil
 }
@@ -349,7 +325,7 @@ func (r *ClusterReconciler) capiToUndistro(o client.Object) []ctrl.Request {
 
 func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&appv1alpha1.Cluster{}, builder.WithPredicates(predicate.Changed{})).
+		For(&appv1alpha1.Cluster{}).
 		WithOptions(controller.Options{MaxConcurrentReconciles: 10}).
 		Watches(
 			&source.Kind{
