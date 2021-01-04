@@ -178,7 +178,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 		meta.SetResourceCondition(&cl, meta.CNIInstalledCondition, metav1.ConditionTrue, meta.CNIInstalledSuccessReason, "calico installed")
 	}
 	if cl.Spec.Bastion != nil {
-		if cl.Spec.Bastion.Enabled && cl.Status.BastionPublicIP == "" {
+		if *cl.Spec.Bastion.Enabled && cl.Status.BastionPublicIP == "" {
 			var err error
 			cl.Status.BastionPublicIP, err = r.getBastionIP(ctx, log, cl, capiCluster)
 			if err != nil {

@@ -56,11 +56,15 @@ func (r *Cluster) Default() {
 	if r.Spec.ControlPlane == nil {
 		r.Spec.ControlPlane = &ControlPlaneNode{}
 	}
+	bastionEnabled := true
 	if r.Spec.Bastion == nil {
 		r.Spec.Bastion = &Bastion{
-			Enabled:             true,
+			Enabled:             &bastionEnabled,
 			DisableIngressRules: true,
 		}
+	}
+	if r.Spec.Bastion.Enabled == nil {
+		r.Spec.Bastion.Enabled = &bastionEnabled
 	}
 }
 

@@ -103,7 +103,7 @@ type Network struct {
 }
 
 type Bastion struct {
-	Enabled             bool     `json:"enabled,omitempty"`
+	Enabled             *bool    `json:"enabled,omitempty"`
 	DisableIngressRules bool     `json:"disableIngressRules,omitempty"`
 	AllowedCIDRBlocks   []string `json:"allowedCIDRBlocks,omitempty"`
 	InstanceType        string   `json:"instanceType,omitempty"`
