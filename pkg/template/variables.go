@@ -44,32 +44,25 @@ func SetVariablesFromEnvVar(ctx context.Context, input VariablesInput) error {
 		input.mtx = &sync.RWMutex{}
 	}
 	for _, envVar := range input.EnvVars {
-		if envVar.Value != "" {
-			input.mtx.Lock()
-			input.Variables[envVar.Name] = envVar.Value
-			input.mtx.Unlock()
-			continue
-		}
+		input.mtx.Lock()
+		input.Variables[envVar.Name] = envVar.Value
+		input.mtx.Unlock()
 		if envVar.ValueFrom != nil {
 			if envVar.ValueFrom.FieldRef != nil || envVar.ValueFrom.ResourceFieldRef != nil {
 				return errors.New("fieldRef and resourceFieldRef are not supported as provider variables")
 			}
 			if envVar.ValueFrom.SecretKeyRef != nil {
 				v := valueFromSecret(ctx, input.ClientSet, envVar.ValueFrom.SecretKeyRef, input.NamespacedName)
-				if v != "" {
-					input.mtx.Lock()
-					input.Variables[envVar.Name] = v
-					input.mtx.Unlock()
-				}
+				input.mtx.Lock()
+				input.Variables[envVar.Name] = v
+				input.mtx.Unlock()
 				continue
 			}
 			if envVar.ValueFrom.ConfigMapKeyRef != nil {
 				v := valueFromConfigMap(ctx, input.ClientSet, envVar.ValueFrom.ConfigMapKeyRef, input.NamespacedName)
-				if v != "" {
-					input.mtx.Lock()
-					input.Variables[envVar.Name] = v
-					input.mtx.Unlock()
-				}
+				input.mtx.Lock()
+				input.Variables[envVar.Name] = v
+				input.mtx.Unlock()
 			}
 		}
 	}
