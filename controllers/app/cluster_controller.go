@@ -176,6 +176,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 	}
 	if capiCluster.Spec.ClusterNetwork != nil {
 		if !reflect.DeepEqual(*capiCluster.Spec.ClusterNetwork, capi.ClusterNetwork{}) && reflect.DeepEqual(cl.Spec.Network.ClusterNetwork, capi.ClusterNetwork{}) {
+			cl.Spec.Network.ClusterNetwork = *capiCluster.Spec.ClusterNetwork
 			return cl, ctrl.Result{Requeue: true}, nil
 		}
 	}
