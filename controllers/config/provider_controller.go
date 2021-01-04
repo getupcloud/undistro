@@ -97,8 +97,8 @@ func (r *ProviderReconciler) reconcileDelete(ctx context.Context, logger logr.Lo
 	if apierrors.IsNotFound(err) {
 		// Remove our finalizer from the list and update it.
 		controllerutil.RemoveFinalizer(&p, meta.Finalizer)
-		err = r.Delete(ctx, &p)
-		if client.IgnoreNotFound(err) != nil {
+		_, err := util.CreateOrUpdate(ctx, r.Client, &p)
+		if err != nil {
 			return ctrl.Result{}, err
 		}
 		return ctrl.Result{}, nil

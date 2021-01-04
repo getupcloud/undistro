@@ -504,8 +504,8 @@ func (r *HelmReleaseReconciler) reconcileDelete(ctx context.Context, logger logr
 	}
 	// Remove our finalizer from the list and update it.
 	controllerutil.RemoveFinalizer(&hr, meta.Finalizer)
-	err = r.Delete(ctx, &hr)
-	if client.IgnoreNotFound(err) != nil {
+	_, err = util.CreateOrUpdate(ctx, r.Client, &hr)
+	if err != nil {
 		return ctrl.Result{}, err
 	}
 	return ctrl.Result{}, nil

@@ -19,7 +19,6 @@ package controllers
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"reflect"
@@ -296,16 +295,14 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl appv1alpha1.Clust
 
 func (r *ClusterReconciler) reconcileDelete(ctx context.Context, logger logr.Logger, cl appv1alpha1.Cluster, capiCluster capi.Cluster) (ctrl.Result, error) {
 	if capiCluster.Status.GetTypedPhase() != capi.ClusterPhaseUnknown && capiCluster.Status.GetTypedPhase() != capi.ClusterPhaseDeleting {
-		fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>>>>>", 1)
 		return ctrl.Result{Requeue: true}, r.Delete(ctx, &capiCluster)
 	}
 	if capiCluster.Status.GetTypedPhase() == capi.ClusterPhaseDeleting {
 		return ctrl.Result{Requeue: true}, nil
 	}
 	controllerutil.RemoveFinalizer(&cl, meta.Finalizer)
-	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>>>>>", 3)
-	err := r.Delete(ctx, &cl)
-	if client.IgnoreNotFound(err) != nil {
+	_, err := util.CreateOrUpdate(ctx, r.Client, &cl)
+	if err != nil {
 		return ctrl.Result{}, err
 	}
 	return ctrl.Result{}, nil
