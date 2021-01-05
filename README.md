@@ -154,6 +154,80 @@ undistro get kubeconfig undistro-quickstart -n default
 undistro --config undistro-config.yaml move undistro-quickstart -n default
 ```
 
+### Install Helm releases into a cluster
+
+```yaml
+---
+apiVersion: app.undistro.io/v1alpha1
+kind: HelmRelease
+metadata:
+    name: nginx
+    namespace: default
+spec:
+  chart:
+    repository: https://kubernetes.github.io/ingress-nginx
+    name: ingress-nginx
+    version: 3.19.0
+  clusterName: default/undistro-quickstart
+---
+apiVersion: app.undistro.io/v1alpha1
+kind: HelmRelease
+metadata:
+    name: kubernetes-dashboard
+    namespace: default
+spec:
+  chart:
+    repository: https://kubernetes.github.io/dashboard
+    name: kubernetes-dashboard
+    version: 3.0.2
+  clusterName: default/undistro-quickstart
+  autoUpgrade: true
+  dependencies:
+    -
+      apiVersion: app.undistro.io/v1alpha1
+      kind: HelmRelease
+      name: nginx
+      namespace: default
+  afterApplyObjects:
+    -
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: dashboard-access
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+        - kind: ServiceAccount
+          name: undistro-quickstart-dash
+          namespace: default 
+  values:
+    ingress:
+      enabled: true
+    serviceAccount:
+      name: undistro-quickstart-dash
+```
+
+We installed nginx ingress, kubernetes dashboard that depends of nginx and apply a ClusterRoleBinding afer kubernetes-dashboard installation.
+
+It's also possible apply objects before a helm release installation adding `beforeApplyObjects`.
+
+If clusterName field is empty UnDistro will install chart in mananagement cluster.
+
+#### Helm Release auto upgrade
+
+To enable auto upgrade foolow example below:
+
+```yaml
+spec:
+  autoUpgrade: true
+```
+
+UnDistro will check new versions every 15 minutes.
+
+**NOTE:** UnDistro doesn't upgrade major versions.
+
 [Docker]: https://www.docker.com/
 [kind]: https://kind.sigs.k8s.io/
 [kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
