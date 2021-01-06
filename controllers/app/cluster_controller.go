@@ -311,18 +311,16 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl appv1alpha1.Clust
 }
 
 func (r *ClusterReconciler) reconcileDelete(ctx context.Context, logger logr.Logger, cl appv1alpha1.Cluster, capiCluster capi.Cluster) (ctrl.Result, error) {
-	if capiCluster.Status.GetTypedPhase() != capi.ClusterPhaseUnknown && capiCluster.Status.GetTypedPhase() != capi.ClusterPhaseDeleting {
-		return ctrl.Result{Requeue: true}, r.Delete(ctx, &capiCluster)
+	err := r.Get(ctx, client.ObjectKeyFromObject(&cl), &capiCluster)
+	if apierrors.IsNotFound(err) {
+		controllerutil.RemoveFinalizer(&cl, meta.Finalizer)
+		_, err = util.CreateOrUpdate(ctx, r.Client, &cl)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, nil
 	}
-	if capiCluster.Status.GetTypedPhase() == capi.ClusterPhaseDeleting {
-		return ctrl.Result{Requeue: true}, nil
-	}
-	controllerutil.RemoveFinalizer(&cl, meta.Finalizer)
-	_, err := util.CreateOrUpdate(ctx, r.Client, &cl)
-	if err != nil {
-		return ctrl.Result{}, err
-	}
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, r.Delete(ctx, &capiCluster)
 }
 
 func (r *ClusterReconciler) capiToUndistro(o client.Object) []ctrl.Request {
