@@ -469,41 +469,39 @@ func (r *HelmReleaseReconciler) composeValues(ctx context.Context, hr appv1alpha
 
 func (r *HelmReleaseReconciler) getRESTClientGetter(ctx context.Context, hr appv1alpha1.HelmRelease) (genericclioptions.RESTClientGetter, error) {
 	if hr.Spec.ClusterName == "" {
-		return kube.NewInClusterRESTClientGetter(r.config, ""), nil
+		return kube.NewInClusterRESTClientGetter(r.config, hr.Spec.TargetNamespace), nil
 	}
 	key := util.ObjectKeyFromString(hr.Spec.ClusterName)
 	kubeConfig, err := kubeconfig.FromSecret(ctx, r.Client, key)
 	if err != nil {
 		return nil, err
 	}
-	return kube.NewMemoryRESTClientGetter(kubeConfig, ""), nil
+	return kube.NewMemoryRESTClientGetter(kubeConfig, hr.Spec.TargetNamespace), nil
 }
 
 func (r *HelmReleaseReconciler) reconcileDelete(ctx context.Context, logger logr.Logger, hr appv1alpha1.HelmRelease) (ctrl.Result, error) {
-	if hr.Status.LastAppliedRevision != "" {
-		restClient, err := r.getRESTClientGetter(ctx, hr)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-		runner, err := helm.NewRunner(restClient, hr.GetNamespace(), logger)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-		rel, err := runner.ObserveLastRelease(hr)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-		if rel == nil {
-			return ctrl.Result{}, nil
-		}
-		err = runner.Uninstall(hr)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
+	restClient, err := r.getRESTClientGetter(ctx, hr)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	runner, err := helm.NewRunner(restClient, hr.GetNamespace(), logger)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	rel, err := runner.ObserveLastRelease(hr)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	if rel == nil {
+		return ctrl.Result{}, nil
+	}
+	err = runner.Uninstall(hr)
+	if err != nil {
+		return ctrl.Result{}, err
 	}
 	// Remove our finalizer from the list and update it.
 	controllerutil.RemoveFinalizer(&hr, meta.Finalizer)
-	_, err := util.CreateOrUpdate(ctx, r.Client, &hr)
+	_, err = util.CreateOrUpdate(ctx, r.Client, &hr)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
