@@ -62,11 +62,8 @@ func (r *HelmRelease) Default() {
 	defaultTimeout := &metav1.Duration{
 		Duration: 300 * time.Second,
 	}
-	if r.Namespace == "" {
-		r.Namespace = "default"
-	}
 	if r.Spec.TargetNamespace == "" {
-		r.Spec.TargetNamespace = r.Namespace
+		r.Spec.TargetNamespace = r.GetNamespace()
 	}
 	if r.Spec.ReleaseName == "" {
 		r.Spec.ReleaseName = fmt.Sprintf("%s-%s", r.Spec.TargetNamespace, r.Name)

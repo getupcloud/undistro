@@ -55,6 +55,7 @@ func (r *Runner) Install(hr appv1alpha1.HelmRelease, chart *chart.Chart, values 
 	install.Wait = *hr.Spec.Wait
 	install.SkipCRDs = hr.Spec.SkipCRDs
 	install.DependencyUpdate = true
+	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>", hr.Spec.TargetNamespace)
 	return install.Run(chart, values.AsMap())
 }
 
