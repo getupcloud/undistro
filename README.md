@@ -18,7 +18,7 @@ UnDistro provides live updates of your Kubernetes cluster without disrupting you
 ### Requirements
 
 - Install and setup [kubectl] in your local environment
-- Install [Kind] and [Docker]
+- Install [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and [\[Docker\]](https://www.docker.com/get-started)
 
 ### Install and/or configure a kubernetes cluster
 
