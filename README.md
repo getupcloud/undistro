@@ -2,21 +2,21 @@
 
 ## Documentation
 
-### What's UnDistro (will be in version 1.0.0)?
+### What is UnDistro (will be in version 1.0.0)?
 
-Enterprise software that automates multicloud, on-prem, and edge operations with a single management UI.
+UnDistro is an enterprise software that automates multicloud, on-prem, and edge operations with a single management UI.
 
-Automate thousands of Kubernetes clusters across multi-cloud, on-prem and edge with unparalleled resilience. Deploy, manage and run multiple Kubernetes clusters with our platform. On your preferred infrastructure.
+UnDistro automates thousands of Kubernetes clusters across multi-cloud, on-prem and edge with unparalleled resilience. Deploy, manage and run multiple Kubernetes clusters with our platform. On your preferred infrastructure.
 
-UnDistro Kubernetes Platform is directly integrated with leading cloud providers, even in your own datacenter.
+UnDistro Kubernetes Platform is directly integrated with leading cloud providers, and runs even in your own datacenter.
 
 By providing managed Kubernetes clusters for your infrastructure, UnDistro makes Kubernetes as easy as it can be. UnDistro empowers you to take advantage of all the advanced features that Kubernetes has to offer and increases the speed, flexibility and scalability of your deployment workflow.
 
-UnDistro provides live updates of your Kubernetes cluster without disrupting your daily business
+UnDistro provides live updates of your Kubernetes cluster without disrupting your daily business.
 
 ### Architecture
 
-The overarching architecture of UnDistro centers around a "management plane". This plane is expected to serve as a single interface upon which administrators can create, scale, upgrade, and delete Kubernetes clusters. At a high level view, the management plane + created clusters should look something like:
+The overarching architecture of UnDistro is centered around a "management plane". This plane is expected to serve as a single interface upon which administrators can create, scale, upgrade, and delete Kubernetes clusters. At a high level view, the management plane + created clusters should look something like this:
 ![Image of Architecture](./docs/assets/arch.png)
 
 ### Requirements
@@ -70,9 +70,9 @@ providers:
 ```
 
 ### Install UnDistro CLI
-The UnDistro CLI tool handles the lifecycle of a UnDistro management cluster.
+The UnDistro CLI tool handles the lifecycle of an UnDistro management cluster.
 
-Download the latest release from releases page https://github.com/getupio-undistro/undistro/releases.
+Download the latest version from the releases page https://github.com/getupio-undistro/undistro/releases.
 
 ### Initialize the management cluster
 
@@ -132,7 +132,7 @@ spec:
     region: us-east-1
     managed: true
 ```
-**create a file with content above.**
+**create a file with the content above.**
 
 ```
 undistro create -f cluster-aws.yaml
@@ -140,7 +140,7 @@ undistro create -f cluster-aws.yaml
 
 ### Waiting cluster to be ready to use
 
-When cluster is ready you will see **Cluster reconciliation succeeded** in command below output:
+When the cluster is ready you will see the output **Cluster reconciliation succeeded** using the command below:
 
 ```
 undistro get clusters
@@ -213,22 +213,22 @@ spec:
       name: undistro-quickstart-dash
 ```
 
-We installed nginx ingress, kubernetes dashboard that depends of nginx and apply a ClusterRoleBinding afer kubernetes-dashboard installation.
+We installed nginx ingress and kubernetes dashboard that depends of nginx and applied a ClusterRoleBinding afer kubernetes-dashboard installation.
 
-It's also possible apply objects before a helm release installation adding `beforeApplyObjects`.
+It's also possible to apply objects before a helm release installation adding `beforeApplyObjects`.
 
-If clusterName field is empty UnDistro will install chart in mananagement cluster.
+If clusterName field is empty UnDistro will install chart in the mananagement cluster.
 
 #### Helm Release auto upgrade
 
-To enable auto upgrade foolow example below:
+To enable auto upgrade foolow the example below:
 
 ```yaml
 spec:
   autoUpgrade: true
 ```
 
-UnDistro will check new versions every 15 minutes.
+UnDistro will check for new versions every 15 minutes.
 
 **NOTE:** UnDistro doesn't upgrade major versions.
 
