@@ -307,14 +307,6 @@ func (o *ObjectGraph) Discovery(namespace string) error {
 		}); err != nil {
 			return err
 		}
-		for i := range objList.Items {
-			labels := objList.Items[i].GetLabels()
-			if labels == nil {
-				labels = make(map[string]string)
-			}
-			labels[meta.LabelUndistroMove] = "true"
-			objList.Items[i].SetLabels(labels)
-		}
 		if len(objList.Items) == 0 {
 			continue
 		}
@@ -365,7 +357,18 @@ func (o *ObjectGraph) GetClusters() []*Node {
 	return clusters
 }
 
-// getClusters returns the list of Secrets existing in the object graph.
+// GetCapiClusters returns the list of Clusters existing in the object graph.
+func (o *ObjectGraph) GetCapiClusters() []*Node {
+	clusters := []*Node{}
+	for _, node := range o.uidToNode {
+		if node.Identity.GroupVersionKind().GroupKind() == clusterv1.GroupVersion.WithKind("Cluster").GroupKind() && node.Identity.Name != "capi-test" {
+			clusters = append(clusters, node)
+		}
+	}
+	return clusters
+}
+
+// getSecrets returns the list of Secrets existing in the object graph.
 func (o *ObjectGraph) getSecrets() []*Node {
 	secrets := []*Node{}
 	for _, node := range o.uidToNode {
@@ -401,6 +404,10 @@ func (o *ObjectGraph) getCRSs() []*Node {
 func (o *ObjectGraph) GetMoveNodes() []*Node {
 	nodes := []*Node{}
 	for _, node := range o.uidToNode {
+		if node.Identity.GroupVersionKind().GroupKind() == appv1alpha1.GroupVersion.WithKind("Cluster").GroupKind() && node.Identity.Name != "undistro-test" {
+			nodes = append(nodes, node)
+			continue
+		}
 		if len(node.TenantClusters) > 0 || len(node.TenantCRSs) > 0 || node.ForceMove {
 			nodes = append(nodes, node)
 		}
@@ -421,7 +428,7 @@ func (o *ObjectGraph) GetMachines() []*Node {
 
 // setSoftOwnership searches for soft ownership relations such as secrets linked to the cluster by a naming convention (without any explicit OwnerReference).
 func (o *ObjectGraph) setSoftOwnership() {
-	clusters := o.GetClusters()
+	clusters := o.GetCapiClusters()
 	for _, secret := range o.getSecrets() {
 		// If the secret has at least one OwnerReference ignore it.
 		// NB. Cluster API generated secrets have an explicit OwnerReference to the ControlPlane or the KubeadmConfig object while user provided secrets might not have one.
@@ -438,7 +445,7 @@ func (o *ObjectGraph) setSoftOwnership() {
 
 // setClusterTenants sets the cluster tenants for the clusters itself and all their dependent object tree.
 func (o *ObjectGraph) setClusterTenants() {
-	for _, cluster := range o.GetClusters() {
+	for _, cluster := range o.GetCapiClusters() {
 		o.setClusterTenant(cluster, cluster)
 	}
 }

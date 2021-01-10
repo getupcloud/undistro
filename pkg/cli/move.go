@@ -144,9 +144,26 @@ func (o *MoveOptions) RunMove(f cmdutil.Factory, cmd *cobra.Command) error {
 	// Check whether nodes are not included in GVK considered for move
 	objectGraph.CheckVirtualNode()
 	clusters := objectGraph.GetClusters()
-	fmt.Fprintf(o.Out, "moving %d clusters\n", len(clusters))
-	machines := objectGraph.GetMachines()
+	fmt.Fprintf(o.Out, "Moving %d clusters\n", len(clusters))
 	errList := []error{}
+	for i := range clusters {
+		cluster := clusters[i]
+		clusterObj := &appv1alpha1.Cluster{}
+		if err := retry.WithExponentialBackoff(retry.NewBackoff(), func() error {
+			return getClusterObj(cmd.Context(), localClient, cluster, clusterObj)
+		}); err != nil {
+			return err
+		}
+
+		if !meta.InReadyCondition(clusterObj.Status.Conditions) {
+			errList = append(errList, errors.Errorf("cannot start the move operation while %q %s/%s is still provisioning the cluster", clusterObj.GroupVersionKind(), clusterObj.GetNamespace(), clusterObj.GetName()))
+		}
+	}
+	if len(errList) > 0 {
+		return kerrors.NewAggregate(errList)
+	}
+
+	machines := objectGraph.GetMachines()
 	for i := range machines {
 		machine := machines[i]
 		machineObj := &clusterv1.Machine{}
@@ -179,9 +196,17 @@ func (o *MoveOptions) RunMove(f cmdutil.Factory, cmd *cobra.Command) error {
 	// - All the MachineDeployments should be moved second (group 1, processed in parallel)
 	// - then all the MachineSets, then all the Machines, etc.
 	moveSequence := graph.GetMoveSequence(objectGraph)
-	fmt.Fprintln(o.Out, "creating objects in target clusters")
+	fmt.Fprintln(o.Out, "Creating objects in target clusters")
 	for groupIndex := 0; groupIndex < len(moveSequence.Groups); groupIndex++ {
 		if err := o.createGroup(cmd.Context(), moveSequence.GetGroup(groupIndex), remoteClient, localClient); err != nil {
+			return err
+		}
+	}
+
+	// Delete all objects group by group in reverse order.
+	fmt.Fprintln(o.Out, "Deleting objects from the source cluster")
+	for groupIndex := len(moveSequence.Groups) - 1; groupIndex >= 0; groupIndex-- {
+		if err := o.deleteGroup(cmd.Context(), moveSequence.GetGroup(groupIndex), localClient); err != nil {
 			return err
 		}
 	}
@@ -190,6 +215,19 @@ func (o *MoveOptions) RunMove(f cmdutil.Factory, cmd *cobra.Command) error {
 	log.V(1).Info("Resuming the target cluster")
 	if err := setClusterPause(cmd.Context(), remoteClient, clusters, false); err != nil {
 		return err
+	}
+	return nil
+}
+
+func getClusterObj(ctx context.Context, proxy client.Client, cluster *graph.Node, clusterObj *appv1alpha1.Cluster) error {
+	clusterObjKey := client.ObjectKey{
+		Namespace: cluster.Identity.Namespace,
+		Name:      cluster.Identity.Name,
+	}
+
+	if err := proxy.Get(ctx, clusterObjKey, clusterObj); err != nil {
+		return errors.Wrapf(err, "error reading %q %s/%s",
+			clusterObj.GroupVersionKind(), clusterObj.GetNamespace(), clusterObj.GetName())
 	}
 	return nil
 }
@@ -330,6 +368,75 @@ func (o *MoveOptions) createGroup(ctx context.Context, group graph.MoveGroup, to
 
 	if len(errList) > 0 {
 		return kerrors.NewAggregate(errList)
+	}
+
+	return nil
+}
+
+// deleteGroup deletes all the Kubernetes objects from the source management cluster corresponding to the object graph nodes in a moveGroup.
+func (o *MoveOptions) deleteGroup(ctx context.Context, group graph.MoveGroup, fromProxy client.Client) error {
+	errList := []error{}
+	for i := range group {
+		nodeToDelete := group[i]
+
+		// Don't delete cluster-wide nodes
+		if nodeToDelete.IsGlobal {
+			continue
+		}
+
+		// Delete the Kubernetes object corresponding to the current node.
+		// Nb. The operation is wrapped in a retry loop to make move more resilient to unexpected conditions.
+		err := retry.WithExponentialBackoff(retry.NewBackoff(), func() error {
+			return o.deleteSourceObject(ctx, nodeToDelete, fromProxy)
+		})
+
+		if err != nil {
+			errList = append(errList, err)
+		}
+	}
+
+	return kerrors.NewAggregate(errList)
+}
+
+var (
+	removeFinalizersPatch = client.RawPatch(types.MergePatchType, []byte("{\"metadata\":{\"finalizers\":[]}}"))
+)
+
+// deleteSourceObject deletes the Kubernetes object corresponding to the node from the source management cluster, taking care of removing all the finalizers so
+// the objects gets immediately deleted (force delete).
+func (o *MoveOptions) deleteSourceObject(ctx context.Context, nodeToDelete *graph.Node, fromProxy client.Client) error {
+	log := log.Log
+	log.V(1).Info("Deleting", nodeToDelete.Identity.Kind, nodeToDelete.Identity.Name, "Namespace", nodeToDelete.Identity.Namespace)
+
+	// Get the source object
+	sourceObj := &unstructured.Unstructured{}
+	sourceObj.SetAPIVersion(nodeToDelete.Identity.APIVersion)
+	sourceObj.SetKind(nodeToDelete.Identity.Kind)
+	sourceObjKey := client.ObjectKey{
+		Namespace: nodeToDelete.Identity.Namespace,
+		Name:      nodeToDelete.Identity.Name,
+	}
+
+	if err := fromProxy.Get(ctx, sourceObjKey, sourceObj); err != nil {
+		if apierrors.IsNotFound(err) {
+			//If the object is already deleted, move on.
+			log.V(5).Info("Object already deleted, skipping delete for", nodeToDelete.Identity.Kind, nodeToDelete.Identity.Name, "Namespace", nodeToDelete.Identity.Namespace)
+			return nil
+		}
+		return errors.Wrapf(err, "error reading %q %s/%s",
+			sourceObj.GroupVersionKind(), sourceObj.GetNamespace(), sourceObj.GetName())
+	}
+
+	if len(sourceObj.GetFinalizers()) > 0 {
+		if err := fromProxy.Patch(ctx, sourceObj, removeFinalizersPatch); err != nil {
+			return errors.Wrapf(err, "error removing finalizers from %q %s/%s",
+				sourceObj.GroupVersionKind(), sourceObj.GetNamespace(), sourceObj.GetName())
+		}
+	}
+
+	if err := fromProxy.Delete(ctx, sourceObj); err != nil {
+		return errors.Wrapf(err, "error deleting %q %s/%s",
+			sourceObj.GroupVersionKind(), sourceObj.GetNamespace(), sourceObj.GetName())
 	}
 
 	return nil
