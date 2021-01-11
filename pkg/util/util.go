@@ -28,8 +28,10 @@ import (
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	apiyaml "k8s.io/apimachinery/pkg/util/yaml"
 	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -251,4 +253,26 @@ func ObjectKeyFromString(str string) client.ObjectKey {
 		c.Namespace = "default"
 	}
 	return c
+}
+
+// IsOwnedByObject returns true if any of the owner references point to the given target.
+func IsOwnedByObject(obj metav1.Object, target client.Object) bool {
+	for _, ref := range obj.GetOwnerReferences() {
+		ref := ref
+		if refersTo(&ref, target) {
+			return true
+		}
+	}
+	return false
+}
+
+// Returns true if ref refers to obj.
+func refersTo(ref *metav1.OwnerReference, obj client.Object) bool {
+	refGv, err := schema.ParseGroupVersion(ref.APIVersion)
+	if err != nil {
+		return false
+	}
+
+	gvk := obj.GetObjectKind().GroupVersionKind()
+	return refGv.Group == gvk.Group && ref.Kind == gvk.Kind && ref.Name == obj.GetName()
 }

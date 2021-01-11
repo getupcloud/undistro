@@ -165,6 +165,66 @@ func (r *ClusterReconciler) getBastionIP(ctx context.Context, log logr.Logger, c
 	return "", nil
 }
 
+func (r *ClusterReconciler) checkRefs(ctx context.Context, capiCluster capi.Cluster) error {
+	if capiCluster.Spec.InfrastructureRef != nil {
+		u := unstructured.Unstructured{}
+		u.SetGroupVersionKind(capiCluster.Spec.InfrastructureRef.GroupVersionKind())
+		key := client.ObjectKey{
+			Namespace: capiCluster.Spec.InfrastructureRef.Namespace,
+			Name:      capiCluster.Spec.InfrastructureRef.Name,
+		}
+		err := r.Get(ctx, key, &u)
+		if err != nil {
+			return err
+		}
+		if !util.IsOwnedByObject(&u, &capiCluster) {
+			block := true
+			refs := u.GetOwnerReferences()
+			refs = append(refs, metav1.OwnerReference{
+				APIVersion:         capiCluster.APIVersion,
+				Kind:               capiCluster.Kind,
+				Name:               capiCluster.Name,
+				UID:                capiCluster.UID,
+				BlockOwnerDeletion: &block,
+			})
+			u.SetOwnerReferences(refs)
+			_, err = util.CreateOrUpdate(ctx, r.Client, &u)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	if capiCluster.Spec.ControlPlaneRef != nil {
+		u := unstructured.Unstructured{}
+		u.SetGroupVersionKind(capiCluster.Spec.ControlPlaneRef.GroupVersionKind())
+		key := client.ObjectKey{
+			Namespace: capiCluster.Spec.ControlPlaneRef.Namespace,
+			Name:      capiCluster.Spec.ControlPlaneRef.Name,
+		}
+		err := r.Get(ctx, key, &u)
+		if err != nil {
+			return err
+		}
+		if !util.IsOwnedByObject(&u, &capiCluster) {
+			block := true
+			refs := u.GetOwnerReferences()
+			refs = append(refs, metav1.OwnerReference{
+				APIVersion:         capiCluster.APIVersion,
+				Kind:               capiCluster.Kind,
+				Name:               capiCluster.Name,
+				UID:                capiCluster.UID,
+				BlockOwnerDeletion: &block,
+			})
+			u.SetOwnerReferences(refs)
+			_, err = util.CreateOrUpdate(ctx, r.Client, &u)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl appv1alpha1.Cluster, capiCluster capi.Cluster) (appv1alpha1.Cluster, ctrl.Result, error) {
 	cl.Status.TotalWorkerPools = int32(len(cl.Spec.Workers))
 	cl.Status.TotalWorkerReplicas = 0
@@ -173,6 +233,12 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 	}
 	for _, cond := range cl.Status.Conditions {
 		meta.SetResourceCondition(&cl, cond.Type, cond.Status, cond.Reason, cond.Message)
+	}
+	if capiCluster.Status.GetTypedPhase() != capi.ClusterPhaseProvisioned {
+		err := r.checkRefs(ctx, capiCluster)
+		if err != nil {
+			return cl, ctrl.Result{}, err
+		}
 	}
 	if capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady && !cl.Spec.InfrastructureProvider.Managed {
 		log.Info("installing calico")
