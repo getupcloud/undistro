@@ -57,8 +57,11 @@ var (
 			New:     getter.NewHTTPGetter,
 		},
 	}
+)
 
-	ns = "undistro-system"
+const (
+	undistroRepo = "https://charts.undistro.io"
+	ns           = "undistro-system"
 )
 
 type InstallOptions struct {
@@ -245,7 +248,6 @@ func (o *InstallOptions) installChart(ctx context.Context, c client.Client, rest
 }
 
 func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error {
-	const undistroRepo = "https://charts.undistro.io"
 	cfg := Config{}
 	if o.ConfigPath != "" {
 		err := viper.Unmarshal(&cfg)
