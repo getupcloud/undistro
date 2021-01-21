@@ -122,7 +122,7 @@ func (r *ClusterReconciler) templateVariables(ctx context.Context, capiCluster *
 	validDiff := true
 	labels := cl.GetLabels()
 	_, moved := labels[meta.LabelUndistroMoved]
-	if moved && !cl.Spec.InfrastructureProvider.Managed && cl.Status.LastUsedUID == "" {
+	if moved && !cl.Spec.InfrastructureProvider.IsManaged() && cl.Status.LastUsedUID == "" {
 		validDiff = false
 		cp := capicp.KubeadmControlPlane{}
 		err := r.Get(ctx, client.ObjectKeyFromObject(cl), &cp)
@@ -142,7 +142,7 @@ func (r *ClusterReconciler) templateVariables(ctx context.Context, capiCluster *
 
 func (r *ClusterReconciler) getBastionIP(ctx context.Context, log logr.Logger, cl appv1alpha1.Cluster, capiCluster capi.Cluster) (string, error) {
 	ref := capiCluster.Spec.InfrastructureRef
-	if cl.Spec.InfrastructureProvider.Managed {
+	if cl.Spec.InfrastructureProvider.IsManaged() {
 		ref = capiCluster.Spec.ControlPlaneRef
 	}
 	if ref != nil {
@@ -174,7 +174,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 	for _, cond := range cl.Status.Conditions {
 		meta.SetResourceCondition(&cl, cond.Type, cond.Status, cond.Reason, cond.Message)
 	}
-	if capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady && !cl.Spec.InfrastructureProvider.Managed {
+	if capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady && !cl.Spec.InfrastructureProvider.IsManaged() {
 		log.Info("installing calico")
 		err := r.installCNI(ctx, cl)
 		if err != nil {
@@ -208,7 +208,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 		Directory: "clustertemplates",
 	})
 	buff := &bytes.Buffer{}
-	err = tpl.YAML(buff, cl.Spec.InfrastructureProvider.Name, vars)
+	err = tpl.YAML(buff, cl.GetTemplate(), vars)
 	if err != nil {
 		return appv1alpha1.ClusterNotReady(cl, meta.TemplateAppliedFailed, err.Error()), ctrl.Result{}, err
 	}
@@ -249,7 +249,7 @@ func (r *ClusterReconciler) hasDiff(ctx context.Context, cl *appv1alpha1.Cluster
 	if cl.Spec.KubernetesVersion != cl.Status.KubernetesVersion {
 		return true
 	}
-	if !cl.Spec.InfrastructureProvider.Managed && cl.Spec.ControlPlane != nil {
+	if !cl.Spec.InfrastructureProvider.IsManaged() && cl.Spec.ControlPlane != nil {
 		if *cl.Spec.ControlPlane.Replicas != *cl.Status.ControlPlane.Replicas {
 			return true
 		}

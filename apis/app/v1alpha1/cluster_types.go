@@ -70,6 +70,7 @@ type ControlPlaneNode struct {
 type WorkerNode struct {
 	Node      `json:",inline,omitempty"`
 	Autoscale Autoscaling `json:"autoscaling,omitempty"`
+	InfraNode bool        `json:"infraNode,omitempty"`
 }
 
 type Autoscaling struct {
@@ -81,11 +82,15 @@ type Autoscaling struct {
 }
 
 type InfrastructureProvider struct {
-	Name    string          `json:"name,omitempty"`
-	Managed bool            `json:"managed,omitempty"`
-	SSHKey  string          `json:"sshKey,omitempty"`
-	Region  string          `json:"region,omitempty"`
-	Env     []corev1.EnvVar `json:"env,omitempty"`
+	Name   string          `json:"name,omitempty"`
+	SSHKey string          `json:"sshKey,omitempty"`
+	Flavor string          `json:"flavor,omitempty"`
+	Region string          `json:"region,omitempty"`
+	Env    []corev1.EnvVar `json:"env,omitempty"`
+}
+
+func (i InfrastructureProvider) IsManaged() bool {
+	return i.Name == "aws" && i.Flavor == "eks"
 }
 
 type NetworkSpec struct {
@@ -161,6 +166,10 @@ type Cluster struct {
 
 	Spec   ClusterSpec   `json:"spec,omitempty"`
 	Status ClusterStatus `json:"status,omitempty"`
+}
+
+func (c Cluster) GetTemplate() string {
+	return fmt.Sprintf("%s/%s", c.Spec.InfrastructureProvider.Name, c.Spec.InfrastructureProvider.Flavor)
 }
 
 func (c *Cluster) GetNamespace() string {

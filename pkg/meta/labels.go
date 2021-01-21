@@ -22,4 +22,5 @@ const (
 	LabelUndistro            = "undistro.io"
 	LabelUndistroMove        = "undistro.io/move"
 	LabelUndistroMoved       = "undistro.io/moved"
+	LabelUndistroInfra       = "node-role.undistro.io/infra"
 )

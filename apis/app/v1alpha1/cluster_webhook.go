@@ -22,6 +22,7 @@ import (
 
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/version"
+	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -58,14 +59,33 @@ func (r *Cluster) Default() {
 		r.Spec.ControlPlane = &ControlPlaneNode{}
 	}
 	bastionEnabled := true
-	if r.Spec.Bastion == nil {
+	if r.Spec.Bastion == nil && r.Spec.InfrastructureProvider.SSHKey != "" {
 		r.Spec.Bastion = &Bastion{
 			Enabled:             &bastionEnabled,
 			DisableIngressRules: true,
 		}
 	}
-	if r.Spec.Bastion.Enabled == nil {
-		r.Spec.Bastion.Enabled = &bastionEnabled
+	if r.Spec.InfrastructureProvider.SSHKey != "" {
+		if r.Spec.Bastion.Enabled == nil {
+			r.Spec.Bastion.Enabled = &bastionEnabled
+		}
+	}
+	for i := range r.Spec.Workers {
+		if r.Spec.Workers[i].InfraNode {
+			if r.Spec.Workers[i].Labels == nil {
+				r.Spec.Workers[i].Labels = make(map[string]string)
+			}
+			if r.Spec.Workers[i].ProviderTags == nil {
+				r.Spec.Workers[i].ProviderTags = make(map[string]string)
+			}
+			r.Spec.Workers[i].Labels[meta.LabelUndistroInfra] = "true"
+			r.Spec.Workers[i].ProviderTags["infra-node"] = "true"
+			r.Spec.Workers[i].Taints = append(r.Spec.Workers[i].Taints, corev1.Taint{
+				Key:    "dedicated",
+				Value:  "infra",
+				Effect: corev1.TaintEffectNoSchedule,
+			})
+		}
 	}
 }
 
@@ -75,7 +95,7 @@ var _ webhook.Validator = &Cluster{}
 
 func (r *Cluster) validate(old *Cluster) error {
 	var allErrs field.ErrorList
-	if r.Spec.ControlPlane == nil && !r.Spec.InfrastructureProvider.Managed {
+	if r.Spec.ControlPlane == nil && !r.Spec.InfrastructureProvider.IsManaged() {
 		allErrs = append(allErrs, field.Required(
 			field.NewPath("spec", "controlPlane"),
 			"controlPlane must to be populated when is a self hosted cluster",
@@ -89,7 +109,7 @@ func (r *Cluster) validate(old *Cluster) error {
 			"kubernetesVersion must to be a semantic versioning",
 		))
 	}
-	if old != nil && r.Spec.ControlPlane != nil && !r.Spec.InfrastructureProvider.Managed {
+	if old != nil && r.Spec.ControlPlane != nil && !r.Spec.InfrastructureProvider.IsManaged() {
 		if !reflect.DeepEqual(old.Spec.ControlPlane.Endpoint, capi.APIEndpoint{}) &&
 			!reflect.DeepEqual(r.Spec.ControlPlane.Endpoint, old.Spec.ControlPlane.Endpoint) {
 			allErrs = append(allErrs, field.Invalid(
