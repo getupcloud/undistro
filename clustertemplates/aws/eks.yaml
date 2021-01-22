@@ -173,7 +173,7 @@ spec:
   {{end}}
   instanceType: "{{$element.MachineType}}"
   roleName: "nodes.cluster-api-provider-aws.sigs.k8s.io"
-  {{if $sshkey}}
+  {{if $sshKey}}
   remoteAccess:
     sshKeyName: "{{$sshKey}}"
   {{end}}
