@@ -62,12 +62,15 @@ metadata:
   namespace: "{{.Cluster.Namespace}}"
 spec:
   version: "{{.Cluster.Spec.KubernetesVersion}}"
+  {{if .Cluster.Spec.InfrastructureProvider.SSHKey}}
   sshKeyName: "{{.Cluster.Spec.InfrastructureProvider.SSHKey}}"
+  {{end}}
   region:  "{{ .Cluster.Spec.InfrastructureProvider.Region}}"
   {{if .Cluster.Spec.ControlPlane.InternalLB}}
   endpointAccess:
     private: true
   {{end}}
+  {{if .Cluster.Spec.InfrastructureProvider.SSHKey}}
   {{if .Cluster.Spec.Bastion.Enabled}}
   {{$lenBlocks := len .Cluster.Spec.Bastion.AllowedCIDRBlocks}}
   bastion:
@@ -80,6 +83,7 @@ spec:
     {{- range  .Cluster.Spec.Bastion.AllowedCIDRBlocks}}
       - {{.}}
     {{- end}}
+  {{end}}
   {{end}}
   {{if  .Cluster.Spec.Network}}
   networkSpec:
@@ -169,8 +173,10 @@ spec:
   {{end}}
   instanceType: "{{$element.MachineType}}"
   roleName: "nodes.cluster-api-provider-aws.sigs.k8s.io"
+  {{if $sshkey}}
   remoteAccess:
     sshKeyName: "{{$sshKey}}"
+  {{end}}
   {{if $element.Subnet}}
   subnetIDs:
     - {{$element.Subnet}}

@@ -107,8 +107,8 @@ spec:
       machineType: t3.medium
   infrastructureProvider:
     name: aws
-    sshKey: <YOUR SSH KEY NAME>
     region: us-east-1
+    flavor: ec2
 ```
 
 ### Creating an EKS kubernetes on AWS
@@ -128,9 +128,8 @@ spec:
       machineType: t3.medium
   infrastructureProvider:
     name: aws
-    sshKey: <YOUR SSH KEY NAME>
     region: us-east-1
-    managed: true
+    flavor: eks
 ```
 **create a file with the content above.**
 

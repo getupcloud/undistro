@@ -186,7 +186,7 @@ spec:
         - --enable-leader-election
         command:
         - /manager
-        image: getupioundistro/undistro:v0.17.16
+        image: getupioundistro/undistro:v0.18.0
         name: manager
         ports:
         - containerPort: 9443

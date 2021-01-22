@@ -89,6 +89,14 @@ type InfrastructureProvider struct {
 	Env    []corev1.EnvVar `json:"env,omitempty"`
 }
 
+func (i InfrastructureProvider) Flavors() []string {
+	switch i.Name {
+	case "aws":
+		return []string{"ec2", "eks"}
+	}
+	return nil
+}
+
 func (i InfrastructureProvider) IsManaged() bool {
 	return i.Name == "aws" && i.Flavor == "eks"
 }

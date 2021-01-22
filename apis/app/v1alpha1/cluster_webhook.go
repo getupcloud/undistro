@@ -19,8 +19,10 @@ package v1alpha1
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/getupio-undistro/undistro/pkg/meta"
+	"github.com/getupio-undistro/undistro/pkg/util"
 	"github.com/getupio-undistro/undistro/pkg/version"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -48,6 +50,7 @@ var _ webhook.Defaulter = &Cluster{}
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (r *Cluster) Default() {
 	clusterlog.Info("default", "name", r.Name)
+	r.Spec.InfrastructureProvider.Flavor = strings.ToLower(r.Spec.InfrastructureProvider.Flavor)
 	if r.Labels == nil {
 		r.Labels = make(map[string]string)
 	}
@@ -95,6 +98,19 @@ var _ webhook.Validator = &Cluster{}
 
 func (r *Cluster) validate(old *Cluster) error {
 	var allErrs field.ErrorList
+	if r.Spec.InfrastructureProvider.Flavor == "" {
+		allErrs = append(allErrs, field.Required(
+			field.NewPath("spec", "infrastructureProvider", "flavor"),
+			"must to be populated",
+		))
+	}
+	if !util.ContainsStringInSlice(r.Spec.InfrastructureProvider.Flavors(), r.Spec.InfrastructureProvider.Flavor) {
+		allErrs = append(allErrs, field.Invalid(
+			field.NewPath("spec", "infrastructureProvider", "flavor"),
+			r.Spec.InfrastructureProvider.Flavor,
+			fmt.Sprintf("valid valid values are %v", r.Spec.InfrastructureProvider.Flavors()),
+		))
+	}
 	if r.Spec.ControlPlane == nil && !r.Spec.InfrastructureProvider.IsManaged() {
 		allErrs = append(allErrs, field.Required(
 			field.NewPath("spec", "controlPlane"),

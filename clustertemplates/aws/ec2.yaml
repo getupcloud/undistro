@@ -49,7 +49,9 @@ metadata:
   namespace: "{{.Cluster.Namespace}}"
 spec:
   region:  "{{ .Cluster.Spec.InfrastructureProvider.Region}}"
+  {{if .Cluster.Spec.InfrastructureProvider.SSHKey}}
   sshKeyName: "{{ .Cluster.Spec.InfrastructureProvider.SSHKey}}"
+  {{end}}
   {{if .Cluster.Spec.ControlPlane.InternalLB}}
   controlPlaneLoadBalancer:
     scheme: internal
@@ -61,6 +63,7 @@ spec:
     port: {{.Cluster.Spec.ControlPlane.Endpoint.Port}}
   {{end}}
   {{end}}
+  {{if .Cluster.Spec.InfrastructureProvider.SSHKey}}
   {{if .Cluster.Spec.Bastion.Enabled}}
   {{$lenBlocks := len .Cluster.Spec.Bastion.AllowedCIDRBlocks}}
   bastion:
@@ -73,6 +76,7 @@ spec:
     {{- range  .Cluster.Spec.Bastion.AllowedCIDRBlocks}}
       - {{.}}
     {{- end}}
+  {{end}}
   {{end}}
   {{if .Cluster.Spec.Network}}
   networkSpec:
@@ -169,7 +173,9 @@ spec:
     spec:
       instanceType: "{{.Cluster.Spec.ControlPlane.MachineType}}"
       iamInstanceProfile: "control-plane.cluster-api-provider-aws.sigs.k8s.io"
-      sshKeyName: "{{.Cluster.Spec.InfrastructureProvider.SSHKey}}"
+      {{if .Cluster.Spec.InfrastructureProvider.SSHKey}}
+      sshKeyName: "{{ .Cluster.Spec.InfrastructureProvider.SSHKey}}"
+      {{end}}
       {{if .Cluster.Spec.ControlPlane.ProviderTags}}
       additionalTags:
         {{range $key, $value := .Cluster.Spec.ControlPlane.ProviderTags}}
@@ -236,7 +242,9 @@ spec:
     - "{{$region}}"
   awsLaunchTemplate:
     instanceType: "{{$element.MachineType}}"
+    {{if $sshKey}}
     sshKeyName: "{{$sshKey}}"
+    {{end}}
     iamInstanceProfile: "nodes.cluster-api-provider-aws.sigs.k8s.io"
   {{if $element.Subnet}}
   subnets:
