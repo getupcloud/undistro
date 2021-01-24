@@ -18,6 +18,7 @@ package v1alpha1
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/getupio-undistro/undistro/pkg/meta"
@@ -193,6 +194,16 @@ func (c *Cluster) GetNamespace() string {
 
 func (c *Cluster) GetStatusConditions() *[]metav1.Condition {
 	return &c.Status.Conditions
+}
+
+func (c *Cluster) GetWorkerRefByMachinePool(mpName string) (WorkerNode, error) {
+	split := strings.Split(mpName, "-")
+	indexStr := split[len(split)-1]
+	index, err := strconv.Atoi(indexStr)
+	if err != nil {
+		return WorkerNode{}, err
+	}
+	return c.Spec.Workers[index], nil
 }
 
 // ClusterProgressing resets any failures and registers progress toward

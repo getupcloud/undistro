@@ -34,6 +34,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/util"
 	"github.com/go-logr/logr"
 	"github.com/pkg/errors"
+	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -42,7 +43,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/uuid"
 	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	capicp "sigs.k8s.io/cluster-api/controlplane/kubeadm/api/v1alpha3"
-	"sigs.k8s.io/cluster-api/util/kubeconfig"
+	capiexp "sigs.k8s.io/cluster-api/exp/api/v1alpha3"
 	"sigs.k8s.io/cluster-api/util/patch"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -239,10 +240,97 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 	cl.Status.Workers = cl.Spec.Workers
 	cl.Status.BastionConfig = cl.Spec.Bastion
 	if capiCluster.Status.InfrastructureReady && capiCluster.Status.ControlPlaneReady && capiCluster.Status.GetTypedPhase() == capi.ClusterPhaseProvisioned {
+		err = r.reconcileNodes(ctx, cl, capiCluster)
+		if err != nil {
+			return appv1alpha1.ClusterNotReady(cl, meta.ReconcileNodesFailed, err.Error()), ctrl.Result{}, err
+		}
 		cl = appv1alpha1.ClusterReady(cl)
 		return cl, ctrl.Result{}, nil
 	}
 	return appv1alpha1.ClusterNotReady(cl, meta.WaitProvisionReason, "wait cluster to be provisioned"), ctrl.Result{Requeue: true}, nil
+}
+
+func (r *ClusterReconciler) reconcileNodes(ctx context.Context, cl appv1alpha1.Cluster, capiCluster capi.Cluster) error {
+	wc, err := kube.NewClusterClient(ctx, r.Client, cl.Name, cl.GetNamespace())
+	if err != nil {
+		return err
+	}
+	if !cl.Spec.InfrastructureProvider.IsManaged() {
+		if len(cl.Spec.ControlPlane.Labels) > 0 || len(cl.Spec.ControlPlane.Taints) > 0 {
+			cp, _, err := util.GetMachinesForCluster(ctx, r.Client, &capiCluster)
+			if err != nil {
+				return err
+			}
+			for _, m := range cp.Items {
+				key := client.ObjectKey{
+					Name: m.Status.NodeRef.Name,
+				}
+				node := corev1.Node{}
+				err = wc.Get(ctx, key, &node)
+				if err != nil {
+					return err
+				}
+				if node.Labels == nil {
+					node.Labels = make(map[string]string)
+				}
+				for k, v := range cl.Spec.ControlPlane.Labels {
+					node.Labels[k] = v
+				}
+				node.Spec.Taints = append(node.Spec.Taints, cl.Spec.ControlPlane.Taints...)
+				node.Spec.Taints = util.RemoveDuplicateTaints(node.Spec.Taints)
+				node.TypeMeta = metav1.TypeMeta{
+					APIVersion: "v1",
+					Kind:       "Node",
+				}
+				_, err = util.CreateOrUpdate(ctx, wc, &node)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+	// workers
+	mpList := capiexp.MachinePoolList{}
+	err = r.List(ctx, &mpList, client.HasLabels{capi.ClusterLabelName})
+	if err != nil {
+		return err
+	}
+	for _, mp := range mpList.Items {
+		w, err := cl.GetWorkerRefByMachinePool(mp.Name)
+		if err != nil {
+			return err
+		}
+		if len(w.Labels) == 0 && len(w.Taints) == 0 {
+			continue
+		}
+		for _, ref := range mp.Status.NodeRefs {
+			key := client.ObjectKey{
+				Name: ref.Name,
+			}
+			node := corev1.Node{}
+			err = wc.Get(ctx, key, &node)
+			if err != nil {
+				return err
+			}
+			if node.Labels == nil {
+				node.Labels = make(map[string]string)
+			}
+			for k, v := range w.Labels {
+				node.Labels[k] = v
+			}
+			node.Spec.Taints = append(node.Spec.Taints, w.Taints...)
+			node.Spec.Taints = util.RemoveDuplicateTaints(node.Spec.Taints)
+			node.TypeMeta = metav1.TypeMeta{
+				APIVersion: "v1",
+				Kind:       "Node",
+			}
+			_, err = util.CreateOrUpdate(ctx, wc, &node)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (r *ClusterReconciler) hasDiff(ctx context.Context, cl *appv1alpha1.Cluster) bool {
@@ -286,18 +374,7 @@ func (r *ClusterReconciler) installCNI(ctx context.Context, cl appv1alpha1.Clust
 	if err != nil {
 		return err
 	}
-	byt, err := kubeconfig.FromSecret(ctx, r.Client, client.ObjectKeyFromObject(&cl))
-	if err != nil {
-		return err
-	}
-	restGetter := kube.NewMemoryRESTClientGetter(byt, cl.GetNamespace())
-	workloadClientConfig, err := restGetter.ToRESTConfig()
-	if err != nil {
-		return err
-	}
-	workloadClient, err := client.New(workloadClientConfig, client.Options{
-		Scheme: scheme.Scheme,
-	})
+	workloadClient, err := kube.NewClusterClient(ctx, r.Client, cl.Name, cl.GetNamespace())
 	if err != nil {
 		return err
 	}
@@ -336,6 +413,28 @@ func (r *ClusterReconciler) capiToUndistro(o client.Object) []ctrl.Request {
 	}
 }
 
+func (r *ClusterReconciler) mpToUndistro(o client.Object) []ctrl.Request {
+	capiMP, ok := o.(*capiexp.MachinePool)
+	if !ok {
+		return nil
+	}
+	if capiMP.Labels == nil {
+		return nil
+	}
+	name, ok := capiMP.Labels[capi.ClusterLabelName]
+	if !ok {
+		return nil
+	}
+	return []ctrl.Request{
+		{
+			NamespacedName: client.ObjectKey{
+				Name:      name,
+				Namespace: capiMP.GetNamespace(),
+			},
+		},
+	}
+}
+
 func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&appv1alpha1.Cluster{}).
@@ -345,6 +444,12 @@ func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 				Type: &capi.Cluster{},
 			},
 			handler.EnqueueRequestsFromMapFunc(r.capiToUndistro),
+		).
+		Watches(
+			&source.Kind{
+				Type: &capiexp.MachinePool{},
+			},
+			handler.EnqueueRequestsFromMapFunc(r.mpToUndistro),
 		).
 		Complete(r)
 }

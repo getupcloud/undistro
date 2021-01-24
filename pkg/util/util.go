@@ -28,6 +28,7 @@ import (
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	apiyaml "k8s.io/apimachinery/pkg/util/yaml"
@@ -251,4 +252,16 @@ func ObjectKeyFromString(str string) client.ObjectKey {
 		c.Namespace = "default"
 	}
 	return c
+}
+
+func RemoveDuplicateTaints(taints []corev1.Taint) []corev1.Taint {
+	taintMap := make(map[corev1.Taint]struct{})
+	for _, t := range taints {
+		taintMap[t] = struct{}{}
+	}
+	res := make([]corev1.Taint, 0)
+	for k := range taintMap {
+		res = append(res, k)
+	}
+	return res
 }

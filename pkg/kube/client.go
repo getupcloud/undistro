@@ -17,6 +17,9 @@ limitations under the License.
 package kube
 
 import (
+	"context"
+
+	"github.com/getupio-undistro/undistro/pkg/scheme"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/discovery"
@@ -24,7 +27,28 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/clientcmd"
+	"sigs.k8s.io/cluster-api/util/kubeconfig"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+func NewClusterClient(ctx context.Context, c client.Client, name, namespace string) (client.Client, error) {
+	key := client.ObjectKey{
+		Name:      name,
+		Namespace: namespace,
+	}
+	byt, err := kubeconfig.FromSecret(ctx, c, key)
+	if err != nil {
+		return nil, err
+	}
+	getter := NewMemoryRESTClientGetter(byt, namespace)
+	cfg, err := getter.ToRESTConfig()
+	if err != nil {
+		return nil, err
+	}
+	return client.New(cfg, client.Options{
+		Scheme: scheme.Scheme,
+	})
+}
 
 func NewInClusterRESTClientGetter(cfg *rest.Config, namespace string) genericclioptions.RESTClientGetter {
 	flags := genericclioptions.NewConfigFlags(false)

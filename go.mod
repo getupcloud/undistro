@@ -22,7 +22,7 @@ require (
 	k8s.io/client-go v0.20.2
 	k8s.io/klog v1.0.0
 	k8s.io/kubectl v0.20.2
-	sigs.k8s.io/cluster-api v0.3.11-0.20201216111421-7d01abe6c9e4
+	sigs.k8s.io/cluster-api v0.3.13
 	sigs.k8s.io/controller-runtime v0.8.1
 	sigs.k8s.io/yaml v1.2.0
 )
@@ -30,4 +30,5 @@ require (
 replace (
 	github.com/Azure/go-autorest => github.com/Azure/go-autorest v14.2.0+incompatible
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
+	sigs.k8s.io/cluster-api => github.com/getupio-undistro/cluster-api v0.3.11-0.20210124214650-7dec89cfa565
 )

@@ -23,6 +23,7 @@ import (
 
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
+	corev1 "k8s.io/api/core/v1"
 )
 
 func TestMergeMaps(t *testing.T) {
@@ -283,6 +284,59 @@ func TestOrdinalize(t *testing.T) {
 			got := Ordinalize(tt.input)
 			if got != tt.expected {
 				t.Errorf("expected %s, but got %s", tt.expected, got)
+			}
+		})
+	}
+}
+
+func TestRemoveDuplicateTaints(t *testing.T) {
+	type args struct {
+		taints []corev1.Taint
+	}
+	tests := []struct {
+		name string
+		args args
+		want []corev1.Taint
+	}{
+		{
+			name: "remove dupicate",
+			args: args{
+				taints: []corev1.Taint{
+					{
+						Key:    "dedicated",
+						Value:  "infra",
+						Effect: corev1.TaintEffectNoSchedule,
+					},
+					{
+						Key:    "dedicated",
+						Value:  "infra",
+						Effect: corev1.TaintEffectNoSchedule,
+					},
+					{
+						Key:    "test",
+						Value:  "test",
+						Effect: corev1.TaintEffectNoSchedule,
+					},
+				},
+			},
+			want: []corev1.Taint{
+				{
+					Key:    "dedicated",
+					Value:  "infra",
+					Effect: corev1.TaintEffectNoSchedule,
+				},
+				{
+					Key:    "test",
+					Value:  "test",
+					Effect: corev1.TaintEffectNoSchedule,
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RemoveDuplicateTaints(tt.args.taints); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("RemoveDuplicateTaints() = %v, want %v", got, tt.want)
 			}
 		})
 	}

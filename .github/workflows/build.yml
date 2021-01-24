@@ -28,8 +28,11 @@ jobs:
     - name: Get dependencies
       run: go mod download
       
-    - name: Build
+    - name: Build CLI
       run: make cli
+
+    - name: Build Manager
+      run: make manager
       
     - name: Test
       run: make test
