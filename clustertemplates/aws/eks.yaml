@@ -157,6 +157,12 @@ metadata:
   namespace: "{{$namespace}}"
 spec:
   eksNodegroupName: "{{$name}}-mp-{{$index}}"
+  {{if $element.Labels}}
+  labels:
+    {{range $key, $value := $element.Labels}}
+    {{$key}}: {{$value | quote}}
+    {{end}}
+  {{end}}
   {{if $element.ProviderTags}}
   additionalTags:
     {{range $key, $value := $element.ProviderTags}}
