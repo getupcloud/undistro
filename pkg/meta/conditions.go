@@ -166,12 +166,17 @@ const (
 	CNIInstalledFailedReason  string = "CNIInstalledFailed"
 	TemplateAppliedFailed     string = "TemplateAppliedFailed"
 	ReconcileNodesFailed      string = "ReconcileNodesFailed"
+	ReconcileNetworkFailed    string = "ReconcileNetworkFailed"
 )
 
 // InReadyCondition returns if the given Condition slice has a ReadyCondition
 // with a 'True' condition status.
 func InReadyCondition(conditions []metav1.Condition) bool {
 	return apimeta.IsStatusConditionTrue(conditions, ReadyCondition)
+}
+
+func InCNIInstalledCondition(conditions []metav1.Condition) bool {
+	return apimeta.IsStatusConditionTrue(conditions, CNIInstalledCondition)
 }
 
 // ObjectWithStatusConditions is an interface that describes kubernetes resource

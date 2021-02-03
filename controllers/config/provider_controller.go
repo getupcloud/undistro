@@ -52,6 +52,9 @@ func (r *ProviderReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	if err := r.Get(ctx, req.NamespacedName, &p); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+	if p.Generation < p.Status.ObservedGeneration {
+		return ctrl.Result{}, nil
+	}
 	log := r.Log.WithValues("provider", req.NamespacedName)
 	patchHelper, err := patch.NewHelper(&p, r.Client)
 	if err != nil {

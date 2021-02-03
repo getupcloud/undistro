@@ -18,10 +18,27 @@ package cloud
 import (
 	"context"
 
+	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/cloud/aws"
+	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+// ReconcileNetwork from clouds
+func ReconcileNetwork(ctx context.Context, r client.Client, cl *appv1alpha1.Cluster, capiCluster *capi.Cluster) error {
+	if capiCluster.Spec.InfrastructureRef == nil || capiCluster.Spec.ControlPlaneRef == nil {
+		return nil
+	}
+	if capiCluster.Spec.ClusterNetwork != nil {
+		cl.Spec.Network.ClusterNetwork = *capiCluster.Spec.ClusterNetwork
+	}
+	switch cl.Spec.InfrastructureProvider.Name {
+	case "aws":
+		return aws.ReconcileNetwork(ctx, r, cl, capiCluster)
+	}
+	return nil
+}
 
 // Init providers
 func Init(ctx context.Context, c client.Client, p configv1alpha1.Provider) (configv1alpha1.Provider, error) {

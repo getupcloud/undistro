@@ -76,6 +76,9 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	if err := r.Get(ctx, req.NamespacedName, &hr); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+	if hr.Generation < hr.Status.ObservedGeneration {
+		return ctrl.Result{}, nil
+	}
 	log := r.Log.WithValues("helmrelease", req.NamespacedName)
 	// Initialize the patch helper.
 	patchHelper, err := patch.NewHelper(&hr, r.Client)

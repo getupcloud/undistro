@@ -26,13 +26,11 @@ import (
 	cfn "github.com/aws/aws-sdk-go/service/cloudformation"
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/cloud/aws/cloudformation"
+	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-)
-
-var (
-	GroupVersion = schema.GroupVersion{Group: "infrastructure.cluster.x-k8s.io", Version: "v1alpha3"}
 )
 
 const (
@@ -48,6 +46,92 @@ region = {{ .Region }}
 aws_session_token = {{ .SessionToken }}
 {{end}}`
 )
+
+func ReconcileNetwork(ctx context.Context, r client.Client, cl *appv1alpha1.Cluster, capiCluster *capi.Cluster) error {
+	u := unstructured.Unstructured{}
+	key := client.ObjectKey{}
+	if cl.Spec.InfrastructureProvider.IsManaged() {
+		u.SetGroupVersionKind(capiCluster.Spec.ControlPlaneRef.GroupVersionKind())
+		key = client.ObjectKey{
+			Name:      capiCluster.Spec.ControlPlaneRef.Name,
+			Namespace: capiCluster.Spec.ControlPlaneRef.Namespace,
+		}
+	} else {
+		u.SetGroupVersionKind(capiCluster.Spec.InfrastructureRef.GroupVersionKind())
+		key = client.ObjectKey{
+			Name:      capiCluster.Spec.InfrastructureRef.Name,
+			Namespace: capiCluster.Spec.InfrastructureRef.Namespace,
+		}
+	}
+	err := r.Get(ctx, key, &u)
+	if err != nil {
+		return err
+	}
+	return clusterNetwork(ctx, cl, u)
+}
+
+func clusterNetwork(ctx context.Context, cl *appv1alpha1.Cluster, u unstructured.Unstructured) error {
+	host, ok, err := unstructured.NestedString(u.Object, "spec", "controlPlaneEndpoint", "host")
+	if err != nil {
+		return err
+	}
+	if ok && host != "" {
+		cl.Spec.ControlPlane.Endpoint.Host = host
+	}
+	port, ok, err := unstructured.NestedInt64(u.Object, "spec", "controlPlaneEndpoint", "port")
+	if err != nil {
+		return err
+	}
+	if ok && port != 0 {
+		cl.Spec.ControlPlane.Endpoint.Port = int32(port)
+	}
+	vpc, ok, err := unstructured.NestedMap(u.Object, "spec", "networkSpec", "vpc")
+	if err != nil {
+		return err
+	}
+	if ok {
+		id, ok := vpc["id"]
+		if ok {
+			cl.Spec.Network.VPC.ID = id.(string)
+		}
+		cidr, ok := vpc["cidrBlock"]
+		if ok {
+			cl.Spec.Network.VPC.CIDRBlock = cidr.(string)
+		}
+	}
+	subnets, ok, err := unstructured.NestedSlice(u.Object, "spec", "networkSpec", "subnets")
+	if err != nil {
+		return err
+	}
+	if ok {
+		for _, s := range subnets {
+			subnet, ok := s.(map[string]interface{})
+			if !ok {
+				return errors.Errorf("unable to reconcile subnets for cluster %s/%s", cl.Namespace, cl.Name)
+			}
+			n := appv1alpha1.NetworkSpec{
+				ID:        subnet["id"].(string),
+				CIDRBlock: subnet["cidrBlock"].(string),
+				IsPublic:  subnet["isPublic"].(bool),
+			}
+			cl.Spec.Network.Subnets = append(cl.Spec.Network.Subnets, n)
+		}
+		cl.Spec.Network.Subnets = removeDuplicateNetwork(cl.Spec.Network.Subnets)
+	}
+	return nil
+}
+
+func removeDuplicateNetwork(n []appv1alpha1.NetworkSpec) []appv1alpha1.NetworkSpec {
+	nMap := make(map[appv1alpha1.NetworkSpec]struct{})
+	for _, t := range n {
+		nMap[t] = struct{}{}
+	}
+	res := make([]appv1alpha1.NetworkSpec, 0)
+	for k := range nMap {
+		res = append(res, k)
+	}
+	return res
+}
 
 type awsCredentials struct {
 	AccessKeyID     string
