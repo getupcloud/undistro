@@ -67,6 +67,9 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	if err := r.Get(ctx, req.NamespacedName, &cl); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
+	if cl.Generation < cl.Status.ObservedGeneration {
+		return ctrl.Result{}, nil
+	}
 	log := r.Log.WithValues("cluster", req.NamespacedName)
 	// Initialize the patch helper.
 	patchHelper, err := patch.NewHelper(&cl, r.Client)
