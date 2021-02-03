@@ -19,6 +19,7 @@ package controllers
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -194,13 +195,13 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 			var err error
 			cl.Status.BastionPublicIP, err = r.getBastionIP(ctx, log, cl, capiCluster)
 			if err != nil {
-				return appv1alpha1.ClusterNotReady(cl, meta.WaitProvisionReason, err.Error()), ctrl.Result{Requeue: true}, nil
+				return appv1alpha1.ClusterNotReady(cl, meta.WaitProvisionReason, err.Error()), ctrl.Result{}, nil
 			}
 		}
 	}
 	err := cloud.ReconcileNetwork(ctx, r.Client, &cl, &capiCluster)
 	if err != nil {
-		return appv1alpha1.ClusterNotReady(cl, meta.ReconcileNetworkFailed, err.Error()), ctrl.Result{Requeue: true}, err
+		return appv1alpha1.ClusterNotReady(cl, meta.ReconcileNetworkFailed, err.Error()), ctrl.Result{}, err
 	}
 	vars, err := r.templateVariables(ctx, &capiCluster, &cl)
 	if err != nil {
@@ -226,6 +227,14 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 			}
 		}
 		err = retry.WithExponentialBackoff(retry.NewBackoff(), func() error {
+			labels := o.GetLabels()
+			if labels == nil {
+				labels = make(map[string]string)
+			}
+			labels[meta.LabelUndistro] = ""
+			labels[meta.LabelUndistroClusterName] = cl.Name
+			labels[capi.ClusterLabelName] = cl.Name
+			o.SetLabels(labels)
 			_, err = util.CreateOrUpdate(ctx, r.Client, &o)
 			if err != nil {
 				return err
@@ -248,7 +257,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 		cl = appv1alpha1.ClusterReady(cl)
 		return cl, ctrl.Result{}, nil
 	}
-	return appv1alpha1.ClusterNotReady(cl, meta.WaitProvisionReason, "wait cluster to be provisioned"), ctrl.Result{Requeue: true}, nil
+	return appv1alpha1.ClusterNotReady(cl, meta.WaitProvisionReason, "wait cluster to be provisioned"), ctrl.Result{}, nil
 }
 
 func (r *ClusterReconciler) reconcileNodes(ctx context.Context, cl appv1alpha1.Cluster, capiCluster capi.Cluster) error {
@@ -297,8 +306,18 @@ func (r *ClusterReconciler) reconcileNodes(ctx context.Context, cl appv1alpha1.C
 		return err
 	}
 	for _, mp := range mpList.Items {
+		if mp.Labels[capi.ClusterLabelName] != cl.Name {
+			continue
+		}
 		w, err := cl.GetWorkerRefByMachinePool(mp.Name)
 		if err != nil {
+			if err == appv1alpha1.InvalidMP {
+				err = r.Delete(ctx, &mp)
+				if err != nil {
+					return err
+				}
+				continue
+			}
 			return err
 		}
 		if len(w.Labels) == 0 && len(w.Taints) == 0 {
@@ -402,7 +421,29 @@ func (r *ClusterReconciler) reconcileDelete(ctx context.Context, logger logr.Log
 		}
 		return ctrl.Result{}, nil
 	}
-	return ctrl.Result{Requeue: true}, r.Delete(ctx, &capiCluster)
+	err = r.Delete(ctx, &capiCluster)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	for i := range cl.Spec.Workers {
+		key := client.ObjectKey{
+			Name:      fmt.Sprintf("%s-mp-%d", cl.Name, i),
+			Namespace: cl.GetNamespace(),
+		}
+		mp := capiexp.MachinePool{}
+		err = r.Get(ctx, key, &mp)
+		if err != nil {
+			if client.IgnoreNotFound(err) != nil {
+				return ctrl.Result{}, err
+			}
+			continue
+		}
+		err = r.Delete(ctx, &mp)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+	}
+	return ctrl.Result{Requeue: true}, nil
 }
 
 func (r *ClusterReconciler) capiToUndistro(o client.Object) []ctrl.Request {

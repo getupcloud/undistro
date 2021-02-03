@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/getupio-undistro/undistro/pkg/meta"
+	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
@@ -203,8 +204,13 @@ func (c *Cluster) GetWorkerRefByMachinePool(mpName string) (WorkerNode, error) {
 	if err != nil {
 		return WorkerNode{}, err
 	}
+	if index > len(c.Spec.Workers)-1 {
+		return WorkerNode{}, InvalidMP
+	}
 	return c.Spec.Workers[index], nil
 }
+
+var InvalidMP = errors.New("invalid machinepool")
 
 // ClusterProgressing resets any failures and registers progress toward
 // reconciling the given Cluster by setting the meta.ReadyCondition to
