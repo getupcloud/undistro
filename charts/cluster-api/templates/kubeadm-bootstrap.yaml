@@ -1,5 +1,5 @@
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   labels:
@@ -15,7 +15,7 @@ spec:
     name: capi-kubeadm-bootstrap-selfsigned-issuer
   secretName: capi-kubeadm-bootstrap-webhook-service-cert
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   labels:

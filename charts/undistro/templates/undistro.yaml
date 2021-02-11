@@ -114,7 +114,7 @@ subjects:
   name: default
   namespace: undistro-system
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: undistro-serving-cert
@@ -128,7 +128,7 @@ spec:
     name: undistro-selfsigned-issuer
   secretName: webhook-server-cert
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: undistro-selfsigned-issuer

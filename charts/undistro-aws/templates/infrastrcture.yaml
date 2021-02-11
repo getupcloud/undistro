@@ -1,5 +1,5 @@
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   labels:
@@ -15,7 +15,7 @@ spec:
     name: capa-selfsigned-issuer
   secretName: capa-webhook-service-cert
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   labels:

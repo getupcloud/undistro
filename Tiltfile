@@ -21,7 +21,7 @@ def binary():
 
 local(manifests() + generate())
 
-deploy_cert_manager()
+deploy_cert_manager(version = 'v1.2.0')
 
 local_resource('crd', manifests() + 'kustomize build config/crd | kubectl apply -f -', deps=['apis'])
 
