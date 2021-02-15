@@ -1,0 +1,44 @@
+presubmits:
+  getupio-undistro/undistro:
+  - name: pull-undistro-build-manager
+    always_run: true
+    optional: false
+    decorate: true
+    path_alias: "github.com/getupio-undistro/undistro"
+    spec:
+      containers:
+      - image: golang:1.15.8
+        command:
+        - "make"
+        - "manager"
+    annotations:
+      testgrid-dashboards: undistro
+      testgrid-tab-name: pr-test
+  - name: pull-undistro-build-CLI
+    always_run: true
+    optional: false
+    decorate: true
+    path_alias: "github.com/getupio-undistro/undistro"
+    spec:
+      containers:
+      - image: golang:1.15.8
+        command:
+        - "make"
+        - "cli"
+    annotations:
+      testgrid-dashboards: undistro
+      testgrid-tab-name: pr-test
+  - name: pull-undistro-test
+    always_run: true
+    optional: false
+    decorate: true
+    path_alias: "github.com/getupio-undistro/undistro"
+    spec:
+      containers:
+      - image: golang:1.15.8
+        command:
+        - "make"
+        - "test"
+    annotations:
+      testgrid-dashboards: undistro
+      testgrid-tab-name: pr-test
