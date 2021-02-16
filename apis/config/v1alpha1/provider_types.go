@@ -20,6 +20,7 @@ import (
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	corev1 "k8s.io/api/core/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -31,6 +32,7 @@ type ProviderSpec struct {
 	ProviderVersion   string                        `json:"providerVersion,omitempty"`
 	Repository        Repository                    `json:"repository,omitempty"`
 	ConfigurationFrom []appv1alpha1.ValuesReference `json:"configurationFrom,omitempty"`
+	Configuration     *apiextensionsv1.JSON         `json:"configuration,omitempty"`
 	// +kubebuilder:default=false
 	AutoUpgrade bool `json:"autoUpgrade,omitempty"`
 }

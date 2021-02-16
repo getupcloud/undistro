@@ -153,6 +153,7 @@ func (r *ProviderReconciler) reconcileChart(ctx context.Context, log logr.Logger
 				TargetNamespace: "undistro-system",
 				ReleaseName:     p.Spec.ProviderName,
 				ValuesFrom:      p.Spec.ConfigurationFrom,
+				Values:          p.Spec.Configuration,
 				Chart: appv1alpha1.ChartSource{
 					RepoChartSource: appv1alpha1.RepoChartSource{
 						RepoURL: p.Spec.Repository.URL,

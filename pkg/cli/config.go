@@ -16,11 +16,13 @@ limitations under the License.
 package cli
 
 import (
+	"encoding/json"
 	"flag"
 	"path/filepath"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/util/homedir"
 	"k8s.io/klog"
@@ -70,16 +72,27 @@ func stringptr(s string) *string {
 }
 
 type Credentials struct {
-	Username string `mapstructure:"username"`
-	Password string `mapstructure:"password"`
+	Username string `mapstructure:"username" json:"username,omitempty"`
+	Password string `mapstructure:"password" json:"password,omitempty"`
 }
 
 type Provider struct {
-	Name          string            `mapstructure:"name"`
-	Configuration map[string]string `mapstructure:"configuration"`
+	Name          string            `mapstructure:"name" json:"name,omitempty"`
+	Configuration map[string]string `mapstructure:"configuration" json:"configuration,omitempty"`
 }
 
 type Config struct {
-	Credentials Credentials `mapstructure:"credentials"`
-	Providers   []Provider  `mapstructure:"providers"`
+	Credentials   Credentials `mapstructure:"credentials" json:"credentials,omitempty"`
+	CoreProviders []Provider  `mapstructure:"coreProviders" json:"coreProviders,omitempty"`
+	Providers     []Provider  `mapstructure:"providers" json:"providers,omitempty"`
+}
+
+func getConfigFrom(providers []Provider, name string) *apiextensionsv1.JSON {
+	for _, p := range providers {
+		if p.Name == name {
+			byt, _ := json.Marshal(p.Configuration) // nolint
+			return &apiextensionsv1.JSON{Raw: byt}
+		}
+	}
+	return &apiextensionsv1.JSON{}
 }

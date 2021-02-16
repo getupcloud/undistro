@@ -951,6 +951,8 @@ spec:
               autoUpgrade:
                 default: false
                 type: boolean
+              configuration:
+                x-kubernetes-preserve-unknown-fields: true
               configurationFrom:
                 items:
                   description: ValuesReference contains a reference to a resource containing Helm values, and optionally the key they can be found at.

@@ -42,6 +42,7 @@ import (
 	"helm.sh/helm/v3/pkg/getter"
 	"helm.sh/helm/v3/pkg/repo"
 	corev1 "k8s.io/api/core/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
@@ -167,7 +168,7 @@ func (o *InstallOptions) installProviders(ctx context.Context, w io.Writer, c cl
 	return nil
 }
 
-func (o *InstallOptions) installChart(ctx context.Context, c client.Client, restGetter genericclioptions.RESTClientGetter, chartRepo *helm.ChartRepository, secretRef *corev1.LocalObjectReference, chartName string) (*configv1alpha1.Provider, error) {
+func (o *InstallOptions) installChart(ctx context.Context, c client.Client, restGetter genericclioptions.RESTClientGetter, chartRepo *helm.ChartRepository, secretRef *corev1.LocalObjectReference, chartName string, overrideValues *apiextensionsv1.JSON) (*configv1alpha1.Provider, error) {
 	versions := chartRepo.Index.Entries[chartName]
 	if versions.Len() == 0 {
 		return nil, errors.Errorf("chart %s not found", chartName)
@@ -208,6 +209,7 @@ func (o *InstallOptions) installChart(ctx context.Context, c client.Client, rest
 			Repository: configv1alpha1.Repository{
 				SecretRef: secretRef,
 			},
+			Configuration: overrideValues,
 		},
 	}
 	err = retry.WithExponentialBackoff(retry.NewBackoff(), func() error {
@@ -353,7 +355,7 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 	}
 	providers := make([]*configv1alpha1.Provider, 0)
 	if installCert {
-		provider, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cert-manager")
+		provider, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cert-manager", getConfigFrom(cfg.CoreProviders, "cert-manager"))
 		if err != nil {
 			return err
 		}
@@ -384,7 +386,7 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		}
 	}
 	if installCapi {
-		providerCapi, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cluster-api")
+		providerCapi, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cluster-api", getConfigFrom(cfg.CoreProviders, "cluster-api"))
 		if err != nil {
 			return err
 		}
@@ -415,7 +417,7 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		}
 	}
 	if installUndistro {
-		providerUndistro, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "undistro")
+		providerUndistro, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "undistro", getConfigFrom(cfg.CoreProviders, "undistro"))
 		if err != nil {
 			return err
 		}
