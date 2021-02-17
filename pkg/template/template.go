@@ -17,9 +17,9 @@ package template
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -107,7 +107,7 @@ func (r *Render) compileTemplates() error {
 		}
 
 		if ext == extension {
-			buf, err := ioutil.ReadFile(path)
+			buf, err := fs.ReadFile(r.opt.Filesystem, path)
 			if err != nil {
 				return err
 			}
@@ -119,7 +119,7 @@ func (r *Render) compileTemplates() error {
 			for _, funcs := range r.opt.Funcs {
 				tmpl = tmpl.Funcs(funcs)
 			}
-
+			fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>", string(buf))
 			_, err = tmpl.Parse(string(buf))
 			if err != nil {
 				return err

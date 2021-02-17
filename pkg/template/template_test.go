@@ -101,9 +101,7 @@ func TestRender(t *testing.T) {
 				Funcs:      tc.funcs,
 				Filesystem: os.DirFS(tc.directory),
 			})
-			if tc.wantErr {
-				g.Expect(err).To(HaveOccurred())
-			}
+			g.Expect(err).ToNot(HaveOccurred())
 			buff := bytes.Buffer{}
 			err = render.YAML(&buff, tc.fileName, tc.values)
 			if tc.wantErr {
