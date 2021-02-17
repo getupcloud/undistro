@@ -96,13 +96,16 @@ func TestRender(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			g := NewWithT(t)
-			render, _ := New(Options{
+			render, err := New(Options{
 				Root:       tc.directory,
 				Funcs:      tc.funcs,
 				Filesystem: os.DirFS(tc.directory),
 			})
+			if tc.wantErr {
+				g.Expect(err).To(HaveOccurred())
+			}
 			buff := bytes.Buffer{}
-			err := render.YAML(&buff, tc.fileName, tc.values)
+			err = render.YAML(&buff, tc.fileName, tc.values)
 			if tc.wantErr {
 				g.Expect(err).To(HaveOccurred())
 				return
@@ -115,14 +118,15 @@ func TestRender(t *testing.T) {
 
 func TestRace(t *testing.T) {
 	g := NewWithT(t)
-	render, _ := New(Options{
+	render, err := New(Options{
 		Root:       "testdata/basic",
 		Filesystem: os.DirFS("testdata/basic"),
 	})
+	g.Expect(err).ToNot(HaveOccurred())
 	done := make(chan struct{})
 	req := func() {
 		buff := bytes.Buffer{}
-		err := render.YAML(&buff, "hello", "k8s")
+		err = render.YAML(&buff, "hello", "k8s")
 		g.Expect(err).ToNot(HaveOccurred())
 		g.Expect(buff.String()).To(Equal("hello: test-k8s"))
 		done <- struct{}{}
