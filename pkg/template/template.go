@@ -17,7 +17,6 @@ package template
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"io/fs"
 	"os"
@@ -119,7 +118,6 @@ func (r *Render) compileTemplates() error {
 			for _, funcs := range r.opt.Funcs {
 				tmpl = tmpl.Funcs(funcs)
 			}
-			fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>", string(buf))
 			_, err = tmpl.Parse(string(buf))
 			if err != nil {
 				return err
