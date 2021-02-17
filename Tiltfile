@@ -29,7 +29,7 @@ local_resource('crd', manifests() + 'kustomize build config/crd | kubectl apply 
 
 k8s_yaml(yaml())
 
-local_resource('recompile', generate() + binary(), deps=['controllers', 'clustertemplates', 'main.go', 'pkg'])
+local_resource('recompile', generate() + binary(), deps=['controllers', 'main.go', 'pkg'])
 
 local('kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml')
 
