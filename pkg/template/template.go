@@ -73,7 +73,7 @@ func (r *Render) prepareOptions() {
 		r.opt.Root = "clustertemplates"
 	}
 	if r.opt.Filesystem == nil {
-		r.opt.Filesystem = os.DirFS(r.opt.Root)
+		r.opt.Filesystem = os.DirFS(".")
 	}
 }
 

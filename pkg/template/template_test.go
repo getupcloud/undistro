@@ -18,7 +18,6 @@ package template
 import (
 	"bytes"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 	"text/template"
@@ -97,11 +96,10 @@ func TestRender(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			g := NewWithT(t)
-			fs := filepath.Join(tc.directory, "*")
 			render, err := New(Options{
 				Root:       tc.directory,
 				Funcs:      tc.funcs,
-				Filesystem: os.DirFS(fs),
+				Filesystem: os.DirFS("."),
 			})
 			g.Expect(err).ToNot(HaveOccurred())
 			buff := bytes.Buffer{}
@@ -120,7 +118,7 @@ func TestRace(t *testing.T) {
 	g := NewWithT(t)
 	render, err := New(Options{
 		Root:       "testdata/basic",
-		Filesystem: os.DirFS("testdata/basic"),
+		Filesystem: os.DirFS("."),
 	})
 	g.Expect(err).ToNot(HaveOccurred())
 	done := make(chan struct{})
