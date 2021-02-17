@@ -1,5 +1,4 @@
-FROM golang:alpine
+FROM golang:1.16-alpine
 WORKDIR /
 COPY ./bin/manager /
-COPY ./clustertemplates /clustertemplates
 CMD ["/manager"]

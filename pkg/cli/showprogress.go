@@ -23,6 +23,7 @@ import (
 	"syscall"
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	"github.com/getupio-undistro/undistro/pkg/fs"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
 	"github.com/getupio-undistro/undistro/pkg/template"
 	"github.com/pkg/errors"
@@ -90,7 +91,7 @@ func (o *ShowProgressOptions) RunShowProgress(f cmdutil.Factory, cmd *cobra.Comm
 		"ENV":     make(map[string]interface{}),
 		"Cluster": &obj,
 	}
-	objs, err := template.GetObjs("clustertemplates", obj.GetTemplate(), vars)
+	objs, err := template.GetObjs(fs.FS, "clustertemplates", obj.GetTemplate(), vars)
 	if err != nil {
 		return err
 	}

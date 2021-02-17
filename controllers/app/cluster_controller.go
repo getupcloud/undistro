@@ -27,6 +27,7 @@ import (
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
+	"github.com/getupio-undistro/undistro/pkg/fs"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/predicate"
@@ -204,7 +205,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 			return appv1alpha1.ClusterNotReady(cl, meta.TemplateAppliedFailed, err.Error()), ctrl.Result{}, err
 		}
 
-		objs, err := template.GetObjs("clustertemplates", cl.GetTemplate(), vars)
+		objs, err := template.GetObjs(fs.FS, "clustertemplates", cl.GetTemplate(), vars)
 		if err != nil {
 			return appv1alpha1.ClusterNotReady(cl, meta.TemplateAppliedFailed, err.Error()), ctrl.Result{}, err
 		}

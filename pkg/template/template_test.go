@@ -17,7 +17,6 @@ package template
 
 import (
 	"bytes"
-	"errors"
 	"os"
 	"strings"
 	"testing"
@@ -97,9 +96,10 @@ func TestRender(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			g := NewWithT(t)
-			render := New(Options{
-				Directory: tc.directory,
-				Funcs:     tc.funcs,
+			render, _ := New(Options{
+				Root:       tc.directory,
+				Funcs:      tc.funcs,
+				Filesystem: os.DirFS(tc.directory),
 			})
 			buff := bytes.Buffer{}
 			err := render.YAML(&buff, tc.fileName, tc.values)
@@ -113,31 +113,11 @@ func TestRender(t *testing.T) {
 	}
 }
 
-func TestFromAssets(t *testing.T) {
-	g := NewWithT(t)
-	render := New(Options{
-		Asset: func(file string) ([]byte, error) {
-			switch file {
-			case "clustertemplates/test.yaml":
-				return []byte("testassets: test"), nil
-			default:
-				return nil, errors.New("file not found: " + file)
-			}
-		},
-		AssetNames: func() []string {
-			return []string{"clustertemplates/test.yaml"}
-		},
-	})
-	buff := bytes.Buffer{}
-	err := render.YAML(&buff, "test", nil)
-	g.Expect(err).ToNot(HaveOccurred())
-	g.Expect(buff.String()).To(Equal("testassets: test"))
-}
-
 func TestRace(t *testing.T) {
 	g := NewWithT(t)
-	render := New(Options{
-		Directory: "testdata/basic",
+	render, _ := New(Options{
+		Root:       "testdata/basic",
+		Filesystem: os.DirFS("testdata/basic"),
 	})
 	done := make(chan struct{})
 	req := func() {
