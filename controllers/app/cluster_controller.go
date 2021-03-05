@@ -109,7 +109,7 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	return result, err
 }
 
-func (r *ClusterReconciler) templateVariables(ctx context.Context, capiCluster *capi.Cluster, cl *appv1alpha1.Cluster) (map[string]interface{}, error) {
+func (r *ClusterReconciler) templateVariables(ctx context.Context, c client.Client, capiCluster *capi.Cluster, cl *appv1alpha1.Cluster) (map[string]interface{}, error) {
 	vars := make(map[string]interface{})
 	v := make(map[string]interface{})
 	err := template.SetVariablesFromEnvVar(ctx, template.VariablesInput{
@@ -123,6 +123,11 @@ func (r *ClusterReconciler) templateVariables(ctx context.Context, capiCluster *
 	}
 	vars["Cluster"] = cl
 	vars["ENV"] = v
+	acc, err := cloud.GetAccount(ctx, c, cl)
+	if err != nil {
+		return nil, err
+	}
+	vars["Account"] = acc
 	validDiff := true
 	labels := cl.GetLabels()
 	_, moved := labels[meta.LabelUndistroMoved]
@@ -204,7 +209,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 		return appv1alpha1.ClusterNotReady(cl, meta.ReconcileNetworkFailed, err.Error()), ctrl.Result{}, err
 	}
 	if r.hasDiff(ctx, &cl) {
-		vars, err := r.templateVariables(ctx, &capiCluster, &cl)
+		vars, err := r.templateVariables(ctx, r.Client, &capiCluster, &cl)
 		if err != nil {
 			return appv1alpha1.ClusterNotReady(cl, meta.TemplateAppliedFailed, err.Error()), ctrl.Result{}, err
 		}

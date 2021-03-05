@@ -25,6 +25,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+type Account interface {
+	GetID() (string, error)
+}
+
 // ReconcileNetwork from clouds
 func ReconcileNetwork(ctx context.Context, r client.Client, cl *appv1alpha1.Cluster, capiCluster *capi.Cluster) error {
 	if capiCluster.Spec.InfrastructureRef == nil || capiCluster.Spec.ControlPlaneRef == nil {
@@ -73,4 +77,12 @@ func Upgrade(ctx context.Context, c client.Client, p configv1alpha1.Provider) (c
 		}
 	}
 	return p, nil
+}
+
+func GetAccount(ctx context.Context, c client.Client, cl *appv1alpha1.Cluster) (Account, error) {
+	switch cl.Spec.InfrastructureProvider.Name {
+	case "aws":
+		return aws.NewAccount(ctx, c)
+	}
+	return nil, nil
 }

@@ -61,6 +61,14 @@ metadata:
   name: "{{.Cluster.Name}}"
   namespace: "{{.Cluster.Namespace}}"
 spec:
+  {{if .Account}}
+  iamAuthenticatorConfig:
+    mapRoles:
+    - username: "UnDistroEKSConsoleRole"
+      rolearn: "arn:aws:iam::{{.Account.GetID}}:role/UnDistroEKSConsoleRole"
+      groups:
+      - "system:masters"
+  {{end}}
   version: "{{.Cluster.Spec.KubernetesVersion}}"
   {{if .Cluster.Spec.InfrastructureProvider.SSHKey}}
   sshKeyName: "{{.Cluster.Spec.InfrastructureProvider.SSHKey}}"
