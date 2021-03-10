@@ -43,7 +43,7 @@ func (ClusterChanges) Update(e event.UpdateEvent) bool {
 	old := cOld.DeepCopy()
 	n := cn.DeepCopy()
 	if meta.InReadyCondition(old.Status.Conditions) && meta.InReadyCondition(n.Status.Conditions) &&
-		cmp.Equal(old.Spec, n.Spec) && cmp.Equal(old.Status, n.Status) && n.DeletionTimestamp.IsZero() {
+		cmp.Equal(old.Spec, n.Spec) && cmp.Equal(old.Status, n.Status) && n.DeletionTimestamp.IsZero() && old.Status.BastionPublicIP != "" {
 		return false
 	}
 	return true

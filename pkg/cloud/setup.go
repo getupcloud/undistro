@@ -26,7 +26,9 @@ import (
 )
 
 type Account interface {
-	GetID() (string, error)
+	GetID() string
+	GetUsername() string
+	IsRoot() bool
 }
 
 // ReconcileNetwork from clouds

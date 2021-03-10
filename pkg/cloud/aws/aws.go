@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -321,6 +322,7 @@ func getData(secret *corev1.Secret, key string) string {
 
 type Account struct {
 	stsClient stsiface.STSAPI
+	out       *sts.GetCallerIdentityOutput
 }
 
 func NewAccount(ctx context.Context, c client.Client) (*Account, error) {
@@ -340,15 +342,24 @@ func NewAccount(ctx context.Context, c client.Client) (*Account, error) {
 		return nil, err
 	}
 	stsClient := sts.New(sess)
+	out, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	if err != nil {
+		return nil, err
+	}
 	return &Account{
 		stsClient: stsClient,
+		out:       out,
 	}, nil
 }
 
-func (a *Account) GetID() (string, error) {
-	out, err := a.stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
-	if err != nil {
-		return "", err
-	}
-	return aws.StringValue(out.Account), nil
+func (a *Account) GetID() string {
+	return aws.StringValue(a.out.Account)
+}
+
+func (a *Account) GetUsername() string {
+	return aws.StringValue(a.out.Arn)
+}
+
+func (a *Account) IsRoot() bool {
+	return strings.HasSuffix(a.GetUsername(), "root")
 }
