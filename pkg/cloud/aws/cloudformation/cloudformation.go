@@ -325,10 +325,14 @@ Resources:
           - eks:DeleteNodegroup
           - eks:UpdateNodegroupConfig
           - eks:CreateNodegroup
+          - eks:DescribeUpdate
+          - eks:ListNodegroups
+          - eks:ListTagsForResource 
           Effect: Allow
           Resource:
           - arn:aws:eks:*:*:cluster/*
           - arn:aws:eks:*:*:nodegroup/*/*/*
+          - arn:aws:iam::*:user/${aws:username}
         - Action:
           - eks:ListAddons
           - eks:CreateAddon
