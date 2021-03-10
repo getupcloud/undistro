@@ -20,12 +20,15 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	cfn "github.com/aws/aws-sdk-go/service/cloudformation"
+	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/cloud/aws/cloudformation"
 	"github.com/pkg/errors"
@@ -315,4 +318,48 @@ func getData(secret *corev1.Secret, key string) string {
 		return ""
 	}
 	return string(b)
+}
+
+type Account struct {
+	stsClient stsiface.STSAPI
+	out       *sts.GetCallerIdentityOutput
+}
+
+func NewAccount(ctx context.Context, c client.Client) (*Account, error) {
+	cred, _, err := getCreds(ctx, c)
+	if err != nil {
+		return nil, err
+	}
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(cred.Region),
+		Credentials: credentials.NewStaticCredentials(
+			cred.AccessKeyID,
+			cred.SecretAccessKey,
+			cred.SessionToken,
+		),
+	})
+	if err != nil {
+		return nil, err
+	}
+	stsClient := sts.New(sess)
+	out, err := stsClient.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	if err != nil {
+		return nil, err
+	}
+	return &Account{
+		stsClient: stsClient,
+		out:       out,
+	}, nil
+}
+
+func (a *Account) GetID() string {
+	return aws.StringValue(a.out.Account)
+}
+
+func (a *Account) GetUsername() string {
+	return aws.StringValue(a.out.Arn)
+}
+
+func (a *Account) IsRoot() bool {
+	return strings.HasSuffix(a.GetUsername(), "root")
 }

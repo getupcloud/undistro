@@ -61,6 +61,16 @@ metadata:
   name: "{{.Cluster.Name}}"
   namespace: "{{.Cluster.Namespace}}"
 spec:
+  {{if .Account}}
+  {{if not .Account.IsRoot}}
+  iamAuthenticatorConfig:
+    mapUsers:
+    - username: "admin"
+      userarn: {{.Account.GetUsername}}
+      groups:
+      - "system:masters"
+  {{end}}
+  {{end}}
   version: "{{.Cluster.Spec.KubernetesVersion}}"
   {{if .Cluster.Spec.InfrastructureProvider.SSHKey}}
   sshKeyName: "{{.Cluster.Spec.InfrastructureProvider.SSHKey}}"
