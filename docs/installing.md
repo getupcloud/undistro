@@ -52,3 +52,9 @@ into a management cluster by using `undistro install`.
 ```bash
 undistro --config undistro-config.yaml install   
 ```
+
+## Upgrade a provider into management cluster
+
+```bash
+undistro upgrade <provider name>
+```
