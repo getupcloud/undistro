@@ -73,7 +73,19 @@ spec:
         isPublic: false # Specify if subnet is public
 ```
 
-## Consuming Existing Infrastructure
+## Create a cluster
+
+```bash
+undistro create -f cluster.yaml
+````
+
+## Delete a cluster
+
+```bash
+undistro delete -f cluster.yaml
+````
+
+## Consuming existing infrastructure
 
 Check infrastructure provider specific page to see the prerequisites.
 
@@ -96,3 +108,13 @@ If you are using local cluster as a management cluster you can use move command 
 ```bash
 undistro move <cluster name> -n namespace
 ```
+
+## Check cluster
+
+```bash
+undistro get cl
+```
+
+## A special thanks
+
+A special thanks for [Cluster API project](https://cluster-api.sigs.k8s.io/) to helps UnDistro to provide the cluster lifecycle functionality.
