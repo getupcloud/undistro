@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"sort"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -263,5 +264,8 @@ func RemoveDuplicateTaints(taints []corev1.Taint) []corev1.Taint {
 	for k := range taintMap {
 		res = append(res, k)
 	}
+	sort.Slice(res[:], func(i, j int) bool {
+		return res[i].Key < res[j].Key
+	})
 	return res
 }
