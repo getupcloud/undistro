@@ -1,4 +1,4 @@
 # UnDistro Kubernetes platform
 
-[Documentation](./docs)
+[Documentation](https://undistro.io/docs)
 [Prow](https://prow.undistro.io)
