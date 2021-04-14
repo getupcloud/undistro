@@ -20,8 +20,6 @@ UnDistro and all required dependencies
 
 # 2 - Introduction
 
-# UnDistro
-
 ## What is UnDistro (will be in version 1.0.0)?
 
 UnDistro is an enterprise software that automates multicloud, on-prem, and edge operations with a single management UI.
@@ -58,7 +56,7 @@ After [prepare the environment](./docs#prepare-environment) choose one of the op
 For production use-cases a "real" Kubernetes cluster should be used with appropriate backup and DR policies and procedures in place.
 
 ~~~bash
-export KUBECONFIG=<...>
+export KUBECONFIG={...}
 ~~~
 
 ## Kind
@@ -93,7 +91,7 @@ undistro --config undistro-config.yaml install
 ## Upgrade a provider into management cluster
 
 ~~~bash
-undistro upgrade <provider name>
+undistro upgrade {provider name}
 ~~~
 
 # 4 - Configuration
@@ -104,18 +102,18 @@ Configuration file is used by UnDistro just in the install and move operations.
 
 ~~~go
 type Config struct {
-	Credentials   Credentials ${apostrofe}mapstructure:"credentials" json:"credentials,omitempty"${apostrofe}
-	CoreProviders [ ] Provider  ${apostrofe}mapstructure:"coreProviders" json:"coreProviders,omitempty"${apostrofe}
-	Providers     [ ] Provider  ${apostrofe}mapstructure:"providers" json:"providers,omitempty"${apostrofe}
+	Credentials   Credentials `mapstructure:"credentials" json:"credentials,omitempty"`
+	CoreProviders [ ] Provider  `mapstructure:"coreProviders" json:"coreProviders,omitempty"`
+	Providers     [ ] Provider  `mapstructure:"providers" json:"providers,omitempty"`
 }
 type Credentials struct {
-	Username string ${apostrofe}mapstructure:"username" json:"username,omitempty"${apostrofe}
-	Password string ${apostrofe}mapstructure:"password" json:"password,omitempty"${apostrofe}
+	Username string `mapstructure:"username" json:"username,omitempty"`
+	Password string `mapstructure:"password" json:"password,omitempty"`
 }
 
 type Provider struct {
-	Name          string            ${apostrofe}mapstructure:"name" json:"name,omitempty"${apostrofe}
-	Configuration map[string]string ${apostrofe}mapstructure:"configuration" json:"configuration,omitempty"${apostrofe}
+	Name          string            `mapstructure:"name" json:"name,omitempty"`
+	Configuration map[string]string `mapstructure:"configuration" json:"configuration,omitempty"`
 }
 ~~~
 
@@ -151,17 +149,17 @@ To configure AWS just add credentials in UnDistro configuration file and run ins
 
 **Configuration file**
 
-replace **<key>** to your keys
+replace **{key}** to your keys
 
 ~~~yaml
 providers:
   -
     name: aws
     configuration:
-      accessKeyID: <key>
-      secretAccessKey: <key>
-      sessionToken: <key> # if you use 2FA
-      region: <key> # default region us-east-1
+      accessKeyID: {key}
+      secretAccessKey: {key}
+      sessionToken: {key} # if you use 2FA
+      region: {key} # default region us-east-1
 ~~~
 
 **Install command**
@@ -180,13 +178,13 @@ undistro --config undistro-config.yaml install
 To access one of the nodes (either a control plane node, or a worker node) via the SSH bastion host, use this command if you are using a non-EKS cluster:
 
 ~~~bash
-ssh -i ${CLUSTER_SSH_KEY} ubuntu@<NODE_IP> -o "ProxyCommand ssh -W %h:%p -i ${CLUSTER_SSH_KEY} ubuntu@${BASTION_HOST}"
+ssh -i ${CLUSTER_SSH_KEY} ubuntu@{NODE_IP} -o "ProxyCommand ssh -W %h:%p -i ${CLUSTER_SSH_KEY} ubuntu@${BASTION_HOST}"
 ~~~
 
 And use this command if you are using a EKS based cluster:
 
 ~~~bash
-ssh -i ${CLUSTER_SSH_KEY} ec2-user@<NODE_IP> -o "ProxyCommand ssh -W %h:%p -i ${CLUSTER_SSH_KEY} ubuntu@${BASTION_HOST}"
+ssh -i ${CLUSTER_SSH_KEY} ec2-user@{NODE_IP} -o "ProxyCommand ssh -W %h:%p -i ${CLUSTER_SSH_KEY} ubuntu@${BASTION_HOST}"
 ~~~
 
 Alternately, users can add a configuration stanza to their SSH configuration file (typically found on macOS/Linux systems as $HOME/.ssh/config):
@@ -194,8 +192,8 @@ Alternately, users can add a configuration stanza to their SSH configuration fil
 ~~~bash
 Host 10.0.*
 User ubuntu # for eks based cluster use ec2-user
-IdentityFile <CLUSTER_SSH_KEY>
-ProxyCommand ssh -W %h:%p ubuntu@<BASTION_HOST>
+IdentityFile {CLUSTER_SSH_KEY}
+ProxyCommand ssh -W %h:%p ubuntu@{BASTION_HOST}
 ~~~
 
 ## Consuming existing AWS infrastructure
@@ -223,12 +221,12 @@ Note that there is no need to create an Elastic Load Balancer (ELB), security gr
 
 ### Tagging AWS Resources
 
-Cluster API itself does tag AWS resources it creates. The **sigs.k8s.io/cluster-api-provider-aws/cluster/<cluster-name>** (where *<cluster-name>* matches the *metadata.name* field of the Cluster object) tag, with a value of **owned**, tells Cluster API that it has ownership of the resource. In this case, Cluster API will modify and manage the lifecycle of the resource.
+Cluster API itself does tag AWS resources it creates. The **sigs.k8s.io/cluster-api-provider-aws/cluster/{cluster-name}** (where *{cluster-name}* matches the *metadata.name* field of the Cluster object) tag, with a value of **owned**, tells Cluster API that it has ownership of the resource. In this case, Cluster API will modify and manage the lifecycle of the resource.
 
 When consuming existing AWS infrastructure, the Cluster API AWS provider does not require any tags to be present. The absence of the tags on an AWS resource indicates to Cluster API that it should not modify the resource or attempt to manage the lifecycle of the resource.
 
 However, the built-in Kubernetes AWS cloud provider doesn’t  require certain tags in order to function properly. Specifically, all subnets where Kubernetes nodes 
-reside should have the **kubernetes.io/cluster/<cluster-name>** tag present. Private subnets should also have the **kubernetes.io/role/internal-elb** tag with a value of **1**, and public subnets should have the **kubernetes.io/role/elb** tag with a value of **1**. These latter two tags help the cloud provider understand which subnets to use when creating load balancers.
+reside should have the **kubernetes.io/cluster/{cluster-name}** tag present. Private subnets should also have the **kubernetes.io/role/internal-elb** tag with a value of **1**, and public subnets should have the **kubernetes.io/role/elb** tag with a value of **1**. These latter two tags help the cloud provider understand which subnets to use when creating load balancers.
 
 # 6 - Cluster
 
@@ -324,13 +322,13 @@ Check infrastructure provider specific page to see the prerequisites.
 ## Get cluster kubeconfig
 
 ~~~bash
-undistro get kubeconfig <cluster name> -n namespace
+undistro get kubeconfig {cluster name} -n namespace
 ~~~
 
 ## See cluster events
 
 ~~~bash
-undistro show-progress <cluster name> -n namespace
+undistro show-progress {cluster name} -n namespace
 ~~~
 
 ## Convert the created cluster into a management cluster
@@ -338,7 +336,7 @@ undistro show-progress <cluster name> -n namespace
 If you are using local cluster as a management cluster you can use move command to convert created cluster into a management cluster
 
 ~~~bash
-undistro move <cluster name> -n namespace
+undistro move {cluster name} -n namespace
 ~~~
 
 ## Check cluster
@@ -442,17 +440,17 @@ undistro get hr
 
 The overarching architecture of UnDistro is centered around a "management plane". This plane is expected to serve as a single interface upon which administrators can create, scale, upgrade, and delete Kubernetes clusters. At a high level view, the management plane + created clusters should look something like this:
 
-![Image of Architecture](${Arch})
+![Image of Architecture](./arch.png)
 
 # 9 - Diagrams
 
 ## Install
 
-![Image of Install](${Install})
+![Image of Install](./../../../dist/install.png)
 
 ## Usage
 
-![Image of Usage](${Usage})
+![Image of Usage](./../../../dist/usage.png)
 
 # 10 - Community
 

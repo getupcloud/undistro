@@ -1,0 +1,207 @@
+@import '~Styles/theme';
+
+.highlight-container {
+  position: relative;
+  padding: 32px 228px;
+
+  @media (max-width: $max-width-laptop) {
+    padding: 32px 92px;
+  }
+
+  @media (max-width: $max-width-mobile) {
+    padding: 24px 16px !important;
+  }
+
+  .float-title {
+    position: absolute;
+    top: 0;
+    left: 43%;
+    font-size: 24px;
+    background-color: white;
+    transform: translateY(-51px);
+    padding: 16px 48px;
+    border-radius: 14px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--black-color, $black-color);
+
+    @media (max-width: $max-width-mobile) {
+      padding: 10px 24px;
+      top: 20px;
+      left: 30%;
+      border-radius: 10px;
+    }
+  }
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+
+    @media (max-width: $max-width-mobile) {
+      display: block !important;
+      margin-bottom: 58px;
+    }
+
+    h1 {
+      color: var(--black-color, $black-color);
+      font-weight: 100;
+      font-size: 64px;
+      width: 564px;
+      line-height: 1;
+
+      @media (max-width: $max-width-mobile) {
+        width: 254px !important;
+        font-size: 28px !important;
+        margin-bottom: 16px !important;
+      }
+    }
+
+    p {
+      width: 438px;
+      font-size: 30px;
+      color: var(--gray-color, $gray-color);
+      font-weight: 100;
+      line-height: 1.3;
+      margin-bottom: 32px;
+
+      @media (max-width: $max-width-mobile) {
+        font-size: 18px !important;
+        width: 234px !important;
+      }
+    }
+
+    .text-and-img {
+      width: 317px;
+
+      @media (max-width: $max-width-mobile) {
+        display: flex;
+        text-align: right;
+      }
+
+      h1 {
+        width: 290px;
+        font-size: 42px;
+        margin: 16px 0;
+
+        @media (max-width: $max-width-laptop) {
+          font-size: 32px;
+          width: 210px !important;
+        }
+      }
+
+      span {
+        font-size: 18px;
+        color: var(--gray-color, $gray-color);
+
+        @media (max-width: $max-width-laptop) {
+          font-size: 14px !important;
+        }
+      }
+
+      p {
+        width: 257px;
+        font-size: 22px;
+        margin-bottom: 0;
+
+        @media (max-width: $max-width-laptop) {
+          font-size: 16px !important;
+          width: 210px !important;
+        }
+      }
+
+      .img-container {
+        @media (max-width: $max-width-mobile) {
+          display: flex;
+          align-items: center;
+          margin-top: 52px;
+          margin-right: 20px;
+        }
+      }
+
+      .connections {
+        margin-left: 27px;
+
+        @media (max-width: $max-width-mobile) {
+          transform: rotate(-90deg);
+          height: 102px;
+          margin: 0;
+        }
+      }
+
+      .star {
+        margin-left: 50px;
+
+        @media (max-width: $max-width-mobile) {
+          margin: 0 !important;
+          height: 94px;
+        }
+      }
+    }
+
+    .text-and-button {
+      span {
+        text-decoration: underline;
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      .button--primary {
+        @media (max-width: $max-width-mobile) {
+          position: absolute;
+          bottom: -60px;
+          left: 33%;
+          height: 32px;
+          min-width: 92px !important;
+        }
+      }
+
+      h1 {
+        font-size: 64px;
+        width: 564px;
+        margin-bottom: 32px;
+
+        @media (max-width: $max-width-laptop) {
+          font-size: 43px;
+          width: 514px;
+        }
+      }
+
+      p {
+        width: 438px;
+        font-size: 30px;
+
+        @media (max-width: $max-width-laptop) {
+          font-size: 26px;
+        }
+      }
+
+      p:last-child {
+        width: 412px;
+      }
+    }
+
+    .text-and-img:last-child {
+      margin-top: 28px;
+      width: auto;
+
+      h1 {
+        @media (max-width: $max-width-mobile) {
+          width: auto !important;
+        }
+      }
+
+      .img-container {
+        @media (max-width: $max-width-mobile) {
+          margin: 16px 0 !important;
+          align-items: flex-end !important;
+        }
+      }
+
+      @media (max-width: $max-width-mobile) {
+        flex-direction: row-reverse !important;
+        text-align: left !important;
+      }
+    }
+  }
+}

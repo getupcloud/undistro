@@ -1,0 +1,43 @@
+@import '~Styles/theme';
+
+.accordion-container {
+  font-size: 22px;
+  max-width: 1403px;
+  width: 100%;
+  margin: 24px;
+
+  @media (max-width: $max-width-laptop) {
+    width: 75%;
+  }
+
+  @media (max-width: $max-width-mobile) {
+    width: 94% !important;
+  }
+
+  .header {
+    background-color: var(--mid-light-gray-color, $mid-light-gray-color);
+    display: flex;
+    padding: 4px 16px;
+    align-items: center;
+    cursor: pointer;
+    justify-content: center;
+
+    .question {
+      flex: 1;
+      color: var(--black-color, $black-color);
+      font-weight: 500;
+    }
+
+    i {
+      color: var(--gray-color, $gray-color);
+      display: flex;
+    }
+  }
+
+  .answer {
+    padding: 0 16px;
+    margin: 16px 0 32px;
+    color: var(--black-color, $black-color);
+    line-height: 1.8;
+  }
+}

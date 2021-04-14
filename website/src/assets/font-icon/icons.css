@@ -1,0 +1,70 @@
+/* stylelint-disable */
+
+@font-face {
+    font-family: "icons";
+    src: url("./icons.eot?53520f39a94f5a567b3b9b3125373708?#iefix") format("embedded-opentype"),
+url("./icons.woff2?53520f39a94f5a567b3b9b3125373708") format("woff2"),
+url("./icons.woff?53520f39a94f5a567b3b9b3125373708") format("woff"),
+url("./icons.ttf?53520f39a94f5a567b3b9b3125373708") format("truetype"),
+url("./icons.svg?53520f39a94f5a567b3b9b3125373708#icons") format("svg");
+}
+
+i[class^="icon-"]:before, i[class*=" icon-"]:before {
+    font-family: icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-arrow-down:before {
+    content: "\f101";
+}
+.icon-arrow-left:before {
+    content: "\f102";
+}
+.icon-arrow-right:before {
+    content: "\f103";
+}
+.icon-arrow-up:before {
+    content: "\f104";
+}
+.icon-calendar:before {
+    content: "\f105";
+}
+.icon-check:before {
+    content: "\f106";
+}
+.icon-circle-check:before {
+    content: "\f107";
+}
+.icon-github:before {
+    content: "\f108";
+}
+.icon-hamburger:before {
+    content: "\f109";
+}
+.icon-insta:before {
+    content: "\f10a";
+}
+.icon-scheduled:before {
+    content: "\f10b";
+}
+.icon-search:before {
+    content: "\f10c";
+}
+.icon-slack:before {
+    content: "\f10d";
+}
+.icon-twitter:before {
+    content: "\f10e";
+}
+.icon-working:before {
+    content: "\f10f";
+}
+.icon-wrench:before {
+    content: "\f110";
+}

@@ -1,0 +1,121 @@
+@import '~Styles/theme';
+
+.benefits-container {
+  background-color: var(--extra-light-gray-color, $extra-light-gray-color);
+  height: 737px;
+
+  @media (max-width: $max-width-mobile) {
+    padding: 16px;
+    height: 640px;
+  }
+
+  .content-container {
+    padding: 32px 228px;
+    display: flex;
+    position: relative;
+
+    @media (max-width: $max-width-mobile) {
+      padding: 0 !important;
+    }
+
+    @media (max-width: $max-width-laptop) {
+      padding: 32px 92px;
+    }
+
+    .img-container {
+      position: absolute;
+      right: 120px;
+      bottom: 49px;
+
+      @media (max-width: $max-width-laptop) {
+        position: absolute;
+        right: 110px;
+        bottom: 17px;
+      }
+
+      img {
+        height: 538px;
+
+        @media (max-width: $max-width-mobile) {
+          display: none;
+        }
+
+        @media (max-width: $max-width-laptop) {
+          height: 486px;
+        }
+      }
+    }
+
+    .content {
+      width: 80%;
+
+      @media (max-width: $max-width-mobile) {
+        width: 100% !important;
+      }
+
+      @media (max-width: $max-width-laptop) {
+        width: 64%;
+      }
+
+      span {
+        font-weight: 600;
+      }
+
+      h1 {
+        font-size: 46px;
+        color: var(--black-color, $black-color);
+        font-weight: 100;
+
+        @media (max-width: $max-width-laptop) {
+          font-size: 36px;
+        }
+      }
+
+      p {
+        font-size: 22px;
+        line-height: 1.3;
+        color: var(--black-color, $black-color);
+        font-weight: 400;
+        margin: 16px 0;
+
+        @media (max-width: $max-width-laptop) {
+          font-size: 18px;
+        }
+      }
+
+      .bold-content {
+        font-size: 24px;
+        color: var(--black-color, $black-color);
+        display: flex;
+        justify-content: space-around;
+
+        @media (max-width: $max-width-mobile) {
+          display: block;
+          text-align: center;
+          align-items: center;
+        }
+
+        @media (max-width: $max-width-laptop) {
+          justify-content: space-between;
+        }
+
+        p {
+          font-weight: 600;
+          width: 309px;
+
+          @media (max-width: $max-width-mobile) {
+            width: auto !important;
+          }
+
+          @media (max-width: $max-width-laptop) {
+            width: 242px;
+          }
+        }
+
+        p:nth-child(2) {
+          padding: 0 16px;
+        }
+      }
+    }
+  }
+}

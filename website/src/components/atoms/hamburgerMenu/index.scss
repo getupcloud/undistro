@@ -1,0 +1,33 @@
+@import '~Styles/theme';
+
+.hamburger-menu {
+  position: relative;
+
+  i {
+    display: flex;
+    font-size: 22px;
+    color: var(--primary-color-darker, $primary-color-darker);
+  }
+
+  ul {
+    display: block;
+    font-size: 16px;
+    position: absolute;
+    left: -18px;
+    top: 32px;
+    font-weight: 500;
+    width: 176px;
+    box-shadow: 2px 2px 2px rgb(0 0 0 / 7%);
+    height: 216px;
+    background-color: white;
+    color: var(--black-color, $black-color);
+
+    li {
+      padding: 16px;
+
+      &:hover {
+        background-color: var(--light-gray-color, $light-gray-color);
+      }
+    }
+  }
+}

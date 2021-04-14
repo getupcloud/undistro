@@ -1,0 +1,76 @@
+@import '~Styles/theme';
+
+.cta-background {
+  background: linear-gradient(93.41deg, #131317 0%, #1d314f 100%), #c4c4c4;
+  opacity: 0.99;
+
+  .cta-container {
+    background: url('/src/assets/images/dc.png');
+    opacity: 1;
+    transition: opacity 0.9s ease 1000ms;
+    height: 347px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    @media (max-width: $max-width-mobile) {
+      height: 256px;
+    }
+
+    .content {
+      width: 842px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      text-align: end;
+      padding-right: 202px;
+
+      @media (max-width: $max-width-laptop) {
+        padding-right: 83px;
+      }
+
+      @media (max-width: $max-width-mobile) {
+        padding: 0;
+        align-items: center;
+      }
+
+      h1 {
+        font-size: 46px;
+        color: white;
+        font-weight: 100;
+        line-height: 56px;
+        text-transform: uppercase;
+
+        @media (max-width: $max-width-laptop) {
+          font-size: 36px;
+        }
+
+        @media (max-width: $max-width-mobile) {
+          width: 334px;
+          line-height: normal;
+        }
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 42px;
+
+        @media (max-width: $max-width-mobile) {
+          justify-content: space-around;
+          margin-top: 28px;
+        }
+
+        .button {
+          @media (max-width: $max-width-laptop) {
+            font-size: 18px;
+          }
+        }
+
+        .button:last-child {
+          margin-left: 16px;
+        }
+      }
+    }
+  }
+}

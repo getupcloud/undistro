@@ -1,0 +1,25 @@
+//default fonts and sizes
+$font-base: 'Montserrat', sans-serif;
+
+//default colors
+$primary-color: #00d9d9;
+$primary-color-dark: #00c9c9;
+$primary-color-darker: #27a3a4;
+$primary-color-light: #62ffff;
+
+$secondary-color: #01ffbf;
+$secondary-color-dark: darken($secondary-color, 20%);
+
+// gray scale
+$black-color: #666;
+$gray-color: #a5a5a5;
+$mid-gray-color: #cbc8c8;
+$mid-light-gray-color: #f5f6f6;
+$light-gray-color: #eee;
+$extra-light-gray-color: #efeff4;
+
+// media querys utility
+$max-width-laptop: 1520px;
+$max-width-laptop-small: 1366px;
+$max-width-tablet: 800px;
+$max-width-mobile: 500px;

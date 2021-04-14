@@ -1,0 +1,18 @@
+.main-container {
+  .undistro-logo {
+    height: 40px !important;
+  }
+
+  .button--read-more {
+    margin-top: 32px;
+  }
+
+  .buttons-cta {
+    height: 120px;
+    padding-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, #f6f6f6 0%, #fcfbfb 49.78%, #f6f6f6 100%);
+  }
+}

@@ -1,0 +1,153 @@
+@import '~Styles/theme';
+
+.roadmap-container {
+  background: url('/src/assets/images/dcBlur.png');
+  height: 423px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: $max-width-mobile) {
+    height: 426px !important;
+  }
+
+  @media (max-width: $max-width-laptop) {
+    height: 294px;
+  }
+
+  .content {
+    color: #fff;
+    width: 90%;
+
+    @media (max-width: $max-width-mobile) {
+      width: auto;
+    }
+
+    span {
+      font-weight: 500;
+    }
+
+    @media (max-width: $max-width-laptop) {
+      width: 94%;
+    }
+
+    h1 {
+      font-weight: 100;
+      font-size: 46px;
+      margin-bottom: 16px;
+      padding: 0 125px;
+
+      @media (max-width: $max-width-laptop) {
+        padding: 0 43px;
+        font-size: 36px;
+      }
+
+      @media (max-width: $max-width-mobile) {
+        padding: 0 !important;
+        margin: 0 !important;
+        margin-bottom: 28px !important;
+      }
+    }
+
+    .cards {
+      display: flex;
+      justify-content: space-between;
+      padding-left: 98px;
+
+      @media (max-width: $max-width-mobile) {
+        padding: 0 !important;
+        display: block;
+      }
+
+      @media (max-width: $max-width-laptop) {
+        padding-left: 22px;
+      }
+
+      .card {
+        width: 316px;
+        padding: 42px 32px;
+        border-radius: 14px;
+        position: relative;
+
+        @media (max-width: $max-width-mobile) {
+          padding: 8px 0 !important;
+          width: auto !important;
+        }
+
+        @media (max-width: $max-width-laptop) {
+          padding: 24px 24px;
+          width: 249px !important;
+        }
+
+        .title {
+          display: flex;
+
+          i {
+            font-size: 30px;
+            display: flex;
+            margin-top: 5px;
+            margin-right: 8px;
+
+            @media (max-width: $max-width-mobile) {
+              font-size: 20px;
+              margin-top: 0;
+              margin-right: 6px;
+            }
+          }
+
+          .icon-check {
+            color: var(--primary-color, $primary-color);
+          }
+
+          .icon-working {
+            color: #fff27e;
+          }
+
+          .icon-scheduled {
+            color: #fff;
+          }
+        }
+
+        h2 {
+          font-size: 34px;
+          margin-bottom: 8px;
+          font-weight: 500;
+
+          @media (max-width: $max-width-mobile) {
+            font-size: 18px !important;
+          }
+
+          @media (max-width: $max-width-laptop) {
+            font-size: 26px;
+          }
+        }
+
+        p {
+          font-size: 24px;
+          line-height: 1.2;
+
+          @media (max-width: $max-width-mobile) {
+            font-size: 14px !important;
+          }
+
+          @media (max-width: $max-width-laptop) {
+            font-size: 18px;
+          }
+        }
+
+        &:hover {
+          background-color: #6666666b;
+        }
+      }
+
+      .card:first-child {
+        width: 287px;
+
+        @media (max-width: $max-width-laptop) {
+          padding: 24px 24px;
+          width: 227px !important;
+        }
+      }
+    }
+  }
+}

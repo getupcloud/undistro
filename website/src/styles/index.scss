@@ -1,0 +1,48 @@
+@import '~Styles/theme';
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: $font-base;
+  -webkit-font-smoothing: antialiased;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar-track {
+    background-color: var(--extra-light-gray-color, $extra-light-gray-color);
+  }
+
+  &::-webkit-scrollbar {
+    width: 12px;
+    background-color: var(--extra-light-gray-color, $extra-light-gray-color);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    border: 3px solid var(--extra-light-gray-color, $extra-light-gray-color);
+    background-color: var(--gray-color, $gray-color);
+  }
+}
+
+body {
+  position: relative;
+}
+
+button {
+  outline: none;
+}
+
+#app {
+  position: relative;
+  min-height: 100vh;
+}
+
+@media (max-width: $max-width-mobile) {
+  h1 {
+    font-size: 24px !important;
+  }
+
+  p {
+    font-size: 14px !important;
+  }
+}

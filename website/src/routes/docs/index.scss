@@ -1,0 +1,260 @@
+@import '~Styles/theme';
+
+.docs-container {
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
+    color: #fff;
+    font-size: 17px;
+    line-height: 1.5;
+    border-radius: 4px;
+    background: #282c34;
+  }
+
+  .hljs-comment,
+  .hljs-quote {
+    color: #5c6370;
+    font-style: italic;
+  }
+
+  .hljs-doctag,
+  .hljs-keyword,
+  .hljs-formula {
+    color: #c678dd;
+  }
+
+  .hljs-section,
+  .hljs-name,
+  .hljs-selector-tag,
+  .hljs-deletion,
+  .hljs-subst {
+    color: #e06c75;
+  }
+
+  .hljs-literal {
+    color: #56b6c2;
+  }
+
+  .hljs-string,
+  .hljs-regexp,
+  .hljs-addition,
+  .hljs-attribute,
+  .hljs-meta-string {
+    color: #98c379;
+  }
+
+  .hljs-built_in,
+  .hljs-class .hljs-title {
+    color: #e6c07b;
+  }
+
+  .hljs-attr,
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-type,
+  .hljs-selector-class,
+  .hljs-selector-attr,
+  .hljs-selector-pseudo,
+  .hljs-number {
+    color: #d19a66;
+  }
+
+  .hljs-symbol,
+  .hljs-bullet,
+  .hljs-link,
+  .hljs-meta,
+  .hljs-selector-id,
+  .hljs-title {
+    color: #61aeee;
+  }
+
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .hljs-strong {
+    font-weight: bold;
+  }
+
+  .hljs-link {
+    text-decoration: underline;
+  }
+
+  .banner {
+    background: url('/src/assets/images/docs-banner.png');
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--black-color, $black-color);
+
+    @media (max-width: $max-width-mobile) {
+      display: none;
+    }
+
+    h1 {
+      font-weight: 100;
+      font-size: 46px;
+      padding: 16px 48px;
+      background-color: #fff;
+    }
+  }
+
+  .markdown-container {
+    display: flex;
+    padding: 0 52px 40px;
+
+    @media (max-width: $max-width-laptop) {
+      padding: 0 16px 40px;
+    }
+
+    @media (max-width: $max-width-mobile) {
+      padding: 8px 16px 72px !important;
+      display: block;
+    }
+
+    .content {
+      padding: 8px 108px;
+      border-radius: 4px;
+
+      @media (max-width: $max-width-mobile) {
+        padding: 0 !important;
+        width: auto !important;
+      }
+
+      @media (max-width: $max-width-laptop) {
+        width: 860px;
+        padding: 8px 60px;
+      }
+
+      img {
+        height: 840px;
+        margin-top: 16px;
+
+        @media (max-width: $max-width-mobile) {
+          height: 500px !important;
+        }
+      }
+
+      pre {
+        border-radius: 4px;
+      }
+
+      h1 {
+        position: relative;
+        scroll-margin-top: 86px;
+
+        &::before {
+          content: '';
+          width: 6px;
+          height: 40px;
+          left: -27px;
+          background-color: #dadada;
+          position: absolute;
+        }
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 16px 0;
+        font-weight: 500;
+        color: var(--black-color, $black-color);
+      }
+
+      a {
+        color: var(--primary-color-darker, $primary-color-darker);
+      }
+
+      p {
+        margin: 8px 0;
+        color: #828282;
+        line-height: 1.5;
+      }
+
+      li {
+        margin: 8px 0;
+        color: #828282;
+
+        @media (max-width: $max-width-mobile) {
+          margin: 8px 16px !important;
+        }
+      }
+
+      strong {
+        color: var(--black-color, $black-color);
+      }
+
+      table {
+        padding: 8px;
+        height: 195px;
+        border-radius: 4px;
+
+        @media (max-width: $max-width-mobile) {
+          padding: 0;
+        }
+
+        thead {
+          background-color: #282a36;
+          color: #ffff;
+
+          tr {
+            text-align: center;
+            height: 42px;
+
+            td {
+              padding: 0 24px;
+            }
+          }
+        }
+
+        tbody {
+          color: var(--black-color, $black-color);
+
+          tr {
+            text-align: center;
+
+            td {
+              padding: 0 24px;
+
+              @media (max-width: $max-width-mobile) {
+                padding: 0;
+              }
+            }
+          }
+
+          tr:nth-child(odd) {
+            background-color: #fff;
+          }
+
+          tr:nth-child(even) {
+            background-color: $light-gray-color;
+          }
+        }
+      }
+    }
+
+    .navigation {
+      position: relative;
+      box-shadow: 15px 15px 20px 0 rgba(#000, 0.04);
+      width: 508px;
+
+      @media (max-width: $max-width-mobile) {
+        display: none;
+      }
+
+      @media (max-width: $max-width-laptop) {
+        position: relative;
+        margin-right: 42px;
+      }
+
+      .sticky {
+        width: 100%;
+        position: sticky;
+        top: 94px;
+      }
+    }
+  }
+}

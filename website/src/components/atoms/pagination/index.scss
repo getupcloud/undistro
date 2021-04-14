@@ -1,0 +1,41 @@
+@import '~Styles/theme';
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+
+  .item {
+    color: var(--gray-color, $gray-color);
+    display: inline-block;
+    cursor: pointer;
+    padding: 3px 10px 4px 10px;
+    margin: 0 4px 0 4px;
+
+    &:hover:not(.disabled) {
+      color: var(--black-color, $black-color);
+      background-color: var(--extra-light-gray-color, $extra-light-gray-color);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    &.active {
+      color: var(--black-color, $black-color);
+      font-weight: 600;
+    }
+  }
+
+  i {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 4px;
+    color: var(--black-color, $black-color);
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}

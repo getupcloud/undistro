@@ -1,0 +1,121 @@
+@import '~Styles/theme';
+
+.community-route-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+
+  @media (max-width: $max-width-mobile) {
+    padding: 0 16px;
+  }
+
+  .horizontal-card-container {
+    @media (max-width: $max-width-mobile) {
+      width: auto;
+      height: 93px;
+    }
+
+    .left-text {
+      &::before {
+        @media (max-width: $max-width-mobile) {
+          height: 62px;
+        }
+      }
+
+      span {
+        @media (max-width: $max-width-mobile) {
+          font-size: 12px !important;
+          letter-spacing: 1px;
+        }
+      }
+
+      p {
+        @media (max-width: $max-width-mobile) {
+          font-size: 25px !important;
+        }
+      }
+    }
+
+    .right-text {
+      @media (max-width: $max-width-mobile) {
+        font-size: 12px !important;
+        width: auto;
+      }
+    }
+  }
+
+  .horizontal-card-container:last-child {
+    .left-text {
+      span {
+        margin-right: -4;
+        letter-spacing: 14px;
+
+        @media (max-width: $max-width-mobile) {
+          letter-spacing: 10px !important;
+        }
+      }
+
+      p {
+        padding-right: 9px;
+      }
+    }
+  }
+
+  .banner {
+    background: url('/src/assets/images/community-background.png');
+    height: 230px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media (max-width: $max-width-mobile) {
+      display: none;
+    }
+
+    h1 {
+      font-size: 46px;
+      font-weight: 100;
+      text-transform: uppercase;
+      color: var(--black-color, $black-color);
+      position: relative;
+      background-color: #fff;
+      padding: 87px 50px;
+    }
+  }
+
+  .community-content {
+    text-align: center;
+    margin: 32px 0;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+
+    @media (max-width: $max-width-mobile) {
+      text-align: center;
+      width: 303px;
+      margin: 62px auto 32px;
+    }
+
+    h1 {
+      font-size: 40px;
+      font-weight: 400;
+      color: var(--black-color, $black-color);
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      color: var(--black-color, $black-color);
+      font-weight: 100;
+      width: 582px;
+      line-height: 1.4;
+
+      @media (max-width: $max-width-mobile) {
+        width: auto;
+      }
+    }
+  }
+}

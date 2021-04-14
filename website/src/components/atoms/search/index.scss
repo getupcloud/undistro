@@ -1,0 +1,33 @@
+@import '~Styles/theme';
+
+.search {
+  position: relative;
+  min-width: 264px;
+  box-shadow: 0 3px 10px rgba(#000, 0.1);
+
+  input {
+    padding: 12px;
+    color: var(--gray-color, $gray-color);
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    border: 2px solid #fff;
+  }
+
+  input::placeholder {
+    font-size: 18px;
+    margin-top: 16px;
+  }
+
+  .icon-search {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    right: 13px;
+    display: flex;
+    color: var(--gray-color, $gray-color);
+    align-items: center;
+    justify-content: center;
+  }
+}

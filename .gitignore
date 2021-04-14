@@ -25,3 +25,10 @@ bin
 
 demos/
 undistro-config.yaml
+
+# Website ignore
+/node_modules/
+.DS_Store
+/dist/
+.env
+

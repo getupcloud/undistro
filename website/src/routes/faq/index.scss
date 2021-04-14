@@ -1,0 +1,60 @@
+@import '~Styles/theme';
+
+.faq-route-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+
+  .banner {
+    background: url('/src/assets/images/faq-banner.jpg');
+    height: 230px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media (max-width: $max-width-mobile) {
+      display: none;
+    }
+
+    .search-bar {
+      width: 424px;
+    }
+
+    h1 {
+      font-size: 46px;
+      font-weight: 100;
+      text-transform: uppercase;
+      margin-bottom: 52px;
+      color: var(--black-color, $black-color);
+      position: relative;
+      background-color: #fff;
+      padding: 4px 8px;
+
+      &::before,
+      &::after {
+        height: 21px;
+        width: 41px;
+        position: absolute;
+        content: '';
+      }
+
+      &::before {
+        left: -8px;
+        top: -8px;
+        border-left: 4px solid var(--primary-color-darker, $primary-color-darker);
+        border-top: 4px solid var(--primary-color-darker, $primary-color-darker);
+      }
+
+      &::after {
+        right: -8px;
+        bottom: -8px;
+        border-right: 4px solid var(--primary-color-darker, $primary-color-darker);
+        border-bottom: 4px solid var(--primary-color-darker, $primary-color-darker);
+      }
+    }
+  }
+}
