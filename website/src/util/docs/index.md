@@ -440,17 +440,17 @@ undistro get hr
 
 The overarching architecture of UnDistro is centered around a "management plane". This plane is expected to serve as a single interface upon which administrators can create, scale, upgrade, and delete Kubernetes clusters. At a high level view, the management plane + created clusters should look something like this:
 
-![Image of Architecture](./arch.png)
+![Image of Architecture](/src/assets/images/arch.png)
 
 # 9 - Diagrams
 
 ## Install
 
-![Image of Install](./../../../dist/install.png)
+![Image of Install](/src/assets/images/install.png)
 
 ## Usage
 
-![Image of Usage](./../../../dist/usage.png)
+![Image of Usage](/src/assets/images/usage.png)
 
 # 10 - Community
 

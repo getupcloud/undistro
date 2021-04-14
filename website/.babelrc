@@ -1,0 +1,12 @@
+{
+  "presets": [["@babel/preset-env", {
+    "targets": {
+      "browsers": ["last 2 versions", "ie >= 11"]
+    },
+    "useBuiltIns": "entry"
+  }],  "@babel/preset-react"],
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-transform-block-scoping"
+  ]
+}
