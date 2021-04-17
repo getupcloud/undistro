@@ -30,6 +30,7 @@ import (
 	"github.com/go-logr/logr"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	kerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -136,14 +137,14 @@ func (r *DefaultPoliciesReconciler) reconcile(ctx context.Context, log logr.Logg
 	if !meta.InReadyCondition(hr.Status.Conditions) {
 		return appv1alpha1.DefaultPoliciesNotReady(p, meta.WaitProvisionReason, "wait Kyverno to be installed"), ctrl.Result{Requeue: true}, nil
 	}
-	p, err = r.applyPolicies(ctx, clusterClient, p)
+	p, err = r.applyPolicies(ctx, log, clusterClient, p)
 	if err != nil {
 		appv1alpha1.DefaultPoliciesNotReady(p, meta.ArtifactFailedReason, err.Error())
 	}
 	return appv1alpha1.DefaultPoliciesReady(p), ctrl.Result{RequeueAfter: 30 * time.Second}, nil
 }
 
-func (r *DefaultPoliciesReconciler) applyPolicies(ctx context.Context, clusterClient client.Client, p appv1alpha1.DefaultPolicies) (appv1alpha1.DefaultPolicies, error) {
+func (r *DefaultPoliciesReconciler) applyPolicies(ctx context.Context, log logr.Logger, clusterClient client.Client, p appv1alpha1.DefaultPolicies) (appv1alpha1.DefaultPolicies, error) {
 	dir, err := fs.PoliciesFS.ReadDir("apps/policies")
 	if err != nil {
 		return p, err
@@ -161,6 +162,22 @@ func (r *DefaultPoliciesReconciler) applyPolicies(ctx context.Context, clusterCl
 			return p, err
 		}
 		for _, o := range objs {
+			if util.ContainsStringInSlice(p.Spec.ExcludePolicies, o.GetName()) {
+				// delete policy if exists
+				u := unstructured.Unstructured{}
+				u.SetGroupVersionKind(o.GroupVersionKind())
+				key := client.ObjectKey{
+					Name: o.GetName(),
+				}
+				err = clusterClient.Get(ctx, key, &u)
+				if !apierrors.IsNotFound(err) {
+					err = clusterClient.Delete(ctx, &u)
+					if err != nil {
+						log.V(2).Error(err, "can't exclude policy", "name", u.GetName())
+					}
+				}
+				continue
+			}
 			_, err = util.CreateOrUpdate(ctx, clusterClient, &o)
 			if err != nil {
 				return p, err
