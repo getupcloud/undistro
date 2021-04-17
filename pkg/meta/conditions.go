@@ -168,6 +168,7 @@ const (
 	ReconcileNodesFailed          string = "ReconcileNodesFailed"
 	ReconcileNetworkFailed        string = "ReconcileNetworkFailed"
 	ReconcileLaunchTemplateFailed string = "ReconcileLaunchTemplateFailed"
+	GetClusterFailed              string = "GetClusterFailed"
 )
 
 // InReadyCondition returns if the given Condition slice has a ReadyCondition

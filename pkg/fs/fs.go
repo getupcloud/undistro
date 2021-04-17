@@ -26,6 +26,12 @@ var FS embed.FS
 //go:embed frontend/*
 var frontFS embed.FS
 
+//go:embed apps/*
+var AppsFS embed.FS
+
+//go:embed apps/policies/*
+var PoliciesFS embed.FS
+
 func GetFrontendFS() (fs.FS, error) {
 	return fs.Sub(frontFS, "frontend")
 }

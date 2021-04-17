@@ -1,0 +1,7 @@
+apiVersion: app.undistro.io/v1alpha1
+kind: DefaultPolicies
+metadata:
+  name: defaultpolicies-sample
+  namespace: undistro-test
+spec:
+  clusterName: undistro-cluster

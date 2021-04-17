@@ -21,11 +21,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/getupio-undistro/undistro/pkg/test"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
+
+	"github.com/getupio-undistro/undistro/pkg/test"
 	// +kubebuilder:scaffold:imports
 )
 

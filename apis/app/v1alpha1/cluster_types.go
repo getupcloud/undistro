@@ -191,6 +191,15 @@ type Cluster struct {
 	Status ClusterStatus `json:"status,omitempty"`
 }
 
+func (c Cluster) HasInfraNodes() bool {
+	for _, w := range c.Spec.Workers {
+		if w.InfraNode {
+			return true
+		}
+	}
+	return false
+}
+
 func (c Cluster) GetTemplate() string {
 	return fmt.Sprintf("%s/%s", c.Spec.InfrastructureProvider.Name, c.Spec.InfrastructureProvider.Flavor)
 }

@@ -1,0 +1,34 @@
+---
+apiVersion: app.undistro.io/v1alpha1
+kind: HelmRelease
+metadata:
+  name: "kyverno-{{.Cluster.Name}}"
+  namespace: "{{.Cluster.Namespace}}"
+spec:
+  beforeApplyObjects:
+    -
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: kyverno
+  targetNamespace: kyverno
+  chart:
+    repository: https://kyverno.github.io/kyverno/
+    name: kyverno
+    version: 1.3.4
+  values:
+    resources:                 
+      limits:                  
+        memory: 2Gi            
+        cpu: 2000m             
+      requests:                
+        cpu: 500m              
+        memory: 500Mi
+    {{if .Cluster.HasInfraNodes}}
+    tolerations:                   
+    - effect: NoSchedule           
+      key: dedicated               
+      value: infra                 
+    nodeSelector:                  
+      role.undistro.io/infra: true
+    {{end}}
