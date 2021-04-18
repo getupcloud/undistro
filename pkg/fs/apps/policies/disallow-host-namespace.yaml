@@ -1,0 +1,40 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kyverno
+    meta.helm.sh/release-namespace: kyverno
+    policies.kyverno.io/category: Pod Security Standards (Default)
+    policies.kyverno.io/description:
+      Host namespaces (Process ID namespace, Inter-Process
+      Communication namespace, and network namespace) allow access to shared information
+      and can be used to elevate privileges. Pods should not be allowed access to
+      host namespaces.
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: disallow-host-namespace
+spec:
+  background: true
+  rules:
+    - match:
+        resources:
+          kinds:
+            - Pod
+      name: host-namespaces
+      exclude:
+        resources:
+          namespaces:
+            - ingress-*
+            - linkerd
+            - cattle-*
+            - undistro-system
+      validate:
+        message:
+          Sharing the host namespaces is disallowed. The fields spec.hostNetwork,
+          spec.hostIPC, and spec.hostPID must not be set to true.
+        pattern:
+          spec:
+            =(hostIPC): "false"
+            =(hostNetwork): "false"
+            =(hostPID): "false"
+  validationFailureAction: enforce

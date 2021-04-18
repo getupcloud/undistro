@@ -1,0 +1,42 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kyverno
+    meta.helm.sh/release-namespace: kyverno
+    policies.kyverno.io/category: Pod Security Standards (Default)
+    policies.kyverno.io/description:
+      Access to host ports allows potential snooping
+      of network traffic and should not be allowed, or at minimum restricted to a
+      known list.
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: disallow-host-port
+spec:
+  background: true
+  rules:
+    - match:
+        resources:
+          kinds:
+            - Pod
+      name: host-ports
+      exclude:
+        resources:
+          namespaces:
+            - linkerd-*
+            - cattle-*
+            - ingress-*
+            - undistro-system
+      validate:
+        message:
+          Use of host ports is disallowed. The fields spec.containers[*].ports[*].hostPort
+          and spec.initContainers[*].ports[*].hostPort must be empty.
+        pattern:
+          spec:
+            =(initContainers):
+              - =(ports):
+                  - X(hostPort): 0
+            containers:
+              - =(ports):
+                  - X(hostPort): 0
+  validationFailureAction: enforce

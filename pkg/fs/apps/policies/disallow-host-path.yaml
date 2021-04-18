@@ -1,0 +1,38 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kyverno
+    meta.helm.sh/release-namespace: kyverno
+    policies.kyverno.io/category: Pod Security Standards (Default)
+    policies.kyverno.io/description:
+      HostPath volumes let pods use host directories
+      and volumes in containers. Using host resources can be used to access shared
+      data or escalate privileges and should not be allowed.
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: disallow-host-path
+spec:
+  background: true
+  rules:
+    - match:
+        resources:
+          kinds:
+            - Pod
+      name: host-path
+      exclude:
+        resources:
+          namespaces:
+            - ingress-*
+            - cattle-*
+            - linkerd-*
+            - undistro-system
+      validate:
+        message:
+          HostPath volumes are forbidden. The fields spec.volumes[*].hostPath
+          must not be set.
+        pattern:
+          spec:
+            =(volumes):
+              - X(hostPath): "null"
+  validationFailureAction: enforce
