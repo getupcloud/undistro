@@ -83,9 +83,12 @@ func (r *DefaultPoliciesReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			Namespace: p.GetNamespace(),
 		}
 		err = r.Get(ctx, key, cl)
-		if err != nil && !apierrors.IsNotFound(err) {
+		if client.IgnoreNotFound(err) != nil {
 			return ctrl.Result{}, err
 		}
+	} else {
+		cl.Name = "management"
+		cl.Namespace = "undistro-system"
 	}
 	if !p.DeletionTimestamp.IsZero() {
 		return r.reconcileDelete(ctx, &p, cl)
@@ -98,8 +101,28 @@ func (r *DefaultPoliciesReconciler) reconcileDelete(ctx context.Context, p *appv
 	if p.Spec.ClusterName != "" && cl.Name != "" {
 		return ctrl.Result{Requeue: true}, nil
 	}
-	controllerutil.RemoveFinalizer(p, meta.Finalizer)
-	return ctrl.Result{}, nil
+	hr := appv1alpha1.HelmRelease{}
+	key := client.ObjectKey{
+		Name:      fmt.Sprintf("kyverno-%s", cl.Name),
+		Namespace: p.GetNamespace(),
+	}
+	err := r.Get(ctx, key, &hr)
+	if err != nil {
+		if client.IgnoreNotFound(err) != nil {
+			return ctrl.Result{}, err
+		}
+		controllerutil.RemoveFinalizer(p, meta.Finalizer)
+		_, err = util.CreateOrUpdate(ctx, r.Client, p)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, nil
+	}
+	err = r.Delete(ctx, &hr)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	return ctrl.Result{Requeue: true}, nil
 }
 
 func (r *DefaultPoliciesReconciler) reconcile(ctx context.Context, log logr.Logger, p appv1alpha1.DefaultPolicies, cl *appv1alpha1.Cluster) (appv1alpha1.DefaultPolicies, ctrl.Result, error) {
@@ -118,10 +141,6 @@ func (r *DefaultPoliciesReconciler) reconcile(ctx context.Context, log logr.Logg
 			return appv1alpha1.DefaultPoliciesNotReady(p, meta.GetClusterFailed, err.Error()), ctrl.Result{}, err
 		}
 	}
-	p, err = r.installKyverno(ctx, clusterClient, p, cl)
-	if err != nil {
-		return appv1alpha1.DefaultPoliciesNotReady(p, meta.ObjectsApliedFailedReason, err.Error()), ctrl.Result{}, err
-	}
 	hr := appv1alpha1.HelmRelease{}
 	key := client.ObjectKey{
 		Name:      fmt.Sprintf("kyverno-%s", cl.Name),
@@ -129,10 +148,13 @@ func (r *DefaultPoliciesReconciler) reconcile(ctx context.Context, log logr.Logg
 	}
 	err = r.Get(ctx, key, &hr)
 	if err != nil {
-		if apierrors.IsNotFound(err) {
-			return p, ctrl.Result{Requeue: true}, nil
+		if client.IgnoreNotFound(err) != nil {
+			return p, ctrl.Result{}, err
 		}
-		return p, ctrl.Result{}, err
+		p, err = r.installKyverno(ctx, clusterClient, p, cl)
+		if err != nil {
+			return appv1alpha1.DefaultPoliciesNotReady(p, meta.ObjectsApliedFailedReason, err.Error()), ctrl.Result{}, err
+		}
 	}
 	if !meta.InReadyCondition(hr.Status.Conditions) {
 		return appv1alpha1.DefaultPoliciesNotReady(p, meta.WaitProvisionReason, "wait Kyverno to be installed"), ctrl.Result{Requeue: true}, nil
@@ -145,7 +167,7 @@ func (r *DefaultPoliciesReconciler) reconcile(ctx context.Context, log logr.Logg
 }
 
 func (r *DefaultPoliciesReconciler) applyPolicies(ctx context.Context, log logr.Logger, clusterClient client.Client, p appv1alpha1.DefaultPolicies) (appv1alpha1.DefaultPolicies, error) {
-	dir, err := fs.PoliciesFS.ReadDir("apps/policies")
+	dir, err := fs.PoliciesFS.ReadDir("policies")
 	if err != nil {
 		return p, err
 	}

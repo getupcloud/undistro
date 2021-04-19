@@ -500,6 +500,15 @@ func (r *HelmReleaseReconciler) reconcileDelete(ctx context.Context, logger logr
 	if err != nil {
 		return ctrl.Result{}, err
 	}
+	l, err := runner.List()
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	for _, i := range l {
+		if i.Name == hr.Spec.ReleaseName {
+			return ctrl.Result{Requeue: true}, nil
+		}
+	}
 	// Remove our finalizer from the list and update it.
 	controllerutil.RemoveFinalizer(&hr, meta.Finalizer)
 	_, err = util.CreateOrUpdate(ctx, r.Client, &hr)

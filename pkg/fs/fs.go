@@ -29,7 +29,7 @@ var frontFS embed.FS
 //go:embed apps/*
 var AppsFS embed.FS
 
-//go:embed apps/policies/*
+//go:embed policies/*
 var PoliciesFS embed.FS
 
 func GetFrontendFS() (fs.FS, error) {

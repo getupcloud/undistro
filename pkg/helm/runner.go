@@ -18,6 +18,7 @@ package helm
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/go-logr/logr"
@@ -69,7 +70,11 @@ func (r *Runner) Upgrade(hr appv1alpha1.HelmRelease, chart *chart.Chart, values 
 	upgrade.Wait = *hr.Spec.Wait
 	upgrade.Force = hr.Spec.ForceUpgrade
 	upgrade.CleanupOnFail = true
-	return upgrade.Run(hr.Spec.ReleaseName, chart, values.AsMap())
+	rel, err := upgrade.Run(hr.Spec.ReleaseName, chart, values.AsMap())
+	if err != nil && errors.Is(err, driver.ErrNoDeployedReleases) {
+		rel, err = r.Install(hr, chart, values)
+	}
+	return rel, err
 }
 
 // Test runs an Helm test action for the given v2beta1.HelmRelease.
@@ -100,8 +105,10 @@ func (r *Runner) Uninstall(hr appv1alpha1.HelmRelease) error {
 	uninstall.Timeout = hr.Spec.Timeout.Duration
 	uninstall.DisableHooks = false
 	uninstall.KeepHistory = *hr.Spec.MaxHistory > 0
-
 	_, err := uninstall.Run(hr.Spec.ReleaseName)
+	if err != nil && strings.Contains(err.Error(), "is already deleted") {
+		err = nil
+	}
 	return err
 }
 
