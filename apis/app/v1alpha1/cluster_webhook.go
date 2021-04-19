@@ -135,13 +135,14 @@ func (r *Cluster) validate(old *Cluster) error {
 			"kubernetesVersion must to be a semantic versioning",
 		))
 	}
+	const immutableMsg = "field is immutable"
 	if old != nil && r.Spec.ControlPlane != nil && !r.Spec.InfrastructureProvider.IsManaged() {
 		if !reflect.DeepEqual(old.Spec.ControlPlane.Endpoint, capi.APIEndpoint{}) &&
 			!reflect.DeepEqual(r.Spec.ControlPlane.Endpoint, old.Spec.ControlPlane.Endpoint) {
 			allErrs = append(allErrs, field.Invalid(
 				field.NewPath("spec", "controlPlane", "endpoint"),
 				r.Spec.ControlPlane.Endpoint,
-				"field is immutable",
+				immutableMsg,
 			))
 		}
 	}
@@ -152,6 +153,14 @@ func (r *Cluster) validate(old *Cluster) error {
 			}
 		}
 	}
+	if old != nil && r.Spec.InfrastructureProvider.Region != old.Spec.InfrastructureProvider.Region {
+		allErrs = append(allErrs, field.Invalid(
+			field.NewPath("spec", "infrastrutureProvider", "region"),
+			r.Spec.InfrastructureProvider.Region,
+			immutableMsg,
+		))
+	}
+
 	if len(allErrs) == 0 {
 		return nil
 	}
