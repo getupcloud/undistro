@@ -1,7 +1,7 @@
 builds:
   - binary: undistro
     main: ./cmd/undistro/main.go
-    ldflags: -X github.com/getupio-undistro/undistro/pkg/version.buildDate={{.Date}} -X github.com/getupio-undistro/undistro/pkg/version.gitCommit={{.ShortCommit}} -X github.com/getupio-undistro/undistro/pkg/version.gitTreeState=clean -X github.com/getupio-undistro/undistro/pkg/version.gitMajor={{.Major}} -X github.com/getupio-undistro/undistro/pkg/version.gitMinor={{.Minor}} -X github.com/getupio-undistro/undistro/pkg/version.gitVersion={{.Version}} -X github.com/getupio-undistro/undistro/pkg/version.gitReleaseCommit={{.ShortCommit}}
+    ldflags: -X github.com/getupio-undistro/undistro/pkg/version.buildDate={{.Env.BUILD_DATETIME}} -X github.com/getupio-undistro/undistro/pkg/version.gitCommit={{.Env.BUILD_COMMIT}} -X github.com/getupio-undistro/undistro/pkg/version.gitTreeState={{.Env.BUILD_STATE}} -X github.com/getupio-undistro/undistro/pkg/version.gitMajor={{.Env.GIT_MAJOR}} -X github.com/getupio-undistro/undistro/pkg/version.gitMinor={{.Env.GIT_MINOR}} -X github.com/getupio-undistro/undistro/pkg/version.gitVersion={{.Env.GIT_VERSION}} -X github.com/getupio-undistro/undistro/pkg/version.gitReleaseCommit={{.Env.RELEASE_COMMIT}}
     goos:
       - darwin
       - linux
