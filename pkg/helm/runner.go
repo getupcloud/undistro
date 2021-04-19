@@ -16,24 +16,30 @@ limitations under the License.
 package helm
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	"github.com/getupio-undistro/undistro/pkg/scheme"
 	"github.com/go-logr/logr"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage/driver"
+	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // Runner represents a Helm action runner capable of performing Helm
 // operations for a v2beta1.HelmRelease.
 type Runner struct {
 	config *action.Configuration
+	client client.Client
 }
 
 // NewRunner constructs a new Runner configured to run Helm actions with the
@@ -44,7 +50,17 @@ func NewRunner(getter genericclioptions.RESTClientGetter, storageNamespace strin
 	if err := cfg.Init(getter, storageNamespace, "secret", debugLogger(logger)); err != nil {
 		return nil, err
 	}
-	return &Runner{config: cfg}, nil
+	cf, err := getter.ToRESTConfig()
+	if err != nil {
+		return nil, err
+	}
+	c, err := client.New(cf, client.Options{
+		Scheme: scheme.Scheme,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &Runner{config: cfg, client: c}, nil
 }
 
 // Install runs an Helm install action for the given v2beta1.HelmRelease.
@@ -56,6 +72,7 @@ func (r *Runner) Install(hr appv1alpha1.HelmRelease, chart *chart.Chart, values 
 	install.Wait = *hr.Spec.Wait
 	install.SkipCRDs = hr.Spec.SkipCRDs
 	install.DependencyUpdate = true
+	install.CreateNamespace = true
 	return install.Run(chart, values.AsMap())
 }
 
@@ -68,12 +85,10 @@ func (r *Runner) Upgrade(hr appv1alpha1.HelmRelease, chart *chart.Chart, values 
 	upgrade.MaxHistory = *hr.Spec.MaxHistory
 	upgrade.Timeout = hr.Spec.Timeout.Duration
 	upgrade.Wait = *hr.Spec.Wait
-	upgrade.Force = hr.Spec.ForceUpgrade
+	upgrade.Force = *hr.Spec.ForceUpgrade
 	upgrade.CleanupOnFail = true
+
 	rel, err := upgrade.Run(hr.Spec.ReleaseName, chart, values.AsMap())
-	if err != nil && errors.Is(err, driver.ErrNoDeployedReleases) {
-		rel, err = r.Install(hr, chart, values)
-	}
 	return rel, err
 }
 
@@ -109,7 +124,17 @@ func (r *Runner) Uninstall(hr appv1alpha1.HelmRelease) error {
 	if err != nil && strings.Contains(err.Error(), "is already deleted") {
 		err = nil
 	}
-	return err
+	ctx := context.TODO()
+	key := client.ObjectKey{
+		Name:      fmt.Sprintf("sh.helm.release.v1.%s.v1", hr.Spec.ReleaseName),
+		Namespace: hr.GetNamespace(),
+	}
+	s := corev1.Secret{}
+	err = r.client.Get(ctx, key, &s)
+	if apierrors.IsNotFound(err) {
+		return nil
+	}
+	return r.client.Delete(ctx, &s)
 }
 
 func (r *Runner) Status(hr appv1alpha1.HelmRelease) (*release.Release, error) {

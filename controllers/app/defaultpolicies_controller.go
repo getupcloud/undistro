@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"time"
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
@@ -175,7 +176,8 @@ func (r *DefaultPoliciesReconciler) applyPolicies(ctx context.Context, log logr.
 		if f.IsDir() {
 			continue
 		}
-		byt, err := fs.PoliciesFS.ReadFile(f.Name())
+
+		byt, err := fs.PoliciesFS.ReadFile(filepath.Join("policies", f.Name()))
 		if err != nil {
 			return p, err
 		}

@@ -89,6 +89,10 @@ func (r *HelmRelease) Default() {
 		h := 10
 		r.Spec.MaxHistory = &h
 	}
+	if r.Spec.ForceUpgrade == nil {
+		force := true
+		r.Spec.ForceUpgrade = &force
+	}
 	for i := range r.Spec.ValuesFrom {
 		if r.Spec.ValuesFrom[i].ValuesKey == "" {
 			r.Spec.ValuesFrom[i].ValuesKey = "values.yaml"

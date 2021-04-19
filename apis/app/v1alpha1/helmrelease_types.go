@@ -148,7 +148,7 @@ type HelmReleaseSpec struct {
 	Wait *bool `json:"wait,omitempty"`
 	// Force will mark this Helm release to `--force` upgrades. This
 	// forces the resource updates through delete/recreate if needed.
-	ForceUpgrade bool `json:"forceUpgrade,omitempty"`
+	ForceUpgrade *bool `json:"forceUpgrade,omitempty"`
 	// The rollback settings for this Helm release.
 	Rollback Rollback `json:"rollback,omitempty"`
 	// The test settings for this Helm release.

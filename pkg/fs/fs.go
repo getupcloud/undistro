@@ -29,7 +29,14 @@ var frontFS embed.FS
 //go:embed apps/*
 var AppsFS embed.FS
 
-//go:embed policies/*
+//go:embed policies/disallow-add-capabilities.yaml
+//go:embed policies/disallow-default-namespace.yaml
+//go:embed policies/disallow-delete-kyverno.yaml
+//go:embed policies/disallow-host-namespace.yaml
+//go:embed policies/disallow-host-path.yaml
+//go:embed policies/disallow-host-port.yaml
+//go:embed policies/disallow-latest-tag.yaml
+//go:embed policies/require-resources.yaml
 var PoliciesFS embed.FS
 
 func GetFrontendFS() (fs.FS, error) {

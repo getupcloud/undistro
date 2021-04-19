@@ -422,6 +422,11 @@ func (in *HelmReleaseSpec) DeepCopyInto(out *HelmReleaseSpec) {
 		*out = new(bool)
 		**out = **in
 	}
+	if in.ForceUpgrade != nil {
+		in, out := &in.ForceUpgrade, &out.ForceUpgrade
+		*out = new(bool)
+		**out = **in
+	}
 	in.Rollback.DeepCopyInto(&out.Rollback)
 	in.Test.DeepCopyInto(&out.Test)
 	if in.Values != nil {
