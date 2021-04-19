@@ -27,7 +27,6 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/kubectl/pkg/cmd/apiresources"
 	"k8s.io/kubectl/pkg/cmd/apply"
-	"k8s.io/kubectl/pkg/cmd/create"
 	"k8s.io/kubectl/pkg/cmd/delete"
 	"k8s.io/kubectl/pkg/cmd/logs"
 	"k8s.io/kubectl/pkg/cmd/patch"
@@ -94,7 +93,6 @@ func NewUndistroCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	cfgFlags.AddFlags(flags, flag.CommandLine)
 	ioStreams := genericclioptions.IOStreams{In: in, Out: out, ErrOut: err}
 	f := cmdutil.NewFactory(cfgFlags)
-	cmd.AddCommand(create.NewCmdCreate(f, ioStreams))
 	cmd.AddCommand(delete.NewCmdDelete(f, ioStreams))
 	cmd.AddCommand(patch.NewCmdPatch(f, ioStreams))
 	cmd.AddCommand(apply.NewCmdApply("undistro", f, ioStreams))
@@ -102,6 +100,7 @@ func NewUndistroCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	cmd.AddCommand(apiresources.NewCmdAPIVersions(f, ioStreams))
 	cmd.AddCommand(apiresources.NewCmdAPIResources(f, ioStreams))
 	cmd.AddCommand(NewCmdGet(f, ioStreams))
+	cmd.AddCommand(NewCmdCreate(f, ioStreams))
 	cmd.AddCommand(NewCmdInstall(cfgFlags, ioStreams))
 	cmd.AddCommand(NewCmdMove(cfgFlags, ioStreams))
 	cmd.AddCommand(NewCmdShowProgress(f, ioStreams))
