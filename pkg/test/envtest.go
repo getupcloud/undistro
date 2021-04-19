@@ -97,9 +97,9 @@ func NewEnvironment() *Environment {
 	if err = (&configv1alpha1.Provider{}).SetupWebhookWithManager(mgr); err != nil {
 		klog.Fatalln(err, "unable to create webhook", "webhook", "Provider")
 	}
-	if err = (&appv1alpha1.Cluster{}).SetupWebhookWithManager(mgr); err != nil {
-		klog.Fatalln(err, "unable to create webhook", "webhook", "Cluster")
-	}
+	// if err = (&appv1alpha1.Cluster{}).SetupWebhookWithManager(mgr); err != nil {
+	// 	klog.Fatalln(err, "unable to create webhook", "webhook", "Cluster")
+	// }
 	if err = (&appv1alpha1.HelmRelease{}).SetupWebhookWithManager(mgr); err != nil {
 		klog.Fatalln(err, "unable to create webhook", "webhook", "HelmRelease")
 	}
