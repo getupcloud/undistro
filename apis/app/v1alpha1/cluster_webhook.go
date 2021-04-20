@@ -160,7 +160,12 @@ func (r *Cluster) validate(old *Cluster) error {
 			immutableMsg,
 		))
 	}
-
+	if r.Spec.InfrastructureProvider.Name == "aws" && r.Spec.InfrastructureProvider.Flavor == "ec2" && r.Spec.InfrastructureProvider.SSHKey == "" {
+		allErrs = append(allErrs, field.Required(
+			field.NewPath("spec", "infrastructureProvider", "sshKey"),
+			"sshKey is required when flavor is ec2",
+		))
+	}
 	if len(allErrs) == 0 {
 		return nil
 	}

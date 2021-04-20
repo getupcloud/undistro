@@ -85,7 +85,12 @@ func (o *ClusterOptions) validateInfraFlavor() error {
 	switch o.Infra {
 	case "aws":
 		switch o.Flavor {
-		case "ec2", "eks":
+		case "eks":
+			return nil
+		case "ec2":
+			if o.SshKeyName == "" {
+				return errors.New("ssh-key-name is required to favor ec2")
+			}
 			return nil
 		default:
 			return errors.Errorf("unknown flavor: %s", o.Flavor)
