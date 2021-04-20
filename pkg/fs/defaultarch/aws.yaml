@@ -24,7 +24,9 @@ spec:
       machineType:  m5.large
   infrastructureProvider:
     name: aws
+    {{if .SSHKey}}
     sshKey: {{.SSHKey}}
+    {{end}}
     region: {{.Region}}
     flavor: {{.Flavor}}
 ---

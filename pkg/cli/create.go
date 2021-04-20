@@ -18,8 +18,9 @@ package cli
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 
+	"github.com/getupio-undistro/undistro/pkg/cloud"
 	"github.com/getupio-undistro/undistro/pkg/fs"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
 	"github.com/getupio-undistro/undistro/pkg/template"
@@ -105,7 +106,10 @@ func (o *ClusterOptions) setRegionByInfra(ctx context.Context, c client.Client) 
 	if err != nil {
 		return err
 	}
-	byt := s.Data["region"]
+	byt, ok := s.Data["region"]
+	if !ok {
+		byt = []byte(cloud.DefaultRegion(o.Infra))
+	}
 	o.Region = string(byt)
 	if o.Region == "" {
 		return errors.New("default region is not set. Use --region to set a region to create a cluster")
@@ -149,13 +153,18 @@ func (o *ClusterOptions) RunCreateCluster(f cmdutil.Factory, cmd *cobra.Command)
 		}
 	}
 	if o.GenerateFile {
-		byt, err := yaml.Marshal(objs)
+		f, err := os.Create(fmt.Sprintf("%s.yaml", o.ClusterName))
 		if err != nil {
 			return err
 		}
-		fname := fmt.Sprintf("%s.yaml", o.ClusterName)
-		if err := ioutil.WriteFile(fname, byt, 0644); err != nil {
-			return err
+		defer f.Close()
+		for _, o := range objs {
+			f.WriteString("---\n")
+			byt, err := yaml.Marshal(o)
+			if err != nil {
+				return err
+			}
+			f.Write(byt)
 		}
 	}
 	return nil

@@ -45,7 +45,7 @@ import (
 )
 
 const (
-	defaultAWSRegion       = "us-east-1"
+	DefaultAWSRegion       = "us-east-1"
 	name                   = "undistro-aws-config"
 	namespace              = "undistro-system"
 	key                    = "credentials"
@@ -314,7 +314,7 @@ func credentialsFromSecret(s *corev1.Secret) (awsCredentials, error) {
 		SessionToken:    getData(s, "sessionToken"),
 	}
 	if cred.Region == "" {
-		cred.Region = defaultAWSRegion
+		cred.Region = DefaultAWSRegion
 	}
 	return cred, nil
 }

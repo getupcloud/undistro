@@ -95,6 +95,14 @@ func InstallTools(ctx context.Context, streams genericclioptions.IOStreams, prov
 	return nil
 }
 
+func DefaultRegion(infra string) string {
+	switch infra {
+	case "aws":
+		return aws.DefaultAWSRegion
+	}
+	return ""
+}
+
 func GetAccount(ctx context.Context, c client.Client, cl *appv1alpha1.Cluster) (Account, error) {
 	switch cl.Spec.InfrastructureProvider.Name {
 	case "aws":
