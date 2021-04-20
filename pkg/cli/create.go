@@ -160,7 +160,7 @@ func (o *ClusterOptions) RunCreateCluster(f cmdutil.Factory, cmd *cobra.Command)
 		defer f.Close()
 		for _, o := range objs {
 			f.WriteString("---\n")
-			byt, err := yaml.Marshal(o)
+			byt, err := yaml.Marshal(o.Object)
 			if err != nil {
 				return err
 			}
