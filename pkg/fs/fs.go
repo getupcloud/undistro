@@ -29,6 +29,9 @@ var frontFS embed.FS
 //go:embed apps/*
 var AppsFS embed.FS
 
+//go:embed defaultarch/*
+var DefaultArchFS embed.FS
+
 //go:embed policies/disallow-add-capabilities.yaml
 //go:embed policies/disallow-default-namespace.yaml
 //go:embed policies/disallow-delete-kyverno.yaml

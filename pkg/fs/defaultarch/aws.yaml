@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{.Namespace}}
+---
+apiVersion: app.undistro.io/v1alpha1
+kind: Cluster
+metadata:
+  name: {{.Name}}
+  namespace: {{.Namespace}}
+spec:
+  kubernetesVersion: {{.K8sVersion}}
+  {{if eq .Flavor "ec2"}}
+  controlPlane:
+    replicas: 3
+    machineType: m5.large
+  {{end}}
+  workers:
+    - replicas: 2
+      machineType:  m5.large
+    - replicas: 2
+      infaNode: true
+      machineType:  m5.large
+  infrastructureProvider:
+    name: aws
+    sshKey: {{.SSHKey}}
+    region: {{.Region}}
+    flavor: {{.Flavor}}
+---
+apiVersion: app.undistro.io/v1alpha1
+kind: DefaultPolicies
+metadata:
+  name: "defaultpolicies-{{.Name}}"
+  namespace: {{.Namespace}}
+spec:
+  clusterName: {{.Name}}
