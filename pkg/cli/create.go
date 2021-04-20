@@ -29,6 +29,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/kubectl/pkg/cmd/create"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
@@ -165,6 +166,8 @@ func (o *ClusterOptions) RunCreateCluster(f cmdutil.Factory, cmd *cobra.Command)
 		defer f.Close()
 		for _, o := range objs {
 			f.WriteString("---\n")
+			o.SetResourceVersion("") // fields if exists
+			o.SetUID(types.UID(""))
 			byt, err := yaml.Marshal(o.Object)
 			if err != nil {
 				return err
