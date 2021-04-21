@@ -13,7 +13,7 @@
     "deploy:dev": "npm run build && aws s3 rm s3://hlg.undistro.io --recursive && aws s3 sync dist/ s3://hlg.undistro.io --acl public-read"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache 2.0",
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
     "@mdx-js/mdx": "^1.6.22",

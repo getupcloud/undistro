@@ -1,0 +1,35 @@
+name: HLG Website
+
+on:
+  push:
+    paths:
+      - "website/**"
+    tags:
+      - "*"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Node 15
+        uses: actions/node@v2
+        with:
+          node-version: "15"
+        id: node
+
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS credentials for Website
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.WEBSITE_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.WEBSITE_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Publish site on undistro.io
+        working-directory: ./website
+        run: npm run deploy:prod
