@@ -1,0 +1,19 @@
+area:
+  - "CLI"
+  - "cluster"
+  - "helm"
+  - "GUI"
+  - "policy"
+  - "cluster-api"
+  - "monitoring"
+  - "docs"
+
+kind:
+  - "bug"
+  - "feature"
+  - "enhancement"
+
+priority:
+  - "low"
+  - "mid"
+  - "high"
