@@ -1,8 +1,7 @@
 name: "Merge on lgtm label"
 on:
   schedule:
-    - cron: "* * * * *"
-
+    - cron: "*/5 * * * *"
 jobs:
   execute:
     runs-on: ubuntu-latest
