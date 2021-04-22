@@ -1,4 +1,8 @@
-# 1 - Glossary
+# 1 - Quick Start
+
+Siga esses passos e crie seu primeiro cluster com a UnDistro facilmente
+
+# 2 - Glossary
 
 Find below a glossary to help to clarify the doc content
 
@@ -18,7 +22,7 @@ UnDistro part that is responsible to communicate with any infrastructure that Un
 
 UnDistro and all required dependencies
 
-# 2 - Introduction
+# 3 - Introduction
 
 ## What is UnDistro (will be in version 1.0.0)?
 
@@ -32,7 +36,7 @@ By providing managed Kubernetes clusters for your infrastructure, UnDistro makes
 
 UnDistro provides live updates of your Kubernetes cluster without disrupting your daily business.
 
-# 3 - Installing UnDistro
+# 4 - Installing UnDistro
 
 UnDistro requires an existing Kubernetes cluster accessible via kubectl. During the installation process
 the Kubernetes cluster will be transformed into a [management cluster](./docs#Management-Cluster) by installing the UnDistro [provider components](./docs#Provider-Components), so it
@@ -94,7 +98,7 @@ undistro --config undistro-config.yaml install
 undistro upgrade {provider name}
 ~~~
 
-# 4 - Configuration
+# 5 - Configuration
 
 Configuration file is used by UnDistro just in the install and move operations.
 
@@ -139,7 +143,7 @@ type Provider struct {
 |name|string|Provider name|
 |configuration|map[string]string|Change according provider name. See provider docs|
 
-# 5 - Providers 
+# 6 - Providers 
 
 # AWS
 
@@ -228,7 +232,7 @@ When consuming existing AWS infrastructure, the Cluster API AWS provider does no
 However, the built-in Kubernetes AWS cloud provider doesn’t  require certain tags in order to function properly. Specifically, all subnets where Kubernetes nodes 
 reside should have the **kubernetes.io/cluster/{cluster-name}** tag present. Private subnets should also have the **kubernetes.io/role/internal-elb** tag with a value of **1**, and public subnets should have the **kubernetes.io/role/elb** tag with a value of **1**. These latter two tags help the cloud provider understand which subnets to use when creating load balancers.
 
-# 6 - Cluster
+# 7 - Cluster
 
 The cluster object is responsible for creating and managing a Kubernetes cluster.
 
@@ -349,7 +353,7 @@ undistro get cl
 
 A special thanks for [Cluster API project](https://cluster-api.sigs.k8s.io/) to helps UnDistro to provide the cluster lifecycle functionality.
 
-# 7 - Helm Release
+# 8 - Helm Release
 
 The HelmRelease object is responsible to manage [Helm Charts](https://helm.sh/) in a declarative way
 
@@ -436,13 +440,13 @@ undistro delete -f hr.yaml
 undistro get hr
 ~~~
 
-# 8 - Architecture
+# 9 - Architecture
 
 The overarching architecture of UnDistro is centered around a "management plane". This plane is expected to serve as a single interface upon which administrators can create, scale, upgrade, and delete Kubernetes clusters. At a high level view, the management plane + created clusters should look something like this:
 
 ![Image of Architecture](https://github.com/getupio-undistro/undistro/blob/b02153cceba365ed7dbc02ca12ed5a484bb50d12/website/src/assets/images/arch.png?raw=true)
 
-# 9 - Diagrams
+# 10 - Diagrams
 
 ## Install
 
@@ -452,7 +456,7 @@ The overarching architecture of UnDistro is centered around a "management plane"
 
 ![Image of Usage](https://github.com/getupio-undistro/undistro/blob/b02153cceba365ed7dbc02ca12ed5a484bb50d12/website/src/assets/images/usage.png?raw=true)
 
-# 10 - Community
+# 11 - Community
 
 - [Issue tracker](https://github.com/getupio-undistro/undistro/issues)
 - [Forum](https://github.com/getupio-undistro/undistro/discussions)
