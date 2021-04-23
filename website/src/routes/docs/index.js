@@ -17,17 +17,9 @@ export default function DocsRoute () {
 			<div className='markdown-container'>
 				<div className='navigation'>
 					<div className='sticky'>
-						{titleNavigation.map(elm => {
-							return (
-								<MarkdownAccordion
-									key={elm.id}
-									title={elm.title}
-									number={elm.number}
-									id={elm.id}
-									subtitle={elm.subtitle}
-								/>
-							)
-						})}
+						<MarkdownAccordion
+							navigation={titleNavigation}
+						/>
 					</div>
 				</div>
 				<div className='content'>
