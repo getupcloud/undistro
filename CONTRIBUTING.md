@@ -1,10 +1,3 @@
----
-title: "Contribute"
-date: 2017-08-30T19:07:12-03:00
-weight: 16
-menu: main
----
-
 Did you found an bug or you would like to suggest a new feature? I'm open for feedback. Please open a new [issue](https://github.com/getupio-undistro/undistro/issues) and let me know what you think.
 
 You're also welcome to contribute with [pull requests](https://github.com/getupio-undistro/undistro/pulls).
