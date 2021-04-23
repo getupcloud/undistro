@@ -89,6 +89,14 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "HelmRelease")
 		os.Exit(1)
 	}
+	if err = (&appcontroller.DefaultPoliciesReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("DefaultPolicies"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "DefaultPolicies")
+		os.Exit(1)
+	}
 	if err = (&configv1alpha1.Provider{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Provider")
 		os.Exit(1)
@@ -101,14 +109,7 @@ func main() {
 		setupLog.Error(err, "unable to create webhook", "webhook", "HelmRelease")
 		os.Exit(1)
 	}
-	if err = (&appcontroller.DefaultPoliciesReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("DefaultPolicies"),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "DefaultPolicies")
-		os.Exit(1)
-	}
+
 	// +kubebuilder:scaffold:builder
 
 	setupLog.Info("starting manager")

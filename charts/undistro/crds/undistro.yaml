@@ -592,12 +592,16 @@ metadata:
 spec:
   conversion:
     strategy: Webhook
-    webhookClientConfig:
-      caBundle: Cg==
-      service:
-        name: webhook-service
-        namespace: system
-        path: /convert
+    webhook:
+      clientConfig:
+        caBundle: Cg==
+        service:
+          name: webhook-service
+          namespace: system
+          path: /convert
+      conversionReviewVersions:
+        - v1
+        - v1beta1
   group: app.undistro.io
   names:
     kind: DefaultPolicies
