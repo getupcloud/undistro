@@ -1,6 +1,95 @@
 # 1 - Quick Start
 
-Siga esses passos e crie seu primeiro cluster com a UnDistro facilmente
+Follow these steps to easily create your first cluster with UnDistro.
+
+Before you start, make sure the following prerequisites are installed:
+
+- Install and setup [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in your local environment.
+- Install and setup [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and [Docker](https://www.docker.com/get-started). **(required just for kind installation method)**
+- Install and setup [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html) in your local environment. **(required just for AWS provider)**
+
+Great tips!
+- The cluster name cannot be changed after it is created, choose it right, choose it well!
+- The namespace cannot be changed after the cluster is created, choose it right, choose it well!
+- Get in advance the keys from the provider you will need to use, be prepared!
+
+## Step 1
+
+To get started we will create a Kind cluster, open your terminal and type:
+
+~~~bash
+kind create cluster
+~~~
+
+## Step 2
+
+Now let's create the configuration file for UnDistro containing the AWS credentials. These credentials must have admin access rights:
+
+~~~yaml
+providers:
+  -
+    name: aws
+    configuration:
+      accessKeyID: put your key here
+      secretAccessKey: put your key here
+      sessionToken: put your key here # if you use 2FA
+      region: put your key here # default region us-east-1
+~~~
+
+## Step 3
+
+We will now install UnDistro on the Kind cluster we just created:
+
+~~~
+undistro --config <your configuration file path created in step 2> install
+~~~
+## Step 4
+
+Let's generate the UnDistro recommended cluster configuration for the AWS provider. Here we have two possible scenarios:
+
+- First scenario - using EC2 ** `*` you will need an AWS pre configured ssh-key
+
+`*` https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair
+
+~~~bash
+undistro create cluster yourclustername --namespace yourclusternamespace --infra aws --flavor ec2 --ssh-key-name yoursshkeyname --generate-file
+~~~
+
+- Second scenario - using EKS
+
+~~~bash
+undistro create cluster yourclustername --namespace yourclusternamespace --infra aws --flavor eks --generate-file
+~~~
+
+both of the above command lines will generate a cluster configuration file called `yourclustername.yaml`
+
+## Step 5
+
+Let's apply the configuration file generated in step 4:
+
+~~~bash
+undistro apply -f yourclustername.yaml
+~~~
+
+## Step 6
+
+The cluster creation will take some time to finish, you can check the installation status using the following command line:
+
+~~~bash
+undistro get clusters yourclustername -n yourclusternamespace
+~~~
+
+## Step 7
+
+Assim que terminar a instalacao utilize o kubeconfig com a linha de comando abaixo para acessar o cluster criado
+Once you have finished the installation retrieve the kubeconfig to access the created cluster:
+
+~~~bash
+undistro get kubeconfig yourclustername -n yourclusternamespace
+~~~
+- *For more information about UnDistro, please refer to the next topics of this document.*
+<br>
+<br>
 
 # 2 - Glossary
 
@@ -54,6 +143,7 @@ After [prepare the environment](./docs#prepare-environment) choose one of the op
 
 - Install and setup [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in your local environment
 - Install and setup [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and [Docker](https://www.docker.com/get-started) **(required just for kind installation method)**
+- Install and setup [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html) in your local environment **(required just for AWS provider)**
 
 ## Existing Cluster
 
@@ -176,6 +266,15 @@ undistro --config undistro-config.yaml install
 
 - ec2 (vanilla Kubernetes using AWS EC2 VMs)
 - eks (AWS Kubernetes offer)
+
+
+## VPC
+
+If you have more than one cluster created with UnDistro you will need to customize the VPC CIDR to avoid conflicts. UnDistro uses the default CIDR ` 10.0.0.0/16`. To learn how to customize this please follow this link: [cluster](./docs#Cluster)
+
+## Create SSH Key pair on AWS
+
+Please refer to AWS [guidelines](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair)
 
 ## Connecting to the nodes via SSH
 
@@ -353,7 +452,83 @@ undistro get cl
 
 A special thanks for [Cluster API project](https://cluster-api.sigs.k8s.io/) to helps UnDistro to provide the cluster lifecycle functionality.
 
-# 8 - Helm Release
+# 8 - Policies
+
+The purpose of policies in UnDistro is simple: They define settings that should be applied across the cluster. But at a high level, UnDistro policies serve to create and enforce effective and efficient governance rules.
+
+## Default policies
+
+By default, UnDistro applies the following governance policies:
+
+~~~yaml
+name: disallow-add-capabilities
+discription: Capabilities permit privileged actions without giving full root access. Adding capabilities beyond the default set must not be allowed.
+~~~
+
+~~~yaml  
+name: disallow-default-namespace
+description: Kubernetes namespaces are an optional feature that provide a way to segment and isolate cluster resources across multiple applications and users. As a best practice, workloads should be isolated with namespaces. Namespaces should be required and the default (empty) namespace should not be used.
+~~~
+
+~~~yaml
+name: deny-delete-kyverno
+description:  Deny delete the kyverno resources
+~~~
+
+~~~yaml
+name: disallow-host-namespace
+description: Host namespaces (Process ID namespace, Inter-Process Communication namespace, and network namespace) allow access to shared information and can be used to elevate privileges. Pods should not be allowed access to host namespaces.
+~~~
+
+~~~yaml
+name: disallow-host-path
+description: HostPath volumes let pods use host directories and volumes in containers Using host resources can be used to access shared data or escalate privileges and should not be allowed.
+~~~    
+
+~~~yaml
+name: disallow-host-port
+description: Access to host ports allows potential snooping of network traffic and should not be allowed, or at minimum restricted to a known list.
+~~~
+
+~~~yaml
+name: disallow-latest-tag
+description: Prevents the use of the latest image
+~~~
+
+~~~yaml
+name: require-requests-limits
+description: As application workloads share cluster resources, it is important to limit resources requested and consumed by each pod. It is recommended to require 'resources.requests' and 'resources.limits.memory' per pod. If a namespace level request or limit is specified, defaults will automatically be applied to each pod based on the 'LimitRange' configuration.
+~~~
+
+## Default policies management
+
+Applied Policies can be disabled using the following configuration:
+
+~~~yaml
+apiVersion: app.undistro.io/v1alpha1
+kind: DefaultPolicies
+metadata:
+  name: defaultpolicies-sample
+  namespace: yourclusternamespace
+spec:
+  clusterName: yourclustername
+  excludePolicies:
+    - policy1
+    - policy2
+~~~
+
+## Applying customized policies
+
+You can use customized policies rules.
+UnDistro policies are provided by Kyverno, please refer do Kyverno documentation to write custom policies [here](https://kyverno.io/docs/writing-policies/).
+
+~~~bash
+undistro apply -f custompoliciesfile.yaml
+~~~
+<br>
+<br>
+
+# 9 - Helm Release
 
 The HelmRelease object is responsible to manage [Helm Charts](https://helm.sh/) in a declarative way
 
@@ -440,13 +615,13 @@ undistro delete -f hr.yaml
 undistro get hr
 ~~~
 
-# 9 - Architecture
+# 10 - Architecture
 
 The overarching architecture of UnDistro is centered around a "management plane". This plane is expected to serve as a single interface upon which administrators can create, scale, upgrade, and delete Kubernetes clusters. At a high level view, the management plane + created clusters should look something like this:
 
 ![Image of Architecture](https://github.com/getupio-undistro/undistro/blob/b02153cceba365ed7dbc02ca12ed5a484bb50d12/website/src/assets/images/arch.png?raw=true)
 
-# 10 - Diagrams
+# 11 - Diagrams
 
 ## Install
 
@@ -456,7 +631,7 @@ The overarching architecture of UnDistro is centered around a "management plane"
 
 ![Image of Usage](https://github.com/getupio-undistro/undistro/blob/b02153cceba365ed7dbc02ca12ed5a484bb50d12/website/src/assets/images/usage.png?raw=true)
 
-# 11 - Community
+# 12 - Community
 
 - [Issue tracker](https://github.com/getupio-undistro/undistro/issues)
 - [Forum](https://github.com/getupio-undistro/undistro/discussions)

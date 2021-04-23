@@ -107,13 +107,23 @@ const titleNavigation = [
 				id: '#flavors-supported'
 			},
 			{
-				title: 'Connecting to the nodes via SSH',
+				title: 'VPC',
 				number: '6.3',
+				id: '#VPC'
+			},
+			{
+				title: 'Create SSH Key pair on AWS',
+				number: '6.4',
+				id: '#create-SSH-Key-pair-on-AWS'
+			},
+			{
+				title: 'Connecting to the nodes via SSH',
+				number: '6.5',
 				id: '#connecting-to-the-nodes-via-ssh'
 			},
 			{
 				title: 'Consuming existing AWS infrastructure',
-				number: '6.4',
+				number: '6.6',
 				id: '#consuming-existing-aws-infrastructure'
 			}
 		],
@@ -172,12 +182,34 @@ const titleNavigation = [
 		id: '#7---cluster'
 	},
 	{
-		title: 'Helm Release',
+		title: 'Policies',
 		number: '8',
 		subtitle: [
 			{
-				title: 'Specification',
+				title: 'Default policies',
 				number: '8.1',
+				id: '#default-policies'
+			},
+			{
+				title: 'Default policies management',
+				number: '8.2',
+				id: '#default-policies-management'
+			},
+			{
+				title: 'Applying customized policies',
+				number: '8.3',
+				id: '#applying-customized-policies'
+			}
+		],
+		id: '#8---policies'
+	},
+	{
+		title: 'Helm Release',
+		number: '9',
+		subtitle: [
+			{
+				title: 'Specification',
+				number: '9.1',
 				id: '#specification'
 			},
 			{
@@ -187,45 +219,45 @@ const titleNavigation = [
 			},
 			{
 				title: 'Delete Helm release',
-				number: '8.3',
+				number: '9.3',
 				id: '#delete-helm-release'
 			},
 			{
 				title: 'Check Helm release',
-				number: '8.4',
+				number: '9.4',
 				id: '#check-helm-release'
 			}
 		],
-		id: '#8---helm-release'
+		id: '#9---helm-release'
 	},
 	{
 		title: 'Architecture',
-		number: '9',
+		number: '10',
 		subtitle: [],
 		id: '#architecture'
 	},
 	{
 		title: 'Diagrams',
-		number: '10',
+		number: '11',
 		subtitle: [
 			{
 				title: 'Install',
-				number: '10.1',
+				number: '11.1',
 				id: '#install'
 			},
 			{
 				title: 'Usage',
-				number: '10.2',
+				number: '11.2',
 				id: '#usage'
 			}
 		],
-		id: '#10---diagrams'
+		id: '#11---diagrams'
 	},
 	{
 		title: 'Community',
-		number: '11',
+		number: '12',
 		subtitle: [],
-		id: '#11---community'
+		id: '#12---community'
 	}
 ]
 

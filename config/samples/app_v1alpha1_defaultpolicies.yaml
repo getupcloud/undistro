@@ -5,3 +5,6 @@ metadata:
   namespace: undistro-test
 spec:
   clusterName: undistro-cluster
+  excludePolicies:
+    - name1
+    - name2
