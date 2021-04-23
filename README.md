@@ -2,6 +2,5 @@
 
 [Documentation](https://undistro.io/docs)
 
-[Prow](https://prow.undistro.io)
+![badge](https://github.com/getupio-undistro/undistro/actions/workflows/build.yml/badge.svg?branch=main)
 
-![Badge](https://prow.undistro.io/badge.svg?jobs=pull-undistro-test)
