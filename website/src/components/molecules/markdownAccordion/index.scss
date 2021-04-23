@@ -8,7 +8,7 @@
     display: flex;
     align-items: center;
     padding: 4px 16px;
-    margin: 12px 0;
+    margin: 10px 0;
 
     .title-level1 {
       color: var(--black-color, $black-color);
@@ -30,7 +30,7 @@
       color: var(--mid-gray-color, $mid-gray-color);
     }
 
-    &:active,
+    &.active,
     &:hover {
       background-color: #f5f6f6;
 
@@ -41,7 +41,7 @@
   }
 
   .subtitles {
-    margin: 12px 0;
+    margin: 4px 0;
     padding: 4px 16px;
 
     .title-level2 {

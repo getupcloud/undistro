@@ -2,36 +2,45 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { motion } from 'framer-motion'
-
+import Classnames from 'classnames'
 import './index.scss'
 
 const MarkdownAccordion = (props) => {
 	const [show, setShow] = useState(false)
 
+	const toggle = (i) => {
+		(show === i) ? setShow(null) : setShow(i)
+	}
+
 	return (
 		<div className='markdown-navigation'>
-			<div onClick={() => setShow(!show)} className='header'>
-				<a href={props.id} className='title-anchor title-level1'>
-					<span>{props.number}</span>
-					{props.title}
-				</a>
-				{!props.subtitle.length == [] && <i onClick={() => setShow(!show)} className={show ? 'icon-arrow-up' : 'icon-arrow-down'} />}
-			</div>
-
-			{show && props.subtitle.map(sub => {
+			{props.navigation.map((elm, i) => {
 				return (
-					<motion.div
-						key={sub.id}
-						className='subtitles'
-						initial={{ y: -20 }}
-						animate={{ y: 0 }}
-						transition={{ ease: 'easeOut', duration: 0.2 }}
-					>
-						<a href={sub.id} className='title-anchor title-level2'>
-							<span>{sub.number}</span>
-							{sub.title}
-						</a>
-					</motion.div>
+					<>
+						<div key={i} onClick={() => toggle(i)} className={Classnames('header', { active: show === i })}>
+							<a href={elm.id} className='title-anchor title-level1'>
+								<span>{elm.number}</span>
+								{elm.title}
+							</a>
+							{!elm.subtitle.length == [] && <i onClick={() => toggle(i)} className={show === i ? 'icon-arrow-up' : 'icon-arrow-down'} />}
+						</div>
+						{show === i && elm.subtitle.map(sub => {
+							return (
+								<motion.div
+									key={sub.id}
+									className='subtitles'
+									initial={{ y: -20 }}
+									animate={{ y: 0 }}
+									transition={{ ease: 'easeOut', duration: 0.2 }}
+								>
+									<a href={sub.id} className='title-anchor title-level2'>
+										<span>{sub.number}</span>
+										{sub.title}
+									</a>
+								</motion.div>
+							)
+						})}
+					</>
 				)
 			})}
 		</div>
@@ -41,10 +50,7 @@ const MarkdownAccordion = (props) => {
 export default MarkdownAccordion
 
 MarkdownAccordion.propTypes = {
-	subtitle: PropTypes.array,
-	id: PropTypes.string,
-	number: PropTypes.string,
-	title: PropTypes.string
+	navigation: PropTypes.func
 }
 
 // title-anchor title-level2
