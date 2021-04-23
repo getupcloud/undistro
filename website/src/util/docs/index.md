@@ -110,7 +110,8 @@ UnDistro part that is responsible to communicate with any infrastructure that Un
 ## Core Provider
 
 UnDistro and all required dependencies
-
+<br>
+<br>
 # 3 - Introduction
 
 ## What is UnDistro (will be in version 1.0.0)?
@@ -124,7 +125,8 @@ UnDistro Kubernetes Platform is directly integrated with leading cloud providers
 By providing managed Kubernetes clusters for your infrastructure, UnDistro makes Kubernetes as easy as it can be. UnDistro empowers you to take advantage of all the advanced features that Kubernetes has to offer and increases the speed, flexibility and scalability of your deployment workflow.
 
 UnDistro provides live updates of your Kubernetes cluster without disrupting your daily business.
-
+<br>
+<br>
 # 4 - Installing UnDistro
 
 UnDistro requires an existing Kubernetes cluster accessible via kubectl. During the installation process
@@ -187,6 +189,8 @@ undistro --config undistro-config.yaml install
 ~~~bash
 undistro upgrade {provider name}
 ~~~
+<br>
+<br>
 
 # 5 - Configuration
 
@@ -232,6 +236,8 @@ type Provider struct {
 |-----------|-----------|-----------|
 |name|string|Provider name|
 |configuration|map[string]string|Change according provider name. See provider docs|
+<br>
+<br>
 
 # 6 - Providers 
 
@@ -330,6 +336,8 @@ When consuming existing AWS infrastructure, the Cluster API AWS provider does no
 
 However, the built-in Kubernetes AWS cloud provider doesn’t  require certain tags in order to function properly. Specifically, all subnets where Kubernetes nodes 
 reside should have the **kubernetes.io/cluster/{cluster-name}** tag present. Private subnets should also have the **kubernetes.io/role/internal-elb** tag with a value of **1**, and public subnets should have the **kubernetes.io/role/elb** tag with a value of **1**. These latter two tags help the cloud provider understand which subnets to use when creating load balancers.
+<br>
+<br>
 
 # 7 - Cluster
 
@@ -451,6 +459,8 @@ undistro get cl
 ## A special thanks
 
 A special thanks for [Cluster API project](https://cluster-api.sigs.k8s.io/) to helps UnDistro to provide the cluster lifecycle functionality.
+<br>
+<br>
 
 # 8 - Policies
 
@@ -614,12 +624,16 @@ undistro delete -f hr.yaml
 ~~~bash
 undistro get hr
 ~~~
+<br>
+<br>
 
 # 10 - Architecture
 
 The overarching architecture of UnDistro is centered around a "management plane". This plane is expected to serve as a single interface upon which administrators can create, scale, upgrade, and delete Kubernetes clusters. At a high level view, the management plane + created clusters should look something like this:
 
 ![Image of Architecture](https://github.com/getupio-undistro/undistro/blob/b02153cceba365ed7dbc02ca12ed5a484bb50d12/website/src/assets/images/arch.png?raw=true)
+<br>
+<br>
 
 # 11 - Diagrams
 
@@ -630,6 +644,8 @@ The overarching architecture of UnDistro is centered around a "management plane"
 ## Usage
 
 ![Image of Usage](https://github.com/getupio-undistro/undistro/blob/b02153cceba365ed7dbc02ca12ed5a484bb50d12/website/src/assets/images/usage.png?raw=true)
+<br>
+<br>
 
 # 12 - Community
 
