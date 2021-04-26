@@ -73,14 +73,11 @@ func (s *Server) routes(router *mux.Router) {
 			klog.Fatal(err)
 		}
 	}
-	frontFS, err := fs.GetFrontendFS()
-	if err != nil {
-		klog.Fatal(err)
-	}
+
 	router.Handle("/healthz/readiness", &s.HealthHandler)
 	router.HandleFunc("/healthz/liveness", health.HandleLive)
 	router.PathPrefix("/uapi/v1/namespaces/{namespace}/clusters/{cluster}/proxy/").Handler(proxy.NewHandler(cfg))
-	router.Handle("/", http.FileServer(http.FS(frontFS)))
+	router.PathPrefix("/").Handler(fs.ReactHandler("", "frontend"))
 }
 
 func (s *Server) GracefullyStart(ctx context.Context, addr string) error {
