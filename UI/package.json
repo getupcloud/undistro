@@ -25,12 +25,13 @@
     "react-modal-resizable-draggable": "^0.1.5",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "surge": "^0.23.0",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "craco build && mv build/* ../pkg/fs/frontend",
     "build:icons": "icon-font-generator src/assets/icons/*.svg -o  src/assets/font-icon --htmlpath src/assets/font-icon/index.html",
     "test": "craco test",
     "eject": "react-scripts eject"

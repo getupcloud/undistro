@@ -1,4 +1,5 @@
 {
+  "extends": "./tsconfig.extends.json",
   "compilerOptions": {
     "target": "es5",
     "lib": [
@@ -6,6 +7,7 @@
       "dom.iterable",
       "esnext"
     ],
+    "baseUrl": "./src",
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -22,6 +24,5 @@
   },
   "include": [
     "src"
-  ],
-  "extends": "./tsconfig.extends.json"
+  ]
 }
