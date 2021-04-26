@@ -1,0 +1,33 @@
+@import '@styles/theme';
+
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+body {
+  position: relative;
+  margin: 0 !important;
+  font-family: $font-base;
+}
+
+button {
+  outline: none;
+}
+
+#app {
+  position: relative;
+  min-height: 100vh;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+li {
+  color: var(--text, $text);
+}

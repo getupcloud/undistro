@@ -1,0 +1,12 @@
+@import '@styles/theme';
+
+.menu-side-container {
+  width: 220px;
+  background-color: var(--menu-top, $menu-top);
+  height: 95%;
+
+  .side-itens {
+    font-size: 14px;
+    padding-top: 8px;
+  }
+}
