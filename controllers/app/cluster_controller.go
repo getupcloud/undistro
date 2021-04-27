@@ -30,7 +30,6 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/fs"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
-	"github.com/getupio-undistro/undistro/pkg/predicate"
 	"github.com/getupio-undistro/undistro/pkg/retry"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
 	"github.com/getupio-undistro/undistro/pkg/template"
@@ -468,6 +467,5 @@ func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			},
 			handler.EnqueueRequestsFromMapFunc(r.capiToUndistro),
 		).
-		WithEventFilter(predicate.ClusterChanges{}).
 		Complete(r)
 }

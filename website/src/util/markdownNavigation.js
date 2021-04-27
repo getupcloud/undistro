@@ -1,167 +1,140 @@
 const titleNavigation = [
 	{
-		title: 'Glossary',
+		title: 'Introduction',
 		number: '1',
 		subtitle: [
 			{
-				title: 'Management Cluster',
-				number: '1.1',
-				id: '#management-cluster'
-			},
-			{
-				title: 'Provider Components',
-				number: '1.2',
-				id: '#provider-components'
-			},
-			{
-				title: 'Infrastructure Provider',
-				number: '1.3',
-				id: '#infrastructure-provider'
-			},
-			{
-				title: 'Core Provider',
-				number: '1.4',
-				id: '#core-provider'
-			}
-		],
-		id: '#1---glossary'
-	},
-	{
-		title: 'Introduction',
-		number: '2',
-		subtitle: [
-			{
 				title: 'What is UnDistro?',
-				number: '2.1',
+				number: '1.1',
 				id: '#what-is-UnDistro'
 			},
 			{
 				title: 'Architecture',
-				number: '2.2',
+				number: '1.2',
 				id: '#architecture'
 			}
 		],
-		id: '#2---introduction'
+		id: '#1---introduction'
 	},
 	{
 		title: 'Quick Start',
-		number: '3',
+		number: '2',
 		subtitle: [],
-		id: '#3---quick-start'
+		id: '#2---quick-start'
 	},
 	{
 		title: 'Installing UnDistro',
-		number: '4',
+		number: '3',
 		subtitle: [
 			{
 				title: 'Prepare environment',
-				number: '4.1',
+				number: '3.1',
 				id: '#prepare-environment'
 			},
 			{
 				title: 'Existing Cluster',
-				number: '4.2',
+				number: '3.2',
 				id: '#existing-cluster'
 			},
 			{
 				title: 'Kind',
-				number: '4.3',
+				number: '3.3',
 				id: '#kind'
 			},
 			{
 				title: 'Download UnDistro CLI',
-				number: '4.4',
+				number: '3.4',
 				id: '#download-undistro-cli'
 			},
 			{
 				title: 'Create the configuration file',
-				number: '4.5',
+				number: '3.5',
 				id: '#create-the-configuration-file'
 			},
 			{
 				title: 'Initialize the management cluster',
-				number: '4.6',
+				number: '3.6',
 				id: '#initialize-the-management-cluster'
 			},
 			{
 				title: 'Upgrade a provider into management cluster',
-				number: '4.7',
+				number: '3.7',
 				id: '#upgrade-a-provider-into-management-cluster'
 			}
 		],
-		id: '#4---installing-undistro'
+		id: '#3---installing-undistro'
 	},
 	{
 		title: 'Configuration',
-		number: '5',
+		number: '4',
 		subtitle: [
 			{
 				title: 'Reference',
-				number: '5.1',
+				number: '4.1',
 				id: '#reference'
 			}
 		],
-		id: '#5---configuration'
+		id: '#4---configuration'
 	},
 	{
 		title: 'Providers',
-		number: '6',
+		number: '5',
 		subtitle: [
 			{
 				title: 'Configure',
-				number: '6.1',
+				number: '5.1',
 				id: '#configure'
 			},
 			{
 				title: 'Flavors supported',
-				number: '6.2',
+				number: '5.2',
 				id: '#flavors-supported'
 			},
 			{
 				title: 'VPC',
-				number: '6.3',
+				number: '5.3',
 				id: '#VPC'
 			},
 			{
 				title: 'Create SSH Key pair on AWS',
-				number: '6.4',
+				number: '5.4',
 				id: '#create-SSH-Key-pair-on-AWS'
 			},
 			{
 				title: 'Connecting to the nodes via SSH',
-				number: '6.5',
+				number: '5.5',
 				id: '#connecting-to-the-nodes-via-ssh'
 			},
 			{
 				title: 'Consuming existing AWS infrastructure',
-				number: '6.6',
+				number: '5.6',
 				id: '#consuming-existing-aws-infrastructure'
 			}
 		],
-		id: '#6---providers'
+		id: '#5---providers'
 	},
 	{
 		title: 'Cluster',
-		number: '7',
+		number: '6',
 		subtitle: [
 			{
 				title: 'Specification',
-				number: '7.1',
+				number: '6.1',
 				id: '#specification'
 			},
 			{
 				title: 'Create a cluster',
-				number: '7.2',
+				number: '6.2',
 				id: '#create-a-cluster'
 			},
 			{
 				title: 'Delete a cluster',
-				number: '7.3',
+				number: '6.3',
 				id: '#delete-a-cluster'
 			},
 			{
 				title: 'Consuming existing infrastructure',
-				number: '7.4',
+				number: '6.4',
 				id: '#consuming-existing-infrastructure'
 			},
 			{
@@ -171,82 +144,109 @@ const titleNavigation = [
 			},
 			{
 				title: 'See cluster events',
-				number: '7.6',
+				number: '6.6',
 				id: '#see-cluster-events'
 			},
 			{
 				title: 'Convert the created cluster into a management cluster',
-				number: '7.7',
+				number: '6.7',
 				id: '#convert-the-created-cluster-into-a-management-cluster'
 			},
 			{
 				title: 'Check cluster',
-				number: '7.8',
+				number: '6.8',
 				id: '#check-cluster'
 			},
 			{
 				title: 'A special thanks',
-				number: '7.9',
+				number: '6.9',
 				id: '#a-special-thanks'
 			}
 		],
-		id: '#7---cluster'
+		id: '#6---cluster'
 	},
 	{
 		title: 'Policies',
-		number: '8',
+		number: '7',
 		subtitle: [
 			{
 				title: 'Default policies',
-				number: '8.1',
+				number: '7.1',
 				id: '#default-policies'
 			},
 			{
 				title: 'Default policies management',
-				number: '8.2',
+				number: '7.2',
 				id: '#default-policies-management'
 			},
 			{
 				title: 'Applying customized policies',
-				number: '8.3',
+				number: '7.3',
 				id: '#applying-customized-policies'
 			}
 		],
-		id: '#8---policies'
+		id: '#7---policies'
 	},
 	{
 		title: 'Helm Release',
-		number: '9',
+		number: '8',
 		subtitle: [
 			{
 				title: 'Specification',
-				number: '9.1',
+				number: '8.1',
 				id: '#specification'
 			},
 			{
 				title: 'Create Helm release',
-				number: '9.2',
+				number: '8.2',
 				id: '#create-helm-release'
 			},
 			{
 				title: 'Delete Helm release',
-				number: '9.3',
+				number: '8.3',
 				id: '#delete-helm-release'
 			},
 			{
 				title: 'Check Helm release',
-				number: '9.4',
+				number: '8.4',
 				id: '#check-helm-release'
 			}
 		],
-		id: '#9---helm-release'
+		id: '#8---helm-release'
 	},
 	{
 		title: 'Community',
-		number: '10',
+		number: '9',
 		subtitle: [],
-		id: '#10---community'
-	}
+		id: '#9---community'
+	},
+	{
+		title: 'Glossary',
+		number: '10',
+		subtitle: [
+			{
+				title: 'Management Cluster',
+				number: '10.1',
+				id: '#management-cluster'
+			},
+			{
+				title: 'Provider Components',
+				number: '10.2',
+				id: '#provider-components'
+			},
+			{
+				title: 'Infrastructure Provider',
+				number: '10.3',
+				id: '#infrastructure-provider'
+			},
+			{
+				title: 'Core Provider',
+				number: '10.4',
+				id: '#core-provider'
+			}
+		],
+		id: '#10---glossary'
+	},
 ]
 
 export default titleNavigation

@@ -10,12 +10,14 @@ spec:
   clusterName: "{{.Cluster.Namespace}}/{{.Cluster.Name}}"
   {{end}}
   {{end}}
+  releaseNme: kyverno
   targetNamespace: kyverno
   chart:
-    repository: https://kyverno.github.io/kyverno/
+    repository: "https://charts.undistro.io"
     name: kyverno
     version: 1.3.5
   values:
+    infraNode: "{{.Cluster.HasInfraNodes}}"
     fullnameOverride: kyverno
     namespace: kyverno
     resources:                 
@@ -25,11 +27,3 @@ spec:
       requests:                
         cpu: 500m              
         memory: 500Mi
-    {{if .Cluster.HasInfraNodes}}
-    tolerations:                   
-    - effect: NoSchedule           
-      key: dedicated               
-      value: infra                 
-    nodeSelector:                  
-      role.undistro.io/infra: true
-    {{end}}

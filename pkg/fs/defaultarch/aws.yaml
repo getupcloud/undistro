@@ -20,7 +20,7 @@ spec:
     - replicas: 2
       machineType:  m5.large
     - replicas: 2
-      infaNode: true
+      infraNode: true
       machineType:  m5.large
   infrastructureProvider:
     name: aws

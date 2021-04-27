@@ -132,16 +132,6 @@ func (r *DefaultPoliciesReconciler) reconcile(ctx context.Context, log logr.Logg
 		return p, ctrl.Result{}, nil
 	}
 	var err error
-	clusterClient := r.Client
-	if p.Spec.ClusterName != "" {
-		if !meta.InReadyCondition(cl.Status.Conditions) {
-			return appv1alpha1.DefaultPoliciesNotReady(p, meta.WaitProvisionReason, "wait cluster to be provisioned"), ctrl.Result{RequeueAfter: 30 * time.Second}, nil
-		}
-		clusterClient, err = kube.NewClusterClient(ctx, r.Client, p.Spec.ClusterName, cl.GetNamespace())
-		if err != nil {
-			return appv1alpha1.DefaultPoliciesNotReady(p, meta.GetClusterFailed, err.Error()), ctrl.Result{}, err
-		}
-	}
 	hr := appv1alpha1.HelmRelease{}
 	key := client.ObjectKey{
 		Name:      fmt.Sprintf("kyverno-%s", cl.Name),
@@ -157,8 +147,21 @@ func (r *DefaultPoliciesReconciler) reconcile(ctx context.Context, log logr.Logg
 			return appv1alpha1.DefaultPoliciesNotReady(p, meta.ObjectsApliedFailedReason, err.Error()), ctrl.Result{}, err
 		}
 	}
+	if !meta.InReadyCondition(cl.Status.Conditions) {
+		return appv1alpha1.DefaultPoliciesNotReady(p, meta.WaitProvisionReason, "wait cluster to be ready"), ctrl.Result{Requeue: true}, nil
+	}
 	if !meta.InReadyCondition(hr.Status.Conditions) {
 		return appv1alpha1.DefaultPoliciesNotReady(p, meta.WaitProvisionReason, "wait Kyverno to be installed"), ctrl.Result{Requeue: true}, nil
+	}
+	clusterClient := r.Client
+	if p.Spec.ClusterName != "" {
+		if !meta.InReadyCondition(cl.Status.Conditions) {
+			return appv1alpha1.DefaultPoliciesNotReady(p, meta.WaitProvisionReason, "wait cluster to be provisioned"), ctrl.Result{RequeueAfter: 30 * time.Second}, nil
+		}
+		clusterClient, err = kube.NewClusterClient(ctx, r.Client, p.Spec.ClusterName, cl.GetNamespace())
+		if err != nil {
+			return appv1alpha1.DefaultPoliciesNotReady(p, meta.GetClusterFailed, err.Error()), ctrl.Result{}, err
+		}
 	}
 	p, err = r.applyPolicies(ctx, log, clusterClient, p)
 	if err != nil {

@@ -30,7 +30,6 @@ import (
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage/driver"
 	corev1 "k8s.io/api/core/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -110,7 +109,6 @@ func (r *Runner) Rollback(hr appv1alpha1.HelmRelease) error {
 	rollback.Force = hr.Spec.Rollback.Force
 	rollback.Recreate = hr.Spec.Rollback.Recreate
 	rollback.CleanupOnFail = true
-
 	return rollback.Run(hr.Spec.ReleaseName)
 }
 
@@ -124,17 +122,20 @@ func (r *Runner) Uninstall(hr appv1alpha1.HelmRelease) error {
 	if err != nil && strings.Contains(err.Error(), "is already deleted") {
 		err = nil
 	}
-	ctx := context.TODO()
-	key := client.ObjectKey{
-		Name:      fmt.Sprintf("sh.helm.release.v1.%s.v1", hr.Spec.ReleaseName),
-		Namespace: hr.GetNamespace(),
+	slist := corev1.SecretList{}
+	serr := r.client.List(context.TODO(), &slist, client.InNamespace(hr.GetNamespace()))
+	if serr != nil {
+		return err
 	}
-	s := corev1.Secret{}
-	err = r.client.Get(ctx, key, &s)
-	if apierrors.IsNotFound(err) {
-		return nil
+	for _, i := range slist.Items {
+		if strings.Contains(i.Name, hr.Spec.ReleaseName) {
+			err = r.client.Delete(context.TODO(), &i)
+			if err != nil {
+				return err
+			}
+		}
 	}
-	return r.client.Delete(ctx, &s)
+	return nil
 }
 
 func (r *Runner) Status(hr appv1alpha1.HelmRelease) (*release.Release, error) {

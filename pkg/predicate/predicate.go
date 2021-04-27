@@ -24,31 +24,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
-type ClusterChanges struct {
-	predicate.Funcs
-}
-
-func (ClusterChanges) Update(e event.UpdateEvent) bool {
-	if e.ObjectOld == nil || e.ObjectNew == nil {
-		return false
-	}
-	cOld, ok := e.ObjectOld.(*appv1alpha1.Cluster)
-	if !ok {
-		return false
-	}
-	cn, ok := e.ObjectNew.(*appv1alpha1.Cluster)
-	if !ok {
-		return false
-	}
-	old := cOld.DeepCopy()
-	n := cn.DeepCopy()
-	if meta.InReadyCondition(old.Status.Conditions) && meta.InReadyCondition(n.Status.Conditions) &&
-		cmp.Equal(old.Spec, n.Spec) && cmp.Equal(old.Status, n.Status) && n.DeletionTimestamp.IsZero() && old.Status.BastionPublicIP != "" {
-		return false
-	}
-	return true
-}
-
 type HelmReleaseChanges struct {
 	predicate.Funcs
 }

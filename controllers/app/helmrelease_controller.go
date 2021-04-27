@@ -19,8 +19,10 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
@@ -36,6 +38,7 @@ import (
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/getter"
+	"helm.sh/helm/v3/pkg/storage/driver"
 	"helm.sh/helm/v3/pkg/strvals"
 	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -104,6 +107,18 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	}
 	if !hr.DeletionTimestamp.IsZero() {
 		return r.reconcileDelete(ctx, log, hr)
+	}
+	if hr.Spec.ClusterName != "" {
+		key := util.ObjectKeyFromString(hr.Spec.ClusterName)
+		cl := appv1alpha1.Cluster{}
+		err = r.Get(ctx, key, &cl)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+		if !meta.InReadyCondition(cl.Status.Conditions) {
+			hr = appv1alpha1.HelmReleaseNotReady(hr, meta.WaitProvisionReason, "wait cluster to be ready")
+			return ctrl.Result{Requeue: true}, nil
+		}
 	}
 	hr, result, err := r.reconcile(ctx, log, hr)
 	return result, err
@@ -196,7 +211,10 @@ func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, 
 	}
 	getter, err := r.getRESTClientGetter(ctx, hr)
 	if err != nil {
-		return hr, ctrl.Result{}, err
+		if client.IgnoreNotFound(err) != nil {
+			return hr, ctrl.Result{}, err
+		}
+		return hr, ctrl.Result{}, nil
 	}
 	restCfg, err := getter.ToRESTConfig()
 	if err != nil {
@@ -237,8 +255,11 @@ func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, 
 		hr = appv1alpha1.HelmReleaseNotReady(hr, meta.StorageOperationFailedReason, err.Error())
 		return hr, ctrl.Result{}, err
 	}
-	hr, err = r.reconcileRelease(ctx, getter, log, hr, hc, values)
+	hr, err = r.reconcileRelease(ctx, getter, workloadClient, log, hr, hc, values)
 	if err != nil {
+		if errors.Is(err, driver.ErrNoDeployedReleases) {
+			return hr, ctrl.Result{Requeue: true}, nil
+		}
 		hr = appv1alpha1.HelmReleaseNotReady(hr, meta.ReconciliationFailedReason, err.Error())
 		return hr, ctrl.Result{}, err
 	}
@@ -270,7 +291,7 @@ func (r *HelmReleaseReconciler) applyObjs(ctx context.Context, c client.Client, 
 	return nil
 }
 
-func (r *HelmReleaseReconciler) reconcileRelease(ctx context.Context, getter genericclioptions.RESTClientGetter, log logr.Logger,
+func (r *HelmReleaseReconciler) reconcileRelease(ctx context.Context, getter genericclioptions.RESTClientGetter, workloadClient client.Client, log logr.Logger,
 	hr appv1alpha1.HelmRelease, chart *chart.Chart, values chartutil.Values) (appv1alpha1.HelmRelease, error) {
 
 	runner, err := helm.NewRunner(getter, hr.GetNamespace(), log)
@@ -307,7 +328,6 @@ func (r *HelmReleaseReconciler) reconcileRelease(ctx context.Context, getter gen
 	} else {
 		rel, err = runner.Upgrade(hr, chart, values)
 		err = r.handleHelmActionResult(&hr, revision, err, "upgrade", meta.ReleasedCondition, meta.UpgradeSucceededReason, meta.UpgradeFailedReason)
-
 	}
 	if util.ReleaseRevision(rel) > releaseRevision {
 		if err == nil && hr.Spec.Test.Enable {
@@ -319,6 +339,21 @@ func (r *HelmReleaseReconciler) reconcileRelease(ctx context.Context, getter gen
 		}
 	}
 	if err != nil {
+		if errors.Is(err, driver.ErrNoDeployedReleases) {
+			slist := corev1.SecretList{}
+			serr := workloadClient.List(ctx, &slist, client.InNamespace(hr.GetNamespace()))
+			if serr != nil {
+				return hr, err
+			}
+			for _, i := range slist.Items {
+				if strings.Contains(i.Name, hr.Spec.ReleaseName) {
+					serr = workloadClient.Delete(ctx, &i)
+					if serr != nil {
+						return hr, err
+					}
+				}
+			}
+		}
 		if util.ReleaseRevision(rel) <= releaseRevision {
 			log.Info("skip, no new revision created")
 		} else {
@@ -495,7 +530,10 @@ func (r *HelmReleaseReconciler) getRESTClientGetter(ctx context.Context, hr appv
 func (r *HelmReleaseReconciler) reconcileDelete(ctx context.Context, logger logr.Logger, hr appv1alpha1.HelmRelease) (ctrl.Result, error) {
 	restClient, err := r.getRESTClientGetter(ctx, hr)
 	if err != nil {
-		return ctrl.Result{}, err
+		if client.IgnoreNotFound(err) != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, nil
 	}
 	runner, err := helm.NewRunner(restClient, hr.GetNamespace(), logger)
 	if err != nil {

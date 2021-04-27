@@ -1,27 +1,5 @@
-# 1 - Glossary
 
-Find below a glossary to help to clarify the doc content
-
-## Management Cluster
-
-The cluster where UnDistro and provider components are installed
-
-## Provider Components
-
-UnDistro and its dependencies
-
-## Infrastructure Provider
-
-UnDistro part that is responsible to communicate with any infrastructure that UnDistro supports
-
-## Core Provider
-
-UnDistro and all required dependencies
-&nbsp;
-
-&nbsp;
-
-# 2 - Introduction
+# 1 - Introduction
 
 ## What is UnDistro (will be in version 1.0.0)?
 
@@ -44,7 +22,7 @@ The overarching architecture of UnDistro is centered around a "management plane"
 
 &nbsp;
 
-# 3 - Quick Start
+# 2 - Quick Start
 
 Follow these steps to easily create your first cluster with UnDistro.
 
@@ -53,6 +31,7 @@ Before you start, make sure the following prerequisites are installed:
 - Install and setup [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in your local environment.
 - Install and setup [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and [Docker](https://www.docker.com/get-started). **(required just for kind installation method)**
 - Install and setup [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html) in your local environment. **(required just for AWS provider)**
+- Download [UnDistro CLI](https://github.com/getupio-undistro/undistro/releases)
 
 **Great tips!**
 - The cluster name cannot be changed after it is created, choose it right, choose it well!
@@ -127,19 +106,29 @@ undistro get clusters yourclustername -n yourclusternamespace
 
 ## Step 7
 
-Assim que terminar a instalacao utilize o kubeconfig com a linha de comando abaixo para acessar o cluster criado
-Once you have finished the installation retrieve the kubeconfig to access the created cluster:
+The cluster creation will take some time to finish, you can check the installation status using the following command line:
 
 ~~~bash
-undistro get kubeconfig yourclustername -n yourclusternamespace
+undistro get clusters yourclustername -n yourclusternamespace
 ~~~
-- *For more information about UnDistro, please refer to the next topics of this document.*
-&nbsp; 
 
-&nbsp; 
+## Step 8
 
+During the installation you can check the progress with command below:
 
-# 4 - Installing UnDistro
+~~~bash
+undistro show-progress yourclustername -n yourclusternamespace
+~~~
+
+## Step 9
+
+To delete all resources created by undistro, run the command line below
+
+~~~bash
+undistro delete -f yourclustername.yaml
+~~~
+
+# 3 - Installing UnDistro
 
 UnDistro requires an existing Kubernetes cluster accessible via kubectl. During the installation process
 the Kubernetes cluster will be transformed into a [management cluster](./docs#Management-Cluster) by installing the UnDistro [provider components](./docs#Provider-Components), so it
@@ -205,7 +194,7 @@ undistro upgrade {provider name}
 
 &nbsp; 
 
-# 5 - Configuration
+# 4 - Configuration
 
 Configuration file is used by UnDistro just in the install and move operations.
 
@@ -254,7 +243,7 @@ type Provider struct {
 &nbsp; 
 
 
-# 6 - Providers 
+# 5 - Providers 
 
 # AWS
 
@@ -356,7 +345,7 @@ reside should have the **kubernetes.io/cluster/{cluster-name}** tag present. Pri
 &nbsp; 
 
 
-# 7 - Cluster
+# 6 - Cluster
 
 The cluster object is responsible for creating and managing a Kubernetes cluster.
 
@@ -481,7 +470,7 @@ A special thanks for [Cluster API project](https://cluster-api.sigs.k8s.io/) to 
 &nbsp; 
 
 
-# 8 - Policies
+# 7 - Policies
 
 The purpose of policies in UnDistro is simple: They define settings that should be applied across the cluster. But at a high level, UnDistro policies serve to create and enforce effective and efficient governance rules.
 
@@ -530,7 +519,7 @@ undistro apply -f custompoliciesfile.yaml
 &nbsp; 
 
 
-# 9 - Helm Release
+# 8 - Helm Release
 
 The HelmRelease object is responsible to manage [Helm Charts](https://helm.sh/) in a declarative way
 
@@ -620,7 +609,30 @@ undistro get hr
 
 &nbsp; 
 
-# 10 - Community
+# 9 - Community
 
 - [Issue tracker](https://github.com/getupio-undistro/undistro/issues)
 - [Forum](https://github.com/getupio-undistro/undistro/discussions)
+
+# 10 - Glossary
+
+Find below a glossary to help to clarify the doc content
+
+## Management Cluster
+
+The cluster where UnDistro and provider components are installed
+
+## Provider Components
+
+UnDistro and its dependencies
+
+## Infrastructure Provider
+
+UnDistro part that is responsible to communicate with any infrastructure that UnDistro supports
+
+## Core Provider
+
+UnDistro and all required dependencies
+&nbsp;
+
+&nbsp;
