@@ -98,10 +98,10 @@ undistro apply -f yourclustername.yaml
 
 ## Step 6
 
-The cluster creation will take some time to finish, you can check the installation status using the following command line:
+During the installation you can check the progress with command below:
 
 ~~~bash
-undistro get clusters yourclustername -n yourclusternamespace
+undistro show-progress yourclustername -n yourclusternamespace
 ~~~
 
 ## Step 7
@@ -114,11 +114,12 @@ undistro get clusters yourclustername -n yourclusternamespace
 
 ## Step 8
 
-During the installation you can check the progress with command below:
+Once you have finished the installation retrieve the kubeconfig to access the created cluster:
 
 ~~~bash
-undistro show-progress yourclustername -n yourclusternamespace
+undistro get kubeconfig yourclustername -n yourclusternamespace
 ~~~
+- *For more information about UnDistro, please refer to the next topics of this document.*
 
 ## Step 9
 
