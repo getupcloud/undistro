@@ -1,30 +1,4 @@
 ---
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  labels:
-    cluster.x-k8s.io/provider: bootstrap-kubeadm
-  name: capi-kubeadm-bootstrap-serving-cert
-  namespace: undistro-system
-spec:
-  dnsNames:
-  - capi-kubeadm-bootstrap-webhook-service.undistro-system.svc
-  - capi-kubeadm-bootstrap-webhook-service.undistro-system.svc.cluster.local
-  issuerRef:
-    kind: Issuer
-    name: capi-kubeadm-bootstrap-selfsigned-issuer
-  secretName: capi-kubeadm-bootstrap-webhook-service-cert
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  labels:
-    cluster.x-k8s.io/provider: bootstrap-kubeadm
-  name: capi-kubeadm-bootstrap-selfsigned-issuer
-  namespace: undistro-system
-spec:
-  selfSigned: {}
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -250,7 +224,7 @@ spec:
         - --feature-gates=MachinePool=true
         command:
         - /manager
-        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-bootstrap-controller:v0.3.14
+        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-bootstrap-controller:v0.3.16
         imagePullPolicy: IfNotPresent
         name: manager
       terminationGracePeriodSeconds: 10
@@ -295,7 +269,7 @@ spec:
         - --feature-gates=MachinePool=true
         command:
         - /manager
-        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-bootstrap-controller:v0.3.14
+        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-bootstrap-controller:v0.3.16
         imagePullPolicy: IfNotPresent
         name: manager
         ports:
@@ -315,6 +289,32 @@ spec:
         secret:
           defaultMode: 420
           secretName: capi-kubeadm-bootstrap-webhook-service-cert
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: bootstrap-kubeadm
+  name: capi-kubeadm-bootstrap-serving-cert
+  namespace: undistro-system
+spec:
+  dnsNames:
+  - capi-kubeadm-bootstrap-webhook-service.undistro-system.svc
+  - capi-kubeadm-bootstrap-webhook-service.undistro-system.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: capi-kubeadm-bootstrap-selfsigned-issuer
+  secretName: capi-kubeadm-bootstrap-webhook-service-cert
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: bootstrap-kubeadm
+  name: capi-kubeadm-bootstrap-selfsigned-issuer
+  namespace: undistro-system
+spec:
+  selfSigned: {}
 ---
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
