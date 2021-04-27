@@ -34,6 +34,19 @@ jobs:
           docker build -t getupioundistro/undistro:$GIT_VERSION .
           docker push getupioundistro/undistro:$GIT_VERSION
 
+      - name: Helm Push
+        env:
+          HELM_LOGIN: ${{ secrets.HELM_LOGIN }}
+          HELM_PASSWORD: ${{ secrets.HELM_PASSWORD }}
+        run: |
+          helm plugin install https://github.com/chartmuseum/helm-push.git
+          helm repo add undistro https://charts.undistro.io
+          helm push cert-manager undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
+          helm push cluster-api undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
+          helm push undistro undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
+          helm push undistro-aws undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
+          helm push kyverno undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
