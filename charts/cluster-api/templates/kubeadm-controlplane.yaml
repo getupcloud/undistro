@@ -1,30 +1,4 @@
 ---
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  labels:
-    cluster.x-k8s.io/provider: control-plane-kubeadm
-  name: capi-kubeadm-control-plane-serving-cert
-  namespace: undistro-system
-spec:
-  dnsNames:
-  - capi-kubeadm-control-plane-webhook-service.undistro-system.svc
-  - capi-kubeadm-control-plane-webhook-service.undistro-system.svc.cluster.local
-  issuerRef:
-    kind: Issuer
-    name: capi-kubeadm-control-plane-selfsigned-issuer
-  secretName: capi-kubeadm-control-plane-webhook-service-cert
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  labels:
-    cluster.x-k8s.io/provider: control-plane-kubeadm
-  name: capi-kubeadm-control-plane-selfsigned-issuer
-  namespace: undistro-system
-spec:
-  selfSigned: {}
----
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
@@ -303,7 +277,7 @@ spec:
         - --enable-leader-election
         command:
         - /manager
-        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-control-plane-controller:v0.3.14
+        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-control-plane-controller:v0.3.16
         imagePullPolicy: IfNotPresent
         name: manager
       terminationGracePeriodSeconds: 10
@@ -347,7 +321,7 @@ spec:
         - --webhook-port=9443
         command:
         - /manager
-        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-control-plane-controller:v0.3.14
+        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-control-plane-controller:v0.3.16
         imagePullPolicy: IfNotPresent
         name: manager
         ports:
@@ -367,6 +341,32 @@ spec:
         secret:
           defaultMode: 420
           secretName: capi-kubeadm-control-plane-webhook-service-cert
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: control-plane-kubeadm
+  name: capi-kubeadm-control-plane-serving-cert
+  namespace: undistro-system
+spec:
+  dnsNames:
+  - capi-kubeadm-control-plane-webhook-service.undistro-system.svc
+  - capi-kubeadm-control-plane-webhook-service.undistro-system.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: capi-kubeadm-control-plane-selfsigned-issuer
+  secretName: capi-kubeadm-control-plane-webhook-service-cert
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: control-plane-kubeadm
+  name: capi-kubeadm-control-plane-selfsigned-issuer
+  namespace: undistro-system
+spec:
+  selfSigned: {}
 ---
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
