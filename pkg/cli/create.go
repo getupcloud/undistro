@@ -51,8 +51,7 @@ type ClusterOptions struct {
 
 func NewClusterOptions(streams genericclioptions.IOStreams) *ClusterOptions {
 	return &ClusterOptions{
-		IOStreams:  streams,
-		K8sVersion: "v1.19.8",
+		IOStreams: streams,
 	}
 }
 
@@ -64,6 +63,14 @@ func (o *ClusterOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []
 	}
 	if o.Namespace == "" {
 		o.Namespace = "dafault"
+	}
+	if o.K8sVersion == "" {
+		switch o.Flavor {
+		case "ec2":
+			o.K8sVersion = "v1.20.6"
+		case "eks":
+			o.K8sVersion = "v1.19.8"
+		}
 	}
 	if len(args) != 1 {
 		return errors.New("required 1 argument")

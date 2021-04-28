@@ -26,6 +26,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/imdario/mergo"
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
@@ -109,17 +111,15 @@ func CreateOrUpdate(ctx context.Context, r client.Client, o client.Object) (bool
 		return true, nil
 	}
 	uo.SetResourceVersion(old.GetResourceVersion())
-	merge := client.MergeFrom(&old)
-	byt, err := merge.Data(uo)
+	err = mergo.Merge(uo, old)
 	if err != nil {
 		return false, err
 	}
-
-	err = r.Patch(ctx, uo, merge)
+	err = r.Update(ctx, uo)
 	if err != nil {
 		return false, err
 	}
-	return len(byt) > 0, nil
+	return cmp.Diff(*uo, old) != "", nil
 }
 
 // ToUnstructured takes a YAML and converts it to a list of Unstructured objects

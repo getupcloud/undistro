@@ -106,7 +106,10 @@ func (o *ShowProgressOptions) RunShowProgress(f cmdutil.Factory, cmd *cobra.Comm
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	go func(ctx context.Context) {
 		for e := range w.ResultChan() {
-			ev := e.Object.(*corev1.Event)
+			ev, ok := e.Object.(*corev1.Event)
+			if !ok {
+				continue
+			}
 			if ev.CreationTimestamp.After(obj.GetCreationTimestamp().Time) && (ev.Reason != "" || ev.Message != "") && ev.Count == 1 {
 				for _, item := range objs {
 					if item.GetName() == ev.InvolvedObject.Name {

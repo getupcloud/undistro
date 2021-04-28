@@ -99,9 +99,6 @@ func (r *DefaultPoliciesReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 }
 
 func (r *DefaultPoliciesReconciler) reconcileDelete(ctx context.Context, p *appv1alpha1.DefaultPolicies, cl *appv1alpha1.Cluster) (ctrl.Result, error) {
-	if p.Spec.ClusterName != "" && cl.Name != "" {
-		return ctrl.Result{Requeue: true}, nil
-	}
 	hr := appv1alpha1.HelmRelease{}
 	key := client.ObjectKey{
 		Name:      fmt.Sprintf("kyverno-%s", cl.Name),
@@ -123,7 +120,12 @@ func (r *DefaultPoliciesReconciler) reconcileDelete(ctx context.Context, p *appv
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	return ctrl.Result{Requeue: true}, nil
+	controllerutil.RemoveFinalizer(p, meta.Finalizer)
+	_, err = util.CreateOrUpdate(ctx, r.Client, p)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	return ctrl.Result{}, nil
 }
 
 func (r *DefaultPoliciesReconciler) reconcile(ctx context.Context, log logr.Logger, p appv1alpha1.DefaultPolicies, cl *appv1alpha1.Cluster) (appv1alpha1.DefaultPolicies, ctrl.Result, error) {

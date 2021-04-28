@@ -125,6 +125,7 @@ spec:
     name: "{{.Cluster.Name}}-cp-{{.Cluster.Status.LastUsedUID}}"
     namespace: "{{.Cluster.Namespace}}"
   kubeadmConfigSpec:
+    useExperimentalRetryJoin: true
     initConfiguration:
       nodeRegistration:
         name: {{"'{{ ds.meta_data.local_hostname }}'"}}
@@ -186,7 +187,25 @@ spec:
       subnet:
         id: {{.Cluster.Spec.ControlPlane.Subnet}}
       {{end}}
-
+---
+apiVersion: cluster.x-k8s.io/v1alpha3
+kind: MachineHealthCheck
+metadata:
+  name: "{{.Cluster.Name}}"
+  namespace: "{{.Cluster.Namespace}}"
+spec:
+  clusterName: "{{.Cluster.Name}}"
+  maxUnhealthy: 100%
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/control-plane: ""
+  unhealthyConditions:
+    - type: Ready
+      status: Unknown
+      timeout: 300s
+    - type: Ready
+      status: "False"
+      timeout: 300s
 {{$name := .Cluster.Name}}
 {{$namespace := .Cluster.Namespace}}
 {{$k8s := .Cluster.Spec.KubernetesVersion}}
@@ -263,6 +282,7 @@ metadata:
   name: "{{$name}}-mp-{{$uid}}-{{$index}}"
   namespace: "{{$namespace}}"
 spec:
+  useExperimentalRetryJoin: true
   joinConfiguration:
     nodeRegistration:
       name: {{"'{{ ds.meta_data.local_hostname }}'"}}

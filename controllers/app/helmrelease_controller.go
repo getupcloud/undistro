@@ -541,9 +541,19 @@ func (r *HelmReleaseReconciler) reconcileDelete(ctx context.Context, logger logr
 	}
 	rel, err := runner.ObserveLastRelease(hr)
 	if err != nil {
-		return ctrl.Result{}, err
+		controllerutil.RemoveFinalizer(&hr, meta.Finalizer)
+		_, err = util.CreateOrUpdate(ctx, r.Client, &hr)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, nil
 	}
 	if rel == nil {
+		controllerutil.RemoveFinalizer(&hr, meta.Finalizer)
+		_, err = util.CreateOrUpdate(ctx, r.Client, &hr)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
 		return ctrl.Result{}, nil
 	}
 	err = runner.Uninstall(hr)
