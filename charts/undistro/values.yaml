@@ -1,5 +1,5 @@
 image:
   repository: getupioundistro/undistro
-  tag: v0.22.4
+  tag: v0.22.5
   pullPolicy: IfNotPresent
   pullSecrets: []
