@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"unicode"
 
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/util"
@@ -160,16 +161,31 @@ func (r *Cluster) validate(old *Cluster) error {
 			immutableMsg,
 		))
 	}
+	switch r.Spec.InfrastructureProvider.Name {
+	case "aws":
+		allErrs = r.validateAWS(old, allErrs)
+	}
+	if len(allErrs) == 0 {
+		return nil
+	}
+	return apierrors.NewInvalid(GroupVersion.WithKind("Cluster").GroupKind(), r.Name, allErrs)
+}
+
+func (r *Cluster) validateAWS(old runtime.Object, allErrs field.ErrorList) field.ErrorList {
 	if r.Spec.InfrastructureProvider.Name == "aws" && r.Spec.InfrastructureProvider.Flavor == "ec2" && r.Spec.InfrastructureProvider.SSHKey == "" {
 		allErrs = append(allErrs, field.Required(
 			field.NewPath("spec", "infrastructureProvider", "sshKey"),
 			"sshKey is required when flavor is ec2",
 		))
 	}
-	if len(allErrs) == 0 {
-		return nil
+	if r.Spec.InfrastructureProvider.Name == "aws" && !isValidNameForAWS(r.Name) {
+		allErrs = append(allErrs, field.Invalid(
+			field.NewPath("metadata", "name"),
+			r.Name,
+			"Invalid cluster name for AWS",
+		))
 	}
-	return apierrors.NewInvalid(GroupVersion.WithKind("Cluster").GroupKind(), r.Name, allErrs)
+	return allErrs
 }
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
@@ -192,4 +208,16 @@ func (r *Cluster) ValidateUpdate(old runtime.Object) error {
 func (r *Cluster) ValidateDelete() error {
 	clusterlog.Info("validate delete", "name", r.Name)
 	return nil
+}
+
+func isValidNameForAWS(name string) bool {
+	for _, letter := range name {
+		if unicode.IsSpace(letter) {
+			return false
+		}
+		if !unicode.IsLetter(letter) && !unicode.IsNumber(letter) && letter != '_' && letter != '-' {
+			return false
+		}
+	}
+	return true
 }
