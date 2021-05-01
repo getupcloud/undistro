@@ -26,7 +26,7 @@ import (
 func main() {
 	cmd := cli.NewUndistroCommand(os.Stdin, os.Stdout, os.Stderr)
 	if err := cmd.ExecuteContext(context.Background()); err != nil {
-		// do not log here because cobra already log error
+		// Do not log here because cobra already log the error
 		os.Exit(1)
 	}
 }
