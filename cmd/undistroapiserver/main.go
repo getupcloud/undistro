@@ -37,12 +37,12 @@ func main() {
 	pflags.StringVarP(&addr, "apiserver", "a", addr, "The address and port of the UnDistro API server")
 	err := pflags.Parse(os.Args[1:])
 	if err != nil {
-		klog.Fatal(err)
+		klog.Exit(err)
 	}
 	f := cmdutil.NewFactory(cfgFlags)
 	server := apiserver.NewServer(f, os.Stdin, os.Stdout, os.Stderr)
 	err = server.GracefullyStart(context.Background(), addr)
 	if err != nil {
-		klog.Fatal(err)
+		klog.Exit(err)
 	}
 }

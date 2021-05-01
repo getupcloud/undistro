@@ -21,12 +21,12 @@ import (
 
 	"github.com/getupio-undistro/undistro/pkg/cli"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
-	"k8s.io/klog/v2"
 )
 
 func main() {
 	cmd := cli.NewUndistroCommand(os.Stdin, os.Stdout, os.Stderr)
 	if err := cmd.ExecuteContext(context.Background()); err != nil {
-		klog.Fatal(err)
+		// do not log here because cobra already log error
+		os.Exit(1)
 	}
 }
