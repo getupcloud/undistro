@@ -60,7 +60,6 @@ func (r *DefaultPolicies) Default() {
 	}
 }
 
-// TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
 //+kubebuilder:webhook:verbs=create;update,path=/validate-app-undistro-io-v1alpha1-defaultpolicies,mutating=false,failurePolicy=fail,groups=app.undistro.io,resources=defaultpolicies,versions=v1alpha1,name=vdefaultpolicies.kb.io,sideEffects=None,admissionReviewVersions=v1beta1
 
 var _ webhook.Validator = &DefaultPolicies{}
