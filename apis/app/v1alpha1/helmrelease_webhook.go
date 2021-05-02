@@ -27,6 +27,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation/field"
+	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -54,6 +55,7 @@ func (r *HelmRelease) Default() {
 	r.Labels[meta.LabelUndistro] = ""
 	key := util.ObjectKeyFromString(r.Spec.ClusterName)
 	r.Labels[meta.LabelUndistroClusterName] = key.Name
+	r.Labels[capi.ClusterLabelName] = r.Name
 	if r.Spec.ClusterName == "" {
 		r.Labels[meta.LabelUndistroClusterType] = "management"
 	} else {

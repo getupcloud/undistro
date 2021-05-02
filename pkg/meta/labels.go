@@ -23,4 +23,5 @@ const (
 	LabelUndistroMove        = "undistro.io/move"
 	LabelUndistroMoved       = "undistro.io/moved"
 	LabelUndistroInfra       = "node-role.undistro.io/infra"
+	LabelK8sInfra            = "node-role.kubernetes.io/infra"
 )

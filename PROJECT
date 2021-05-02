@@ -8,6 +8,9 @@ resources:
   kind: Cluster
   version: v1alpha1
 - group: app
+  kind: DefaultPolicies
+  version: v1alpha1
+- group: app
   kind: HelmRelease
   version: v1alpha1
 - group: config
