@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -37,6 +38,9 @@ import (
 var helmreleaselog = logf.Log.WithName("helmrelease-resource")
 
 func (r *HelmRelease) SetupWebhookWithManager(mgr ctrl.Manager) error {
+	if k8sClient == nil {
+		k8sClient = mgr.GetClient()
+	}
 	return ctrl.NewWebhookManagedBy(mgr).
 		For(r).
 		Complete()
@@ -156,6 +160,17 @@ func (r *HelmRelease) validate(old *HelmRelease) error {
 			r.Spec.Chart.Version,
 			err.Error(),
 		))
+	}
+	if r.Spec.ClusterName != "" {
+		cl := Cluster{}
+		key := util.ObjectKeyFromString(r.Spec.ClusterName)
+		err := k8sClient.Get(context.TODO(), key, &cl)
+		if err != nil {
+			allErrs = append(allErrs, field.NotFound(
+				field.NewPath("spec", "clusterName"),
+				r.Spec.ClusterName,
+			))
+		}
 	}
 	if len(allErrs) == 0 {
 		return nil

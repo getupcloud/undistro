@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/getupio-undistro/undistro/pkg/meta"
@@ -26,6 +27,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
@@ -34,6 +36,9 @@ import (
 var defaultpolicieslog = logf.Log.WithName("defaultpolicies-resource")
 
 func (r *DefaultPolicies) SetupWebhookWithManager(mgr ctrl.Manager) error {
+	if k8sClient == nil {
+		k8sClient = mgr.GetClient()
+	}
 	return ctrl.NewWebhookManagedBy(mgr).
 		For(r).
 		Complete()
@@ -72,6 +77,20 @@ func (r *DefaultPolicies) validate(old *DefaultPolicies) error {
 			r.Spec.ClusterName,
 			"field is immutable",
 		))
+	}
+	if r.Spec.ClusterName != "" {
+		cl := Cluster{}
+		key := client.ObjectKey{
+			Name:      r.Spec.ClusterName,
+			Namespace: r.GetNamespace(),
+		}
+		err := k8sClient.Get(context.TODO(), key, &cl)
+		if err != nil {
+			allErrs = append(allErrs, field.NotFound(
+				field.NewPath("spec", "clusterName"),
+				r.Spec.ClusterName,
+			))
+		}
 	}
 	if len(allErrs) == 0 {
 		return nil
