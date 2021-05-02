@@ -1,7 +1,5 @@
 domain: undistro.io
-layout: go.kubebuilder.io/v2
 multigroup: true
-projectName: undistro
 repo: github.com/getupio-undistro/undistro
 resources:
 - group: app
@@ -16,6 +14,4 @@ resources:
 - group: config
   kind: Provider
   version: v1alpha1
-version: "3"
-plugins:
-  go.sdk.operatorframework.io/v2-alpha: {}
+version: "2"

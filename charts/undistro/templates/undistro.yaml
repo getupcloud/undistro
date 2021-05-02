@@ -260,6 +260,26 @@ webhooks:
     service:
       name: undistro-webhook-service
       namespace: undistro-system
+      path: /mutate-app-undistro-io-v1alpha1-defaultpolicies
+  failurePolicy: Fail
+  name: mdefaultpolicies.kb.io
+  rules:
+  - apiGroups:
+    - app.undistro.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - defaultpolicies
+  sideEffects: None
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: undistro-webhook-service
+      namespace: undistro-system
       path: /mutate-app-undistro-io-v1alpha1-helmrelease
   failurePolicy: Fail
   name: mhelmrelease.undistro.io
@@ -321,6 +341,26 @@ webhooks:
     - UPDATE
     resources:
     - clusters
+  sideEffects: None
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: undistro-webhook-service
+      namespace: undistro-system
+      path: /validate-app-undistro-io-v1alpha1-defaultpolicies
+  failurePolicy: Fail
+  name: vdefaultpolicies.kb.io
+  rules:
+  - apiGroups:
+    - app.undistro.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - defaultpolicies
   sideEffects: None
 - admissionReviewVersions:
   - v1beta1
