@@ -203,6 +203,7 @@ Resources:
           - elasticloadbalancing:DeleteLoadBalancer
           - elasticloadbalancing:DescribeLoadBalancers
           - elasticloadbalancing:DescribeLoadBalancerAttributes
+          - elasticloadbalancing:ApplySecurityGroupsToLoadBalancer
           - elasticloadbalancing:DescribeTags
           - elasticloadbalancing:ModifyLoadBalancerAttributes
           - elasticloadbalancing:RegisterInstancesWithLoadBalancer
@@ -228,7 +229,7 @@ Resources:
           - autoscaling:DeleteTags
           Effect: Allow
           Resource:
-          - arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*
+          - arn:*:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*
         - Action:
           - iam:CreateServiceLinkedRole
           Condition:
@@ -269,7 +270,7 @@ Resources:
           - ssm:GetParameter
           Effect: Allow
           Resource:
-          - arn:aws:ssm:*:*:parameter/aws/service/eks/optimized-ami/*
+          - arn:*:ssm:*:*:parameter/aws/service/eks/optimized-ami/*
         - Action:
           - iam:CreateServiceLinkedRole
           Condition:
@@ -277,7 +278,7 @@ Resources:
               iam:AWSServiceName: eks.amazonaws.com
           Effect: Allow
           Resource:
-          - arn:aws:iam::*:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS
+          - arn:*:iam::*:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS
         - Action:
           - iam:CreateServiceLinkedRole
           Condition:
@@ -285,7 +286,15 @@ Resources:
               iam:AWSServiceName: eks-nodegroup.amazonaws.com
           Effect: Allow
           Resource:
-          - arn:aws:iam::*:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup
+          - arn:*:iam::*:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup
+        - Action:
+          - iam:CreateServiceLinkedRole
+          Condition:
+            StringLike:
+              iam:AWSServiceName: eks-fargate.amazonaws.com
+          Effect: Allow
+          Resource:
+          - arn:aws:iam::*:role/aws-service-role/eks-fargate-pods.amazonaws.com/AWSServiceRoleForAmazonEKSForFargate
         - Action:
           - iam:ListOpenIDConnectProviders
           - iam:CreateOpenIDConnectProvider
@@ -305,7 +314,7 @@ Resources:
           - iam:AttachRolePolicy
           Effect: Allow
           Resource:
-          - arn:aws:iam::*:role/*
+          - arn:*:iam::*:role/*
         - Action:
           - iam:GetPolicy
           Effect: Allow
@@ -325,14 +334,10 @@ Resources:
           - eks:DeleteNodegroup
           - eks:UpdateNodegroupConfig
           - eks:CreateNodegroup
-          - eks:DescribeUpdate
-          - eks:ListNodegroups
-          - eks:ListTagsForResource 
           Effect: Allow
           Resource:
-          - arn:aws:eks:*:*:cluster/*
-          - arn:aws:eks:*:*:nodegroup/*/*/*
-          - arn:aws:iam::*:user/${aws:username}
+          - arn:*:eks:*:*:cluster/*
+          - arn:*:eks:*:*:nodegroup/*/*/*
         - Action:
           - eks:ListAddons
           - eks:CreateAddon
@@ -341,6 +346,9 @@ Resources:
           - eks:DeleteAddon
           - eks:UpdateAddon
           - eks:TagResource
+          - eks:DescribeFargateProfile
+          - eks:CreateFargateProfile
+          - eks:DeleteFargateProfile
           Effect: Allow
           Resource:
           - '*'

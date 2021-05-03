@@ -195,6 +195,7 @@ metadata:
   namespace: "{{.Cluster.Namespace}}"
 spec:
   clusterName: "{{.Cluster.Name}}"
+  nodeStartupTimeout: 10m
   maxUnhealthy: 100%
   selector:
     matchLabels:
