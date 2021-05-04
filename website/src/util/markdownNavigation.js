@@ -175,13 +175,18 @@ const titleNavigation = [
 				id: '#default-policies'
 			},
 			{
-				title: 'Default policies management',
+				title: 'Network policy',
 				number: '7.2',
+				id: '#network-policy'
+			},
+			{
+				title: 'Default policies management',
+				number: '7.3',
 				id: '#default-policies-management'
 			},
 			{
 				title: 'Applying customized policies',
-				number: '7.3',
+				number: '7.4',
 				id: '#applying-customized-policies'
 			}
 		],
