@@ -492,7 +492,7 @@ By default, UnDistro applies the following governance policies:
 |disallow-host-port|Access to host ports allows potential snooping of network traffic and should not be allowed, or at minimum restricted to a known list.|
 |disallow-latest-tag|Prevents the use of the latest image.|
 |require-requests-limits|As application workloads share cluster resources, it is important to limit resources requested and consumed by each pod. It is recommended to require 'resources.requests' and 'resources.limits.memory' per pod. If a namespace level request or limit is specified, defaults will automatically be applied to each pod based on the 'LimitRange' configuration.|
-|traffic-deny|By default, Kubernetes allows communications across all pods within a cluster. Network policies and, a CNI that supports network policies, must be used to restrict communications. UnDistro uses Calico CNI default. A default NetworkPolicy should be configured for each namespace to default deny all ingress and egress traffic to the pods in the namespace. Application teams can then configure additional NetworkPolicy resources to allow desired traffic to application pods from select sources|
+|traffic-deny|By default, Kubernetes allows communications across all pods within a cluster. Network policies and, a CNI that supports network policies, must be used to restrict communications. UnDistro uses Calico CNI. A default NetworkPolicy should be configured for each namespace to default deny all ingress and egress traffic to the pods in the namespace. Application teams can then configure additional NetworkPolicy resources to allow desired traffic to application pods from select sources|
 
 ## Network policy
 
