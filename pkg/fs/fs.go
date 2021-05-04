@@ -43,6 +43,7 @@ var DefaultArchFS embed.FS
 //go:embed policies/disallow-host-port.yaml
 //go:embed policies/disallow-latest-tag.yaml
 //go:embed policies/require-resources.yaml
+//go:embed policies/network-policy.yaml
 var PoliciesFS embed.FS
 
 type fsFunc func(name string) (fs.File, error)

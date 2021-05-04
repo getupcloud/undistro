@@ -1,0 +1,100 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: traffic-deny
+spec:
+  rules:
+    - name: deny-all-traffic
+      match:
+        resources:
+          kinds:
+            - Namespace
+      exclude:
+        resources:
+          namespaces:
+            - kube-system
+            - default
+            - kube-public
+            - kyverno
+            - linkerd
+            - linkerd-*
+            - cattle-*
+            - ingress-*
+            - velero
+            - monitoring
+            - undistro-system
+      generate:
+        kind: NetworkPolicy
+        name: deny-all-traffic
+        namespace: "{{request.object.metadata.name}}"
+        data:
+          spec:
+            # select all pods in the namespace
+            podSelector: {}
+            policyTypes:
+              - Egress
+              - Ingress
+    - name: allow-egress-traffic-labeled-pods
+      match:
+        resources:
+          kinds:
+            - Namespace
+      exclude:
+        resources:
+          namespaces:
+            - kube-system
+            - default
+            - kube-public
+            - kyverno
+            - linkerd
+            - linkerd-*
+            - cattle-*
+            - ingress-*
+            - velero
+            - monitoring
+            - undistro-system
+      generate:
+        kind: NetworkPolicy
+        name: allow-egress-traffic-labeled-pods
+        namespace: "{{request.object.metadata.name}}"
+        data:
+          spec:
+            podSelector:
+              matchLabels:
+                network.undistro.io/egress: allow
+            policyTypes:
+              - Egress
+            egress:
+              - {}
+    - name: allow-ingress-traffic-labeled-pods
+      match:
+        resources:
+          kinds:
+            - Namespace
+      exclude:
+        resources:
+          namespaces:
+            - kube-system
+            - default
+            - kube-public
+            - kyverno
+            - linkerd
+            - linkerd-*
+            - cattle-*
+            - ingress-*
+            - velero
+            - monitoring
+            - undistro-system
+      generate:
+        kind: NetworkPolicy
+        name: allow-ingress-traffic-labeled-pods
+        namespace: "{{request.object.metadata.name}}"
+        data:
+          spec:
+            podSelector:
+              matchLabels:
+                network.undistro.io/ingress: allow
+            policyTypes:
+              - Ingress
+            ingress:
+              - {}
