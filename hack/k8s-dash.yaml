@@ -2,9 +2,31 @@
 apiVersion: app.undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
-    name: kubernetes-dashboard
-    namespace: default
+    name: nginx
+    namespace: undistro
 spec:
+  clusterName: undistro/example-ec2
+  targetNamespace: undistro
+  chart:
+    repository: https://kubernetes.github.io/ingress-nginx
+    name: nginx-ingress
+    version: 3.30.0
+  autoUpgrade: true
+  
+---
+apiVersion: app.undistro.io/v1alpha1
+kind: HelmRelease
+metadata:
+    name: kubernetes-dashboard
+    namespace: undistro
+spec:
+  clusterName: undistro/example-ec2
+  targetNamespace: undistro
+  dependencies: 
+    - apiVersion: app.undistro.io/v1alpha1
+      kind: HelmRelease
+      name: nginx
+      namespace: undistro
   chart:
     repository: https://kubernetes.github.io/dashboard
     name: kubernetes-dashboard

@@ -1,256 +1,275 @@
----
+--- 
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  annotations:
-    ${AWS_CONTROLLER_IAM_ROLE/#arn/eks.amazonaws.com/role-arn: arn}
-  labels:
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
     control-plane: aws-bootstrap-controller-manager
   name: capa-eks-bootstrap-controller-manager
   namespace: undistro-system
----
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
   name: capa-eks-bootstrap-leader-election-role
   namespace: undistro-system
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - configmaps/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
----
+rules: 
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - configmaps
+    verbs: 
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - configmaps/status
+    verbs: 
+      - get
+      - update
+      - patch
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - events
+    verbs: 
+      - create
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
-metadata:
-  creationTimestamp: null
-  labels:
+metadata: 
+  creationTimestamp: ~
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
   name: capa-eks-bootstrap-manager-role
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - update
-  - watch
-- apiGroups:
-  - bootstrap.cluster.x-k8s.io
-  resources:
-  - eksconfigs
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - bootstrap.cluster.x-k8s.io
-  resources:
-  - eksconfigs/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - cluster.x-k8s.io
-  resources:
-  - clusters
-  - machinepools
-  - machines
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - controlplane.cluster.x-k8s.io
-  resources:
-  - awsmanagedcontrolplanes
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - exp.cluster.x-k8s.io
-  resources:
-  - machinepools
-  verbs:
-  - get
-  - list
-  - watch
----
+rules: 
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - secrets
+    verbs: 
+      - create
+      - delete
+      - get
+      - list
+      - update
+      - watch
+  - 
+    apiGroups: 
+      - bootstrap.cluster.x-k8s.io
+    resources: 
+      - eksconfigs
+    verbs: 
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - 
+    apiGroups: 
+      - bootstrap.cluster.x-k8s.io
+    resources: 
+      - eksconfigs/status
+    verbs: 
+      - get
+      - patch
+      - update
+  - 
+    apiGroups: 
+      - cluster.x-k8s.io
+    resources: 
+      - clusters
+      - machinepools
+      - machines
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - controlplane.cluster.x-k8s.io
+    resources: 
+      - awsmanagedcontrolplanes
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - exp.cluster.x-k8s.io
+    resources: 
+      - machinepools
+    verbs: 
+      - get
+      - list
+      - watch
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
   name: capa-eks-bootstrap-proxy-role
-rules:
-- apiGroups:
-  - authentication.k8s.io
-  resources:
-  - tokenreviews
-  verbs:
-  - create
-- apiGroups:
-  - authorization.k8s.io
-  resources:
-  - subjectaccessreviews
-  verbs:
-  - create
----
+rules: 
+  - 
+    apiGroups: 
+      - authentication.k8s.io
+    resources: 
+      - tokenreviews
+    verbs: 
+      - create
+  - 
+    apiGroups: 
+      - authorization.k8s.io
+    resources: 
+      - subjectaccessreviews
+    verbs: 
+      - create
+--- 
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
   name: capa-eks-bootstrap-metrics-reader
-rules:
-- nonResourceURLs:
-  - /metrics
-  verbs:
-  - get
+rules: 
+  - 
+    nonResourceURLs: 
+      - /metrics
+    verbs: 
+      - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
   name: capa-eks-bootstrap-leader-election-rolebinding
   namespace: undistro-system
-roleRef:
+roleRef: 
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: capa-eks-bootstrap-leader-election-role
-subjects:
-- kind: ServiceAccount
-  name: capa-eks-bootstrap-controller-manager
-  namespace: undistro-system
----
+subjects: 
+  - 
+    kind: ServiceAccount
+    name: capa-eks-bootstrap-controller-manager
+    namespace: undistro-system
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
   name: capa-eks-bootstrap-manager-rolebinding
-roleRef:
+roleRef: 
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: capa-eks-bootstrap-manager-role
-subjects:
-- kind: ServiceAccount
-  name: capa-eks-bootstrap-controller-manager
-  namespace: undistro-system
----
+subjects: 
+  - 
+    kind: ServiceAccount
+    name: capa-eks-bootstrap-controller-manager
+    namespace: undistro-system
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
   name: capa-eks-bootstrap-proxy-rolebinding
-roleRef:
+roleRef: 
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: capa-eks-bootstrap-proxy-role
-subjects:
-- kind: ServiceAccount
-  name: capa-eks-bootstrap-controller-manager
-  namespace: undistro-system
----
+subjects: 
+  - 
+    kind: ServiceAccount
+    name: capa-eks-bootstrap-controller-manager
+    namespace: undistro-system
+--- 
 apiVersion: v1
 kind: Service
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
     control-plane: aws-bootstrap-controller-manager
   name: capa-eks-bootstrap-controller-manager-metrics-service
   namespace: undistro-system
-spec:
-  ports:
-  - name: https
-    port: 8443
-    targetPort: https
-  selector:
+spec: 
+  ports: 
+    - 
+      name: https
+      port: 8443
+      targetPort: https
+  selector: 
     cluster.x-k8s.io/provider: bootstrap-eks
     control-plane: aws-bootstrap-controller-manager
----
+--- 
 apiVersion: apps/v1
 kind: Deployment
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: bootstrap-eks
     control-plane: aws-bootstrap-controller-manager
   name: capa-eks-bootstrap-controller-manager
   namespace: undistro-system
-spec:
+spec: 
   replicas: 1
-  selector:
-    matchLabels:
+  selector: 
+    matchLabels: 
       cluster.x-k8s.io/provider: bootstrap-eks
       control-plane: aws-bootstrap-controller-manager
-  template:
-    metadata:
-      labels:
+  template: 
+    metadata: 
+      labels: 
         cluster.x-k8s.io/provider: bootstrap-eks
         control-plane: aws-bootstrap-controller-manager
-    spec:
-      containers:
-      - args:
-        - --secure-listen-address=0.0.0.0:8443
-        - --upstream=http://127.0.0.1:8080/
-        - --logtostderr=true
-        - --v=10
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
-        imagePullPolicy: IfNotPresent
-        name: kube-rbac-proxy
-        ports:
-        - containerPort: 8443
-          name: https
-      - args:
-        - --metrics-addr=127.0.0.1:8080
-        - --enable-leader-election
-        - --feature-gates=MachinePool=true
-        command:
-        - /manager
-        image: gcr.io/k8s-staging-cluster-api-aws/eks-bootstrap-controller:v0.6.5
-        imagePullPolicy: Always
-        name: manager
-      securityContext:
+    spec: 
+      containers: 
+        - 
+          args: 
+            - "--secure-listen-address=0.0.0.0:8443"
+            - "--upstream=http://127.0.0.1:8080/"
+            - "--logtostderr=true"
+            - "--v=10"
+          image: "gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0"
+          imagePullPolicy: IfNotPresent
+          name: kube-rbac-proxy
+          ports: 
+            - 
+              containerPort: 8443
+              name: https
+        - 
+          args: 
+            - "--metrics-addr=127.0.0.1:8080"
+            - "--enable-leader-election"
+            - "--feature-gates=MachinePool=true"
+          command: 
+            - /manager
+          image: "gcr.io/k8s-staging-cluster-api-aws/eks-bootstrap-controller:v0.6.5"
+          imagePullPolicy: Always
+          name: manager
+      securityContext: 
         fsGroup: 1000
       serviceAccountName: capa-eks-bootstrap-controller-manager
       terminationGracePeriodSeconds: 10
-      tolerations:
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
+      tolerations: 
+        - 
+          effect: NoSchedule
+          key: node-role.kubernetes.io/master
+

@@ -1,451 +1,485 @@
----
+--- 
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  annotations:
-    ${AWS_CONTROLLER_IAM_ROLE/#arn/eks.amazonaws.com/role-arn: arn}
-  labels:
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
     control-plane: aws-controlplane-controller-manager
   name: capa-eks-control-plane-controller-manager
   namespace: undistro-system
----
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-leader-election-role
   namespace: undistro-system
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - configmaps/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
----
+rules: 
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - configmaps
+    verbs: 
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - configmaps/status
+    verbs: 
+      - get
+      - update
+      - patch
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - events
+    verbs: 
+      - create
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
-metadata:
-  creationTimestamp: null
-  labels:
+metadata: 
+  creationTimestamp: ~
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-manager-role
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - cluster.x-k8s.io
-  resources:
-  - clusters
-  - clusters/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - controlplane.cluster.x-k8s.io
-  resources:
-  - awsmanagedcontrolplanes
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - controlplane.cluster.x-k8s.io
-  resources:
-  - awsmanagedcontrolplanes/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - get
-  - list
-  - patch
-  - watch
-- apiGroups:
-  - infrastructure.cluster.x-k8s.io
-  resources:
-  - awsclusterroleidentities
-  - awsclusterstaticidentities
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - infrastructure.cluster.x-k8s.io
-  resources:
-  - awsmachinepools
-  - awsmachinepools/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - infrastructure.cluster.x-k8s.io
-  resources:
-  - awsmachines
-  - awsmachines/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - infrastructure.cluster.x-k8s.io
-  resources:
-  - awsmanagedclusters
-  - awsmanagedclusters/status
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - infrastructure.cluster.x-k8s.io
-  resources:
-  - awsmanagedmachinepools
-  - awsmanagedmachinepools/status
-  verbs:
-  - get
-  - list
-  - watch
----
+rules: 
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - secrets
+    verbs: 
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - 
+    apiGroups: 
+      - cluster.x-k8s.io
+    resources: 
+      - clusters
+      - clusters/status
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - controlplane.cluster.x-k8s.io
+    resources: 
+      - awsmanagedcontrolplanes
+    verbs: 
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - 
+    apiGroups: 
+      - controlplane.cluster.x-k8s.io
+    resources: 
+      - awsmanagedcontrolplanes/status
+    verbs: 
+      - get
+      - patch
+      - update
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - events
+    verbs: 
+      - create
+      - get
+      - list
+      - patch
+      - watch
+  - 
+    apiGroups: 
+      - infrastructure.cluster.x-k8s.io
+    resources: 
+      - awsclusterroleidentities
+      - awsclusterstaticidentities
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - infrastructure.cluster.x-k8s.io
+    resources: 
+      - awsmachinepools
+      - awsmachinepools/status
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - infrastructure.cluster.x-k8s.io
+    resources: 
+      - awsmachines
+      - awsmachines/status
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - infrastructure.cluster.x-k8s.io
+    resources: 
+      - awsmanagedclusters
+      - awsmanagedclusters/status
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - infrastructure.cluster.x-k8s.io
+    resources: 
+      - awsmanagedmachinepools
+      - awsmanagedmachinepools/status
+    verbs: 
+      - get
+      - list
+      - watch
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-proxy-role
-rules:
-- apiGroups:
-  - authentication.k8s.io
-  resources:
-  - tokenreviews
-  verbs:
-  - create
-- apiGroups:
-  - authorization.k8s.io
-  resources:
-  - subjectaccessreviews
-  verbs:
-  - create
----
+rules: 
+  - 
+    apiGroups: 
+      - authentication.k8s.io
+    resources: 
+      - tokenreviews
+    verbs: 
+      - create
+  - 
+    apiGroups: 
+      - authorization.k8s.io
+    resources: 
+      - subjectaccessreviews
+    verbs: 
+      - create
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-leader-election-rolebinding
   namespace: undistro-system
-roleRef:
+roleRef: 
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: capa-eks-control-plane-leader-election-role
-subjects:
-- kind: ServiceAccount
-  name: capa-eks-control-plane-controller-manager
-  namespace: undistro-system
----
+subjects: 
+  - 
+    kind: ServiceAccount
+    name: capa-eks-control-plane-controller-manager
+    namespace: undistro-system
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-manager-rolebinding
-roleRef:
+roleRef: 
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: capa-eks-control-plane-manager-role
-subjects:
-- kind: ServiceAccount
-  name: capa-eks-control-plane-controller-manager
-  namespace: undistro-system
----
+subjects: 
+  - 
+    kind: ServiceAccount
+    name: capa-eks-control-plane-controller-manager
+    namespace: undistro-system
+--- 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-proxy-rolebinding
-roleRef:
+roleRef: 
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: capa-eks-control-plane-proxy-role
-subjects:
-- kind: ServiceAccount
-  name: capa-eks-control-plane-controller-manager
-  namespace: undistro-system
-
----
+subjects: 
+  - 
+    kind: ServiceAccount
+    name: capa-eks-control-plane-controller-manager
+    namespace: undistro-system
+--- 
 apiVersion: v1
 kind: Service
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
     control-plane: aws-controlplane-controller-manager
   name: capa-eks-control-plane-controller-manager-metrics-service
   namespace: undistro-system
-spec:
-  ports:
-  - name: https
-    port: 8443
-    targetPort: https
-  selector:
+spec: 
+  ports: 
+    - 
+      name: https
+      port: 8443
+      targetPort: https
+  selector: 
     cluster.x-k8s.io/provider: control-plane-eks
     control-plane: aws-controlplane-controller-manager
----
+--- 
 apiVersion: v1
 kind: Service
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-webhook-service
   namespace: undistro-system
-spec:
-  ports:
-  - port: 443
-    targetPort: webhook-server
-  selector:
+spec: 
+  ports: 
+    - 
+      port: 443
+      targetPort: webhook-server
+  selector: 
     cluster.x-k8s.io/provider: control-plane-eks
----
+--- 
 apiVersion: apps/v1
 kind: Deployment
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
     control-plane: aws-controlplane-controller-manager
   name: capa-eks-control-plane-controller-manager
   namespace: undistro-system
-spec:
+spec: 
   replicas: 1
-  selector:
-    matchLabels:
+  selector: 
+    matchLabels: 
       cluster.x-k8s.io/provider: control-plane-eks
       control-plane: aws-controlplane-controller-manager
-  template:
-    metadata:
-      labels:
+  template: 
+    metadata: 
+      labels: 
         cluster.x-k8s.io/provider: control-plane-eks
         control-plane: aws-controlplane-controller-manager
-    spec:
-      containers:
-      - args:
-        - --metrics-addr=127.0.0.1:8080
-        - --enable-leader-election
-        - --feature-gates=EKSEnableIAM=true,EKSAllowAddRoles=true,MachinePool=true
-        - --v=${EKS_CP_LOGLEVEL:=4}
-        command:
-        - /manager
-        env:
-        - name: AWS_SHARED_CREDENTIALS_FILE
-          value: /home/.aws/credentials
-        image: gcr.io/k8s-staging-cluster-api-aws/eks-controlplane-controller:v0.6.5
-        imagePullPolicy: IfNotPresent
-        name: manager
-        volumeMounts:
-        - mountPath: /home/.aws
-          name: credentials
-      - args:
-        - --secure-listen-address=0.0.0.0:8443
-        - --upstream=http://127.0.0.1:8080/
-        - --logtostderr=true
-        - --v=10
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
-        name: kube-rbac-proxy
-        ports:
-        - containerPort: 8443
-          name: http
-      securityContext:
+    spec: 
+      containers: 
+        - 
+          args: 
+            - "--metrics-addr=127.0.0.1:8080"
+            - "--enable-leader-election"
+            - "--feature-gates=EKSEnableIAM=true,EKSAllowAddRoles=true,MachinePool=true"            
+          command: 
+            - /manager
+          env: 
+            - 
+              name: AWS_SHARED_CREDENTIALS_FILE
+              value: /home/.aws/credentials
+          image: "gcr.io/k8s-staging-cluster-api-aws/eks-controlplane-controller:v0.6.5"
+          imagePullPolicy: IfNotPresent
+          name: manager
+          volumeMounts: 
+            - 
+              mountPath: /home/.aws
+              name: credentials
+        - 
+          args: 
+            - "--secure-listen-address=0.0.0.0:8443"
+            - "--upstream=http://127.0.0.1:8080/"
+            - "--logtostderr=true"
+            - "--v=10"
+          image: "gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0"
+          name: kube-rbac-proxy
+          ports: 
+            - 
+              containerPort: 8443
+              name: http
+      securityContext: 
         fsGroup: 1000
       serviceAccountName: capa-eks-control-plane-controller-manager
       terminationGracePeriodSeconds: 10
-      tolerations:
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
-      volumes:
-      - name: credentials
-        secret:
-          secretName: undistro-aws-config
----
+      tolerations: 
+        - 
+          effect: NoSchedule
+          key: node-role.kubernetes.io/master
+      volumes: 
+        - 
+          name: credentials
+          secret: 
+            secretName: undistro-aws-config
+--- 
 apiVersion: apps/v1
 kind: Deployment
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
     control-plane: aws-controlplane-controller-manager
   name: capa-eks-control-plane-controller-manager-webhook
   namespace: undistro-system
-spec:
+spec: 
   replicas: 1
-  selector:
-    matchLabels:
+  selector: 
+    matchLabels: 
       cluster.x-k8s.io/provider: control-plane-eks
       control-plane: aws-controlplane-controller-manager
-  template:
-    metadata:
-      labels:
+  template: 
+    metadata: 
+      labels: 
         cluster.x-k8s.io/provider: control-plane-eks
         control-plane: aws-controlplane-controller-manager
-    spec:
-      containers:
-      - args:
-        - --metrics-addr=127.0.0.1:8080
-        - --webhook-port=9443
-        command:
-        - /manager
-        image: gcr.io/k8s-staging-cluster-api-aws/eks-controlplane-controller:v0.6.5
-        imagePullPolicy: IfNotPresent
-        name: manager
-        ports:
-        - containerPort: 9443
-          name: webhook-server
-          protocol: TCP
-        volumeMounts:
-        - mountPath: /tmp/k8s-webhook-server/serving-certs
-          name: cert
-          readOnly: true
-      - args:
-        - --secure-listen-address=0.0.0.0:8443
-        - --upstream=http://127.0.0.1:8080/
-        - --logtostderr=true
-        - --v=10
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
-        name: kube-rbac-proxy
-        ports:
-        - containerPort: 8443
-          name: http
+    spec: 
+      containers: 
+        - 
+          args: 
+            - "--metrics-addr=127.0.0.1:8080"
+            - "--webhook-port=9443"
+          command: 
+            - /manager
+          image: "gcr.io/k8s-staging-cluster-api-aws/eks-controlplane-controller:v0.6.5"
+          imagePullPolicy: IfNotPresent
+          name: manager
+          ports: 
+            - 
+              containerPort: 9443
+              name: webhook-server
+              protocol: TCP
+          volumeMounts: 
+            - 
+              mountPath: /tmp/k8s-webhook-server/serving-certs
+              name: cert
+              readOnly: true
+        - 
+          args: 
+            - "--secure-listen-address=0.0.0.0:8443"
+            - "--upstream=http://127.0.0.1:8080/"
+            - "--logtostderr=true"
+            - "--v=10"
+          image: "gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0"
+          name: kube-rbac-proxy
+          ports: 
+            - 
+              containerPort: 8443
+              name: http
       terminationGracePeriodSeconds: 10
-      tolerations:
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
-      volumes:
-      - name: cert
-        secret:
-          defaultMode: 420
-          secretName: capa-eks-control-plane-webhook-service-cert
----
+      tolerations: 
+        - 
+          effect: NoSchedule
+          key: node-role.kubernetes.io/master
+      volumes: 
+        - 
+          name: cert
+          secret: 
+            defaultMode: 420
+            secretName: capa-eks-control-plane-webhook-service-cert
+--- 
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-serving-cert
   namespace: undistro-system
-spec:
-  dnsNames:
-  - capa-eks-control-plane-webhook-service.undistro-system.svc
-  - capa-eks-control-plane-webhook-service.undistro-system.svc.cluster.local
-  issuerRef:
+spec: 
+  dnsNames: 
+    - capa-eks-control-plane-webhook-service.undistro-system.svc
+    - capa-eks-control-plane-webhook-service.undistro-system.svc.cluster.local
+  issuerRef: 
     kind: Issuer
     name: capa-eks-control-plane-selfsigned-issuer
   secretName: capa-eks-control-plane-webhook-service-cert
----
+--- 
 apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
-metadata:
-  labels:
+metadata: 
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-selfsigned-issuer
   namespace: undistro-system
-spec:
+spec: 
   selfSigned: {}
----
+--- 
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
-metadata:
-  annotations:
+metadata: 
+  annotations: 
     cert-manager.io/inject-ca-from: undistro-system/capa-eks-control-plane-serving-cert
-  labels:
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-mutating-webhook-configuration
-webhooks:
-- clientConfig:
-    caBundle: Cg==
-    service:
-      name: capa-eks-control-plane-webhook-service
-      namespace: undistro-system
-      path: /mutate-controlplane-cluster-x-k8s-io-v1alpha3-awsmanagedcontrolplane
-  failurePolicy: Fail
-  matchPolicy: Equivalent
-  name: default.awsmanagedcontrolplanes.controlplane.cluster.x-k8s.io
-  rules:
-  - apiGroups:
-    - controlplane.cluster.x-k8s.io
-    apiVersions:
-    - v1alpha3
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - awsmanagedcontrolplanes
-  sideEffects: None
----
+webhooks: 
+  - 
+    clientConfig: 
+      caBundle: Cg==
+      service: 
+        name: capa-eks-control-plane-webhook-service
+        namespace: undistro-system
+        path: /mutate-controlplane-cluster-x-k8s-io-v1alpha3-awsmanagedcontrolplane
+    failurePolicy: Fail
+    matchPolicy: Equivalent
+    name: default.awsmanagedcontrolplanes.controlplane.cluster.x-k8s.io
+    rules: 
+      - 
+        apiGroups: 
+          - controlplane.cluster.x-k8s.io
+        apiVersions: 
+          - v1alpha3
+        operations: 
+          - CREATE
+          - UPDATE
+        resources: 
+          - awsmanagedcontrolplanes
+    sideEffects: None
+--- 
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
-metadata:
-  annotations:
+metadata: 
+  annotations: 
     cert-manager.io/inject-ca-from: undistro-system/capa-eks-control-plane-serving-cert
-  labels:
+  labels: 
     cluster.x-k8s.io/provider: control-plane-eks
   name: capa-eks-control-plane-validating-webhook-configuration
-webhooks:
-- clientConfig:
-    caBundle: Cg==
-    service:
-      name: capa-eks-control-plane-webhook-service
-      namespace: undistro-system
-      path: /validate-controlplane-cluster-x-k8s-io-v1alpha3-awsmanagedcontrolplane
-  failurePolicy: Fail
-  matchPolicy: Equivalent
-  name: validation.awsmanagedcontrolplanes.controlplane.cluster.x-k8s.io
-  rules:
-  - apiGroups:
-    - controlplane.cluster.x-k8s.io
-    apiVersions:
-    - v1alpha3
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - awsmanagedcontrolplanes
-  sideEffects: None
+webhooks: 
+  - 
+    clientConfig: 
+      caBundle: Cg==
+      service: 
+        name: capa-eks-control-plane-webhook-service
+        namespace: undistro-system
+        path: /validate-controlplane-cluster-x-k8s-io-v1alpha3-awsmanagedcontrolplane
+    failurePolicy: Fail
+    matchPolicy: Equivalent
+    name: validation.awsmanagedcontrolplanes.controlplane.cluster.x-k8s.io
+    rules: 
+      - 
+        apiGroups: 
+          - controlplane.cluster.x-k8s.io
+        apiVersions: 
+          - v1alpha3
+        operations: 
+          - CREATE
+          - UPDATE
+        resources: 
+          - awsmanagedcontrolplanes
+    sideEffects: None
