@@ -132,6 +132,10 @@ func (r *ProviderReconciler) reconcile(ctx context.Context, log logr.Logger, p c
 		}
 		return p, ctrl.Result{}, err
 	}
+	err = cloud.PostInstall(ctx, r.Client, p)
+	if err != nil {
+		return configv1alpha1.ProviderNotReady(p, meta.WaitChartReason, err.Error()), ctrl.Result{}, err
+	}
 	return configv1alpha1.ProviderReady(p), ctrl.Result{}, nil
 }
 

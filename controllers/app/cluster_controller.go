@@ -180,7 +180,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 		cl.Status.TotalWorkerReplicas += *w.Replicas
 	}
 	if !meta.InCNIInstalledCondition(cl.Status.Conditions) {
-		if capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady && !cl.Spec.InfrastructureProvider.IsManaged() {
+		if capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady {
 			log.Info("installing calico")
 			err := r.installCNI(ctx, cl)
 			if err != nil {
@@ -199,11 +199,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 			}
 		}
 	}
-	err := cloud.ReconcileLaunchTemplate(ctx, r.Client, &cl)
-	if err != nil {
-		return appv1alpha1.ClusterNotReady(cl, meta.ReconcileLaunchTemplateFailed, err.Error()), ctrl.Result{}, err
-	}
-	err = cloud.ReconcileNetwork(ctx, r.Client, &cl, &capiCluster)
+	err := cloud.ReconcileNetwork(ctx, r.Client, &cl, &capiCluster)
 	if err != nil {
 		return appv1alpha1.ClusterNotReady(cl, meta.ReconcileNetworkFailed, err.Error()), ctrl.Result{}, err
 	}

@@ -7,7 +7,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/aws/aws-sdk-go v1.36.12
-	github.com/go-logr/logr v0.3.0
+	github.com/go-logr/logr v0.4.0
 	github.com/google/go-cmp v0.5.4
 	github.com/gorilla/mux v1.8.0
 	github.com/onsi/ginkgo v1.14.2
@@ -16,13 +16,13 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
-	helm.sh/helm/v3 v3.5.3
+	helm.sh/helm/v3 v3.5.4
 	k8s.io/api v0.20.6
 	k8s.io/apiextensions-apiserver v0.20.6
 	k8s.io/apimachinery v0.20.6
 	k8s.io/cli-runtime v0.20.6
 	k8s.io/client-go v0.20.6
-	k8s.io/klog/v2 v2.4.0
+	k8s.io/klog/v2 v2.5.0
 	k8s.io/kubectl v0.20.6
 	sigs.k8s.io/cluster-api v0.3.16
 	sigs.k8s.io/controller-runtime v0.8.3

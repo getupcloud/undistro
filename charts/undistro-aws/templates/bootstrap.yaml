@@ -1,4 +1,15 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    ${AWS_CONTROLLER_IAM_ROLE/#arn/eks.amazonaws.com/role-arn: arn}
+  labels:
+    cluster.x-k8s.io/provider: bootstrap-eks
+    control-plane: aws-bootstrap-controller-manager
+  name: capa-eks-bootstrap-controller-manager
+  namespace: undistro-system
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -145,7 +156,7 @@ roleRef:
   name: capa-eks-bootstrap-leader-election-role
 subjects:
 - kind: ServiceAccount
-  name: default
+  name: capa-eks-bootstrap-controller-manager
   namespace: undistro-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -160,7 +171,7 @@ roleRef:
   name: capa-eks-bootstrap-manager-role
 subjects:
 - kind: ServiceAccount
-  name: default
+  name: capa-eks-bootstrap-controller-manager
   namespace: undistro-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -175,7 +186,7 @@ roleRef:
   name: capa-eks-bootstrap-proxy-role
 subjects:
 - kind: ServiceAccount
-  name: default
+  name: capa-eks-bootstrap-controller-manager
   namespace: undistro-system
 ---
 apiVersion: v1
@@ -222,6 +233,7 @@ spec:
         - --logtostderr=true
         - --v=10
         image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
+        imagePullPolicy: IfNotPresent
         name: kube-rbac-proxy
         ports:
         - containerPort: 8443
@@ -232,9 +244,12 @@ spec:
         - --feature-gates=MachinePool=true
         command:
         - /manager
-        image: getupioundistro/eks-bootstrap-controller-amd64:v0.6.4-undistro
-        imagePullPolicy: IfNotPresent
+        image: gcr.io/k8s-staging-cluster-api-aws/eks-bootstrap-controller:v0.6.5
+        imagePullPolicy: Always
         name: manager
+      securityContext:
+        fsGroup: 1000
+      serviceAccountName: capa-eks-bootstrap-controller-manager
       terminationGracePeriodSeconds: 10
       tolerations:
       - effect: NoSchedule

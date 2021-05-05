@@ -1,0 +1,7 @@
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
+kind: AWSClusterControllerIdentity
+metadata:
+  name: "default"
+spec:
+  allowedNamespaces: {}

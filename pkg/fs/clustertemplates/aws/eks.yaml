@@ -61,6 +61,11 @@ metadata:
   name: "{{.Cluster.Name}}"
   namespace: "{{.Cluster.Namespace}}"
 spec:
+  # disable AWS CNI because UnDistro uses calico
+  disableVPCCNI: true
+  identityRef:
+    kind: AWSClusterControllerIdentity
+    name: default
   {{if .Account}}
   {{if not .Account.IsRoot}}
   iamAuthenticatorConfig:
@@ -163,11 +168,6 @@ metadata:
   namespace: "{{$namespace}}"
 spec:
   eksNodegroupName: "{{$name}}-mp-{{$index}}"
-  {{if $element.LaunchTemplateReference.ID}}
-  launchTemplate:
-    id: {{$element.LaunchTemplateReference.ID}}
-    version: {{$element.LaunchTemplateReference.Version}}
-  {{end}}
   {{if $element.Labels}}
   labels:
     {{range $key, $value := $element.Labels}}
@@ -192,6 +192,7 @@ spec:
   {{if $sshKey}}
   remoteAccess:
     sshKeyName: "{{$sshKey}}"
+    public: true
   {{end}}
   {{if $element.Subnet}}
   subnetIDs:

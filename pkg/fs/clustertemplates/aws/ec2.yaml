@@ -49,6 +49,9 @@ metadata:
   namespace: "{{.Cluster.Namespace}}"
 spec:
   region:  "{{ .Cluster.Spec.InfrastructureProvider.Region}}"
+  identityRef:
+    kind: AWSClusterControllerIdentity
+    name: default
   {{if .Cluster.Spec.InfrastructureProvider.SSHKey}}
   sshKeyName: "{{ .Cluster.Spec.InfrastructureProvider.SSHKey}}"
   {{end}}
@@ -262,12 +265,6 @@ spec:
     - "{{$region}}"
   awsLaunchTemplate:
     instanceType: "{{$element.MachineType}}"
-    {{if $element.LaunchTemplateReference.ID}}
-    id: {{$element.LaunchTemplateReference.ID}}
-    {{end}}
-    {{if $element.LaunchTemplateReference.Version}}
-    versionNumber: {{$element.LaunchTemplateReference.Version}}
-    {{end}}
     {{if $sshKey}}
     sshKeyName: "{{$sshKey}}"
     {{end}}
