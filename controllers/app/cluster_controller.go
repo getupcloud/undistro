@@ -199,7 +199,11 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 			}
 		}
 	}
-	err := cloud.ReconcileNetwork(ctx, r.Client, &cl, &capiCluster)
+	err := cloud.ReconcileLaunchTemplate(ctx, r.Client, &cl)
+	if err != nil {
+		return appv1alpha1.ClusterNotReady(cl, meta.ReconcileLaunchTemplateFailed, err.Error()), ctrl.Result{}, err
+	}
+	err = cloud.ReconcileNetwork(ctx, r.Client, &cl, &capiCluster)
 	if err != nil {
 		return appv1alpha1.ClusterNotReady(cl, meta.ReconcileNetworkFailed, err.Error()), ctrl.Result{}, err
 	}

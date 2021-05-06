@@ -55,6 +55,15 @@ func PostInstall(ctx context.Context, c client.Client, p configv1alpha1.Provider
 	return nil
 }
 
+// ReconcileLaunchTemplate from clouds
+func ReconcileLaunchTemplate(ctx context.Context, r client.Client, cl *appv1alpha1.Cluster) error {
+	switch cl.Spec.InfrastructureProvider.Name {
+	case "aws":
+		return aws.ReconcileLaunchTemplate(ctx, r, cl)
+	}
+	return nil
+}
+
 // Init providers
 func Init(ctx context.Context, c client.Client, p configv1alpha1.Provider) (configv1alpha1.Provider, error) {
 	var err error

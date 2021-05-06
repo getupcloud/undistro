@@ -216,6 +216,7 @@ spec:
 {{$sshKey := .Cluster.Spec.InfrastructureProvider.SSHKey}}
 {{$region := .Cluster.Spec.InfrastructureProvider.Region}}
 {{$uid := .Cluster.Status.LastUsedUID}}
+{{$subnets := .Cluster.Spec.Network.Subnets}}
 {{range $index, $element := .Cluster.Spec.Workers}}
 ---
 apiVersion: exp.cluster.x-k8s.io/v1alpha3
@@ -261,10 +262,20 @@ spec:
     {{$key}}: {{$value | quote}}
     {{end}}
   {{end}}
+  {{if $subnets}}
   availabilityZones: 
-    - "{{$region}}"
+    {{- range $subnets}}
+    - {{.Zone}}
+    {{- end}}
+  {{end}}
   awsLaunchTemplate:
     instanceType: "{{$element.MachineType}}"
+    {{if $element.LaunchTemplateReference.ID}}
+    id: {{$element.LaunchTemplateReference.ID}}
+    {{end}}
+    {{if $element.LaunchTemplateReference.Version}}
+    versionNumber: {{$element.LaunchTemplateReference.Version}}
+    {{end}}
     {{if $sshKey}}
     sshKeyName: "{{$sshKey}}"
     {{end}}

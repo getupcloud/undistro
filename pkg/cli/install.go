@@ -483,6 +483,10 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 				ready = false
 				break
 			}
+			err = cloud.PostInstall(cmd.Context(), c, item)
+			if err != nil {
+				return err
+			}
 		}
 
 		// retest objects because certmanager update certs when new pod is added

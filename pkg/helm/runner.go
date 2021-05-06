@@ -72,6 +72,7 @@ func (r *Runner) Install(hr appv1alpha1.HelmRelease, chart *chart.Chart, values 
 	install.SkipCRDs = hr.Spec.SkipCRDs
 	install.DependencyUpdate = true
 	install.CreateNamespace = true
+	install.Replace = true
 	return install.Run(chart, values.AsMap())
 }
 
@@ -86,7 +87,7 @@ func (r *Runner) Upgrade(hr appv1alpha1.HelmRelease, chart *chart.Chart, values 
 	upgrade.Wait = *hr.Spec.Wait
 	upgrade.Force = *hr.Spec.ForceUpgrade
 	upgrade.CleanupOnFail = true
-
+	upgrade.Recreate = true
 	rel, err := upgrade.Run(hr.Spec.ReleaseName, chart, values.AsMap())
 	return rel, err
 }

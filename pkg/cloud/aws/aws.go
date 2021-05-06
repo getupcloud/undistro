@@ -25,6 +25,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -62,6 +63,62 @@ aws_session_token = {{ .SessionToken }}
 
 //go:embed undistro-aws.yaml
 var identity []byte
+
+func kindByFlavor(flavor string) string {
+	switch flavor {
+	case "ec2":
+		return "AWSMachinePool"
+	case "eks":
+		return "AWSManagedMachinePool"
+	}
+	return ""
+}
+
+func launchTemplateRef(ctx context.Context, u unstructured.Unstructured) (appv1alpha1.LaunchTemplateReference, error) {
+	var (
+		ref     appv1alpha1.LaunchTemplateReference
+		version int64
+		ok      bool
+		err     error
+	)
+	switch u.GetKind() {
+	case "AWSMachinePool":
+		ref.ID, ok, err = unstructured.NestedString(u.Object, "spec", "awsLaunchTemplate", "id")
+		if !ok || err != nil {
+			return ref, err
+		}
+		version, ok, err = unstructured.NestedInt64(u.Object, "spec", "awsLaunchTemplate", "versionNumber")
+		if !ok || err != nil {
+			return ref, err
+		}
+		ref.Version = strconv.Itoa(int(version))
+	}
+	return ref, nil
+}
+
+func ReconcileLaunchTemplate(ctx context.Context, r client.Client, cl *appv1alpha1.Cluster) error {
+	for i := range cl.Spec.Workers {
+		if !cl.Spec.InfrastructureProvider.IsManaged() {
+			key := client.ObjectKey{
+				Name:      fmt.Sprintf("%s-mp-%d", cl.Name, i),
+				Namespace: cl.GetNamespace(),
+			}
+			u := unstructured.Unstructured{}
+			u.SetAPIVersion("infrastructure.cluster.x-k8s.io/v1alpha3")
+			u.SetKind(kindByFlavor(cl.Spec.InfrastructureProvider.Flavor))
+			err := r.Get(ctx, key, &u)
+			if err != nil {
+				return client.IgnoreNotFound(err)
+			}
+			ref, err := launchTemplateRef(ctx, u)
+			if err != nil {
+				return err
+			}
+			cl.Spec.Workers[i].LaunchTemplateReference = ref
+		}
+	}
+	return nil
+}
 
 func ReconcileNetwork(ctx context.Context, r client.Client, cl *appv1alpha1.Cluster, capiCluster *capi.Cluster) error {
 	u := unstructured.Unstructured{}

@@ -29,6 +29,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/kubectl/pkg/cmd/create"
@@ -81,31 +82,8 @@ func (o *ClusterOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []
 	if o.Flavor == "" {
 		return errors.New("required flag: flavor")
 	}
-	err = o.validateInfraFlavor()
-	if err != nil {
-		return err
-	}
 	o.ClusterName = args[0]
 	return nil
-}
-
-func (o *ClusterOptions) validateInfraFlavor() error {
-	switch o.Infra {
-	case "aws":
-		switch o.Flavor {
-		case "eks":
-			return nil
-		case "ec2":
-			if o.SshKeyName == "" {
-				return errors.New("ssh-key-name is required to favor ec2")
-			}
-			return nil
-		default:
-			return errors.Errorf("unknown flavor: %s", o.Flavor)
-		}
-	default:
-		return errors.Errorf("unknown infrastructure: %s", o.Infra)
-	}
 }
 
 func (o *ClusterOptions) setRegionByInfra(ctx context.Context, c client.Client) error {
@@ -167,7 +145,21 @@ func (o *ClusterOptions) RunCreateCluster(f cmdutil.Factory, cmd *cobra.Command)
 		}
 		defer file.Close()
 	}
-	for _, obj := range objs {
+	for i, obj := range objs {
+		if i == 0 {
+			_, err = util.CreateOrUpdate(cmd.Context(), c, &corev1.Namespace{
+				TypeMeta: metav1.TypeMeta{
+					APIVersion: "v1",
+					Kind:       "Namespace",
+				},
+				ObjectMeta: metav1.ObjectMeta{
+					Name: obj.GetNamespace(),
+				},
+			})
+			if err != nil {
+				return err
+			}
+		}
 		if o.GenerateFile {
 			file.WriteString("---\n")
 			obj.SetResourceVersion("") // fields if exists
