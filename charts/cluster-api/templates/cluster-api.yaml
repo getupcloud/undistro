@@ -540,7 +540,7 @@ spec:
         - --feature-gates=MachinePool=true,ClusterResourceSet=true
         command:
         - /manager
-        image: us.gcr.io/k8s-artifacts-prod/cluster-api/cluster-api-controller:v0.3.16
+        image: getupioundistro/cluster-api-controller-amd64:v0.3.16
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -597,7 +597,7 @@ spec:
         - --feature-gates=MachinePool=true,ClusterResourceSet=true
         command:
         - /manager
-        image: us.gcr.io/k8s-artifacts-prod/cluster-api/cluster-api-controller:v0.3.16
+        image: getupioundistro/cluster-api-controller-amd64:v0.3.16
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
