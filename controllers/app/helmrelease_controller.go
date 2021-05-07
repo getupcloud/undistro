@@ -238,6 +238,7 @@ func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, 
 	if err != nil {
 		return hr, ctrl.Result{}, err
 	}
+	// install helm secrets in undistro-system so this namespace need to exists in workload clusters
 	_, err = util.CreateOrUpdate(ctx, workloadClient, &corev1.Namespace{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
