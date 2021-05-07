@@ -181,7 +181,9 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 	}
 	if !meta.InCNIInstalledCondition(cl.Status.Conditions) {
 		// we need to install calico in managed flavors too for network policy support
-		if (capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady) || cl.Spec.InfrastructureProvider.IsManaged() {
+		if (capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady) ||
+			(cl.Spec.InfrastructureProvider.IsManaged() && capiCluster.Status.ControlPlaneReady) {
+
 			log.Info("installing calico")
 			err := r.installCNI(ctx, cl)
 			if err != nil {
