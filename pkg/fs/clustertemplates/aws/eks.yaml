@@ -61,8 +61,6 @@ metadata:
   name: "{{.Cluster.Name}}"
   namespace: "{{.Cluster.Namespace}}"
 spec:
-  # disable AWS CNI because UnDistro uses calico
-  disableVPCCNI: true
   identityRef:
     kind: AWSClusterControllerIdentity
     name: default

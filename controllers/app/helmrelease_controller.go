@@ -238,6 +238,18 @@ func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, 
 	if err != nil {
 		return hr, ctrl.Result{}, err
 	}
+	_, err = util.CreateOrUpdate(ctx, workloadClient, &corev1.Namespace{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Namespace",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "undistro-system",
+		},
+	})
+	if err != nil {
+		return hr, ctrl.Result{}, err
+	}
 	err = r.applyObjs(ctx, workloadClient, hr.Spec.BeforeApplyObjects)
 	if err != nil {
 		hr = appv1alpha1.HelmReleaseNotReady(hr, meta.ObjectsApliedFailedReason, err.Error())
@@ -517,14 +529,14 @@ func (r *HelmReleaseReconciler) composeValues(ctx context.Context, hr appv1alpha
 
 func (r *HelmReleaseReconciler) getRESTClientGetter(ctx context.Context, hr appv1alpha1.HelmRelease) (genericclioptions.RESTClientGetter, error) {
 	if hr.Spec.ClusterName == "" {
-		return kube.NewInClusterRESTClientGetter(r.config), nil
+		return kube.NewInClusterRESTClientGetter(r.config, hr.Spec.TargetNamespace), nil
 	}
 	key := util.ObjectKeyFromString(hr.Spec.ClusterName)
 	kubeConfig, err := kubeconfig.FromSecret(ctx, r.Client, key)
 	if err != nil {
 		return nil, err
 	}
-	return kube.NewMemoryRESTClientGetter(kubeConfig), nil
+	return kube.NewMemoryRESTClientGetter(kubeConfig, hr.Spec.TargetNamespace), nil
 }
 
 func (r *HelmReleaseReconciler) reconcileDelete(ctx context.Context, logger logr.Logger, hr appv1alpha1.HelmRelease) (ctrl.Result, error) {

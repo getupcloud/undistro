@@ -18,6 +18,8 @@ spec:
         resources:
           namespaces:
             - linkerd
+            - linkerd-*
+            - ingress-*
             - kube-system
             - undistro-system
       match:

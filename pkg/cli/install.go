@@ -274,13 +274,13 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 	if err != nil {
 		return err
 	}
-	restGetter := kube.NewInClusterRESTClientGetter(restCfg)
+	restGetter := kube.NewInClusterRESTClientGetter(restCfg, ns)
 	if o.ClusterName != "" {
 		byt, err := kubeconfig.FromSecret(cmd.Context(), c, util.ObjectKeyFromString(o.ClusterName))
 		if err != nil {
 			return err
 		}
-		restGetter = kube.NewMemoryRESTClientGetter(byt)
+		restGetter = kube.NewMemoryRESTClientGetter(byt, ns)
 		restCfg, err = restGetter.ToRESTConfig()
 		if err != nil {
 			return err

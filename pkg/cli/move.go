@@ -121,7 +121,7 @@ func (o *MoveOptions) RunMove(f cmdutil.Factory, cmd *cobra.Command) error {
 	if err != nil {
 		return err
 	}
-	restGetter := kube.NewMemoryRESTClientGetter(byt)
+	restGetter := kube.NewMemoryRESTClientGetter(byt, o.Namespace)
 	remoteCfg, err := restGetter.ToRESTConfig()
 	if err != nil {
 		return err

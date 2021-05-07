@@ -180,7 +180,7 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 		cl.Status.TotalWorkerReplicas += *w.Replicas
 	}
 	if !meta.InCNIInstalledCondition(cl.Status.Conditions) {
-		if capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady {
+		if (capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady) || cl.Spec.InfrastructureProvider.IsManaged() {
 			log.Info("installing calico")
 			err := r.installCNI(ctx, cl)
 			if err != nil {

@@ -52,7 +52,7 @@ func NewClusterConfig(ctx context.Context, c client.Client, name, namespace stri
 	if err != nil {
 		return nil, err
 	}
-	getter := NewMemoryRESTClientGetter(byt)
+	getter := NewMemoryRESTClientGetter(byt, namespace)
 	cfg, err := getter.ToRESTConfig()
 	if err != nil {
 		return nil, err
@@ -60,11 +60,12 @@ func NewClusterConfig(ctx context.Context, c client.Client, name, namespace stri
 	return cfg, nil
 }
 
-func NewInClusterRESTClientGetter(cfg *rest.Config) genericclioptions.RESTClientGetter {
+func NewInClusterRESTClientGetter(cfg *rest.Config, namespace string) genericclioptions.RESTClientGetter {
 	flags := genericclioptions.NewConfigFlags(false)
 	flags.APIServer = &cfg.Host
 	flags.BearerToken = &cfg.BearerToken
 	flags.CAFile = &cfg.CAFile
+	flags.Namespace = &namespace
 	return flags
 }
 
@@ -72,11 +73,13 @@ func NewInClusterRESTClientGetter(cfg *rest.Config) genericclioptions.RESTClient
 // capable of working with an in-memory kubeconfig file.
 type MemoryRESTClientGetter struct {
 	kubeConfig []byte
+	namespace  string
 }
 
-func NewMemoryRESTClientGetter(kubeConfig []byte) genericclioptions.RESTClientGetter {
+func NewMemoryRESTClientGetter(kubeConfig []byte, namespace string) genericclioptions.RESTClientGetter {
 	return &MemoryRESTClientGetter{
 		kubeConfig: kubeConfig,
+		namespace:  namespace,
 	}
 }
 
@@ -117,6 +120,7 @@ func (c *MemoryRESTClientGetter) ToRawKubeConfigLoader() clientcmd.ClientConfig 
 	loadingRules.DefaultClientConfig = &clientcmd.DefaultClientConfig
 
 	overrides := &clientcmd.ConfigOverrides{ClusterDefaults: clientcmd.ClusterDefaults}
+	overrides.Context.Namespace = c.namespace
 
 	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, overrides)
 }
