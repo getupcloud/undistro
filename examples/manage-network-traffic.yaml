@@ -3,10 +3,10 @@ apiVersion: app.undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
   name: nginx
-  namespace: ec2
+  namespace: example
 spec:
   targetNamespace: ingress-nginx
-  clusterName: <cluster-name>
+  clusterName: example/example-ec2
   chart:
     repository: https://kubernetes.github.io/ingress-nginx
     name: ingress-nginx
@@ -22,14 +22,14 @@ apiVersion: app.undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
   name: kubernetes-dashboard
-  namespace: ec2
+  namespace: example
 spec:
-  clusterName: <cluster-name>
+  clusterName: example/example-ec2
   dependencies:
     - apiVersion: app.undistro.io/v1alpha1
       kind: HelmRelease
       name: nginx
-      namespace: ec2
+      namespace: example
   chart:
     repository: https://kubernetes.github.io/dashboard
     name: kubernetes-dashboard
@@ -47,7 +47,7 @@ spec:
       subjects:
         - kind: ServiceAccount
           name: undistro-quickstart-dash
-          namespace: default
+          namespace: example
   values:
     podLabels:
       network.undistro.io/ingress: allow
