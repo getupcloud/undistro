@@ -9,6 +9,7 @@ require (
 	github.com/aws/aws-sdk-go v1.36.12
 	github.com/go-logr/logr v0.4.0
 	github.com/google/go-cmp v0.5.4
+	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/onsi/ginkgo v1.14.2
 	github.com/onsi/gomega v1.10.4

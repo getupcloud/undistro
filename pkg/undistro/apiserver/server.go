@@ -27,6 +27,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/fs"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/health"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/proxy"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/rest"
@@ -61,7 +62,13 @@ func NewServer(f cmdutil.Factory, in io.Reader, out, errOut io.Writer, healthChe
 		apiServer.HealthHandler.Add(c)
 	}
 	apiServer.routes(router)
+	env := os.Getenv("UNDISTRO_ENV")
 	apiServer.Handler = router
+	if env == "dev" {
+		corsObj := handlers.AllowedOrigins([]string{"*"})
+		apiServer.Handler = handlers.CORS(corsObj)(router)
+	}
+
 	return apiServer
 }
 
