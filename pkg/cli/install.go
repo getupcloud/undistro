@@ -117,7 +117,11 @@ func (o *InstallOptions) installProviders(ctx context.Context, streams genericcl
 		secretData := make(map[string][]byte)
 		valuesRef := make([]appv1alpha1.ValuesReference, 0)
 		for k, v := range p.Configuration {
-			secretData[k] = []byte(v)
+			str, ok := v.(string)
+			if !ok {
+				continue
+			}
+			secretData[k] = []byte(str)
 			valuesRef = append(valuesRef, appv1alpha1.ValuesReference{
 				Kind:       "Secret",
 				Name:       secretName,

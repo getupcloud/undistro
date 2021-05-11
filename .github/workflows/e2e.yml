@@ -2,7 +2,7 @@ name: Tests E2E
 
 on:
   push:
-    branches: ["main"]
+    branches: ["*"]
 
 jobs:
   e2e:
@@ -26,5 +26,18 @@ jobs:
       - name: Build CLI and add path
         run: |
           make cli
-          echo "::add-path::$GITHUB_WORKSPACE/bin"
-          echo "::add-path::$RUNNER_WORKSPACE/$(basename $GITHUB_REPOSITORY)/bin"
+          echo "GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+          echo "$RUNNER_WORKSPACE/$(basename $GITHUB_REPOSITORY)/bin" >> $GITHUB_PATH
+
+      - name: Install Kind and create cluster
+        run: |
+          GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
+          ./hack/kind.sh
+
+      - name: Run E2E
+        working-directory: ./e2e
+        env:
+          E2E_AWS_ACCESS_KEY_ID: ${{ secrets.E2E_AWS_ACCESS_KEY_ID }}
+          E2E_AWS_SECRET_ACCESS_KEY: ${{ secrets.E2E_AWS_SECRET_ACCESS_KEY }}
+        run: |
+          go test -e2e ./...
