@@ -18,6 +18,7 @@ import (
 var e2eRun = flag.Bool("e2e", false, "set true to run e2e tests")
 
 func TestMain(m *testing.M) {
+	flag.Parse()
 	klog.Info("E2E")
 	runE2E := *e2eRun
 	if !runE2E {
