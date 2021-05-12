@@ -81,13 +81,9 @@ func TestMain(m *testing.M) {
 		exec.WithCommand("undistro"),
 		exec.WithArgs("--config", "undistro-config.yaml", "install"),
 	)
-	out, errOut, err := cmd.Run(ctx)
+	out, _, err := cmd.Run(ctx)
 	if err != nil {
 		klog.Info(err)
-		os.Exit(1)
-	}
-	if len(errOut) > 0 {
-		klog.Info(string(errOut))
 		os.Exit(1)
 	}
 	if !bytes.Contains(out, []byte("Management cluster is ready to use.")) {
