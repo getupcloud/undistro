@@ -91,6 +91,7 @@ func getConfigFrom(providers []Provider, name string) *apiextensionsv1.JSON {
 	for _, p := range providers {
 		if p.Name == name {
 			byt, _ := json.Marshal(p.Configuration) // nolint
+			klog.Info(string(byt))
 			return &apiextensionsv1.JSON{Raw: byt}
 		}
 	}
