@@ -30,5 +30,17 @@ var _ = Describe("Validate UnDistro Installation", func() {
 			}
 			return running
 		}, 10*time.Minute, 1*time.Minute).Should(BeTrue())
+		It("Verify if UnDistro AWS is correctly installed", func() {
+			Eventually(func() string {
+				s := corev1.Secret{}
+				key := client.ObjectKey{
+					Name:      "undistro-aws-config",
+					Namespace: "undistro-system",
+				}
+				err := k8sClient.Get(context.Background(), key, &s)
+				Expect(err).ToNot(HaveOccurred())
+				return string(s.Data["credentials"])
+			}, 10*time.Minute, 1*time.Minute).ShouldNot(BeEmpty())
+		})
 	})
 })
