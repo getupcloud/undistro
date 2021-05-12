@@ -6,9 +6,11 @@ import (
 	"os"
 	"time"
 
+	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -52,14 +54,15 @@ var _ = Describe("Validate UnDistro Installation", func() {
 			podList := corev1.PodList{}
 			err := k8sClient.List(context.Background(), &podList, client.InNamespace("undistro-system"))
 			Expect(err).ToNot(HaveOccurred())
-			for _, p := range podList.Items {
-				for _, container := range p.Spec.Containers {
-					if container.Image == image {
-						return container.Image
-					}
-				}
+			hr := appv1alpha1.HelmRelease{}
+			key := client.ObjectKey{
+				Name:      "undistro",
+				Namespace: "undistro-system",
 			}
+			err = k8sClient.Get(context.Background(), key, &hr)
+			Expect(err).ToNot(HaveOccurred())
+			klog.Info(string(hr.Spec.Values.Raw))
 			return ""
-		}, 10*time.Minute, 1*time.Minute).Should(Equal(image))
+		}, 1*time.Minute, 1*time.Minute).Should(Equal(image))
 	})
 })
