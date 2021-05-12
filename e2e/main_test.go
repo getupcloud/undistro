@@ -7,15 +7,29 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/getupio-undistro/undistro/pkg/cli"
+	"github.com/getupio-undistro/undistro/pkg/kube"
+	"github.com/getupio-undistro/undistro/pkg/scheme"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"k8s.io/client-go/util/homedir"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/cluster-api/test/framework/exec"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
 	"sigs.k8s.io/yaml"
 )
 
-var e2eRun = flag.Bool("e2e", false, "set true to run e2e tests")
+var (
+	home       = homedir.HomeDir()
+	e2eRun     = flag.Bool("e2e", false, "set true to run e2e tests")
+	kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	k8sClient  client.Client
+)
 
 func TestMain(m *testing.M) {
 	flag.Parse()
@@ -86,6 +100,34 @@ func TestMain(m *testing.M) {
 		klog.Info("failed to install undistro")
 		os.Exit(1)
 	}
+	byt, err = ioutil.ReadFile(*kubeconfig)
+	if err != nil {
+		klog.Info(err)
+		os.Exit(1)
+	}
+	getter := kube.NewMemoryRESTClientGetter(byt, "")
+	config, err := getter.ToRESTConfig()
+	if err != nil {
+		klog.Info(err)
+		os.Exit(1)
+	}
+	k8sClient, err = client.New(config, client.Options{
+		Scheme: scheme.Scheme,
+	})
+	if err != nil {
+		klog.Info(err)
+		os.Exit(1)
+	}
 	code := m.Run()
 	os.Exit(code)
+}
+
+func TestGinkgoSuite(t *testing.T) {
+	SetDefaultEventuallyPollingInterval(1 * time.Minute)
+	SetDefaultEventuallyTimeout(120 * time.Minute)
+	RegisterFailHandler(Fail)
+
+	RunSpecsWithDefaultAndCustomReporters(t,
+		"E2E Suite",
+		[]Reporter{printer.NewlineReporter{}})
 }
