@@ -61,7 +61,7 @@ func TestMain(m *testing.M) {
 		klog.Info(err.Error())
 		os.Exit(1)
 	}
-	klog.Info(stout)
+	klog.Info(string(stout))
 	cfg := cli.Config{
 		Providers: []cli.Provider{
 			{
