@@ -45,21 +45,23 @@ func TestMain(m *testing.M) {
 		exec.WithCommand("docker"),
 		exec.WithArgs("build", "-t", image, "../"),
 	)
-	_, _, err := cmd.Run(ctx)
+	stout, _, err := cmd.Run(ctx)
 	if err != nil {
-		klog.Info(err)
+		klog.Info(err.Error())
 		os.Exit(1)
 	}
+	klog.Info(string(stout))
 	klog.Info("Push docker image")
 	cmd = exec.NewCommand(
 		exec.WithCommand("docker"),
 		exec.WithArgs("push", image),
 	)
-	_, _, err = cmd.Run(ctx)
+	stout, _, err = cmd.Run(ctx)
 	if err != nil {
-		klog.Info(err)
+		klog.Info(err.Error())
 		os.Exit(1)
 	}
+	klog.Info(stout)
 	cfg := cli.Config{
 		Providers: []cli.Provider{
 			{
@@ -93,9 +95,11 @@ func TestMain(m *testing.M) {
 		exec.WithCommand("undistro"),
 		exec.WithArgs("--config", "undistro-config.yaml", "install"),
 	)
-	out, _, _ := cmd.Run(ctx)
+	out, stderr, _ := cmd.Run(ctx)
+	klog.Info(string(out))
 	if !bytes.Contains(out, []byte("Management cluster is ready to use.")) {
-		klog.Info("failed to install undistro")
+		msg := "failed to install undistro: " + string(stderr)
+		klog.Info(msg)
 		os.Exit(1)
 	}
 	config, err := clientcmd.BuildConfigFromFlags("", filepath.Join(homedir.HomeDir(), ".kube", "config"))

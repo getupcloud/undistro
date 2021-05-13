@@ -11,6 +11,7 @@ require (
 	github.com/google/go-cmp v0.5.4
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
+	github.com/json-iterator/go v1.1.10
 	github.com/onsi/ginkgo v1.14.2
 	github.com/onsi/gomega v1.10.4
 	github.com/pkg/errors v0.9.1
