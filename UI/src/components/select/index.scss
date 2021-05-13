@@ -1,0 +1,118 @@
+@import 'styles/theme';
+
+.select {
+  margin-bottom: 8px;
+  display: block;
+
+  .title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+
+    label {
+      color: var(--off-white, $off-white);
+      background-color: var(--gray-blue-2, $gray-blue-2);
+      border-radius: 2px;
+      font-weight: 500;
+      font-size: 12px;
+      padding: 0 2px;
+      position: absolute;
+      top: -7px;
+      left: 8px;
+      display: flex;
+      justify-content: center;
+      z-index: 1;
+    }
+  }
+
+  .select-container {
+    &__control {
+      border-radius: 2px;
+      border: 1px solid var(--off-white, $off-white);
+      outline: none;
+      box-shadow: none;
+      background-color: var(--gray-blue-2, $gray-blue-2);
+
+      &:hover {
+        box-shadow: none;
+        border: 1px solid var(--off-white, $off-white);
+      }
+    }
+
+    &__placeholder {
+      margin: 0;
+      padding: 5px;
+      font-size: 14px;
+      color: var(--text, $text);
+    }
+
+    &__single-value {
+      font-size: 14px;
+      color: var(--text, $text);
+    }
+
+    &__value-container {
+      font-size: 14px;
+      color: var(--gray-blue-2, $gray-blue-2);
+      padding-left: 8px;
+      background-color: var(--gray-blue-2, $gray-blue-2);
+    }
+
+    &__Input {
+      margin: 0;
+      padding: 0;
+    } 
+
+    &__indicator-separator {
+      display: none;
+    }
+
+    &__indicators {
+      fill: white !important;
+
+      &:hover {
+        fill: white !important;
+      }
+
+      &__dropdown-indicator {
+        svg {
+          fill: white !important;
+
+          &:hover {
+            fill: white !important;
+          }
+        }
+      }
+    }
+
+    &__menu {
+      z-index: 2;
+      font-size: 14px;
+      color: var(--gray-blue-2, $gray-blue-2);
+      background-color: var(--background, $blackground);
+    }
+
+    &__option {
+      color: var(--text, $text);
+      font-size: 14px;
+      background-color: var(--background, $blackground);
+
+
+      &:hover {
+        background-color: var(--menu-left, $menu-left);
+        color: var(--off-white, $off-white) !important;
+      }
+
+      &--is-selected {
+        background-color: $blackground;
+        color: var(--gray-blue-2, $gray-blue-2);
+        font-weight: 600;
+      }
+
+      &--is-focused {
+        background-color: var(--blackground, $blackground);
+      }
+    }
+  }
+}

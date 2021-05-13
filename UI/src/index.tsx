@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals'
 import { BrowserRouter as Router } from 'react-router-dom'
 // import { QueryParamProvider } from 'use-query-params'
 
-import '@styles/app.scss'
+import 'styles/app.scss'
 import '@assets/font-icon/icons.css'
 
 ReactDOM.render(

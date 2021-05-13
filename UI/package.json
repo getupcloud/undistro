@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "0s": "^1.0.0",
+    "@babel/plugin-syntax-jsx": "^7.12.13",
     "@craco/craco": "^6.1.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -14,25 +15,33 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.7",
+    "@types/react-select": "^4.0.15",
+    "axios": "^0.21.1",
     "classnames": "^2.3.1",
+    "docz": "^2.3.1",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-plugin-html": "^6.1.2",
+    "gatsby-plugin-sass": "^4.3.0",
     "icon-font-generator": "^2.1.11",
+    "init": "^0.1.2",
     "node-sass": "4.14.1",
+    "pullstate": "^1.22.1",
     "query-string": "^7.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-modal-resizable-draggable": "^0.1.5",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "react-select": "^4.3.0",
+    "sass": "^1.32.11",
     "surge": "^0.23.0",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build && mv build/* ../pkg/fs/frontend",
+    "build": "craco build && rm -rf ../pkg/fs/frontend/* && mv build/* ../pkg/fs/frontend",
     "build:icons": "icon-font-generator src/assets/icons/*.svg -o  src/assets/font-icon --htmlpath src/assets/font-icon/index.html",
+    "docz:dev": "docz dev",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
@@ -40,6 +49,16 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
     ]
   },
   "browserslist": {

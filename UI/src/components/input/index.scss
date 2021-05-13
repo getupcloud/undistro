@@ -1,0 +1,56 @@
+@import 'styles/theme';
+
+.input {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  label {
+    color: var(--off-white, $off-white);
+    background-color: var(--gray-blue-2, $gray-blue-2);
+    border-radius: 2px;
+    font-weight: 500;
+    font-size: 12px;
+    padding: 0 2px;
+    position: absolute;
+    top: -7px;
+    left: 8px;
+    display: flex;
+    justify-content: center;
+  }
+
+  input {
+    border-radius: 2px;
+    box-sizing: border-box;
+    height: 34px;
+    outline: none;
+    font-size: 14px;
+    border: 1px solid var(--off-white, $off-white);
+    margin-bottom: 15px;
+    background-color: var(--gray-blue-2, $gray-blue-2);
+    color: var(--off-white, $off-white);
+  }
+
+  input[type="text"] {
+    box-sizing: border-box;
+    padding-left: 10px;
+  }
+
+  &--error {
+    input {
+      border: 1px solid var(--error, $success);
+    }
+  }
+
+  &--success {
+    input {
+      border: 1px solid var(--error, $error);
+    }
+  }
+
+  &--warning {
+    input {
+      border: 1px solid var(--warning, $warning);
+    }
+  }
+}
