@@ -9,6 +9,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/klog/v2"
+	"sigs.k8s.io/cluster-api/test/framework/exec"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -54,10 +56,18 @@ var _ = Describe("Validate UnDistro Installation", func() {
 			Expect(err).ToNot(HaveOccurred())
 			for _, p := range podList.Items {
 				for _, container := range p.Spec.Containers {
+					klog.Info(container.Name)
 					if container.Image == image {
 						return container.Image
 					}
 				}
+				cmd := exec.NewCommand(
+					exec.WithCommand("undistro"),
+					exec.WithArgs("logs", p.Name, "-n", "undistro-system", "-c", "manager"),
+				)
+				out, _, err := cmd.Run(context.Background())
+				klog.Info(err)
+				klog.Info(string(out))
 			}
 			return ""
 		}, 10*time.Minute, 1*time.Minute).Should(Equal(image))
