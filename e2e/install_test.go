@@ -91,6 +91,13 @@ var _ = Describe("Validate UnDistro Installation", func() {
 			klog.Info(err)
 			klog.Info(string(out))
 			cmd = exec.NewCommand(
+				exec.WithCommand("undistro"),
+				exec.WithArgs("get", "pods", "-n", "undistro-system"),
+			)
+			out, _, err = cmd.Run(context.Background())
+			klog.Info(err)
+			klog.Info(string(out))
+			cmd = exec.NewCommand(
 				exec.WithCommand("helm"),
 				exec.WithArgs("ls", "-n", "undistro-system"),
 			)
