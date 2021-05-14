@@ -314,6 +314,7 @@ func (r *HelmReleaseReconciler) reconcileRelease(ctx context.Context, getter gen
 	if err != nil {
 		return appv1alpha1.HelmReleaseNotReady(hr, meta.GetLastReleaseFailedReason, "failed to get last release revision"), err
 	}
+
 	revision := chart.Metadata.Version
 	releaseRevision := util.ReleaseRevision(rel)
 	valuesChecksum := util.ValuesChecksum(values)
@@ -327,11 +328,8 @@ func (r *HelmReleaseReconciler) reconcileRelease(ctx context.Context, getter gen
 		}
 	}
 	// Check status of any previous release attempt.
-	released := apimeta.FindStatusCondition(hr.Status.Conditions, meta.ReleasedCondition)
-	if released != nil {
-		if released.Status == metav1.ConditionTrue {
-			return appv1alpha1.HelmReleaseReady(hr), nil
-		}
+	if meta.InReadyCondition(hr.Status.Conditions) && !hasNewState {
+		return appv1alpha1.HelmReleaseReady(hr), nil
 	}
 
 	if rel == nil {
