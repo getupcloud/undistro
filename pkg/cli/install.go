@@ -242,6 +242,14 @@ func (o *InstallOptions) installChart(ctx context.Context, c client.Client, rest
 				},
 			},
 		}
+		m := make(map[string]interface{})
+		if overrideValues.Raw != nil {
+			err = json.Unmarshal(overrideValues.Raw, &m)
+			if err != nil {
+				return err
+			}
+		}
+		chart.Values = util.MergeMaps(chart.Values, m)
 		rel, _ := runner.ObserveLastRelease(hr)
 		if rel == nil {
 			_, err = runner.Install(hr, chart, chart.Values)
