@@ -114,6 +114,16 @@ func TestMain(m *testing.M) {
 		klog.Info(err)
 		os.Exit(1)
 	}
+	cmd = exec.NewCommand(
+		exec.WithCommand("undistro"),
+		exec.WithArgs("get", "pods", "-n", "undistro-system"),
+	)
+	out, _, err = cmd.Run(ctx)
+	if err != nil {
+		klog.Info(err)
+		os.Exit(1)
+	}
+	klog.Info(string(out))
 	code := m.Run()
 	os.Exit(code)
 }
