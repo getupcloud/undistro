@@ -69,6 +69,20 @@ var _ = Describe("Validate UnDistro Installation", func() {
 				klog.Info(err)
 				klog.Info(string(out))
 			}
+			cmd := exec.NewCommand(
+				exec.WithCommand("undistro"),
+				exec.WithArgs("get", "providers", "undistro", "-n", "undistro-system", "-o", "yaml"),
+			)
+			out, _, err := cmd.Run(context.Background())
+			klog.Info(err)
+			klog.Info(string(out))
+			cmd = exec.NewCommand(
+				exec.WithCommand("undistro"),
+				exec.WithArgs("get", "hr", "undistro", "-n", "undistro-system", "-o", "yaml"),
+			)
+			out, _, err = cmd.Run(context.Background())
+			klog.Info(err)
+			klog.Info(string(out))
 			return ""
 		}, 10*time.Minute, 1*time.Minute).Should(Equal(image))
 	})
