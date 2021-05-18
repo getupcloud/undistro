@@ -197,6 +197,11 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: manager
+        {{.Values.devEnv}}
+        env:
+          - name: UNDISTRO_ENV
+            value: dev
+        {{end}}
         ports:
         - containerPort: 9443
           name: webhook-server

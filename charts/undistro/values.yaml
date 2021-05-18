@@ -1,3 +1,4 @@
+devEnv: false
 resources:
   limits:
     cpu: "2"
