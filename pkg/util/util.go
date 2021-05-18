@@ -26,6 +26,7 @@ import (
 	"sort"
 	"strings"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
@@ -33,10 +34,13 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	apiyaml "k8s.io/apimachinery/pkg/util/yaml"
+	"k8s.io/klog/v2"
 	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // MergeMaps merges map b into given map a and returns the result.
 // It allows overwrites of map values with flat values, and vice versa.
@@ -65,11 +69,17 @@ func MergeMaps(a, b map[string]interface{}) map[string]interface{} {
 // ValuesChecksum calculates and returns the SHA1 checksum for the
 // given chartutil.Values.
 func ValuesChecksum(values chartutil.Values) string {
-	var s string
+	var (
+		s   []byte
+		err error
+	)
 	if len(values) != 0 {
-		s, _ = values.YAML()
+		s, err = json.Marshal(values.AsMap())
+		if err != nil {
+			klog.Error(err)
+		}
 	}
-	return fmt.Sprintf("%x", sha1.Sum([]byte(s)))
+	return fmt.Sprintf("%x", sha1.Sum(s))
 }
 
 // ReleaseRevision returns the revision of the given release.Release.

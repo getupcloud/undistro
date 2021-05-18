@@ -117,7 +117,11 @@ func (o *InstallOptions) installProviders(ctx context.Context, streams genericcl
 		secretData := make(map[string][]byte)
 		valuesRef := make([]appv1alpha1.ValuesReference, 0)
 		for k, v := range p.Configuration {
-			secretData[k] = []byte(v)
+			str, ok := v.(string)
+			if !ok {
+				continue
+			}
+			secretData[k] = []byte(str)
 			valuesRef = append(valuesRef, appv1alpha1.ValuesReference{
 				Kind:       "Secret",
 				Name:       secretName,
@@ -238,6 +242,14 @@ func (o *InstallOptions) installChart(ctx context.Context, c client.Client, rest
 				},
 			},
 		}
+		m := make(map[string]interface{})
+		if overrideValues.Raw != nil {
+			err = json.Unmarshal(overrideValues.Raw, &m)
+			if err != nil {
+				return err
+			}
+		}
+		chart.Values = util.MergeMaps(chart.Values, m)
 		rel, _ := runner.ObserveLastRelease(hr)
 		if rel == nil {
 			_, err = runner.Install(hr, chart, chart.Values)

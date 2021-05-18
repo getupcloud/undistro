@@ -100,7 +100,7 @@ func TestValuesChecksum(t *testing.T) {
 					"cool": "stuff",
 				},
 			},
-			want: "7d487b668ca37fe68c42adfc06fa4d0e74443afd",
+			want: "496605d01c7847477b215f8f2a24798e3b385863",
 		},
 	}
 	for _, tt := range tests {

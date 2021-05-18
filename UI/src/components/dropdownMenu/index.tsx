@@ -2,9 +2,9 @@ import React, { FC } from 'react'
 
 import './index.scss'
 
-type Item = {
-  name: string
-}
+// type Item = {
+//   name: string
+// }
 
 const DropdownMenu: FC = () => {
 	return (

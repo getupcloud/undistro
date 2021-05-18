@@ -1,5 +1,13 @@
+devEnv: false
+resources:
+  limits:
+    cpu: "2"
+    memory: 1024Mi
+  requests:
+    cpu: "0.5"
+    memory: 256Mi
 image:
   repository: getupioundistro/undistro
-  tag: v0.24.1
+  tag: v0.25.2
   pullPolicy: IfNotPresent
   pullSecrets: []

@@ -7,7 +7,7 @@ const MenuTopBar: FC = () => {
 	return (
 		<div className='menu-top-container'>
 			<div className='img-container'>
-				<img alt='UnDistro logo' src={Logo} />
+				<img alt='undistro-logo' src={Logo} />
 			</div>
 			<ul>
 				<li>
