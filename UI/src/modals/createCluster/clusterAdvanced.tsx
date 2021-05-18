@@ -1,30 +1,30 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import store from '../store'
-import Input from '@components/input'
-import Select from '@components/select'
-import Modals from 'util/modals'
+// import Input from '@components/input'
+// import Select from '@components/select'
+// import Modals from 'util/modals'
 import Steps from './steps'
-import Button from '@components/button'
-import Toggle from '@components/toggle'
+// import Button from '@components/button'
+// import Toggle from '@components/toggle'
 type Props = {
   handleClose: () => void
 }
 
 const ClusterAdvanced: FC<Props> = ({ handleClose }) => {
   const body = store.useState((s: any) => s.body)
-	const [test, setTest] = useState(false)
+	// const [test, setTest] = useState(false)
   // const handleAction = () => {
   //   handleClose()
   //   if (body.handleAction) body.handleAction()
   // }
 
-  const showModal = () => {
-    handleClose()
-    Modals.show('create-cluster', {
-      title: 'Create',
-			ndTitle: 'Cluster'
-    })
-  }
+  // const showModal = () => {
+  //   handleClose()
+  //   Modals.show('create-cluster', {
+  //     title: 'Create',
+	// 		ndTitle: 'Cluster'
+  //   })
+  // }
 
   return (
     <>

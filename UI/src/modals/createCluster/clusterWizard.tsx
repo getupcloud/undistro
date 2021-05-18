@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FC, useEffect, useState, FormEventHandler } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import store from '../store'
 import Input from '@components/input'
 import Select from '@components/select'
-import Modals from 'util/modals'
+// import Modals from 'util/modals'
 import Steps from './steps'
 import Button from '@components/button'
 import Api from 'util/api'
@@ -37,13 +37,13 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   //   if (body.handleAction) body.handleAction()
   // }
 
-  const showModal = () => {
-    handleClose()
-    Modals.show('create-cluster', {
-      title: 'Create',
-			ndTitle: 'Cluster'
-    })
-  }
+  // const showModal = () => {
+  //   handleClose()
+  //   Modals.show('create-cluster', {
+  //     title: 'Create',
+	// 		ndTitle: 'Cluster'
+  //   })
+  // }
 
   const handleAction = () => {
     const cluster = {

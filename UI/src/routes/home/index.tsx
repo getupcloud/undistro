@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Button from '@components/button'
 import Input from '@components/input'
-import Select from '@components/select'
+// import Select from '@components/select'
 import Toogle from '@components/toggle'
 import Modals from 'util/modals'
 import Api from 'util/api'
