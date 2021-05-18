@@ -33,7 +33,8 @@ jobs:
       - name: Build UI
         working-directory: ./UI
         run: |
-         yarn build 
+          yarn
+          yarn build
 
       - name: docker build and push
         env:
