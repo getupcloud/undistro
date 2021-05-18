@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"flag"
 	"os"
 
@@ -26,6 +27,7 @@ import (
 	configcontroller "github.com/getupio-undistro/undistro/controllers/config"
 	"github.com/getupio-undistro/undistro/pkg/record"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver"
 	"github.com/getupio-undistro/undistro/pkg/version"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -39,8 +41,10 @@ var (
 
 func main() {
 	var metricsAddr string
+	var undistroApiAddr string
 	var enableLeaderElection bool
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
+	flag.StringVar(&undistroApiAddr, "undistro-api-addr", ":2020", "The address and port of the UnDistro API server")
 	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
@@ -48,7 +52,9 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+	cfg := ctrl.GetConfigOrDie()
+
+	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme:             scheme.Scheme,
 		MetricsBindAddress: metricsAddr,
 		Port:               9443,
@@ -114,11 +120,31 @@ func main() {
 		setupLog.Error(err, "unable to create webhook", "webhook", "DefaultPolicies")
 		os.Exit(1)
 	}
-	// +kubebuilder:scaffold:builder
 
-	setupLog.Info("starting manager", "version", version.Get())
-	if err := mgr.Start(ctx); err != nil {
-		setupLog.Error(err, "problem running manager")
-		os.Exit(1)
+	// +kubebuilder:scaffold:builder
+	cerr := make(chan error)
+	done := make(chan struct{})
+	go func(ctx context.Context) {
+		setupLog.Info("Starting UnDistro API Server", "version", version.Get())
+		server := apiserver.NewServer(cfg, os.Stdin, os.Stdout, os.Stderr)
+		if err := server.GracefullyStart(ctx, undistroApiAddr); err != nil {
+			cerr <- err
+			return
+		}
+		done <- struct{}{}
+	}(ctx)
+	go func(ctx context.Context) {
+		setupLog.Info("Starting Manager", "version", version.Get())
+		if err := mgr.Start(ctx); err != nil {
+			cerr <- err
+			return
+		}
+		done <- struct{}{}
+	}(ctx)
+
+	select {
+	case err := <-cerr:
+		setupLog.Error(err, "failed to start UnDistro")
+	case <-done:
 	}
 }
