@@ -8,5 +8,7 @@ spec:
   ports:
     - port: 443
       targetPort: 9443
+    - port: 2020
+      targetPort: 2020
   selector:
     control-plane: controller-manager

@@ -25,6 +25,9 @@ else
 GOBIN=$(shell go env GOBIN)
 endif
 
+# Set build time variables including version details
+LDFLAGS := $(shell hack/version-local.sh)
+
 all: manager cli
 
 # Run tests
@@ -36,11 +39,11 @@ test: generate fmt vet manifests
 
 # Build manager binary
 manager: generate fmt vet
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o bin/manager main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags "$(LDFLAGS)" -o bin/manager main.go
 
 # Build cli binary
 cli: generate fmt vet
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -o bin/cli ./cmd/undistro
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags "$(LDFLAGS)" -o bin/undistro ./cmd/undistro
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet manifests

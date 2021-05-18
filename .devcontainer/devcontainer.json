@@ -32,8 +32,7 @@
     "forwardPorts": [
         10350
     ],
-    // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "sudo chown -R vscode /usr/local/go && sudo chown -R vscode /home/vscode/go && go mod tidy",
+    "postAttachCommand": "sudo chown -R vscode /usr/local/go && sudo chown -R vscode /home/vscode/go && go mod tidy && sudo chown vscode /var/run/docker.sock",
     // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
     "remoteUser": "vscode"
 }

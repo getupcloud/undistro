@@ -16,10 +16,10 @@ limitations under the License.
 package cli
 
 import (
-	"encoding/json"
 	"flag"
 	"path/filepath"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -28,6 +28,8 @@ import (
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type ConfigFlags struct {
 	ConfigFile *string
@@ -77,8 +79,8 @@ type Credentials struct {
 }
 
 type Provider struct {
-	Name          string            `mapstructure:"name" json:"name,omitempty"`
-	Configuration map[string]string `mapstructure:"configuration" json:"configuration,omitempty"`
+	Name          string                 `mapstructure:"name" json:"name,omitempty"`
+	Configuration map[string]interface{} `mapstructure:"configuration" json:"configuration,omitempty"`
 }
 
 type Config struct {
@@ -90,7 +92,10 @@ type Config struct {
 func getConfigFrom(providers []Provider, name string) *apiextensionsv1.JSON {
 	for _, p := range providers {
 		if p.Name == name {
-			byt, _ := json.Marshal(p.Configuration) // nolint
+			byt, err := json.Marshal(p.Configuration)
+			if err != nil {
+				return &apiextensionsv1.JSON{}
+			}
 			return &apiextensionsv1.JSON{Raw: byt}
 		}
 	}

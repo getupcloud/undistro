@@ -17,6 +17,12 @@ jobs:
         with:
           go-version: ^1.16
         id: go
+      
+      - name: Set up Node 15
+        uses: actions/setup-node@v2
+        with:
+          node-version: "15"
+        id: node
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
@@ -31,6 +37,12 @@ jobs:
 
       - name: Build Manager
         run: make manager
+
+      - name: Build UI
+        working-directory: ./UI
+        run: |
+          yarn
+          yarn build
 
       - name: Test
         run: make test

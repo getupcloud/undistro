@@ -160,6 +160,8 @@ spec:
   ports:
   - port: 443
     targetPort: 9443
+  - port: 2020
+    targetPort: 2020
   selector:
     control-plane: undistro-controller-manager
 ---
@@ -195,17 +197,22 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: manager
+        {{.Values.devEnv}}
+        env:
+          - name: UNDISTRO_ENV
+            value: dev
+        {{end}}
         ports:
         - containerPort: 9443
           name: webhook-server
           protocol: TCP
+        - containerPort: 2020
+          name: undistro-api-server
+          protocol: TCP
+{{- with .Values.resources }}
         resources:
-          limits:
-            cpu: "1"
-            memory: 512Mi
-          requests:
-            cpu: "0.5"
-            memory: 256Mi
+{{ toYaml . | indent 10 }}
+{{- end }}
         volumeMounts:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert

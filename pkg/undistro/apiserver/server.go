@@ -32,17 +32,16 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
-	cmdutil "k8s.io/kubectl/pkg/cmd/util"
 )
 
 type Server struct {
 	genericclioptions.IOStreams
 	*http.Server
-	K8sFactory    cmdutil.Factory
+	K8sCfg        *rest.Config
 	HealthHandler health.Handler
 }
 
-func NewServer(f cmdutil.Factory, in io.Reader, out, errOut io.Writer, healthChecks ...health.Checker) *Server {
+func NewServer(cfg *rest.Config, in io.Reader, out, errOut io.Writer, healthChecks ...health.Checker) *Server {
 	streams := genericclioptions.IOStreams{
 		In:     in,
 		Out:    out,
@@ -56,7 +55,7 @@ func NewServer(f cmdutil.Factory, in io.Reader, out, errOut io.Writer, healthChe
 			WriteTimeout: 30 * time.Second,
 			IdleTimeout:  120 * time.Second,
 		},
-		K8sFactory: f,
+		K8sCfg: cfg,
 	}
 	for _, c := range healthChecks {
 		apiServer.HealthHandler.Add(c)
@@ -65,25 +64,28 @@ func NewServer(f cmdutil.Factory, in io.Reader, out, errOut io.Writer, healthChe
 	env := os.Getenv("UNDISTRO_ENV")
 	apiServer.Handler = router
 	if env == "dev" {
-		corsObj := handlers.AllowedOrigins([]string{"*"})
-		apiServer.Handler = handlers.CORS(corsObj)(router)
-	}
+		apiServer.Handler = handlers.CORS(
+			handlers.AllowedOrigins([]string{"*"}),
+			handlers.AllowedMethods([]string{
+				http.MethodGet,
+				http.MethodPost,
+				http.MethodPatch,
+				http.MethodPut,
+				http.MethodOptions,
+				http.MethodHead,
+				http.MethodDelete,
+				http.MethodConnect,
 
+			}),
+		)(router)
+	}
 	return apiServer
 }
 
 func (s *Server) routes(router *mux.Router) {
-	cfg, err := s.K8sFactory.ToRESTConfig()
-	if err != nil {
-		cfg, err = rest.InClusterConfig()
-		if err != nil {
-			klog.Fatal(err)
-		}
-	}
-
 	router.Handle("/healthz/readiness", &s.HealthHandler)
 	router.HandleFunc("/healthz/liveness", health.HandleLive)
-	router.PathPrefix("/uapi/v1/namespaces/{namespace}/clusters/{cluster}/proxy/").Handler(proxy.NewHandler(cfg))
+	router.PathPrefix("/uapi/v1/namespaces/{namespace}/clusters/{cluster}/proxy/").Handler(proxy.NewHandler(s.K8sCfg))
 	router.PathPrefix("/").Handler(fs.ReactHandler("", "frontend"))
 }
 

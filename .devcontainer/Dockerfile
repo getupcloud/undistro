@@ -13,6 +13,7 @@ ENV GOPATH=/home/vscode/go
 ENV NVM_DIR=/usr/local/share/nvm
 ENV NVM_SYMLINK_CURRENT=true \
     PATH=${NVM_DIR}/current/bin:${PATH}
+ENV PATH="/home/vscode/go/bin:${PATH}"
 
 
 # Install needed packages and setup non-root user. Use a separate RUN statement to add your own dependencies.
