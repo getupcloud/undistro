@@ -2,17 +2,15 @@ import React, { FC, FormEventHandler } from 'react'
 import Classnames from 'classnames'
 import './index.scss'
 
-type FallbackType = Element;
-type ConstraintType = Element;
 
-type Props<T extends ConstraintType = FallbackType> = {
+type Props = {
   type: string,
   label?: string,
   placeholder?: string,
-  value: string,
+  value: string | number,
   disabled?: boolean,
   validator?: {},
-  onChange: FormEventHandler<T>,
+  onChange: FormEventHandler<HTMLInputElement>,
 }
 
 const Input: FC<Props> = ({

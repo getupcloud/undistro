@@ -3,21 +3,13 @@ import Select from 'react-select'
 
 import './index.scss'
 
-const optionsDefault = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
-]
-
-type options = [
-  { value: any, label: string }
-]
+type OptionType = { value: any, label: string }
 
 type Props = {
   label?: string,
-  options?: any,
-  onChange?: any,
-  value?: any
+  options: any,
+  onChange: Function,
+  value?: string
 }
 
 const SelectUndistro: FC<Props> = ({ 
@@ -26,6 +18,15 @@ const SelectUndistro: FC<Props> = ({
   onChange,
   value
 }) => {
+
+  const handleChange = (option: any) => {
+    onChange(option.value)
+  }
+
+  const getCorrectValue = ():OptionType => {
+    return options.filter((elm: OptionType) => elm.value === value)[0]
+  }
+
   return (
     <div className='select'>
     <div className='title-section'>
@@ -34,8 +35,8 @@ const SelectUndistro: FC<Props> = ({
 
     <Select
       options={options}
-      onChange={onChange}
-      value={value}
+      onChange={(e) => handleChange(e)}
+      value={getCorrectValue()}
       classNamePrefix="select-container"
     />
   </div>

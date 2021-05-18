@@ -34,7 +34,7 @@ const ClusterAdvanced: FC<Props> = ({ handleClose }) => {
     </header>
       <div className='box'>
         <Steps handleAction={() => console.log('children')}>
-          <>
+          {/* <>
             <h3 className="title-box">Cluster</h3>
             <form className='create-cluster'>
               <Input type='text' label='cluster name' value='' onChange={() => console.log('aa')} />
@@ -188,7 +188,7 @@ const ClusterAdvanced: FC<Props> = ({ handleClose }) => {
                 <Select label='machineType' />
               </div>
             </form>
-          </>
+          </> */}
         </Steps>
       </div>
   </>

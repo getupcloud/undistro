@@ -31,6 +31,15 @@
       background-color: var(--gray-blue-4, $gray-blue-4);
       padding: 0 8px;
       text-transform: uppercase;
+      position: relative;
+
+      .wizard-text {
+        text-transform: none;
+        position: absolute;
+        top: 1px;
+        font-weight: 500;
+        cursor: inherit;
+      }
 
       .title {
         text-align: center;
@@ -172,10 +181,15 @@
 
       .input-container {
         display: grid;
-        align-items: center;
         justify-content: center;
         grid-template-columns: 80px 90px 90px 216px;
         grid-gap: 10px;
+
+        .input {
+          input {
+            margin-bottom: 0;
+          }
+        }
 
         .button-container {
           grid-column: 4;
@@ -190,7 +204,7 @@
       grid-template-columns: 1fr 1fr;
       grid-gap: 10px;
 
-      .select:last-child {
+      .input {
         grid-column: 1 / 3;
       }
     }

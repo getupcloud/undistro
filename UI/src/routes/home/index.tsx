@@ -48,7 +48,6 @@ export default function HomePage () {
 				value='asadfds'
 				onChange={() => console.log('aa')} 
 			/>
-			<Select label='Label' />
 			<Toogle label='is public' value={test} onChange={() => setTest(!test)} />
 		</div>
 	)
