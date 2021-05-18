@@ -3,9 +3,9 @@ import Classnames from 'classnames'
 
 import './index.scss'
 
-type SubItem = {
-  name: string
-}
+// type SubItem = {
+//   name: string
+// }
 
 type Item = {
   name: string
