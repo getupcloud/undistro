@@ -17,52 +17,73 @@ package provider
 
 import (
 	"encoding/json"
+	"errors"
+	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/gorilla/mux"
+	"io"
 	"k8s.io/klog/v2"
 	"net/http"
+	"strings"
 )
 
 type Metadata struct {
 }
 
+type ErrResponse struct {
+	Status  int `json:"status"`
+	Message string `json:"message"`
+}
+
+var (
+	NoProviderName = errors.New("no provider name was found")
+	ReadBody = errors.New("error while parsing body")
+	InvalidProviderName = errors.New("invalid provider, maybe unsupported")
+)
 
 // RetrieveMetadata ...
 func RetrieveMetadata(w http.ResponseWriter, r *http.Request) {
-	// get provider name
-	vars := mux.Vars(r)
-	providerName, has := vars["name"]
-
-	// validate provider name and type
-	if !has {
-		w.WriteHeader(http.StatusBadRequest)
-		msg := struct {
-			Status int
-			ErrMessage string
-		}{
-			Status: http.StatusBadRequest,
-			ErrMessage: "No provider name was found",
-		}
-
-		byt, err := json.Marshal(msg)
-		if err != nil {
-			klog.Errorln(err.Error())
-			return
-		}
-		_, err = w.Write(byt)
-		if err != nil {
-			klog.Errorln(err.Error())
-			return
-		}
-	}
-
-	klog.Infoln("provider", providerName)
-
-	var byt []byte
-	read, err := r.Body.Read(byt)
-	if err != nil {
+	providerName := routeField("name", w, r)
+	if providerName == "" {
 		return
 	}
 
-	klog.Infoln("Read request body", read)
-	//
+	if !isValidInfraProvider(providerName) {
+		http.Error(w, InvalidProviderName.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// get provider type
+	var body struct{
+		Type string
+	}
+	d := json.NewDecoder(r.Body)
+	d.DisallowUnknownFields()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			klog.Errorln(err.Error())
+		}
+	}(r.Body)
+
+	if err := d.Decode(&body); err != nil {
+		http.Error(w, ReadBody.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	klog.Infoln("body type", body.Type)
+
+	//generate metadata info about the provider
+}
+
+func routeField(routeField string, w http.ResponseWriter, r *http.Request) (pn string) {
+	vars := mux.Vars(r)
+	pn, has := vars[routeField]
+	if !has {
+		http.Error(w, NoProviderName.Error(), http.StatusBadRequest)
+	}
+	return strings.TrimSpace(pn)
+}
+
+func isValidInfraProvider(name string) bool {
+	return name == v1alpha1.Aws.String()
 }

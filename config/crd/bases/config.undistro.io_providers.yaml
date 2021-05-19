@@ -100,6 +100,8 @@ spec:
               paused:
                 default: false
                 type: boolean
+              providerKind:
+                type: string
               providerName:
                 type: string
               providerVersion:
