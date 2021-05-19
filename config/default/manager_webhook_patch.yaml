@@ -13,7 +13,7 @@ spec:
           name: webhook-server
           protocol: TCP
         - containerPort: 2020
-          name: undistro-api-server
+          name: undistro-server
           protocol: TCP
         volumeMounts:
         - mountPath: /tmp/k8s-webhook-server/serving-certs

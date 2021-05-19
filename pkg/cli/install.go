@@ -549,7 +549,10 @@ func NewCmdInstall(f *ConfigFlags, streams genericclioptions.IOStreams) *cobra.C
 		Run: func(cmd *cobra.Command, args []string) {
 			cmdutil.CheckErr(o.Complete(f, cmd, args))
 			cmdutil.CheckErr(o.Validate())
-			cmdutil.CheckErr(o.RunInstall(cmdutil.NewFactory(f), cmd))
+			err := o.RunInstall(cmdutil.NewFactory(f), cmd)
+			if err != nil {
+				fmt.Fprintf(o.ErrOut, "error: %v\n", err)
+			}
 		},
 	}
 	return cmd
