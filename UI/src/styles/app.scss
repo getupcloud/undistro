@@ -1,4 +1,4 @@
-@import '@styles/theme';
+@import 'styles/theme';
 
 * {
   margin: 0;
@@ -6,12 +6,31 @@
   -webkit-font-smoothing: antialiased;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  font-family: $font-base;
+}
+
+.route-container {
+  background: url('../assets/images/background.png');
+  min-height: 100vh;
+
+  .menu-side-container {
+    position: absolute;
+    left: 0;
+  }
+
+  .route-content {
+    padding-left: 245px;
+    padding-top: 16px;
+  }
+
+  h1 {
+    margin: 0;
+  }
 }
 
 body {
   position: relative;
   margin: 0 !important;
-  font-family: $font-base;
 }
 
 button {

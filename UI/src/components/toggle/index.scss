@@ -1,0 +1,51 @@
+@import 'styles/theme';
+
+.toggle-container {
+  display: flex;
+  height: fit-content;
+  margin-top: 10px;
+  align-items: center;
+
+  label {
+    display: flex;
+    margin-right: 8px;
+    font-size: 14px;
+    align-items: center;
+    color: var(--off-white, $off-white);
+    text-align: center;
+    justify-content: center;
+  }
+
+  .toggle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 16px;
+    background-color: var(--gray-blue-4, $gray-blue-4);    
+    position: relative;
+    height: 9px;
+    width: 21px;
+    cursor: pointer;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      cursor: pointer;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 10px;
+      background-color: var(--primary, $primary);
+      transition: all 0.25s ease-in-out;
+    }
+
+    &.--right {
+      &::before {
+        left: -2px;
+        background-color: var(--text, $text);
+      }
+    }
+  }
+}

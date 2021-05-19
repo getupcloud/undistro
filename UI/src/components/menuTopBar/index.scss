@@ -1,11 +1,11 @@
-@import '@styles/theme';
+@import 'styles/theme';
 
 .menu-top-container {
   height: 48px;
   background-color: var(--menu-top, $menu-top);
   display: flex;
   align-items: center;
-  position: relative;
+  position: sticky;
 
   .img-container {
     padding: 0 58px;
