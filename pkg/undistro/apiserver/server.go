@@ -66,6 +66,7 @@ func NewServer(cfg *rest.Config, in io.Reader, out, errOut io.Writer, healthChec
 	if env == "dev" {
 		apiServer.Handler = handlers.CORS(
 			handlers.AllowedOrigins([]string{"*"}),
+			handlers.AllowedHeaders([]string{"*"}),
 			handlers.AllowedMethods([]string{
 				http.MethodGet,
 				http.MethodPost,
@@ -75,7 +76,6 @@ func NewServer(cfg *rest.Config, in io.Reader, out, errOut io.Writer, healthChec
 				http.MethodHead,
 				http.MethodDelete,
 				http.MethodConnect,
-
 			}),
 		)(router)
 	}

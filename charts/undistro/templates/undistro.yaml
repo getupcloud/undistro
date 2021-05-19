@@ -160,8 +160,10 @@ spec:
   ports:
   - port: 443
     targetPort: 9443
+    name: webhook-server
   - port: 2020
     targetPort: 2020
+    name: undistro-server
   selector:
     control-plane: undistro-controller-manager
 ---
@@ -197,7 +199,7 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: manager
-        {{.Values.devEnv}}
+        {{if .Values.devEnv}}
         env:
           - name: UNDISTRO_ENV
             value: dev
@@ -207,7 +209,7 @@ spec:
           name: webhook-server
           protocol: TCP
         - containerPort: 2020
-          name: undistro-api-server
+          name: undistro-server
           protocol: TCP
 {{- with .Values.resources }}
         resources:
