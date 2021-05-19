@@ -1,0 +1,17 @@
+{{ if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: undistro-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: undistro-webhook-service
+            port:
+              number: 2020
+{{- end -}}
