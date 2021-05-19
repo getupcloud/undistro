@@ -18,7 +18,7 @@ class Cluster {
   }
 
   async postPolicies (data: {}) {
-    const url = '/apis/app.undistro.io/v1alpha1/namespaces/default/defaultPolices'
+    const url = '/apis/app.undistro.io/v1alpha1/namespaces/default/defaultPolicies'
     const res = await this.http.post(url, data)
     return res.data
   }

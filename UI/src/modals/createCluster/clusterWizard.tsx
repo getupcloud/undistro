@@ -47,44 +47,45 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
 
   const handleAction = () => {
     const cluster = {
-      name: clusterName,
-      namespace: namespace
+      "name": clusterName,
+      "namespace": namespace
     }
 
     const spec = {
-      kubernetesVersion: k8sVersion,
-      controlPlane: {
-        machineTypes: machineTypes,
-        replicas: replicas
-      },
-      infrastructureProvider: {
-        flavor: flavor,
-        name: provider,
-        region: region
+      "kubernetesVersion": k8sVersion,
+      "controlPlane": {
+        "machineTypes": machineTypes,
+        "replicas": replicas
       },
 
-      workers: {
-        machineTypes: machineTypes,
-        replicas: replicas
-      }
+      "infrastructureProvider": {
+        "flavor": flavor,
+        "name": provider,
+        "region": region
+      },
+
+      "workers": [{
+        "machineTypes": machineTypes,
+        "replicas": replicas
+      }]
     }
 
     const data = {
-      apiVersion: 'app.undistro.io/v1alpha1',
-      kind: 'Cluster',
-      metadata: cluster,
-      spec: spec
+      "apiVersion": "app.undistro.io/v1alpha1",
+      "kind": "Cluster",
+      "metadata": cluster,
+      "spec": spec
     }
 
     const dataPolicies = {
-      apiVersion: 'app.undistro.io/v1alpha1',
-      kind: 'DefaultPolicies',
-      metadata: {
-        name: 'defaultpolicies-undistro',
-        namespace: namespace
+      "apiVersion": "app.undistro.io/v1alpha1",
+      "kind": "DefaultPolicies",
+      "metadata": {
+        "name": "defaultpolicies-undistro",
+        "namespace": namespace
       },
-      spec: {
-        clusterName: clusterName
+      "spec": {
+        "clusterName": clusterName
       }
     }
 
