@@ -17,6 +17,7 @@ package apiserver
 
 import (
 	"context"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider"
 	"io"
 	"net/http"
 	"os"
@@ -84,6 +85,7 @@ func NewServer(cfg *rest.Config, in io.Reader, out, errOut io.Writer, healthChec
 func (s *Server) routes(router *mux.Router) {
 	router.Handle("/healthz/readiness", &s.HealthHandler)
 	router.HandleFunc("/healthz/liveness", health.HandleLive)
+	router.HandleFunc("/provider/{name}/metadata", provider.RetrieveMetadata)
 	router.PathPrefix("/uapi/v1/namespaces/{namespace}/clusters/{cluster}/proxy/").Handler(proxy.NewHandler(s.K8sCfg))
 	router.PathPrefix("/").Handler(fs.ReactHandler("", "frontend"))
 }
