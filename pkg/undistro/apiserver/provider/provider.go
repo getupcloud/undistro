@@ -16,17 +16,20 @@ limitations under the License.
 package provider
 
 import (
-	"bytes"
 	"errors"
-	"fmt"
+	"k8s.io/klog/v2"
+	"net/http"
+
 	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/gorilla/mux"
-	"log"
-	"net/http"
 	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 )
 
 type Metadata struct {
+	Type v1alpha1.InfrastructureProvider
+	MachineTypes []string `json:"machine_types"`
+	ProviderRegions []string `json:"provider_regions"`
+	SupportedFlavors []string `json:"supported_flavors"` // k8s flavors (ec2,eks, etc) and each version
 }
 
 type ErrResponse struct {
@@ -40,24 +43,13 @@ var (
 	InvalidProvider = errors.New("invalid provider, maybe unsupported")
 )
 
-type Handler struct {
-}
-
-func createKeyValuePairs(m map[string]string) string {
-	b := new(bytes.Buffer)
-	for key, value := range m {
-		fmt.Fprintf(b, "%s=\"%s\"\n", key, value)
-	}
-	return b.String()
-}
-
 // ServeHTTP retrieves infraProviderMetadata about some Provider
 func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	// extract provider name
 	vars := mux.Vars(r)
 	pn := vars["name"]
 	if pn == "" {
-		http.Error(w, createKeyValuePairs(vars), http.StatusBadRequest)
+		http.Error(w, NoProviderName.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -76,14 +68,21 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		infraProviderMetadata(pn, w)
 	default:
-		// wrong provider type
+		// invalid provider type
 		http.Error(w, ReadQueryParam.Error(), http.StatusBadRequest)
 	}
 }
 
 func infraProviderMetadata(providerName string, w http.ResponseWriter) {
 	//generate Infrastructure Provider Metadata info about the provider
-	log.Println(providerName)
+	pm := Metadata{
+		Type:             v1alpha1.InfrastructureProvider{},
+		MachineTypes:     nil,
+		ProviderRegions:  nil,
+		SupportedFlavors: nil,
+	}
+	klog.Infoln(pm)
+
 	w.WriteHeader(http.StatusOK)
 }
 
