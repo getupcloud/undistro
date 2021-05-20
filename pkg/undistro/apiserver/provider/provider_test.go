@@ -37,7 +37,7 @@ type test struct {
 	name           string
 	params         provider
 	expectedStatus int
-	error error
+	error          error
 }
 
 func TestRetrieveMetadata(t *testing.T) {
@@ -49,7 +49,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(v1alpha3.InfrastructureProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error: InvalidProvider,
+			error:          InvalidProvider,
 		},
 		{
 			name: "test get metadata passing no provider",
@@ -58,7 +58,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(v1alpha3.InfrastructureProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error: InvalidProvider,
+			error:          InvalidProvider,
 		},
 		{
 			name: "test get metadata passing provider wrong type",
@@ -67,7 +67,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(v1alpha3.CoreProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error: ReadQueryParam,
+			error:          ReadQueryParam,
 		},
 		{
 			name: "test successfully infra provider metadata",
@@ -76,7 +76,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(v1alpha3.InfrastructureProviderType),
 			},
 			expectedStatus: http.StatusOK,
-			error: nil,
+			error:          nil,
 		},
 	}
 
@@ -105,7 +105,7 @@ func TestRetrieveMetadata(t *testing.T) {
 			}
 
 			if status := resp.StatusCode; status != p.expectedStatus {
-				t.Errorf("handler returned wrong status code: got %v want %v\n",
+				t.Errorf("handler returned wrong status code: got %v want %v",
 					status, p.expectedStatus)
 			}
 
@@ -128,5 +128,3 @@ func TestRetrieveMetadata(t *testing.T) {
 		})
 	}
 }
-
-

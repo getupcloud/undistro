@@ -16,25 +16,20 @@ limitations under the License.
 package provider
 
 import (
+	"encoding/json"
 	"errors"
-	"k8s.io/klog/v2"
 	"net/http"
 
 	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
 	"github.com/gorilla/mux"
 	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 )
 
 type Metadata struct {
-	Type v1alpha1.InfrastructureProvider
-	MachineTypes []string `json:"machine_types"`
-	ProviderRegions []string `json:"provider_regions"`
-	SupportedFlavors []string `json:"supported_flavors"` // k8s flavors (ec2,eks, etc) and each version
-}
-
-type ErrResponse struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
+	MachineTypes     []infra.EC2MachineType `json:"machine_types"`
+	ProviderRegions  []string `json:"provider_regions"`
+	SupportedFlavors map[string]string `json:"supported_flavors"` // k8s flavors (ec2,eks, etc) and each version
 }
 
 var (
@@ -43,7 +38,7 @@ var (
 	InvalidProvider = errors.New("invalid provider, maybe unsupported")
 )
 
-// ServeHTTP retrieves infraProviderMetadata about some Provider
+// MetadataHandler retrieves Infra Provider Metadata
 func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	// extract provider name
 	vars := mux.Vars(r)
@@ -56,8 +51,7 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	// extract provider type
 	providerType := r.URL.Query().Get("provider_type")
 	if providerType == "" {
-		http.Error(w, ReadQueryParam.Error(), http.StatusInternalServerError)
-		return
+		providerType = string(v1alpha3.CoreProviderType)
 	}
 
 	switch providerType {
@@ -76,13 +70,16 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 func infraProviderMetadata(providerName string, w http.ResponseWriter) {
 	//generate Infrastructure Provider Metadata info about the provider
 	pm := Metadata{
-		Type:             v1alpha1.InfrastructureProvider{},
-		MachineTypes:     nil,
-		ProviderRegions:  nil,
-		SupportedFlavors: nil,
+		MachineTypes:     infra.MachineTypes,
+		ProviderRegions:  infra.Regions,
+		SupportedFlavors: infra.SupportedFlavors,
 	}
-	klog.Infoln(pm)
 
+	encoder := json.NewEncoder(w)
+	err := encoder.Encode(pm)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 	w.WriteHeader(http.StatusOK)
 }
 
