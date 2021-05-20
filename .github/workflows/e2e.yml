@@ -34,7 +34,7 @@ jobs:
         run: |
           GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
           ./hack/kind.sh
-      
+
       - name: Configure AWS credentials for E2E
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -50,4 +50,4 @@ jobs:
           E2E_PEM: ${{ secrets.E2E_PEM }}
         run: |
           echo $E2E_PEM > undistro.pem
-          go test -e2e ./...
+          go test -timeout 1440s -e2e ./...
