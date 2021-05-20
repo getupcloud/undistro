@@ -1,4 +1,8 @@
 devEnv: false
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: cantour
 resources:
   limits:
     cpu: "2"
@@ -8,6 +12,6 @@ resources:
     memory: 256Mi
 image:
   repository: getupioundistro/undistro
-  tag: v0.25.3
+  tag: v0.25.4
   pullPolicy: IfNotPresent
   pullSecrets: []
