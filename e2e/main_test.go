@@ -139,6 +139,16 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 	klog.Info(string(out))
+	cmd = exec.NewCommand(
+		exec.WithCommand("mv"),
+		exec.WithArgs("aws-iam-authenticator", "./bin"),
+	)
+	out, _, err = cmd.Run(ctx)
+	if err != nil {
+		klog.Info(err)
+		os.Exit(1)
+	}
+	klog.Info(string(out))
 	code := m.Run()
 	os.Exit(code)
 }
