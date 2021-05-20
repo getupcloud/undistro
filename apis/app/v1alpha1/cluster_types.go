@@ -107,7 +107,7 @@ type InfrastructureProvider struct {
 type SupportedInfraProvider int8
 
 const (
-	Aws SupportedInfraProvider = iota
+	Amazon SupportedInfraProvider = iota
 )
 
 func (s SupportedInfraProvider) String() string {
@@ -116,14 +116,14 @@ func (s SupportedInfraProvider) String() string {
 
 func (i InfrastructureProvider) Flavors() []string {
 	switch i.Name {
-	case Aws.String():
+	case Amazon.String():
 		return []string{"ec2", "eks"}
 	}
 	return nil
 }
 
 func (i InfrastructureProvider) IsManaged() bool {
-	return i.Name == Aws.String() && i.Flavor == "eks"
+	return i.Name == Amazon.String() && i.Flavor == "eks"
 }
 
 type NetworkSpec struct {

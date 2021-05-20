@@ -16,95 +16,98 @@ limitations under the License.
 package provider
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	"github.com/gorilla/mux"
 	"net/http"
 	"net/http/httptest"
-	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 	"testing"
+
+	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 )
 
-type params struct {
-	providerName string
-	providerKind string
+type provider struct {
+	Name         string `json:"name"`
+	ProviderType string `json:"providerType"`
 }
 
 type test struct {
-	name 	string
-	params params
+	name           string
+	params         provider
 	expectedStatus int
 }
 
 func TestRetrieveMetadata(t *testing.T) {
 	cases := []test{
 		{
-			name:           "test get metadata passing invalid provider",
-			params:      params{
-				providerName: "amazon",
-				providerKind: string(v1alpha3.InfrastructureProviderType),
+			name: "test get metadata passing invalid provider",
+			params: provider{
+				Name:         "amazon",
+				ProviderType: string(v1alpha3.InfrastructureProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
-			name:           "test get metadata passing no provider",
-			params:       params{
-				providerName: "",
-				providerKind: string(v1alpha3.InfrastructureProviderType),
+			name: "test get metadata passing no provider",
+			params: provider{
+				Name:         " ",
+				ProviderType: string(v1alpha3.InfrastructureProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
-			name:           "test get metadata passing provider wrong type",
-			params:         params{
-				providerName: "aws",
-				providerKind: string(v1alpha3.CoreProviderType),
+			name: "test get metadata passing provider wrong type",
+			params: provider{
+				Name:         v1alpha1.Amazon.String(),
+				ProviderType: string(v1alpha3.CoreProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
-			name:           "test successfully infra provider metadata",
-			params:         params{
-				providerName: v1alpha1.Aws.String(),
-				providerKind: string(v1alpha3.InfrastructureProviderType),
+			name: "test successfully infra provider metadata",
+			params: provider{
+				Name:         v1alpha1.Amazon.String(),
+				ProviderType: string(v1alpha3.InfrastructureProviderType),
 			},
 			expectedStatus: http.StatusOK,
 		},
 	}
 
+	r := mux.NewRouter()
+	r.HandleFunc("/provider/{name}/metadata", MetadataHandler)
+
+	ts := httptest.NewServer(r)
+	defer ts.Close()
+
 	for _, p := range cases {
 		t.Run(p.name, func(t *testing.T) {
-			var endpoint = fmt.Sprintf("/provider/%s/metadata", p.params.providerName)
+			endpoint := fmt.Sprintf("%s/provider/%s/metadata", ts.URL, p.params.Name)
 
-			body := struct {
-				ProviderKind string `json:"providerKind"`
-			}{
-				ProviderKind: p.params.providerKind,
-			}
-			byt, err := json.Marshal(&body)
+			req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 			if err != nil {
-				t.Fatalf("error: %s\n", err.Error())
+				t.Errorf("error: %s\n", err.Error())
 			}
-			req, err := http.NewRequest(http.MethodGet, endpoint, bytes.NewBuffer(byt))
+			// add provider type
+			q := req.URL.Query()
+			q.Add("provider_type", p.params.ProviderType)
+			req.URL.RawQuery = q.Encode()
+
+			resp, err := http.DefaultClient.Do(req)
 			if err != nil {
-				t.Fatalf("error: %s\n", err.Error())
+				t.Errorf("error: %s\n", err.Error())
 			}
-			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(RetrieveMetadata)
 
-			handler.ServeHTTP(rr, req)
-
-			if status := rr.Code; status != p.expectedStatus {
-				t.Errorf("handler returned wrong status code: got %v want %v",
+			if status := resp.StatusCode; status != p.expectedStatus {
+				t.Errorf("handler returned wrong status code: got %v want %v\n",
 					status, p.expectedStatus)
 			}
-			// validate body
-			//expected := `{"alive": true}`
-			//if rr.Body.String() != expected {
-			//	t.Errorf("handler returned unexpected body: got %v want %v",
-			//		rr.Body.String(), expected)
-			//}
 		})
 	}
 }
+
+// validate metadata body
+//expected := `{"alive": true}`
+//if rr.Body.String() != expected {
+//	t.Errorf("handler returned unexpected body: got %v want %v",
+//		rr.Body.String(), expected)
+//}

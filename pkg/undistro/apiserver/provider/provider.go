@@ -16,74 +16,77 @@ limitations under the License.
 package provider
 
 import (
-	"encoding/json"
+	"bytes"
 	"errors"
+	"fmt"
 	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/gorilla/mux"
-	"io"
-	"k8s.io/klog/v2"
+	"log"
 	"net/http"
-	"strings"
+	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 )
 
 type Metadata struct {
 }
 
 type ErrResponse struct {
-	Status  int `json:"status"`
+	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
 
 var (
-	NoProviderName = errors.New("no provider name was found")
-	ReadBody = errors.New("error while parsing body")
-	InvalidProviderName = errors.New("invalid provider, maybe unsupported")
+	NoProviderName  = errors.New("no provider name was found")
+	ReadQueryParam  = errors.New("query param invalid")
+	InvalidProvider = errors.New("invalid provider, maybe unsupported")
 )
 
-// RetrieveMetadata ...
-func RetrieveMetadata(w http.ResponseWriter, r *http.Request) {
-	providerName := routeField("name", w, r)
-	if providerName == "" {
-		return
-	}
-
-	if !isValidInfraProvider(providerName) {
-		http.Error(w, InvalidProviderName.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// get provider type
-	var body struct{
-		Type string
-	}
-	d := json.NewDecoder(r.Body)
-	d.DisallowUnknownFields()
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			klog.Errorln(err.Error())
-		}
-	}(r.Body)
-
-	if err := d.Decode(&body); err != nil {
-		http.Error(w, ReadBody.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	klog.Infoln("body type", body.Type)
-
-	//generate metadata info about the provider
+type Handler struct {
 }
 
-func routeField(routeField string, w http.ResponseWriter, r *http.Request) (pn string) {
-	vars := mux.Vars(r)
-	pn, has := vars[routeField]
-	if !has {
-		http.Error(w, NoProviderName.Error(), http.StatusBadRequest)
+func createKeyValuePairs(m map[string]string) string {
+	b := new(bytes.Buffer)
+	for key, value := range m {
+		fmt.Fprintf(b, "%s=\"%s\"\n", key, value)
 	}
-	return strings.TrimSpace(pn)
+	return b.String()
+}
+
+// ServeHTTP retrieves infraProviderMetadata about some Provider
+func MetadataHandler(w http.ResponseWriter, r *http.Request) {
+	// extract provider name
+	vars := mux.Vars(r)
+	pn := vars["name"]
+	if pn == "" {
+		http.Error(w, createKeyValuePairs(vars), http.StatusBadRequest)
+		return
+	}
+
+	// extract provider type
+	providerType := r.URL.Query().Get("provider_type")
+	if providerType == "" {
+		http.Error(w, ReadQueryParam.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	switch providerType {
+	case string(v1alpha3.InfrastructureProviderType):
+		if !isValidInfraProvider(pn) {
+			http.Error(w, InvalidProvider.Error(), http.StatusBadRequest)
+			return
+		}
+		infraProviderMetadata(pn, w)
+	default:
+		// wrong provider type
+		http.Error(w, ReadQueryParam.Error(), http.StatusBadRequest)
+	}
+}
+
+func infraProviderMetadata(providerName string, w http.ResponseWriter) {
+	//generate Infrastructure Provider Metadata info about the provider
+	log.Println(providerName)
+	w.WriteHeader(http.StatusOK)
 }
 
 func isValidInfraProvider(name string) bool {
-	return name == v1alpha1.Aws.String()
+	return name == v1alpha1.Amazon.String()
 }
