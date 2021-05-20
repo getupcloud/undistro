@@ -1,4 +1,4 @@
-@import '@styles/theme';
+@import 'styles/theme';
 
 .side-item {
   display: flex;
@@ -56,7 +56,7 @@
 
 .item-menu {
   min-height: 150px;
-  text-align: center;
+  padding: 0 38px;
 
   p {
     color: var(--text-gray-middle, $text-gray-middle);
