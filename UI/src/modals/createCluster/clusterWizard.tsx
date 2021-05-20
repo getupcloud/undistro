@@ -109,12 +109,10 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     newWorker.machineTypes = machineTypesWorkers
     newWorker.replicas = replicasWorkers
     workers.push(newWorker)
-    console.log(workers)
   }
 
   const deleteWorkers = (elm: any) => {
     workers.splice(elm, 1)
-    console.log(workers)
   }
 
   const getProviders = () => {
