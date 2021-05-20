@@ -50,4 +50,5 @@ jobs:
           E2E_PEM: ${{ secrets.E2E_PEM }}
         run: |
           echo $E2E_PEM > undistro.pem
-          go test -timeout 1440s -e2e ./...
+          go install github.com/onsi/ginkgo/ginkgo
+          ginkgo -- -e2e
