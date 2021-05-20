@@ -76,7 +76,7 @@ var _ = Describe("Create EC2 cluster", func() {
 			err = k8sClient.Get(context.Background(), key, &cl)
 			Expect(err).ToNot(HaveOccurred())
 			return meta.InReadyCondition(cl.Status.Conditions)
-		}, 2*time.Minute, 120*time.Minute).Should(BeTrue())
+		}, 120*time.Minute, 2*time.Minute).Should(BeTrue())
 		klog.Info("Get Kubeconfig")
 		cmd = exec.NewCommand(
 			exec.WithCommand("undistro"),
@@ -98,7 +98,7 @@ var _ = Describe("Create EC2 cluster", func() {
 			err = clusterClient.List(context.Background(), &nodes)
 			Expect(err).ToNot(HaveOccurred())
 			return nodes.Items
-		}, 2*time.Minute, 120*time.Minute).Should(HaveLen(7))
+		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(7))
 		klog.Info("check kyverno")
 		c, err := kyvernoclient.NewForConfig(cfg)
 		Expect(err).ToNot(HaveOccurred())
@@ -108,7 +108,7 @@ var _ = Describe("Create EC2 cluster", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(list).ToNot(BeNil())
 			return list.Items
-		}, 2*time.Minute, 120*time.Minute).Should(HaveLen(16))
+		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(16))
 		klog.Info("delete cluster")
 		cmd = exec.NewCommand(
 			exec.WithCommand("undistro"),
@@ -124,5 +124,5 @@ var _ = Describe("Create EC2 cluster", func() {
 		out, _, err = cmd.Run(context.Background())
 		Expect(err).ToNot(HaveOccurred())
 		klog.Info(string(out))
-	}, float64(120*time.Minute))
+	}, float64(240*time.Minute))
 })
