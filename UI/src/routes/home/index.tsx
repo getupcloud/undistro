@@ -36,11 +36,6 @@ export default function HomePage () {
 	return (
 		<div className='home-page-route'>
 			<Button onClick={() => showModal()} size='large' type='primary' children='LgBtnText' />
-			<Button size='medium' type='primary' children='LgBtnText' />
-			<Button size='large' type='gray' children='LgBtnText' />
-			<Button size='medium' type='gray' children='LgBtnText' />
-			<Button size='large' type='black' children='LgBtnText' />
-			<Button size='medium' type='black' children='LgBtnText' />
 			<Input 
 				type='text'
 				label='Label'

@@ -12,6 +12,7 @@ type Props = {
   handleClose: () => void
 }
 
+const workers: any[] = []
 
 const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const body = store.useState((s: any) => s.body)
@@ -64,10 +65,7 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
         "region": region
       },
 
-      "workers": [{
-        "machineTypes": machineTypes,
-        "replicas": replicas
-      }]
+      "workers": workers
     }
 
     const data = {
@@ -103,6 +101,20 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
         setSecret(atob(res.data.secretAccessKey))
         setRegion(atob(res.data.region))
       })
+  }
+  
+
+  const createWorkers = () => {
+    let newWorker = { "machineTypes": '', "replicas": 0 }
+    newWorker.machineTypes = machineTypesWorkers
+    newWorker.replicas = replicasWorkers
+    workers.push(newWorker)
+    console.log(workers)
+  }
+
+  const deleteWorkers = (elm: any) => {
+    workers.splice(elm, 1)
+    console.log(workers)
   }
 
   const getProviders = () => {
@@ -204,11 +216,14 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
 
           <>
             <h3 className="title-box">Control plane</h3>
+            <Button onClick={() => createWorkers()} type='gray' size='medium' children='Add' />
+
               <form className='control-plane'>
                   <div className='input-container'>
                     <Input value={replicas} onChange={formReplica} type='text' label='replicas' />
                     {/* <Select label='CPU' /> */}
                     {/* <Select label='mem' /> */}
+
                     <Select value={machineTypes} onChange={formMachineTypes} options={machineOptions} label='machineType' />
                   </div>
 
@@ -220,27 +235,18 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
                       {/* <Select label='mem' /> */}
                       <Select value={machineTypesWorkers} onChange={formMachineTypesWorkers} options={machineOptions} label='machineType' />
                       <div className='button-container'>
-                        <Button type='gray' size='small' children='Add' />
                       </div>
                     </div>
 
                     <ul>
-                      <li>
-                        <p>clusterName-mp-0</p>
-                        <i className='icon-close' />
-                      </li>
-                      <li>
-                        <p>clusterName-mp-1</p>
-                        <i className='icon-close' />
-                      </li>
-                      <li>
-                        <p>clusterName-mp-2</p>
-                        <i className='icon-close' />
-                      </li>
-                      <li>
-                        <p>clusterName-mp-3</p>
-                        <i className='icon-close' />
-                      </li>
+                      {workers.map((i = 0) => {
+                        return (
+                          <li key={i}>
+                            <p>clusterName-mp-{i}</p>
+                            <i onClick={() => deleteWorkers(i)} className='icon-close' />
+                          </li>
+                        )
+                      })}
                     </ul>
                   </div>
               </form>
