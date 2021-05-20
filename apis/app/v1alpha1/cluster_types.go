@@ -114,16 +114,27 @@ func (s SupportedInfraProvider) String() string {
 	return [...]string{"aws"}[s]
 }
 
+type SupportedInfraProviderFlavor int8
+
+const (
+	EC2 SupportedInfraProviderFlavor = iota
+	EKS
+)
+
+func (s SupportedInfraProviderFlavor) String() string {
+	return [...]string{"ecs", "eks"}[s]
+}
+
 func (i InfrastructureProvider) Flavors() []string {
 	switch i.Name {
 	case Amazon.String():
-		return []string{"ec2", "eks"}
+		return []string{EC2.String(), EKS.String()}
 	}
 	return nil
 }
 
 func (i InfrastructureProvider) IsManaged() bool {
-	return i.Name == Amazon.String() && i.Flavor == "eks"
+	return i.Name == Amazon.String() && i.Flavor == EKS.String()
 }
 
 type NetworkSpec struct {

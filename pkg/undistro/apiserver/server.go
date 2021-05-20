@@ -17,7 +17,6 @@ package apiserver
 
 import (
 	"context"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider"
 	"io"
 	"net/http"
 	"os"
@@ -27,6 +26,7 @@ import (
 
 	"github.com/getupio-undistro/undistro/pkg/fs"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/health"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/proxy"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"

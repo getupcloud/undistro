@@ -30,7 +30,7 @@ type ProviderSpec struct {
 	Paused            bool                          `json:"paused,omitempty"`
 	ProviderName      string                        `json:"providerName,omitempty"`
 	ProviderVersion   string                        `json:"providerVersion,omitempty"`
-	ProviderKind	  string 						`json:"providerKind,omitempty"`
+	ProviderKind      string                        `json:"providerKind,omitempty"`
 	Repository        Repository                    `json:"repository,omitempty"`
 	ConfigurationFrom []appv1alpha1.ValuesReference `json:"configurationFrom,omitempty"`
 	Configuration     *apiextensionsv1.JSON         `json:"configuration,omitempty"`
