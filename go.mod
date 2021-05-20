@@ -6,10 +6,10 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/Masterminds/sprig/v3 v3.2.2
-	github.com/aws/aws-sdk-go v1.36.12
+	github.com/aws/aws-sdk-go v1.38.43
 	github.com/go-logr/logr v0.4.0
 	github.com/gorilla/mux v1.8.0
-	github.com/json-iterator/go v1.1.10
+	github.com/json-iterator/go v1.1.11
 	github.com/kyverno/kyverno v1.3.6
 	github.com/onsi/ginkgo v1.16.1
 	github.com/onsi/gomega v1.11.0
@@ -30,4 +30,7 @@ require (
 	sigs.k8s.io/yaml v1.2.0
 )
 
-replace github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
+replace (
+	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
+	github.com/gorilla/rpc => github.com/getupio-undistro/rpc v1.2.1-0.20210520161253-a32dcc464920
+)
