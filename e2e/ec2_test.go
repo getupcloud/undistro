@@ -99,8 +99,7 @@ var _ = Describe("Create EC2 cluster", func() {
 			Expect(err).ToNot(HaveOccurred())
 			return nodes.Items
 		}, 2*time.Minute, 120*time.Minute).Should(HaveLen(7))
-	})
-	It("Should install kyverno", func() {
+		klog.Info("check kyverno")
 		c, err := kyvernoclient.NewForConfig(cfg)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(c).ToNot(BeNil())
@@ -110,13 +109,12 @@ var _ = Describe("Create EC2 cluster", func() {
 			Expect(list).ToNot(BeNil())
 			return list.Items
 		}, 2*time.Minute, 120*time.Minute).Should(HaveLen(16))
-	})
-	It("Should delete EC2 cluster", func() {
-		cmd := exec.NewCommand(
+		klog.Info("delete cluster")
+		cmd = exec.NewCommand(
 			exec.WithCommand("undistro"),
 			exec.WithArgs("delete", "-f", "./testdata/ec2-policies.yaml"),
 		)
-		out, _, err := cmd.Run(context.Background())
+		out, _, err = cmd.Run(context.Background())
 		Expect(err).ToNot(HaveOccurred())
 		klog.Info(string(out))
 		cmd = exec.NewCommand(
