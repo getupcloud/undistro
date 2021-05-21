@@ -24,13 +24,10 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
-	kyvernov1 "github.com/kyverno/kyverno/pkg/api/kyverno/v1"
-	kyvernoclient "github.com/kyverno/kyverno/pkg/client/clientset/versioned"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/rest"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/cluster-api/test/framework/exec"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -39,7 +36,6 @@ import (
 var _ = Describe("Create EC2 cluster", func() {
 	var (
 		clusterClient client.Client
-		cfg           *rest.Config
 	)
 	It("Should generate recommend cluster spec", func() {
 		cmd := exec.NewCommand(
@@ -75,6 +71,7 @@ var _ = Describe("Create EC2 cluster", func() {
 			}
 			err = k8sClient.Get(context.Background(), key, &cl)
 			Expect(err).ToNot(HaveOccurred())
+			klog.Info(cl)
 			return meta.InReadyCondition(cl.Status.Conditions)
 		}, 120*time.Minute, 2*time.Minute).Should(BeTrue())
 		klog.Info("Get Kubeconfig")
@@ -85,7 +82,7 @@ var _ = Describe("Create EC2 cluster", func() {
 		out, _, err = cmd.Run(context.Background())
 		Expect(err).ToNot(HaveOccurred())
 		getter := kube.NewMemoryRESTClientGetter(out, "")
-		cfg, err = getter.ToRESTConfig()
+		cfg, err := getter.ToRESTConfig()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(cfg).ToNot(BeNil())
 		clusterClient, err = client.New(cfg, client.Options{
@@ -97,16 +94,18 @@ var _ = Describe("Create EC2 cluster", func() {
 			nodes := corev1.NodeList{}
 			err = clusterClient.List(context.Background(), &nodes)
 			Expect(err).ToNot(HaveOccurred())
+			klog.Info(nodes.Items)
 			return nodes.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(7))
 		klog.Info("check kyverno")
-		c, err := kyvernoclient.NewForConfig(cfg)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(c).ToNot(BeNil())
-		Eventually(func() []kyvernov1.ClusterPolicy {
-			list, err := c.KyvernoV1().ClusterPolicies().List(context.Background(), metav1.ListOptions{})
+		Eventually(func() []unstructured.Unstructured {
+			list := unstructured.UnstructuredList{}
+			list.SetAPIVersion("kyverno.io/v1")
+			list.SetKind("ClusterPolicyList")
+			clusterClient.List(context.Background(), &list)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(list).ToNot(BeNil())
+			klog.Info(list.Items)
 			return list.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(16))
 		klog.Info("delete cluster")
