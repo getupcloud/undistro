@@ -73,6 +73,7 @@ func infraProviderMetadata(providerName string, w http.ResponseWriter) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	pm := Metadata{
@@ -85,6 +86,7 @@ func infraProviderMetadata(providerName string, w http.ResponseWriter) {
 	err = encoder.Encode(pm)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
 
