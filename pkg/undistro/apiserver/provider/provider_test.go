@@ -105,15 +105,9 @@ func TestRetrieveMetadata(t *testing.T) {
 				t.Errorf("error: %s\n", err.Error())
 			}
 
-			byt, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				t.Errorf("error: %s\n", err.Error())
-			}
-
 			if status := resp.StatusCode; status != p.expectedStatus {
-				t.Errorf("handler returned wrong status code: got %v want %v\n %s",
-					status, p.expectedStatus, string(byt))
+				t.Errorf("handler returned wrong status code: got %v want %v\n",
+					status, p.expectedStatus)
 			}
 
 			var received []byte
