@@ -23,7 +23,7 @@ import (
 )
 
 type EC2MachineType struct {
-	InstanceType      string   `json:"instance_type"`
+	InstanceType      string `json:"instance_type"`
 	AvailabilityZones string `json:"availability_zones"`
 }
 
