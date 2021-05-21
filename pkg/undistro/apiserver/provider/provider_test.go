@@ -78,7 +78,6 @@ func TestRetrieveMetadata(t *testing.T) {
 			},
 			expectedStatus: http.StatusOK,
 			error:          nil,
-			body:           nil,
 		},
 	}
 
@@ -107,7 +106,7 @@ func TestRetrieveMetadata(t *testing.T) {
 			}
 
 			byt, err := ioutil.ReadAll(resp.Body)
-			
+
 			if err != nil {
 				t.Errorf("error: %s\n", err.Error())
 			}

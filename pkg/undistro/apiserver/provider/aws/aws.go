@@ -24,7 +24,7 @@ import (
 
 type EC2MachineType struct {
 	InstanceType      string   `json:"instance_type"`
-	AvailabilityZones []string `json:"availability_zones"`
+	AvailabilityZones string `json:"availability_zones"`
 }
 
 var (
