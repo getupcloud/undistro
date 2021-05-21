@@ -36,7 +36,7 @@
       .wizard-text {
         text-transform: none;
         position: absolute;
-        top: 1px;
+        top: 4px;
         font-weight: 500;
         cursor: inherit;
       }
@@ -77,8 +77,7 @@
     }
 
     .box {
-      justify-content: space-between;
-      padding: 52px 21px 21px 21px;
+      height: auto;
     }
 
     .title-box {
@@ -124,7 +123,7 @@
       }
 
       .input-container {
-        margin-top: 27px;
+        margin-top: 28px;
       }
 
       .subnet-inputs {
@@ -136,6 +135,7 @@
 
       ul {
         width: 436px;
+        height: 84px;
         margin: 28px auto 17px;
         list-style: none;
         border: 1px solid var(--gray-blue-4, $gray-blue-4);
@@ -178,12 +178,18 @@
 
     .control-plane {
       width: 678px;
+      margin: 27px 0 23px;
 
       .input-container {
         display: grid;
         justify-content: center;
         grid-template-columns: 80px 90px 90px 216px;
         grid-gap: 10px;
+
+        .toggle-container {
+          grid-column: 1 / 5;
+          margin: 0 0 17px;
+        }
 
         .input {
           input {
@@ -199,6 +205,7 @@
     }
 
     .infra-provider {
+      margin: 69px 0 136px;
       width: 390px;
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -211,6 +218,7 @@
 
     .create-cluster {
       width: 436px;
+      margin: 38px 0 54px;
 
       .input {
         margin: 5px 0;
@@ -273,7 +281,8 @@
 
     footer {
       display: flex;
-      width: 100%;
+      width: 94%;
+      margin: 21px;
       justify-content: space-between;
     }
   }

@@ -7,6 +7,7 @@ import Select from '@components/select'
 import Steps from './steps'
 import Button from '@components/button'
 import Api from 'util/api'
+import Toggle from '@components/toggle'
 
 type Props = {
   handleClose: () => void
@@ -25,6 +26,7 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const [flavor, setFlavor] = useState<string>('')
   const [k8sVersion, setK8sVersion] = useState<string>('')
   const [replicas, setReplicas] = useState<number>(0)
+  const [infraNode, setInfraNode] = useState<boolean>(false)
   const [machineTypes, setMachineTypes] = useState<string>('')
   const [replicasWorkers, setReplicasWorkers] = useState<number>(0)
   const [machineTypesWorkers, setMachineTypesWorkers] = useState<string>('')
@@ -214,8 +216,6 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
 
           <>
             <h3 className="title-box">Control plane</h3>
-            <Button onClick={() => createWorkers()} type='gray' size='medium' children='Add' />
-
               <form className='control-plane'>
                   <div className='input-container'>
                     <Input value={replicas} onChange={formReplica} type='text' label='replicas' />
@@ -227,12 +227,14 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
 
                   <div className='workers'>
                     <h3 className="title-box">Workers</h3>
-                    <div className='input-container'>
+                    <Toggle label='InfraNode' value={infraNode} onChange={() => setInfraNode(!infraNode)} />
+                    <div className='input-container'> 
                       <Input type='text' label='replicas' value={replicasWorkers} onChange={formReplicaWorkers} />
                       {/* <Select label='CPU' /> */}
                       {/* <Select label='mem' /> */}
                       <Select value={machineTypesWorkers} onChange={formMachineTypesWorkers} options={machineOptions} label='machineType' />
                       <div className='button-container'>
+                        <Button onClick={() => createWorkers()} type='gray' size='small' children='Add' />
                       </div>
                     </div>
 
