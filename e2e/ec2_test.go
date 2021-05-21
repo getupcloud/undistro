@@ -28,6 +28,7 @@ import (
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/cluster-api/test/framework/exec"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -100,11 +101,11 @@ var _ = Describe("Create EC2 cluster", func() {
 		klog.Info("check kyverno")
 		Eventually(func() []unstructured.Unstructured {
 			list := unstructured.UnstructuredList{}
-			list.SetAPIVersion("kyverno.io/v1")
-			list.SetKind("ClusterPolicyList")
-			clusterClient.List(context.Background(), &list)
+			list.SetGroupVersionKind(schema.FromAPIVersionAndKind("kyverno.io/v1", "ClusterPolicyList"))
+			err = clusterClient.List(context.Background(), &list)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(list).ToNot(BeNil())
+			klog.Info(err)
 			klog.Info(list.Items)
 			return list.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(16))
