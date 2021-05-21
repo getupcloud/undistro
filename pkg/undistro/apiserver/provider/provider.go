@@ -21,15 +21,15 @@ import (
 	"net/http"
 
 	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/aws"
 	"github.com/gorilla/mux"
 	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 )
 
 type Metadata struct {
-	MachineTypes     []infra.EC2MachineType `json:"machine_types"`
-	ProviderRegions  []string `json:"provider_regions"`
-	SupportedFlavors map[string]string `json:"supported_flavors"` // k8s flavors (ec2,eks, etc) and each version
+	MachineTypes     []aws.EC2MachineType `json:"machine_types"`
+	ProviderRegions  []string             `json:"provider_regions"`
+	SupportedFlavors map[string]string    `json:"supported_flavors"` // k8s flavors (ec2,eks, etc) and each version
 }
 
 var (
@@ -69,14 +69,20 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 
 func infraProviderMetadata(providerName string, w http.ResponseWriter) {
 	//generate Infrastructure Provider Metadata info about the provider
+	mt, err := aws.DescribeMachineTypes()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
 	pm := Metadata{
-		MachineTypes:     infra.MachineTypes,
-		ProviderRegions:  infra.Regions,
-		SupportedFlavors: infra.SupportedFlavors,
+		MachineTypes:     mt,
+		ProviderRegions:  aws.Regions,
+		SupportedFlavors: aws.SupportedFlavors,
 	}
 
 	encoder := json.NewEncoder(w)
-	err := encoder.Encode(pm)
+	err = encoder.Encode(pm)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
