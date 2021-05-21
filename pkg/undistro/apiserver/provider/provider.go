@@ -86,7 +86,6 @@ func infraProviderMetadata(providerName string, w http.ResponseWriter) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 func isValidInfraProvider(name string) bool {

@@ -1,1586 +1,2378 @@
 [
   {
     "instance_type": "t1.micro",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 1,
+    "memory": 0.612
   },
   {
     "instance_type": "t2.nano",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 1,
+    "memory": 0.5
   },
   {
     "instance_type": "t2.micro",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 1,
+    "memory": 1
   },
   {
     "instance_type": "t2.small",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 1,
+    "memory": 2
   },
   {
     "instance_type": "t2.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "t2.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "t2.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "t2.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "t3.nano",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 0.5
   },
   {
     "instance_type": "t3.micro",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 1
   },
   {
     "instance_type": "t3.small",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 2
   },
   {
     "instance_type": "t3.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "t3.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "t3.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "t3.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "a1.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 1,
+    "memory": 2
   },
   {
     "instance_type": "a1.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "a1.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 4,
+    "memory": 8
   },
   {
     "instance_type": "a1.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 8,
+    "memory": 16
   },
   {
     "instance_type": "a1.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 16,
+    "memory": 32
   },
   {
     "instance_type": "a1.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 16,
+    "memory": 32
   },
   {
     "instance_type": "c1.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 2,
+    "memory": 1.7
   },
   {
     "instance_type": "c1.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 8,
+    "memory": 7
   },
   {
     "instance_type": "c3.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 2,
+    "memory": 3.75
   },
   {
     "instance_type": "c3.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 4,
+    "memory": 7.5
   },
   {
     "instance_type": "c3.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 8,
+    "memory": 15
   },
   {
     "instance_type": "c3.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 16,
+    "memory": 30
   },
   {
     "instance_type": "c3.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 32,
+    "memory": 60
   },
   {
     "instance_type": "c4.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 2,
+    "memory": 3.75
   },
   {
     "instance_type": "c4.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 4,
+    "memory": 7.5
   },
   {
     "instance_type": "c4.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 8,
+    "memory": 15
   },
   {
     "instance_type": "c4.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 16,
+    "memory": 30
   },
   {
     "instance_type": "c4.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 36,
+    "memory": 60
   },
   {
     "instance_type": "c5.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "c5.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 8
   },
   {
     "instance_type": "c5.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 16
   },
   {
     "instance_type": "c5.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 32
   },
   {
     "instance_type": "c5.9xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 36,
+    "memory": 72
   },
   {
     "instance_type": "c5.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 96
   },
   {
     "instance_type": "c5.18xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 72,
+    "memory": 144
   },
   {
     "instance_type": "c5.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 192
   },
   {
     "instance_type": "c5.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 192
   },
   {
     "instance_type": "c5a.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "c5a.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 8
   },
   {
     "instance_type": "c5a.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 16
   },
   {
     "instance_type": "c5a.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 32
   },
   {
     "instance_type": "c5a.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 64
   },
   {
     "instance_type": "c5a.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 96
   },
   {
     "instance_type": "c5a.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 128
   },
   {
     "instance_type": "c5a.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 192
   },
   {
     "instance_type": "c5ad.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "c5ad.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 8
   },
   {
     "instance_type": "c5ad.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 16
   },
   {
     "instance_type": "c5ad.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 32
   },
   {
     "instance_type": "c5ad.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 64
   },
   {
     "instance_type": "c5ad.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 96
   },
   {
     "instance_type": "c5ad.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 128
   },
   {
     "instance_type": "c5ad.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 192
   },
   {
     "instance_type": "c5d.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "c5d.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 8
   },
   {
     "instance_type": "c5d.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 16
   },
   {
     "instance_type": "c5d.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 32
   },
   {
     "instance_type": "c5d.9xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 36,
+    "memory": 72
   },
   {
     "instance_type": "c5d.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 48,
+    "memory": 96
   },
   {
     "instance_type": "c5d.18xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 72,
+    "memory": 144
   },
   {
     "instance_type": "c5d.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 96,
+    "memory": 192
   },
   {
     "instance_type": "c5d.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 96,
+    "memory": 192
   },
   {
     "instance_type": "c5n.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 5.3
   },
   {
     "instance_type": "c5n.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 10.5
   },
   {
     "instance_type": "c5n.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 21
   },
   {
     "instance_type": "c5n.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 42
   },
   {
     "instance_type": "c5n.9xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 36,
+    "memory": 96
   },
   {
     "instance_type": "c5n.18xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 72,
+    "memory": 192
   },
   {
     "instance_type": "c5n.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 72,
+    "memory": 192
   },
   {
     "instance_type": "c6g.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 1,
+    "memory": 2
   },
   {
     "instance_type": "c6g.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "c6g.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 8
   },
   {
     "instance_type": "c6g.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 16
   },
   {
     "instance_type": "c6g.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 32
   },
   {
     "instance_type": "c6g.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 64
   },
   {
     "instance_type": "c6g.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 96
   },
   {
     "instance_type": "c6g.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 128
   },
   {
     "instance_type": "c6g.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 128
   },
   {
     "instance_type": "c6gd.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 1,
+    "memory": 2
   },
   {
     "instance_type": "c6gd.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "c6gd.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 8
   },
   {
     "instance_type": "c6gd.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 16
   },
   {
     "instance_type": "c6gd.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 32
   },
   {
     "instance_type": "c6gd.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 64
   },
   {
     "instance_type": "c6gd.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 96
   },
   {
     "instance_type": "c6gd.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 128
   },
   {
     "instance_type": "c6gd.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 128
   },
   {
     "instance_type": "c6gn.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 1,
+    "memory": 2
   },
   {
     "instance_type": "c6gn.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "c6gn.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 4,
+    "memory": 8
   },
   {
     "instance_type": "c6gn.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 8,
+    "memory": 16
   },
   {
     "instance_type": "c6gn.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 16,
+    "memory": 32
   },
   {
     "instance_type": "c6gn.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 32,
+    "memory": 64
   },
   {
     "instance_type": "c6gn.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 48,
+    "memory": 96
   },
   {
     "instance_type": "c6gn.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 64,
+    "memory": 128
   },
   {
     "instance_type": "cc2.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 32,
+    "memory": 60.5
   },
   {
     "instance_type": "d2.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 4,
+    "memory": 30.5
   },
   {
     "instance_type": "d2.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 8,
+    "memory": 61
   },
   {
     "instance_type": "d2.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 16,
+    "memory": 122
   },
   {
     "instance_type": "d2.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 36,
+    "memory": 244
   },
   {
     "instance_type": "d3.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "d3.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "d3.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "d3.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "d3en.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "d3en.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "d3en.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "d3en.6xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 24,
+    "memory": 96
   },
   {
     "instance_type": "d3en.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "d3en.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "f1.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 8,
+    "memory": 122
   },
   {
     "instance_type": "f1.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 16,
+    "memory": 244
   },
   {
     "instance_type": "f1.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 64,
+    "memory": 976
   },
   {
     "instance_type": "g2.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 8,
+    "memory": 15
   },
   {
     "instance_type": "g2.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 32,
+    "memory": 60
   },
   {
     "instance_type": "g3.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 16,
+    "memory": 122
   },
   {
     "instance_type": "g3.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 32,
+    "memory": 244
   },
   {
     "instance_type": "g3.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 64,
+    "memory": 488
   },
   {
     "instance_type": "g3s.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 4,
+    "memory": 30.5
   },
   {
     "instance_type": "g4ad.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "g4ad.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "g4ad.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "g4dn.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "g4dn.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "g4dn.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "g4dn.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "g4dn.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "g4dn.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "g4dn.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "h1.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "h1.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "h1.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "h1.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "i2.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 4,
+    "memory": 30.5
   },
   {
     "instance_type": "i2.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 8,
+    "memory": 61
   },
   {
     "instance_type": "i2.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 16,
+    "memory": 122
   },
   {
     "instance_type": "i2.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 32,
+    "memory": 244
   },
   {
     "instance_type": "i3.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 2,
+    "memory": 15.3
   },
   {
     "instance_type": "i3.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 4,
+    "memory": 30.5
   },
   {
     "instance_type": "i3.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 8,
+    "memory": 61
   },
   {
     "instance_type": "i3.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 16,
+    "memory": 122
   },
   {
     "instance_type": "i3.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 32,
+    "memory": 244
   },
   {
     "instance_type": "i3.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 64,
+    "memory": 488
   },
   {
     "instance_type": "i3.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 72,
+    "memory": 512
   },
   {
     "instance_type": "i3en.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "i3en.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "i3en.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "i3en.3xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 12,
+    "memory": 96
   },
   {
     "instance_type": "i3en.6xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 24,
+    "memory": 192
   },
   {
     "instance_type": "i3en.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "i3en.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "i3en.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "inf1.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 8
   },
   {
     "instance_type": "inf1.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 16
   },
   {
     "instance_type": "inf1.6xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 24,
+    "memory": 48
   },
   {
     "instance_type": "inf1.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 192
   },
   {
     "instance_type": "m1.small",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 1,
+    "memory": 1.7
   },
   {
     "instance_type": "m1.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 1,
+    "memory": 3.7
   },
   {
     "instance_type": "m1.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 2,
+    "memory": 7.5
   },
   {
     "instance_type": "m1.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 4,
+    "memory": 15
   },
   {
     "instance_type": "m2.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 2,
+    "memory": 17.1
   },
   {
     "instance_type": "m2.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 4,
+    "memory": 34.2
   },
   {
     "instance_type": "m2.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 8,
+    "memory": 68.4
   },
   {
     "instance_type": "m3.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 1,
+    "memory": 3.75
   },
   {
     "instance_type": "m3.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 2,
+    "memory": 7.5
   },
   {
     "instance_type": "m3.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 4,
+    "memory": 15
   },
   {
     "instance_type": "m3.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 8,
+    "memory": 30
   },
   {
     "instance_type": "m4.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m4.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m4.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m4.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "m4.10xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 40,
+    "memory": 160
   },
   {
     "instance_type": "m4.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m5.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m5.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m5.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m5.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "m5.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "m5.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m5.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m5.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5a.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m5a.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m5a.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m5a.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "m5a.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "m5a.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m5a.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m5a.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5ad.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m5ad.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m5ad.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m5ad.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "m5ad.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "m5ad.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m5ad.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m5ad.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5d.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m5d.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m5d.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m5d.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "m5d.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "m5d.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m5d.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m5d.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5d.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5dn.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m5dn.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m5dn.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m5dn.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "m5dn.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "m5dn.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m5dn.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m5dn.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5dn.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5n.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m5n.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m5n.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m5n.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "m5n.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "m5n.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m5n.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m5n.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5n.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 384
   },
   {
     "instance_type": "m5zn.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m5zn.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m5zn.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m5zn.3xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 12,
+    "memory": 48
   },
   {
     "instance_type": "m5zn.6xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 24,
+    "memory": 96
   },
   {
     "instance_type": "m5zn.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m5zn.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m6g.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 1,
+    "memory": 4
   },
   {
     "instance_type": "m6g.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m6g.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m6g.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m6g.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "m6g.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "m6g.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m6g.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m6g.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m6gd.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 1,
+    "memory": 4
   },
   {
     "instance_type": "m6gd.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "m6gd.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "m6gd.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "m6gd.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 64
   },
   {
     "instance_type": "m6gd.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 128
   },
   {
     "instance_type": "m6gd.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 192
   },
   {
     "instance_type": "m6gd.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "m6gd.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 256
   },
   {
     "instance_type": "mac1.metal",
-    "availability_zones": "us-east-1a - us-east-1b"
+    "availability_zones": "us-east-1a | us-east-1b",
+    "vcpus": 12,
+    "memory": 32
   },
   {
     "instance_type": "p2.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 4,
+    "memory": 61
   },
   {
     "instance_type": "p2.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 32,
+    "memory": 488
   },
   {
     "instance_type": "p2.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e",
+    "vcpus": 64,
+    "memory": 732
   },
   {
     "instance_type": "p3.2xlarge",
-    "availability_zones": "us-east-1b - us-east-1c - us-east-1f"
+    "availability_zones": "us-east-1b | us-east-1c | us-east-1f",
+    "vcpus": 8,
+    "memory": 61
   },
   {
     "instance_type": "p3.8xlarge",
-    "availability_zones": "us-east-1b - us-east-1c - us-east-1f"
+    "availability_zones": "us-east-1b | us-east-1c | us-east-1f",
+    "vcpus": 32,
+    "memory": 244
   },
   {
     "instance_type": "p3.16xlarge",
-    "availability_zones": "us-east-1b - us-east-1c - us-east-1f"
+    "availability_zones": "us-east-1b | us-east-1c | us-east-1f",
+    "vcpus": 64,
+    "memory": 488
   },
   {
     "instance_type": "p3dn.24xlarge",
-    "availability_zones": "us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1b | us-east-1c",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "p4d.24xlarge",
-    "availability_zones": "us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 96,
+    "memory": 1152
   },
   {
     "instance_type": "r3.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 2,
+    "memory": 15
   },
   {
     "instance_type": "r3.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 4,
+    "memory": 30.5
   },
   {
     "instance_type": "r3.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 8,
+    "memory": 61
   },
   {
     "instance_type": "r3.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 16,
+    "memory": 122
   },
   {
     "instance_type": "r3.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d - us-east-1e"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d | us-east-1e",
+    "vcpus": 32,
+    "memory": 244
   },
   {
     "instance_type": "r4.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 2,
+    "memory": 15.3
   },
   {
     "instance_type": "r4.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 4,
+    "memory": 30.5
   },
   {
     "instance_type": "r4.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 8,
+    "memory": 61
   },
   {
     "instance_type": "r4.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 16,
+    "memory": 122
   },
   {
     "instance_type": "r4.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 32,
+    "memory": 244
   },
   {
     "instance_type": "r4.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 64,
+    "memory": 488
   },
   {
     "instance_type": "r5.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "r5.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "r5.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "r5.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "r5.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "r5.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "r5.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r5.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5a.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "r5a.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "r5a.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "r5a.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "r5a.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "r5a.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "r5a.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r5a.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5ad.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "r5ad.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "r5ad.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "r5ad.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "r5ad.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "r5ad.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "r5ad.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r5ad.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5b.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "r5b.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "r5b.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "r5b.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "r5b.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "r5b.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "r5b.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r5b.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5b.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5d.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "r5d.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "r5d.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "r5d.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "r5d.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "r5d.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "r5d.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r5d.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5d.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5dn.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "r5dn.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "r5dn.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "r5dn.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "r5dn.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "r5dn.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "r5dn.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r5dn.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5dn.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5n.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "r5n.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "r5n.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "r5n.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "r5n.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "r5n.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "r5n.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r5n.24xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r5n.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 96,
+    "memory": 768
   },
   {
     "instance_type": "r6g.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 1,
+    "memory": 8
   },
   {
     "instance_type": "r6g.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "r6g.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "r6g.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "r6g.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "r6g.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "r6g.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "r6g.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r6g.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r6gd.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 1,
+    "memory": 8
   },
   {
     "instance_type": "r6gd.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "r6gd.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "r6gd.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "r6gd.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 128
   },
   {
     "instance_type": "r6gd.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 256
   },
   {
     "instance_type": "r6gd.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "r6gd.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "r6gd.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 512
   },
   {
     "instance_type": "t3a.nano",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 0.5
   },
   {
     "instance_type": "t3a.micro",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 1
   },
   {
     "instance_type": "t3a.small",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 2
   },
   {
     "instance_type": "t3a.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "t3a.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "t3a.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "t3a.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "t4g.nano",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 0.5
   },
   {
     "instance_type": "t4g.micro",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 1
   },
   {
     "instance_type": "t4g.small",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 2
   },
   {
     "instance_type": "t4g.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 4
   },
   {
     "instance_type": "t4g.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 8
   },
   {
     "instance_type": "t4g.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 16
   },
   {
     "instance_type": "t4g.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 32
   },
   {
     "instance_type": "u-12tb1.112xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 448,
+    "memory": 12288
   },
   {
     "instance_type": "u-6tb1.56xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 224,
+    "memory": 6144
   },
   {
     "instance_type": "u-6tb1.112xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 448,
+    "memory": 6144
   },
   {
     "instance_type": "u-9tb1.112xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1d",
+    "vcpus": 448,
+    "memory": 9216
   },
   {
     "instance_type": "x1.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 64,
+    "memory": 976
   },
   {
     "instance_type": "x1.32xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1e - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1e | us-east-1f",
+    "vcpus": 128,
+    "memory": 1952
   },
   {
     "instance_type": "x1e.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 4,
+    "memory": 122
   },
   {
     "instance_type": "x1e.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 8,
+    "memory": 244
   },
   {
     "instance_type": "x1e.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 16,
+    "memory": 488
   },
   {
     "instance_type": "x1e.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 32,
+    "memory": 976
   },
   {
     "instance_type": "x1e.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 64,
+    "memory": 1952
   },
   {
     "instance_type": "x1e.32xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d",
+    "vcpus": 128,
+    "memory": 3904
   },
   {
     "instance_type": "x2gd.medium",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 1,
+    "memory": 16
   },
   {
     "instance_type": "x2gd.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 32
   },
   {
     "instance_type": "x2gd.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 64
   },
   {
     "instance_type": "x2gd.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 128
   },
   {
     "instance_type": "x2gd.4xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 16,
+    "memory": 256
   },
   {
     "instance_type": "x2gd.8xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 32,
+    "memory": 512
   },
   {
     "instance_type": "x2gd.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 768
   },
   {
     "instance_type": "x2gd.16xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 1024
   },
   {
     "instance_type": "x2gd.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 64,
+    "memory": 1024
   },
   {
     "instance_type": "z1d.large",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 2,
+    "memory": 16
   },
   {
     "instance_type": "z1d.xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 4,
+    "memory": 32
   },
   {
     "instance_type": "z1d.2xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 8,
+    "memory": 64
   },
   {
     "instance_type": "z1d.3xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 12,
+    "memory": 96
   },
   {
     "instance_type": "z1d.6xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 24,
+    "memory": 192
   },
   {
     "instance_type": "z1d.12xlarge",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   },
   {
     "instance_type": "z1d.metal",
-    "availability_zones": "us-east-1a - us-east-1b - us-east-1c - us-east-1d - us-east-1f"
+    "availability_zones": "us-east-1a | us-east-1b | us-east-1c | us-east-1d | us-east-1f",
+    "vcpus": 48,
+    "memory": 384
   }
 ]

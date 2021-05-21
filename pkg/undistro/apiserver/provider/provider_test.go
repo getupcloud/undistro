@@ -38,6 +38,7 @@ type test struct {
 	params         provider
 	expectedStatus int
 	error          error
+	body           interface{}
 }
 
 func TestRetrieveMetadata(t *testing.T) {
@@ -77,6 +78,7 @@ func TestRetrieveMetadata(t *testing.T) {
 			},
 			expectedStatus: http.StatusOK,
 			error:          nil,
+			body:           nil,
 		},
 	}
 

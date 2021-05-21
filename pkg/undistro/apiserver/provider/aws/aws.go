@@ -18,16 +18,17 @@ package aws
 import (
 	_ "embed"
 	"encoding/json"
+
 	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 )
 
 type EC2MachineType struct {
-	InstanceType string
-	AvailabilityZones []string
+	InstanceType      string   `json:"instance_type"`
+	AvailabilityZones []string `json:"availability_zones"`
 }
 
 var (
-	Regions = []string {
+	Regions = []string{
 		"us-east-2",
 		"us-east-1",
 		"us-west-1",
@@ -54,7 +55,7 @@ var (
 		"us-gov-east-1",
 		"us-gov-west-1",
 	}
-	SupportedFlavors = map[string]string {
+	SupportedFlavors = map[string]string{
 		v1alpha1.EC2.String(): "1.20",
 		v1alpha1.EKS.String(): "1.19",
 	}
