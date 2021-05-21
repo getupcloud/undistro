@@ -16,7 +16,9 @@ limitations under the License.
 package e2e_test
 
 import (
+	"bytes"
 	"context"
+	"io/ioutil"
 	"os"
 	"time"
 
@@ -27,8 +29,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/cluster-api/test/framework/exec"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -91,6 +91,8 @@ var _ = Describe("Create EC2 cluster", func() {
 		})
 		Expect(err).ToNot(HaveOccurred())
 		Expect(clusterClient).ToNot(BeNil())
+		err = ioutil.WriteFile("ec2-e2e.kubeconfig", out, 0700)
+		Expect(err).ToNot(HaveOccurred())
 		Eventually(func() []corev1.Node {
 			nodes := corev1.NodeList{}
 			err = clusterClient.List(context.Background(), &nodes)
@@ -99,17 +101,16 @@ var _ = Describe("Create EC2 cluster", func() {
 			return nodes.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(7))
 		klog.Info("check kyverno")
-		Eventually(func() []unstructured.Unstructured {
-			list := unstructured.UnstructuredList{}
-			list.SetGroupVersionKind(schema.FromAPIVersionAndKind("kyverno.io/v1", "ClusterPolicyList"))
-			err = clusterClient.List(context.Background(), &list)
-			if err != nil {
-				klog.Info(err)
-				return []unstructured.Unstructured{}
-			}
-			klog.Info(list.Items)
-			return list.Items
-		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(16))
+		Eventually(func() bool {
+			cmd = exec.NewCommand(
+				exec.WithCommand("undistro"),
+				exec.WithArgs("--kubeconfig", "ec2-e2e.kubeconfig", "get", "clusterpolicy"),
+			)
+			out, _, err = cmd.Run(context.Background())
+			klog.Info(err)
+			klog.Info(string(out))
+			return bytes.Contains(out, []byte("traffic-deny"))
+		}, 120*time.Minute, 2*time.Minute).Should(BeTrue())
 		klog.Info("delete cluster")
 		cmd = exec.NewCommand(
 			exec.WithCommand("undistro"),
