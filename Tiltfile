@@ -9,10 +9,10 @@ def yaml():
     return local('cd config/manager; kustomize edit set image controller=' + IMG + '; cd ../..; kustomize build config/default')
 
 def manifests():
-    return 'CGO_ENABLED=0 make manifests;'
+    return 'make manifests;'
 
 def generate():
-    return 'CGO_ENABLED=0 make generate;'
+    return 'make generate;'
 
 def vetfmt():
     return 'go vet ./...; go fmt ./...'
