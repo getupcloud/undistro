@@ -103,9 +103,10 @@ var _ = Describe("Create EC2 cluster", func() {
 			list := unstructured.UnstructuredList{}
 			list.SetGroupVersionKind(schema.FromAPIVersionAndKind("kyverno.io/v1", "ClusterPolicyList"))
 			err = clusterClient.List(context.Background(), &list)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(list).ToNot(BeNil())
-			klog.Info(err)
+			if err != nil {
+				klog.Info(err)
+				return []unstructured.Unstructured{}
+			}
 			klog.Info(list.Items)
 			return list.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(16))
