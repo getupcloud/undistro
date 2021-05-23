@@ -16,20 +16,20 @@ limitations under the License.
 package provider
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
 	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/aws"
 	"github.com/gorilla/mux"
+	"k8s.io/apimachinery/pkg/util/json"
 	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 )
 
 type Metadata struct {
 	MachineTypes     []aws.EC2MachineType `json:"machine_types"`
 	ProviderRegions  []string             `json:"provider_regions"`
-	SupportedFlavors map[string]string    `json:"supported_flavors"` // k8s flavors (ec2,eks, etc) and each version
+	SupportedFlavors map[string]string    `json:"supported_flavors"`
 }
 
 var (
@@ -38,7 +38,7 @@ var (
 	InvalidProvider = errors.New("invalid provider, maybe unsupported")
 )
 
-// MetadataHandler retrieves Infra Provider Metadata
+// MetadataHandler retrieves Provider Metadata
 func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	// extract provider name
 	vars := mux.Vars(r)
@@ -69,24 +69,30 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 
 func infraProviderMetadata(providerName string, w http.ResponseWriter) {
 	//generate Infrastructure Provider Metadata info about the provider
-	mt, err := aws.DescribeMachineTypes()
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	switch providerName {
+	case v1alpha1.Amazon.String():
+		mt, err := aws.DescribeMachineTypes()
 
-	pm := Metadata{
-		MachineTypes:     mt,
-		ProviderRegions:  aws.Regions,
-		SupportedFlavors: aws.SupportedFlavors,
-	}
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	encoder := json.NewEncoder(w)
-	err = encoder.Encode(pm)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		pm := Metadata{
+			MachineTypes:     mt,
+			ProviderRegions:  aws.Regions,
+			SupportedFlavors: aws.SupportedFlavors,
+		}
+
+		encoder := json.NewEncoder(w)
+		err = encoder.Encode(pm)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	default:
+		http.Error(w, InvalidProvider.Error(), http.StatusBadRequest)
 	}
 }
 

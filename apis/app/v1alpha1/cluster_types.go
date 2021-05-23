@@ -122,7 +122,7 @@ const (
 )
 
 func (s SupportedInfraProviderFlavor) String() string {
-	return [...]string{"ecs", "eks"}[s]
+	return [...]string{"ec2", "eks"}[s]
 }
 
 func (i InfrastructureProvider) Flavors() []string {
