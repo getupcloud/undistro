@@ -1,5 +1,4 @@
 FROM golang:1.16-alpine
 WORKDIR /
-ENV UNDISTRO_ENV=dev
 COPY ./bin/manager /
 CMD ["/manager"]
