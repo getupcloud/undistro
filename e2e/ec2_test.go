@@ -96,6 +96,7 @@ var _ = Describe("Create EC2 cluster", func() {
 			err = clusterClient.List(context.Background(), &nodes)
 			Expect(err).ToNot(HaveOccurred())
 			klog.Info(nodes.Items)
+			klog.Info(len(nodes.Items))
 			return nodes.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(7))
 		klog.Info("check kyverno")
@@ -108,6 +109,7 @@ var _ = Describe("Create EC2 cluster", func() {
 				return []unstructured.Unstructured{}
 			}
 			klog.Info(list.Items)
+			klog.Info(len(list.Items))
 			return list.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(16))
 		klog.Info("delete cluster")
