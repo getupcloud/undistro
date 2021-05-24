@@ -206,14 +206,14 @@ func removeDuplicateNetwork(n []appv1alpha1.NetworkSpec) []appv1alpha1.NetworkSp
 	return res
 }
 
-type awsCredentials struct {
+type AwsCredentials struct {
 	AccessKeyID     string
 	SecretAccessKey string
 	SessionToken    string
 	Region          string
 }
 
-func (c awsCredentials) renderAWSDefaultProfile() (string, error) {
+func (c AwsCredentials) renderAWSDefaultProfile() (string, error) {
 	tmpl, err := template.New("AWS Credentials").Parse(awsCredentialsTemplate)
 	if err != nil {
 		return "", err
@@ -226,7 +226,7 @@ func (c awsCredentials) renderAWSDefaultProfile() (string, error) {
 	return credsFileStr.String(), nil
 }
 
-func (c awsCredentials) setBase64EncodedAWSDefaultProfile(ctx context.Context, cl client.Client, secret *corev1.Secret) (appv1alpha1.ValuesReference, error) {
+func (c AwsCredentials) setBase64EncodedAWSDefaultProfile(ctx context.Context, cl client.Client, secret *corev1.Secret) (appv1alpha1.ValuesReference, error) {
 	profile, err := c.renderAWSDefaultProfile()
 	if err != nil {
 		return appv1alpha1.ValuesReference{}, err
@@ -246,7 +246,7 @@ func (c awsCredentials) setBase64EncodedAWSDefaultProfile(ctx context.Context, c
 
 // Init providers
 func Init(ctx context.Context, c client.Client, cfg []appv1alpha1.ValuesReference, version string) ([]appv1alpha1.ValuesReference, error) {
-	cred, secret, err := getCreds(ctx, c)
+	cred, secret, err := Credentials(ctx, c)
 	if err != nil {
 		return cfg, err
 	}
@@ -274,7 +274,7 @@ func PostInstall(ctx context.Context, c client.Client) error {
 
 // Upgrade providers
 func Upgrade(ctx context.Context, c client.Client, cfg []appv1alpha1.ValuesReference, version string) ([]appv1alpha1.ValuesReference, error) {
-	cred, _, err := getCreds(ctx, c)
+	cred, _, err := Credentials(ctx, c)
 	if err != nil {
 		return cfg, err
 	}
@@ -285,7 +285,7 @@ func Upgrade(ctx context.Context, c client.Client, cfg []appv1alpha1.ValuesRefer
 	return cfg, nil
 }
 
-func reconcileCloudformation(cred awsCredentials) error {
+func reconcileCloudformation(cred AwsCredentials) error {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(cred.Region),
 		Credentials: credentials.NewStaticCredentials(
@@ -301,7 +301,7 @@ func reconcileCloudformation(cred awsCredentials) error {
 	return cfnSvc.ReconcileBootstrapStack(cloudformation.Template)
 }
 
-func getCreds(ctx context.Context, c client.Client) (awsCredentials, *corev1.Secret, error) {
+func Credentials(ctx context.Context, c client.Client) (AwsCredentials, *corev1.Secret, error) {
 	secret := corev1.Secret{}
 	nm := client.ObjectKey{
 		Name:      name,
@@ -309,17 +309,17 @@ func getCreds(ctx context.Context, c client.Client) (awsCredentials, *corev1.Sec
 	}
 	err := c.Get(ctx, nm, &secret)
 	if err != nil {
-		return awsCredentials{}, nil, err
+		return AwsCredentials{}, nil, err
 	}
 	cred, err := credentialsFromSecret(&secret)
 	if err != nil {
-		return awsCredentials{}, nil, err
+		return AwsCredentials{}, nil, err
 	}
 	return cred, &secret, nil
 }
 
-func credentialsFromSecret(s *corev1.Secret) (awsCredentials, error) {
-	cred := awsCredentials{
+func credentialsFromSecret(s *corev1.Secret) (AwsCredentials, error) {
+	cred := AwsCredentials{
 		AccessKeyID:     getData(s, "accessKeyID"),
 		SecretAccessKey: getData(s, "secretAccessKey"),
 		Region:          getData(s, "region"),
@@ -345,7 +345,7 @@ type Account struct {
 }
 
 func NewAccount(ctx context.Context, c client.Client) (*Account, error) {
-	cred, _, err := getCreds(ctx, c)
+	cred, _, err := Credentials(ctx, c)
 	if err != nil {
 		return nil, err
 	}
