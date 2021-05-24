@@ -19,23 +19,14 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/aws"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
 	"github.com/gorilla/mux"
-	"k8s.io/apimachinery/pkg/util/json"
 	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 )
 
-type Metadata struct {
-	MachineTypes     []aws.EC2MachineType `json:"machine_types"`
-	ProviderRegions  []string             `json:"provider_regions"`
-	SupportedFlavors map[string]string    `json:"supported_flavors"`
-}
-
 var (
-	NoProviderName  = errors.New("no provider name was found")
-	ReadQueryParam  = errors.New("query param invalid")
-	InvalidProvider = errors.New("invalid provider, maybe unsupported")
+	errNoProviderName = errors.New("no provider name was found")
+	readQueryParam    = errors.New("query param invalid")
 )
 
 // MetadataHandler retrieves Provider Metadata
@@ -44,7 +35,7 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pn := vars["name"]
 	if pn == "" {
-		http.Error(w, NoProviderName.Error(), http.StatusBadRequest)
+		http.Error(w, errNoProviderName.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -54,46 +45,12 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 		providerType = string(v1alpha3.CoreProviderType)
 	}
 
+	// write metadata by provider type
 	switch providerType {
 	case string(v1alpha3.InfrastructureProviderType):
-		if !isValidInfraProvider(pn) {
-			http.Error(w, InvalidProvider.Error(), http.StatusBadRequest)
-			return
-		}
-		infraProviderMetadata(pn, w)
+		infra.WriteMetadata(pn, w)
 	default:
 		// invalid provider type
-		http.Error(w, ReadQueryParam.Error(), http.StatusBadRequest)
+		http.Error(w, readQueryParam.Error(), http.StatusBadRequest)
 	}
-}
-
-func infraProviderMetadata(providerName string, w http.ResponseWriter) {
-	switch providerName {
-	case v1alpha1.Amazon.String():
-		mt, err := aws.DescribeMachineTypes()
-
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		pm := Metadata{
-			MachineTypes:     mt,
-			ProviderRegions:  aws.Regions,
-			SupportedFlavors: aws.SupportedFlavors,
-		}
-
-		encoder := json.NewEncoder(w)
-		err = encoder.Encode(pm)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	default:
-		http.Error(w, InvalidProvider.Error(), http.StatusBadRequest)
-	}
-}
-
-func isValidInfraProvider(name string) bool {
-	return name == v1alpha1.Amazon.String()
 }

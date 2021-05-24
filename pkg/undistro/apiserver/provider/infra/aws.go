@@ -13,11 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package aws
+package infra
 
 import (
 	_ "embed"
 	"encoding/json"
+	"github.com/pkg/errors"
+	"net/http"
 
 	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 )
@@ -64,7 +66,51 @@ var (
 	machineTypesEmb []byte
 )
 
-func DescribeMachineTypes() (mt []EC2MachineType, err error) {
+type Metadata struct {
+	MachineTypes     []EC2MachineType `json:"machine_types"`
+	ProviderRegions  []string               `json:"provider_regions"`
+	SupportedFlavors map[string]string      `json:"supported_flavors"`
+}
+
+var invalidProvider = errors.New("invalid provider, maybe unsupported")
+
+func describeMachineTypes() (mt []EC2MachineType, err error) {
 	err = json.Unmarshal(machineTypesEmb, &mt)
 	return
+}
+
+func WriteMetadata(providerName string, w http.ResponseWriter) {
+	if !isValidInfraProvider(providerName) {
+		http.Error(w, invalidProvider.Error(), http.StatusBadRequest)
+		return
+	}
+
+	switch providerName {
+	case v1alpha1.Amazon.String():
+		mt, err := describeMachineTypes()
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		pm := Metadata{
+			MachineTypes:     mt,
+			ProviderRegions:  Regions,
+			SupportedFlavors: SupportedFlavors,
+		}
+
+		encoder := json.NewEncoder(w)
+		err = encoder.Encode(pm)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	default:
+		http.Error(w, invalidProvider.Error(), http.StatusBadRequest)
+	}
+}
+
+func isValidInfraProvider(name string) bool {
+	return name == v1alpha1.Amazon.String()
 }

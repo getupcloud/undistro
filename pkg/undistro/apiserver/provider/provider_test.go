@@ -68,7 +68,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(v1alpha3.CoreProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          ReadQueryParam,
+			error:          readQueryParam,
 		},
 		{
 			name: "test successfully infra provider metadata",
