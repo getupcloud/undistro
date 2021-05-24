@@ -33,7 +33,7 @@ k8s_yaml(yaml())
 local_resource('recompile', generate() + binary(), deps=['controllers', 'main.go', 'pkg'])
 
 local('kubectl apply -f https://projectcontour.io/quickstart/contour.yaml')
-local("kubectl patch daemonsets -n projectcontour envoy -p '{"spec":{"template":{"spec":{"nodeSelector":{"ingress-ready":"true"},"tolerations":[{"key":"node-role.kubernetes.io/master","operator":"Equal","effect":"NoSchedule"}]}}}}'")
+local('kubectl patch daemonsets -n projectcontour envoy -p \'{"spec":{"template":{"spec":{"nodeSelector":{"ingress-ready":"true"},"tolerations":[{"key":"node-role.kubernetes.io/master","operator":"Equal","effect":"NoSchedule"}]}}}}\'')
 
 docker_build_with_restart(IMG, '.', 
  dockerfile='tilt.docker',

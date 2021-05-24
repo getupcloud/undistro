@@ -3,6 +3,7 @@ ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: cantour
+    projectcontour.io/websocket-routes: /
 resources:
   limits:
     cpu: "2"
@@ -12,6 +13,6 @@ resources:
     memory: 256Mi
 image:
   repository: getupioundistro/undistro
-  tag: v0.25.4
+  tag: v0.25.5
   pullPolicy: IfNotPresent
   pullSecrets: []

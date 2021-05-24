@@ -49,7 +49,7 @@ func TestMain(m *testing.M) {
 	klog.Info("E2E")
 	runE2E := *e2eRun
 	if !runE2E {
-		klog.Info("Skiping E2E")
+		klog.Info("Skipping E2E")
 		os.Exit(0)
 	}
 	ctx := context.Background()
@@ -132,6 +132,16 @@ func TestMain(m *testing.M) {
 	cmd = exec.NewCommand(
 		exec.WithCommand("undistro"),
 		exec.WithArgs("get", "pods", "-n", "undistro-system"),
+	)
+	out, _, err = cmd.Run(ctx)
+	if err != nil {
+		klog.Info(err)
+		os.Exit(1)
+	}
+	klog.Info(string(out))
+	cmd = exec.NewCommand(
+		exec.WithCommand("mv"),
+		exec.WithArgs("aws-iam-authenticator", "./bin"),
 	)
 	out, _, err = cmd.Run(ctx)
 	if err != nil {

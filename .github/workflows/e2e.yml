@@ -19,7 +19,7 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Get dependencies
         run: go mod download
@@ -35,10 +35,20 @@ jobs:
           GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
           ./hack/kind.sh
 
+      - name: Configure AWS credentials for E2E
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.E2E_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.E2E_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
       - name: Run E2E
         working-directory: ./e2e
         env:
           E2E_AWS_ACCESS_KEY_ID: ${{ secrets.E2E_AWS_ACCESS_KEY_ID }}
           E2E_AWS_SECRET_ACCESS_KEY: ${{ secrets.E2E_AWS_SECRET_ACCESS_KEY }}
+          E2E_PEM: ${{ secrets.E2E_PEM }}
         run: |
-          go test -e2e ./...
+          echo $E2E_PEM > undistro.pem
+          go install github.com/onsi/ginkgo/ginkgo
+          ginkgo -v -trace -- -e2e

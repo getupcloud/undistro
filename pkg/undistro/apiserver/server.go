@@ -26,8 +26,8 @@ import (
 
 	"github.com/getupio-undistro/undistro/pkg/fs"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/health"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/proxy"
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/rest"
@@ -61,30 +61,14 @@ func NewServer(cfg *rest.Config, in io.Reader, out, errOut io.Writer, healthChec
 		apiServer.HealthHandler.Add(c)
 	}
 	apiServer.routes(router)
-	env := os.Getenv("UNDISTRO_ENV")
 	apiServer.Handler = router
-	if env == "dev" {
-		apiServer.Handler = handlers.CORS(
-			handlers.AllowedOrigins([]string{"*"}),
-			handlers.AllowedHeaders([]string{"*"}),
-			handlers.AllowedMethods([]string{
-				http.MethodGet,
-				http.MethodPost,
-				http.MethodPatch,
-				http.MethodPut,
-				http.MethodOptions,
-				http.MethodHead,
-				http.MethodDelete,
-				http.MethodConnect,
-			}),
-		)(router)
-	}
 	return apiServer
 }
 
 func (s *Server) routes(router *mux.Router) {
 	router.Handle("/healthz/readiness", &s.HealthHandler)
 	router.HandleFunc("/healthz/liveness", health.HandleLive)
+	router.HandleFunc("/provider/{name}/metadata", provider.MetadataHandler).Methods(http.MethodGet)
 	router.PathPrefix("/uapi/v1/namespaces/{namespace}/clusters/{cluster}/proxy/").Handler(proxy.NewHandler(s.K8sCfg))
 	router.PathPrefix("/").Handler(fs.ReactHandler("", "frontend"))
 }
