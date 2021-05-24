@@ -68,8 +68,6 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func infraProviderMetadata(providerName string, w http.ResponseWriter) {
-	//generate Infrastructure Provider Metadata info about the provider
-
 	switch providerName {
 	case v1alpha1.Amazon.String():
 		mt, err := aws.DescribeMachineTypes()

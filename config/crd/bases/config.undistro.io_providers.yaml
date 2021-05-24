@@ -100,9 +100,9 @@ spec:
               paused:
                 default: false
                 type: boolean
-              providerKind:
-                type: string
               providerName:
+                type: string
+              providerType:
                 type: string
               providerVersion:
                 type: string
