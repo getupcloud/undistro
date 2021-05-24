@@ -104,9 +104,7 @@ func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error)
 	k8sClient, err := client.New(conf, client.Options{
 		Scheme: scheme.Scheme,
 	})
-
 	creds, _, err := undistroaws.Credentials(context.Background(), k8sClient)
-
 	if err != nil {
 		return []string{}, errGetCredentials
 	}

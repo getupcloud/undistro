@@ -33,7 +33,7 @@ func WriteError(w http.ResponseWriter, err error, code int) {
 		Code:    code,
 		Message: err.Error(),
 	}
-
+	w.WriteHeader(code)
 	encoder := json.NewEncoder(w)
 	err = encoder.Encode(resp)
 	if err != nil {

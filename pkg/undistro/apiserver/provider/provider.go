@@ -36,6 +36,12 @@ type Handler struct {
 	DefaultConfig *rest.Config
 }
 
+func NewHandler(cfg *rest.Config) *Handler {
+	return &Handler{
+		DefaultConfig: cfg,
+	}
+}
+
 // MetadataHandler retrieves Provider metadata
 func (h *Handler) MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	// extract provider name

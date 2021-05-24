@@ -31,8 +31,8 @@ import (
 )
 
 type provider struct {
-	Name         string `json:"name"`
-	ProviderType string `json:"providerType"`
+	Name         string
+	ProviderType string
 }
 
 type test struct {
@@ -114,8 +114,8 @@ func TestRetrieveMetadata(t *testing.T) {
 					status, p.expectedStatus)
 			}
 
-			var received util.ErrResponder
 			// validate body
+			var received util.ErrResponder
 			if p.error != nil {
 				byt, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
@@ -127,11 +127,11 @@ func TestRetrieveMetadata(t *testing.T) {
 				if err != nil {
 					t.Errorf("error: %s\n", err.Error())
 				}
-			}
 
-			if received.Message != p.error.Error() {
-				t.Errorf("handler returned unexpected body: got %v want %v",
-					received.Message, p.error.Error())
+				if received.Message != p.error.Error() {
+					t.Errorf("handler returned unexpected body: got %v want %v",
+						received.Message, p.error.Error())
+				}
 			}
 		})
 	}
