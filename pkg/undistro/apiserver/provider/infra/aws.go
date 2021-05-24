@@ -139,7 +139,7 @@ func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error)
 	return res, nil
 }
 
-func WriteMetadata(providerName string, w http.ResponseWriter) {
+func WriteMetadata(w http.ResponseWriter, providerName string) {
 	if !isValidInfraProvider(providerName) {
 		util.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
 		return

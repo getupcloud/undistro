@@ -55,7 +55,7 @@ func (h *Handler) MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	// write metadata by provider type
 	switch providerType {
 	case string(configv1alpha1.InfraProviderType):
-		infra.WriteMetadata(pn, w)
+		infra.WriteMetadata(w, pn)
 	default:
 		// invalid provider type
 		util.WriteError(w, readQueryParam, http.StatusBadRequest)
@@ -67,6 +67,7 @@ func (h Handler) SSHKeysHandler(w http.ResponseWriter, r *http.Request) {
 	region := r.URL.Query().Get("region")
 	if region == "" {
 		util.WriteError(w, readQueryParam, http.StatusBadRequest)
+		return
 	}
 
 	// retrieve ssh keys
@@ -81,6 +82,5 @@ func (h Handler) SSHKeysHandler(w http.ResponseWriter, r *http.Request) {
 	err = encoder.Encode(keys)
 	if err != nil {
 		util.WriteError(w, err, http.StatusInternalServerError)
-		return
 	}
 }
