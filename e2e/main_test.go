@@ -49,7 +49,7 @@ func TestMain(m *testing.M) {
 	klog.Info("E2E")
 	runE2E := *e2eRun
 	if !runE2E {
-		klog.Info("Skiping E2E")
+		klog.Info("Skipping E2E")
 		os.Exit(0)
 	}
 	ctx := context.Background()

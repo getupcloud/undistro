@@ -104,16 +104,37 @@ type InfrastructureProvider struct {
 	Env    []corev1.EnvVar `json:"env,omitempty"`
 }
 
+type SupportedInfraProvider int8
+
+const (
+	Amazon SupportedInfraProvider = iota
+)
+
+func (s SupportedInfraProvider) String() string {
+	return [...]string{"aws"}[s]
+}
+
+type SupportedInfraProviderFlavor int8
+
+const (
+	EC2 SupportedInfraProviderFlavor = iota
+	EKS
+)
+
+func (s SupportedInfraProviderFlavor) String() string {
+	return [...]string{"ec2", "eks"}[s]
+}
+
 func (i InfrastructureProvider) Flavors() []string {
 	switch i.Name {
-	case "aws":
-		return []string{"ec2", "eks"}
+	case Amazon.String():
+		return []string{EC2.String(), EKS.String()}
 	}
 	return nil
 }
 
 func (i InfrastructureProvider) IsManaged() bool {
-	return i.Name == "aws" && i.Flavor == "eks"
+	return i.Name == Amazon.String() && i.Flavor == EKS.String()
 }
 
 type NetworkSpec struct {
