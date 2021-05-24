@@ -217,6 +217,7 @@ Resources:
           - ec2:DescribeLaunchTemplateVersions
           - ec2:DeleteLaunchTemplate
           - ec2:DeleteLaunchTemplateVersions
+          - ec2:DescribeKeyPairs
           Effect: Allow
           Resource:
           - '*'

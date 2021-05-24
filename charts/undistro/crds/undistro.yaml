@@ -1124,6 +1124,8 @@ spec:
                   type: boolean
                 providerName:
                   type: string
+                providerType:
+                  type: string
                 providerVersion:
                   type: string
                 repository:

@@ -316,7 +316,7 @@ spec:
             - 
               name: AWS_SHARED_CREDENTIALS_FILE
               value: /home/.aws/credentials
-          image: "gcr.io/k8s-staging-cluster-api-aws/eks-controlplane-controller:v0.6.5"
+          image: "gcr.io/k8s-staging-cluster-api-aws/eks-controlplane-controller:v0.6.6"
           imagePullPolicy: IfNotPresent
           name: manager
           volumeMounts: 
@@ -376,7 +376,7 @@ spec:
             - "--webhook-port=9443"
           command: 
             - /manager
-          image: "gcr.io/k8s-staging-cluster-api-aws/eks-controlplane-controller:v0.6.5"
+          image: "gcr.io/k8s-staging-cluster-api-aws/eks-controlplane-controller:v0.6.6"
           imagePullPolicy: IfNotPresent
           name: manager
           ports: 

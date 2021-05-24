@@ -45,6 +45,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
+	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 	"sigs.k8s.io/cluster-api/util/kubeconfig"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -156,6 +157,7 @@ func (o *InstallOptions) installProviders(ctx context.Context, streams genericcl
 			Spec: configv1alpha1.ProviderSpec{
 				ProviderName:      chart,
 				ProviderVersion:   version.Version,
+				ProviderType:      string(v1alpha3.CoreProviderType),
 				ConfigurationFrom: valuesRef,
 				Repository: configv1alpha1.Repository{
 					SecretRef: secretRef,
@@ -214,6 +216,7 @@ func (o *InstallOptions) installChart(ctx context.Context, c client.Client, rest
 		Spec: configv1alpha1.ProviderSpec{
 			ProviderName:    chartName,
 			ProviderVersion: version.Version,
+			ProviderType:      string(v1alpha3.CoreProviderType),
 			Repository: configv1alpha1.Repository{
 				SecretRef: secretRef,
 			},

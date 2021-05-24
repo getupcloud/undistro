@@ -1,3 +1,18 @@
+/*
+Copyright 2020 The UnDistro authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 package e2e_test
 
 import (
@@ -34,7 +49,7 @@ func TestMain(m *testing.M) {
 	klog.Info("E2E")
 	runE2E := *e2eRun
 	if !runE2E {
-		klog.Info("Skiping E2E")
+		klog.Info("Skipping E2E")
 		os.Exit(0)
 	}
 	ctx := context.Background()
@@ -117,6 +132,16 @@ func TestMain(m *testing.M) {
 	cmd = exec.NewCommand(
 		exec.WithCommand("undistro"),
 		exec.WithArgs("get", "pods", "-n", "undistro-system"),
+	)
+	out, _, err = cmd.Run(ctx)
+	if err != nil {
+		klog.Info(err)
+		os.Exit(1)
+	}
+	klog.Info(string(out))
+	cmd = exec.NewCommand(
+		exec.WithCommand("mv"),
+		exec.WithArgs("aws-iam-authenticator", "./bin"),
 	)
 	out, _, err = cmd.Run(ctx)
 	if err != nil {

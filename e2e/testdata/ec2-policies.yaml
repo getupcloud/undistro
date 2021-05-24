@@ -1,0 +1,8 @@
+---
+apiVersion: app.undistro.io/v1alpha1
+kind: DefaultPolicies
+metadata:
+  name: defaultpolicies-undistro-ec2-e2e
+  namespace: e2e
+spec:
+  clusterName: undistro-ec2-e2e
