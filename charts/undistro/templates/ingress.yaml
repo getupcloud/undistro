@@ -4,6 +4,7 @@ apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
   name: undistro-ingress
+  namespace: undistro-system
   annotations:
 {{- with .Values.ingress.annotations }}
 {{ toYaml . | indent 4 }}

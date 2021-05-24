@@ -2,8 +2,8 @@ devEnv: false
 ingress:
   enabled: true
   annotations:
-    kubernetes.io/ingress.class: cantour
-    projectcontour.io/ingress.class: cantour
+    kubernetes.io/ingress.class: contour
+    projectcontour.io/ingress.class: contour
     projectcontour.io/websocket-routes: /
 resources:
   limits:
