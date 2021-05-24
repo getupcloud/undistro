@@ -260,7 +260,7 @@ func (o *InstallOptions) installChart(ctx context.Context, c client.Client, rest
 			if err != nil {
 				return err
 			}
-		} else if rel.Info.Status == release.StatusDeployed {
+		} else if rel.Info.Status == release.StatusDeployed || rel.Info.Status == release.StatusFailed {
 			_, err = runner.Upgrade(hr, chart, chart.Values)
 			if err != nil {
 				return err
