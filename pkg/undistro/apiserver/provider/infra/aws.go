@@ -18,7 +18,6 @@ package infra
 import (
 	"context"
 	_ "embed"
-	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -26,9 +25,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	undistrov1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	undistroaws "github.com/getupio-undistro/undistro/pkg/cloud/aws"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver"
+	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -67,8 +68,8 @@ var (
 		"us-gov-west-1",
 	}
 	flavors = map[string]string{
-		v1alpha1.EC2.String(): "1.20",
-		v1alpha1.EKS.String(): "1.19",
+		undistrov1alpha1.EC2.String(): "1.20",
+		undistrov1alpha1.EKS.String(): "1.19",
 	}
 
 	//go:embed instancetypesaws.json
@@ -82,7 +83,7 @@ type metadata struct {
 }
 
 var (
-	errInvalidProvider  = errors.New("invalid provider, maybe unsupported")
+	ErrInvalidProvider  = errors.New("invalid provider, maybe unsupported")
 	errGetCredentials   = errors.New("cannot retrieve credentials from secrets")
 	errLoadConfig       = errors.New("unable to load SDK config")
 	errDescribeKeyPairs = errors.New("error to describe key pairs")
@@ -94,10 +95,12 @@ func describeMachineTypes() (mt []ec2InstanceType, err error) {
 }
 
 func isValidInfraProvider(name string) bool {
-	return name == v1alpha1.Amazon.String()
+	return name == undistrov1alpha1.Amazon.String()
 }
 
+// DescribeSSHKeys retrieve all ssh key names from a region in an account
 func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error) {
+	// get credentials from secrets
 	k8sClient, err := client.New(conf, client.Options{
 		Scheme: scheme.Scheme,
 	})
@@ -108,6 +111,7 @@ func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error)
 		return []string{}, errGetCredentials
 	}
 
+	// instantiate config and session
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(region),
 		Credentials: credentials.NewStaticCredentials(
@@ -116,39 +120,37 @@ func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error)
 			creds.SessionToken,
 		),
 	})
-
 	if err != nil {
 		return []string{}, errLoadConfig
 	}
 
-	e := ec2.New(sess)
-
+	// get ssh keys from ec2
+	ec2Client := ec2.New(sess)
 	params := ec2.DescribeKeyPairsInput{}
-	out, err := e.DescribeKeyPairs(&params)
-
+	out, err := ec2Client.DescribeKeyPairs(&params)
 	if err != nil {
 		return []string{}, errDescribeKeyPairs
 	}
 
+	// filter ssh key names
 	for _, kp := range out.KeyPairs {
 		res = append(res, *kp.KeyName)
 	}
-
 	return res, nil
 }
 
 func WriteMetadata(providerName string, w http.ResponseWriter) {
 	if !isValidInfraProvider(providerName) {
-		http.Error(w, errInvalidProvider.Error(), http.StatusBadRequest)
+		apiserver.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
 		return
 	}
 
 	switch providerName {
-	case v1alpha1.Amazon.String():
+	case undistrov1alpha1.Amazon.String():
 		mt, err := describeMachineTypes()
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			apiserver.WriteError(w, err, http.StatusInternalServerError)
 			return
 		}
 
@@ -161,10 +163,10 @@ func WriteMetadata(providerName string, w http.ResponseWriter) {
 		encoder := json.NewEncoder(w)
 		err = encoder.Encode(pm)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			apiserver.WriteError(w, err, http.StatusInternalServerError)
 			return
 		}
 	default:
-		http.Error(w, errInvalidProvider.Error(), http.StatusBadRequest)
+		apiserver.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
 	}
 }

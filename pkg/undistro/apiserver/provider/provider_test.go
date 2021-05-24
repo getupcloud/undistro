@@ -17,6 +17,7 @@ package provider
 
 import (
 	"fmt"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -50,7 +51,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(v1alpha3.InfrastructureProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          InvalidProvider,
+			error:          infra.ErrInvalidProvider,
 		},
 		{
 			name: "test get metadata passing no provider",
@@ -59,7 +60,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(v1alpha3.InfrastructureProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          InvalidProvider,
+			error:          infra.ErrInvalidProvider,
 		},
 		{
 			name: "test get metadata passing provider wrong type",
@@ -81,8 +82,10 @@ func TestRetrieveMetadata(t *testing.T) {
 		},
 	}
 
+	h := Handler{DefaultConfig: nil}
+
 	r := mux.NewRouter()
-	r.HandleFunc("/provider/{name}/metadata", MetadataHandler)
+	r.HandleFunc("/provider/{name}/metadata", h.MetadataHandler)
 
 	ts := httptest.NewServer(r)
 	defer ts.Close()

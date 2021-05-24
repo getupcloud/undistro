@@ -17,24 +17,20 @@ package provider
 
 import (
 	"errors"
+	"net/http"
+
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
 	"github.com/gorilla/mux"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
-	"net/http"
 )
 
 var (
 	errNoProviderName = errors.New("no provider name was found")
 	readQueryParam    = errors.New("query param invalid or empty")
 )
-
-type ErrResponder struct {
-	Status  string `json:"status"`
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
 
 type Handler struct {
 	DefaultConfig *rest.Config
@@ -46,7 +42,7 @@ func (h *Handler) MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pn := vars["name"]
 	if pn == "" {
-		writeError(w, errNoProviderName, http.StatusBadRequest)
+		apiserver.WriteError(w, errNoProviderName, http.StatusBadRequest)
 		return
 	}
 
@@ -62,7 +58,7 @@ func (h *Handler) MetadataHandler(w http.ResponseWriter, r *http.Request) {
 		infra.WriteMetadata(pn, w)
 	default:
 		// invalid provider type
-		writeError(w, readQueryParam, http.StatusBadRequest)
+		apiserver.WriteError(w, readQueryParam, http.StatusBadRequest)
 	}
 }
 
@@ -70,34 +66,21 @@ func (h Handler) SSHKeysHandler(w http.ResponseWriter, r *http.Request) {
 	// extract region
 	region := r.URL.Query().Get("region")
 	if region == "" {
-		writeError(w, readQueryParam, http.StatusBadRequest)
+		apiserver.WriteError(w, readQueryParam, http.StatusBadRequest)
 	}
 
-	res, err := infra.DescribeSSHKeys(region, h.DefaultConfig)
-
+	// retrieve ssh keys
+	keys, err := infra.DescribeSSHKeys(region, h.DefaultConfig)
 	if err != nil {
-		writeError(w, err, http.StatusInternalServerError)
+		apiserver.WriteError(w, err, http.StatusInternalServerError)
 		return
 	}
 
+	// write response body
 	encoder := json.NewEncoder(w)
-	err = encoder.Encode(res)
+	err = encoder.Encode(keys)
 	if err != nil {
-		writeError(w, err, http.StatusInternalServerError)
+		apiserver.WriteError(w, err, http.StatusInternalServerError)
 		return
-	}
-}
-
-func writeError(w http.ResponseWriter, err error, code int) {
-	resp := ErrResponder{
-		Status:  http.StatusText(code),
-		Code:    code,
-		Message: err.Error(),
-	}
-
-	encoder := json.NewEncoder(w)
-	err = encoder.Encode(resp)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
