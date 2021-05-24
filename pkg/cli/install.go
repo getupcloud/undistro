@@ -27,6 +27,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/capi"
 	"github.com/getupio-undistro/undistro/pkg/certmanager"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
+	"github.com/getupio-undistro/undistro/pkg/contour"
 	"github.com/getupio-undistro/undistro/pkg/helm"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
@@ -422,6 +423,26 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 			return err
 		}
 	}
+	installContour := false
+	contourObjs, err := util.ToUnstructured([]byte(contour.TestResources))
+	if err != nil {
+		return err
+	}
+	for _, o := range contourObjs {
+		_, errContour := util.CreateOrUpdate(cmd.Context(), c, &o)
+		if errContour != nil {
+			installContour = true
+			break
+		}
+	}
+	if installContour {
+		providerContour, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "contour", getConfigFrom(cfg.CoreProviders, "contour"))
+		if err != nil {
+			return err
+		}
+		providers = append(providers, providerContour)
+
+	}
 	installUndistro := false
 	undistroObjs, err := util.ToUnstructured([]byte(undistro.TestResources))
 	if err != nil {
@@ -506,18 +527,21 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 			_, err = util.CreateOrUpdate(cmd.Context(), c, &o)
 			if err != nil {
 				ready = false
+				break
 			}
 		}
 		for _, o := range undistroObjs {
 			_, err = util.CreateOrUpdate(cmd.Context(), c, &o)
 			if err != nil {
 				ready = false
+				break
 			}
 		}
 		for _, o := range capiObjs {
 			_, err = util.CreateOrUpdate(cmd.Context(), c, &o)
 			if err != nil {
 				ready = false
+				break
 			}
 		}
 		if ready {
