@@ -13,17 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package apiserver
+package util
 
 import (
-	"k8s.io/apimachinery/pkg/util/json"
 	"net/http"
+
+	"k8s.io/apimachinery/pkg/util/json"
 )
 
 type ErrResponder struct {
-	Status  string `json:"status"`
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Status  string `json:"status,omitempty"`
+	Code    int    `json:"code,omitempty"`
+	Message string `json:"message,omitempty"`
 }
 
 func WriteError(w http.ResponseWriter, err error, code int) {

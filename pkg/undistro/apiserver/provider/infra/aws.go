@@ -28,7 +28,7 @@ import (
 	undistrov1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	undistroaws "github.com/getupio-undistro/undistro/pkg/cloud/aws"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/util"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -141,7 +141,7 @@ func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error)
 
 func WriteMetadata(providerName string, w http.ResponseWriter) {
 	if !isValidInfraProvider(providerName) {
-		apiserver.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
+		util.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
 		return
 	}
 
@@ -150,7 +150,7 @@ func WriteMetadata(providerName string, w http.ResponseWriter) {
 		mt, err := describeMachineTypes()
 
 		if err != nil {
-			apiserver.WriteError(w, err, http.StatusInternalServerError)
+			util.WriteError(w, err, http.StatusInternalServerError)
 			return
 		}
 
@@ -163,10 +163,10 @@ func WriteMetadata(providerName string, w http.ResponseWriter) {
 		encoder := json.NewEncoder(w)
 		err = encoder.Encode(pm)
 		if err != nil {
-			apiserver.WriteError(w, err, http.StatusInternalServerError)
+			util.WriteError(w, err, http.StatusInternalServerError)
 			return
 		}
 	default:
-		apiserver.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
+		util.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
 	}
 }

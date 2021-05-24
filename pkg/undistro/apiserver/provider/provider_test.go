@@ -17,16 +17,17 @@ package provider
 
 import (
 	"fmt"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
-	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/util"
 	"github.com/gorilla/mux"
-	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
+	"k8s.io/apimachinery/pkg/util/json"
 )
 
 type provider struct {
@@ -48,7 +49,7 @@ func TestRetrieveMetadata(t *testing.T) {
 			name: "test get metadata passing invalid provider",
 			params: provider{
 				Name:         "amazon",
-				ProviderType: string(v1alpha3.InfrastructureProviderType),
+				ProviderType: string(configv1alpha1.InfraProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
 			error:          infra.ErrInvalidProvider,
@@ -57,7 +58,7 @@ func TestRetrieveMetadata(t *testing.T) {
 			name: "test get metadata passing no provider",
 			params: provider{
 				Name:         "_",
-				ProviderType: string(v1alpha3.InfrastructureProviderType),
+				ProviderType: string(configv1alpha1.InfraProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
 			error:          infra.ErrInvalidProvider,
@@ -65,8 +66,8 @@ func TestRetrieveMetadata(t *testing.T) {
 		{
 			name: "test get metadata passing provider wrong type",
 			params: provider{
-				Name:         v1alpha1.Amazon.String(),
-				ProviderType: string(v1alpha3.CoreProviderType),
+				Name:         appv1alpha1.Amazon.String(),
+				ProviderType: string(configv1alpha1.CoreProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
 			error:          readQueryParam,
@@ -74,8 +75,8 @@ func TestRetrieveMetadata(t *testing.T) {
 		{
 			name: "test successfully infra provider metadata",
 			params: provider{
-				Name:         v1alpha1.Amazon.String(),
-				ProviderType: string(v1alpha3.InfrastructureProviderType),
+				Name:         appv1alpha1.Amazon.String(),
+				ProviderType: string(configv1alpha1.InfraProviderType),
 			},
 			expectedStatus: http.StatusOK,
 			error:          nil,
@@ -113,21 +114,24 @@ func TestRetrieveMetadata(t *testing.T) {
 					status, p.expectedStatus)
 			}
 
-			var received []byte
-			var expected string
+			var received util.ErrResponder
 			// validate body
 			if p.error != nil {
-				expected = p.error.Error()
-				received, err = ioutil.ReadAll(resp.Body)
+				byt, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					t.Errorf("error: %s\n", err.Error())
+				}
+
+				err = json.Unmarshal(byt, &received)
+
 				if err != nil {
 					t.Errorf("error: %s\n", err.Error())
 				}
 			}
 
-			recstr := strings.TrimSpace(string(received))
-			if recstr != expected {
+			if received.Message != p.error.Error() {
 				t.Errorf("handler returned unexpected body: got %v want %v",
-					recstr, expected)
+					received.Message, p.error.Error())
 			}
 		})
 	}

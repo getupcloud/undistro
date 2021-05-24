@@ -20,8 +20,8 @@ import (
 	"net/http"
 
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/util"
 	"github.com/gorilla/mux"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
@@ -42,7 +42,7 @@ func (h *Handler) MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pn := vars["name"]
 	if pn == "" {
-		apiserver.WriteError(w, errNoProviderName, http.StatusBadRequest)
+		util.WriteError(w, errNoProviderName, http.StatusBadRequest)
 		return
 	}
 
@@ -58,7 +58,7 @@ func (h *Handler) MetadataHandler(w http.ResponseWriter, r *http.Request) {
 		infra.WriteMetadata(pn, w)
 	default:
 		// invalid provider type
-		apiserver.WriteError(w, readQueryParam, http.StatusBadRequest)
+		util.WriteError(w, readQueryParam, http.StatusBadRequest)
 	}
 }
 
@@ -66,13 +66,13 @@ func (h Handler) SSHKeysHandler(w http.ResponseWriter, r *http.Request) {
 	// extract region
 	region := r.URL.Query().Get("region")
 	if region == "" {
-		apiserver.WriteError(w, readQueryParam, http.StatusBadRequest)
+		util.WriteError(w, readQueryParam, http.StatusBadRequest)
 	}
 
 	// retrieve ssh keys
 	keys, err := infra.DescribeSSHKeys(region, h.DefaultConfig)
 	if err != nil {
-		apiserver.WriteError(w, err, http.StatusInternalServerError)
+		util.WriteError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -80,7 +80,7 @@ func (h Handler) SSHKeysHandler(w http.ResponseWriter, r *http.Request) {
 	encoder := json.NewEncoder(w)
 	err = encoder.Encode(keys)
 	if err != nil {
-		apiserver.WriteError(w, err, http.StatusInternalServerError)
+		util.WriteError(w, err, http.StatusInternalServerError)
 		return
 	}
 }
