@@ -16,21 +16,30 @@ limitations under the License.
 package infra
 
 import (
+	"context"
 	_ "embed"
 	"encoding/json"
-	"github.com/pkg/errors"
+	"errors"
 	"net/http"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	undistroaws "github.com/getupio-undistro/undistro/pkg/cloud/aws"
+	"github.com/getupio-undistro/undistro/pkg/scheme"
+	"k8s.io/client-go/rest"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-type EC2MachineType struct {
+type ec2InstanceType struct {
 	InstanceType      string `json:"instance_type"`
 	AvailabilityZones string `json:"availability_zones"`
 }
 
 var (
-	Regions = []string{
+	regions = []string{
 		"us-east-2",
 		"us-east-1",
 		"us-west-1",
@@ -57,7 +66,7 @@ var (
 		"us-gov-east-1",
 		"us-gov-west-1",
 	}
-	SupportedFlavors = map[string]string{
+	flavors = map[string]string{
 		v1alpha1.EC2.String(): "1.20",
 		v1alpha1.EKS.String(): "1.19",
 	}
@@ -66,22 +75,71 @@ var (
 	machineTypesEmb []byte
 )
 
-type Metadata struct {
-	MachineTypes     []EC2MachineType `json:"machine_types"`
-	ProviderRegions  []string               `json:"provider_regions"`
-	SupportedFlavors map[string]string      `json:"supported_flavors"`
+type metadata struct {
+	MachineTypes     []ec2InstanceType `json:"machine_types"`
+	ProviderRegions  []string          `json:"provider_regions"`
+	SupportedFlavors map[string]string `json:"supported_flavors"`
 }
 
-var invalidProvider = errors.New("invalid provider, maybe unsupported")
+var (
+	errInvalidProvider  = errors.New("invalid provider, maybe unsupported")
+	errGetCredentials   = errors.New("cannot retrieve credentials from secrets")
+	errLoadConfig       = errors.New("unable to load SDK config")
+	errDescribeKeyPairs = errors.New("error to describe key pairs")
+)
 
-func describeMachineTypes() (mt []EC2MachineType, err error) {
+func describeMachineTypes() (mt []ec2InstanceType, err error) {
 	err = json.Unmarshal(machineTypesEmb, &mt)
 	return
 }
 
+func isValidInfraProvider(name string) bool {
+	return name == v1alpha1.Amazon.String()
+}
+
+func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error) {
+	k8sClient, err := client.New(conf, client.Options{
+		Scheme: scheme.Scheme,
+	})
+
+	creds, _, err := undistroaws.Credentials(context.Background(), k8sClient)
+
+	if err != nil {
+		return []string{}, errGetCredentials
+	}
+
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(region),
+		Credentials: credentials.NewStaticCredentials(
+			creds.AccessKeyID,
+			creds.SecretAccessKey,
+			creds.SessionToken,
+		),
+	})
+
+	if err != nil {
+		return []string{}, errLoadConfig
+	}
+
+	e := ec2.New(sess)
+
+	params := ec2.DescribeKeyPairsInput{}
+	out, err := e.DescribeKeyPairs(&params)
+
+	if err != nil {
+		return []string{}, errDescribeKeyPairs
+	}
+
+	for _, kp := range out.KeyPairs {
+		res = append(res, *kp.KeyName)
+	}
+
+	return res, nil
+}
+
 func WriteMetadata(providerName string, w http.ResponseWriter) {
 	if !isValidInfraProvider(providerName) {
-		http.Error(w, invalidProvider.Error(), http.StatusBadRequest)
+		http.Error(w, errInvalidProvider.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -94,10 +152,10 @@ func WriteMetadata(providerName string, w http.ResponseWriter) {
 			return
 		}
 
-		pm := Metadata{
+		pm := metadata{
 			MachineTypes:     mt,
-			ProviderRegions:  Regions,
-			SupportedFlavors: SupportedFlavors,
+			ProviderRegions:  regions,
+			SupportedFlavors: flavors,
 		}
 
 		encoder := json.NewEncoder(w)
@@ -107,10 +165,6 @@ func WriteMetadata(providerName string, w http.ResponseWriter) {
 			return
 		}
 	default:
-		http.Error(w, invalidProvider.Error(), http.StatusBadRequest)
+		http.Error(w, errInvalidProvider.Error(), http.StatusBadRequest)
 	}
-}
-
-func isValidInfraProvider(name string) bool {
-	return name == v1alpha1.Amazon.String()
 }

@@ -24,6 +24,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type ProviderType string
+
+const (
+	CoreProviderType  = ProviderType("core")
+	InfraProviderType = ProviderType("infra")
+)
+
 // ProviderSpec defines the desired state of Provider
 type ProviderSpec struct {
 	// +kubebuilder:default=false

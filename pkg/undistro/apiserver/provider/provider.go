@@ -17,40 +17,87 @@ package provider
 
 import (
 	"errors"
-	"net/http"
-
+	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
 	"github.com/gorilla/mux"
-	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
+	"k8s.io/apimachinery/pkg/util/json"
+	"k8s.io/client-go/rest"
+	"net/http"
 )
 
 var (
 	errNoProviderName = errors.New("no provider name was found")
-	readQueryParam    = errors.New("query param invalid")
+	readQueryParam    = errors.New("query param invalid or empty")
 )
 
-// MetadataHandler retrieves Provider Metadata
-func MetadataHandler(w http.ResponseWriter, r *http.Request) {
+type ErrResponder struct {
+	Status  string `json:"status"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+type Handler struct {
+	DefaultConfig *rest.Config
+}
+
+// MetadataHandler retrieves Provider metadata
+func (h *Handler) MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	// extract provider name
 	vars := mux.Vars(r)
 	pn := vars["name"]
 	if pn == "" {
-		http.Error(w, errNoProviderName.Error(), http.StatusBadRequest)
+		writeError(w, errNoProviderName, http.StatusBadRequest)
 		return
 	}
 
 	// extract provider type
 	providerType := r.URL.Query().Get("provider_type")
 	if providerType == "" {
-		providerType = string(v1alpha3.CoreProviderType)
+		providerType = string(configv1alpha1.InfraProviderType)
 	}
 
 	// write metadata by provider type
 	switch providerType {
-	case string(v1alpha3.InfrastructureProviderType):
+	case string(configv1alpha1.InfraProviderType):
 		infra.WriteMetadata(pn, w)
 	default:
 		// invalid provider type
-		http.Error(w, readQueryParam.Error(), http.StatusBadRequest)
+		writeError(w, readQueryParam, http.StatusBadRequest)
+	}
+}
+
+func (h Handler) SSHKeysHandler(w http.ResponseWriter, r *http.Request) {
+	// extract region
+	region := r.URL.Query().Get("region")
+	if region == "" {
+		writeError(w, readQueryParam, http.StatusBadRequest)
+	}
+
+	res, err := infra.DescribeSSHKeys(region, h.DefaultConfig)
+
+	if err != nil {
+		writeError(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	encoder := json.NewEncoder(w)
+	err = encoder.Encode(res)
+	if err != nil {
+		writeError(w, err, http.StatusInternalServerError)
+		return
+	}
+}
+
+func writeError(w http.ResponseWriter, err error, code int) {
+	resp := ErrResponder{
+		Status:  http.StatusText(code),
+		Code:    code,
+		Message: err.Error(),
+	}
+
+	encoder := json.NewEncoder(w)
+	err = encoder.Encode(resp)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

@@ -57,7 +57,10 @@ func (r *Provider) Default() {
 		r.Spec.Repository.URL = defaultRepo
 	}
 	if r.Spec.ProviderName == "undistro" && r.Spec.Repository.URL == defaultRepo {
-		r.Labels[meta.LabelProviderType] = "core"
+		r.Labels[meta.LabelProviderType] = string(CoreProviderType)
+	}
+	if r.Spec.ProviderType == "" {
+		r.Spec.ProviderType = string(InfraProviderType)
 	}
 }
 
