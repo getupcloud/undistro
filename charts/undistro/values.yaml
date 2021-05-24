@@ -3,6 +3,7 @@ ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: cantour
+    projectcontour.io/ingress.class: cantour
     projectcontour.io/websocket-routes: /
 resources:
   limits:
