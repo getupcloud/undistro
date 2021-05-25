@@ -76,24 +76,25 @@ var (
 )
 
 var (
-	errGetCredentials           = errors.New("cannot retrieve credentials from secrets")
-	errLoadConfig               = errors.New("unable to load SDK config")
-	errInvalidPageRange         = errors.New("invalid page range")
-	errRegionRequired = errors.New("region is required")
-	ErrNoProviderMeta           = errors.New("meta is required. supported are " +
-		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']"))
+	errGetCredentials   = errors.New("cannot retrieve credentials from secrets")
+	errLoadConfig       = errors.New("unable to load SDK config")
+	errInvalidPageRange = errors.New("invalid page range")
+	errRegionRequired   = errors.New("region is required")
+	ErrNoProviderMeta   = errors.New("meta is required. supported are " +
+		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']")
+)
 
 type metaParam string
 
 const (
-	SShKeysMeta = 	metaParam("ssh_keys")
-	RegionsMeta = 	metaParam("regions")
+	SShKeysMeta          = metaParam("ssh_keys")
+	RegionsMeta          = metaParam("regions")
 	MachineTypesMeta     = metaParam("machine_types")
-	SupportedFlavorsMeta  = metaParam("supported_flavors")
+	SupportedFlavorsMeta = metaParam("supported_flavors")
 )
 
 type PagerResponse struct {
-	Page int
+	Page         int
 	MachineTypes []ec2InstanceType
 }
 
@@ -110,7 +111,7 @@ func DescribeMeta(config *rest.Config, region, meta string, page int) (interface
 	case string(MachineTypesMeta):
 		mts, err := describeMachineTypes(page)
 		pr := PagerResponse{
-			Page: page,
+			Page:         page,
 			MachineTypes: mts,
 		}
 		return pr, err

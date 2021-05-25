@@ -17,6 +17,7 @@ package provider
 
 import (
 	"fmt"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -50,7 +51,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(configv1alpha1.InfraProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          errInvalidProviderType,
+			error:          infra.ErrInvalidProviderName,
 		},
 		{
 			name: "test get metadata passing no provider",
@@ -59,16 +60,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(configv1alpha1.InfraProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          errInvalidProviderType,
-		},
-		{
-			name: "test get metadata passing provider wrong type",
-			params: provider{
-				Name:         appv1alpha1.Amazon.String(),
-				ProviderType: string(configv1alpha1.CoreProviderType),
-			},
-			expectedStatus: http.StatusBadRequest,
-			error:          errReadQueryParam,
+			error:          infra.ErrInvalidProviderName,
 		},
 		{
 			name: "test successfully infra provider metadata",
@@ -84,14 +76,14 @@ func TestRetrieveMetadata(t *testing.T) {
 	h := Handler{DefaultConfig: nil}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/provider/{name}/metadata", h.HandleProviderMetadata)
+	r.HandleFunc("/provider/metadata", h.HandleProviderMetadata)
 
 	ts := httptest.NewServer(r)
 	defer ts.Close()
 
 	for _, p := range cases {
 		t.Run(p.name, func(t *testing.T) {
-			endpoint := fmt.Sprintf("%s/provider/%s/metadata", ts.URL, p.params.Name)
+			endpoint := fmt.Sprintf("%s/provider/metadata", ts.URL)
 
 			req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 			if err != nil {
@@ -99,7 +91,8 @@ func TestRetrieveMetadata(t *testing.T) {
 			}
 			// add provider type
 			q := req.URL.Query()
-			q.Add("provider_type", p.params.ProviderType)
+			q.Add("name", p.params.Name)
+			q.Add("meta", "regions")
 			req.URL.RawQuery = q.Encode()
 
 			resp, err := http.DefaultClient.Do(req)
@@ -113,7 +106,7 @@ func TestRetrieveMetadata(t *testing.T) {
 			}
 
 			// validate body
-			var received util.ErrResponder
+			var received errResponse
 			if p.error != nil {
 				byt, err := ioutil.ReadAll(resp.Body)
 				if err != nil {

@@ -23,7 +23,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-type Provider struct {}
+type Provider struct{}
 
 func New() *Provider {
 	return &Provider{}
@@ -46,5 +46,3 @@ func DescribeInfraMetadata(config *rest.Config, name, meta, region string, page 
 	}
 	return nil, ErrInvalidProviderName
 }
-
-

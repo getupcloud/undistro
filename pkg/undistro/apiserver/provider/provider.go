@@ -29,7 +29,7 @@ import (
 
 var (
 	errProviderNotSupported = errors.New("provider not supported yet")
-	errInvalidProviderType = errors.New("invalid provider type, supported are " +
+	errInvalidProviderType  = errors.New("invalid provider type, supported are " +
 		"['core', 'infra']")
 )
 
@@ -43,17 +43,14 @@ func NewHandler(cfg *rest.Config) *Handler {
 	}
 }
 
-type param string
-
 const (
-	ParamName = param("name")
-	ParamType = param("type")
-	ParamMeta = param("meta")
-	ParamPage = param("page")
-	ParamRegion = param("region")
+	ParamName   = "name"
+	ParamType   = "type"
+	ParamMeta   = "meta"
+	ParamPage   = "page"
+	ParamRegion = "region"
 )
 
-// /provider/metadata?name=aws&type=infra&meta=sshkeys
 // HandleProviderMetadata retrieves Provider metadata by type
 func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request) {
 	// extract provider type, infra provider as default
@@ -62,7 +59,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 	switch providerType {
 	case string(configv1alpha1.InfraProviderType):
 		// extract provider name
-		providerName := queryField(r, string(ParamName))
+		providerName := queryField(r, ParamName)
 		if isEmpty(providerName) || !infra.IsValidInfraProviderName(providerName) {
 			writeError(w, infra.ErrInvalidProviderName, http.StatusBadRequest)
 			return
@@ -81,7 +78,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 		}
 
 		// extract provider name
-		region := queryField(r, string(ParamRegion))
+		region := queryField(r, ParamRegion)
 
 		resp, err := infra.DescribeInfraMetadata(h.DefaultConfig, providerName, meta, region, page)
 		if err != nil {
@@ -99,7 +96,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 }
 
 func extractMeta(r *http.Request) (meta string, err error) {
-	meta = queryField(r, string(ParamMeta))
+	meta = queryField(r, ParamMeta)
 	if isEmpty(meta) {
 		err = aws.ErrNoProviderMeta
 	}
@@ -112,7 +109,7 @@ func queryField(r *http.Request, field string) (extracted string) {
 }
 
 func queryProviderType(r *http.Request) (providerType string) {
-	providerType = queryField(r, string(ParamType))
+	providerType = queryField(r, ParamType)
 	if isEmpty(providerType) {
 		providerType = string(configv1alpha1.InfraProviderType)
 	}
@@ -121,7 +118,7 @@ func queryProviderType(r *http.Request) (providerType string) {
 
 func queryPage(r *http.Request) (page int, err error) {
 	const defaultPage = "1"
-	pageSrt := queryField(r, string(ParamPage))
+	pageSrt := queryField(r, ParamPage)
 	switch {
 	case !isEmpty(pageSrt):
 		page, err = strconv.Atoi(pageSrt)
