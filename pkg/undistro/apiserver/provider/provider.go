@@ -50,6 +50,7 @@ const (
 	ParamType = param("type")
 	ParamMeta = param("meta")
 	ParamPage = param("page")
+	ParamRegion = param("region")
 )
 
 // /provider/metadata?name=aws&type=infra&meta=sshkeys
@@ -62,7 +63,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 	case string(configv1alpha1.InfraProviderType):
 		// extract provider name
 		providerName := queryField(r, string(ParamName))
-		if isEmpty(providerName) || !infra.IsValidInfraProvider(providerName) {
+		if isEmpty(providerName) || !infra.IsValidInfraProviderName(providerName) {
 			writeError(w, infra.ErrInvalidProviderName, http.StatusBadRequest)
 			return
 		}
@@ -79,7 +80,14 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		resp, err := infra.DescribeInfraMetadata(h.DefaultConfig, providerName, meta, page)
+		// extract provider name
+		region := queryField(r, string(ParamRegion))
+		if isEmpty(region) || !infra.IsValidInfraProviderName(providerName) {
+			writeError(w, infra.ErrInvalidProviderName, http.StatusBadRequest)
+			return
+		}
+
+		resp, err := infra.DescribeInfraMetadata(h.DefaultConfig, providerName, meta, region, page)
 		if err != nil {
 			writeError(w, err, http.StatusBadRequest)
 			return

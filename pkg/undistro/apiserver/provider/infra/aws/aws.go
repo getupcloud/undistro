@@ -33,8 +33,10 @@ import (
 )
 
 type ec2InstanceType struct {
-	InstanceType      string `json:"instance_type"`
-	AvailabilityZones string `json:"availability_zones"`
+	InstanceType      string  `json:"instance_type,omitempty"`
+	AvailabilityZones string  `json:"availability_zones,omitempty"`
+	VCPUs             int     `json:"vcpus,omitempty"`
+	Memory            float64 `json:"memory,omitempty"`
 }
 
 var (
@@ -75,7 +77,6 @@ var (
 )
 
 var (
-	errOnlyInfraProviderAllowed = errors.New("only infra providers are allowed to retrieve this resource")
 	errGetCredentials           = errors.New("cannot retrieve credentials from secrets")
 	errLoadConfig               = errors.New("unable to load SDK config")
 	errDescribeKeyPairs         = errors.New("error to describe key pairs")
@@ -92,16 +93,25 @@ const (
 	SupportedFlavorsMeta  = metaParam("supported_flavors")
 )
 
-func DescribeMeta(config *rest.Config, m string, page int) (interface{}, error) {
-	switch m {
+type PagerResponse struct {
+	Page int
+	MachineTypes []ec2InstanceType
+}
+
+func DescribeMeta(config *rest.Config, region, meta string, page int) (interface{}, error) {
+	switch meta {
 	case string(RegionsMeta):
 		return regions, nil
 	case string(SShKeysMeta):
-		keys, err := describeSSHKeys("", config)
+		keys, err := describeSSHKeys(region, config)
 		return keys, err
 	case string(MachineTypesMeta):
 		mts, err := describeMachineTypes(page)
-		return mts, err
+		pr := PagerResponse{
+			Page: page,
+			MachineTypes: mts,
+		}
+		return pr, err
 	case string(SupportedFlavorsMeta):
 		return flavors, nil
 	}
@@ -137,7 +147,7 @@ func describeSSHKeys(region string, restConf *rest.Config) (res []string, err er
 	params := ec2.DescribeKeyPairsInput{}
 	out, err := ec2Client.DescribeKeyPairs(&params)
 	if err != nil {
-		return []string{}, errDescribeKeyPairs
+		return []string{}, err
 	}
 
 	// filter ssh key names

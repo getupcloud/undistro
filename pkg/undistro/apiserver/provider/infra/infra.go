@@ -23,16 +23,22 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func IsValidInfraProvider(p string) bool {
+type Provider struct {}
+
+func New() *Provider {
+	return &Provider{}
+}
+
+func IsValidInfraProviderName(p string) bool {
 	return p == typesv1alpha1.Amazon.String()
 }
 
 var ErrInvalidProviderName = errors.New("name is required. supported are ['aws']")
 
-func DescribeInfraMetadata(config *rest.Config, name, meta string, page int) (result interface{}, err error) {
+func DescribeInfraMetadata(config *rest.Config, name, meta, region string, page int) (result interface{}, err error) {
 	switch name {
 	case typesv1alpha1.Amazon.String():
-		result, err = aws.DescribeMeta(config, meta, page)
+		result, err = aws.DescribeMeta(config, region, meta, page)
 		if err != nil {
 			return nil, err
 		}
