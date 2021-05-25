@@ -32,7 +32,6 @@ import (
 	. "github.com/onsi/gomega"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
-	"k8s.io/klog/v2"
 	"sigs.k8s.io/cluster-api/test/framework/exec"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
@@ -46,14 +45,14 @@ var (
 
 func TestMain(m *testing.M) {
 	flag.Parse()
-	klog.Info("E2E")
+	fmt.Println("E2E")
 	runE2E := *e2eRun
 	if !runE2E {
-		klog.Info("Skipping E2E")
+		fmt.Println("Skipping E2E")
 		os.Exit(0)
 	}
 	ctx := context.Background()
-	klog.Info("Build docker image")
+	fmt.Println("Build docker image")
 	sha := os.Getenv("GITHUB_SHA")
 	image := fmt.Sprintf("localhost:5000/undistro:%s", sha)
 	cmd := exec.NewCommand(
@@ -62,21 +61,21 @@ func TestMain(m *testing.M) {
 	)
 	stout, _, err := cmd.Run(ctx)
 	if err != nil {
-		klog.Info(err.Error())
+		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	klog.Info(string(stout))
-	klog.Info("Push docker image")
+	fmt.Println(string(stout))
+	fmt.Println("Push docker image")
 	cmd = exec.NewCommand(
 		exec.WithCommand("docker"),
 		exec.WithArgs("push", image),
 	)
 	stout, _, err = cmd.Run(ctx)
 	if err != nil {
-		klog.Info(err.Error())
+		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	klog.Info(string(stout))
+	fmt.Println(string(stout))
 	cfg := cli.Config{
 		Providers: []cli.Provider{
 			{
@@ -102,31 +101,31 @@ func TestMain(m *testing.M) {
 	byt, _ := yaml.Marshal(cfg)
 	err = ioutil.WriteFile("undistro-config.yaml", byt, 0700)
 	if err != nil {
-		klog.Info(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
-	klog.Info("Install UnDistro")
+	fmt.Println("Install UnDistro")
 	cmd = exec.NewCommand(
 		exec.WithCommand("undistro"),
 		exec.WithArgs("--config", "undistro-config.yaml", "install"),
 	)
 	out, stderr, _ := cmd.Run(ctx)
-	klog.Info(string(out))
+	fmt.Println(string(out))
 	if !bytes.Contains(out, []byte("Management cluster is ready to use.")) {
 		msg := "failed to install undistro: " + string(stderr)
-		klog.Info(msg)
+		fmt.Println(msg)
 		os.Exit(1)
 	}
 	config, err := clientcmd.BuildConfigFromFlags("", filepath.Join(homedir.HomeDir(), ".kube", "config"))
 	if err != nil {
-		klog.Info(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 	k8sClient, err = client.New(config, client.Options{
 		Scheme: scheme.Scheme,
 	})
 	if err != nil {
-		klog.Info(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 	cmd = exec.NewCommand(
@@ -135,20 +134,20 @@ func TestMain(m *testing.M) {
 	)
 	out, _, err = cmd.Run(ctx)
 	if err != nil {
-		klog.Info(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
-	klog.Info(string(out))
+	fmt.Println(string(out))
 	cmd = exec.NewCommand(
 		exec.WithCommand("mv"),
 		exec.WithArgs("aws-iam-authenticator", "./bin"),
 	)
 	out, _, err = cmd.Run(ctx)
 	if err != nil {
-		klog.Info(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
-	klog.Info(string(out))
+	fmt.Println(string(out))
 	code := m.Run()
 	os.Exit(code)
 }
