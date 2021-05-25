@@ -4,13 +4,14 @@ apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
   name: undistro-ingress
+  namespace: undistro-system
   annotations:
 {{- with .Values.ingress.annotations }}
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
   virtualhost:
-    fqdn: "*"
+    fqdn: {{.Values.ingress.fqdn}}
     tls:
       passthrough: true
     corsPolicy:

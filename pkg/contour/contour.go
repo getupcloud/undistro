@@ -15,6 +15,8 @@ limitations under the License.
 */
 package contour
 
+const PatchLocal = `{"spec":{"template":{"spec":{"nodeSelector":{"ingress-ready":"true"},"tolerations":[{"key":"node-role.kubernetes.io/master","operator":"Equal","effect":"NoSchedule"}]}}}}`
+
 var TestResources = `---
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy

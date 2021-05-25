@@ -20,6 +20,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"os"
+	"os/exec"
 	"time"
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
@@ -40,13 +41,13 @@ import (
 	"github.com/spf13/viper"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/getter"
+	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/repo"
 	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
-	"sigs.k8s.io/cluster-api/cmd/clusterctl/api/v1alpha3"
 	"sigs.k8s.io/cluster-api/util/kubeconfig"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -158,7 +159,7 @@ func (o *InstallOptions) installProviders(ctx context.Context, streams genericcl
 			Spec: configv1alpha1.ProviderSpec{
 				ProviderName:      chart,
 				ProviderVersion:   version.Version,
-				ProviderType:      string(v1alpha3.CoreProviderType),
+				ProviderType:      string(configv1alpha1.InfraProviderType),
 				ConfigurationFrom: valuesRef,
 				Repository: configv1alpha1.Repository{
 					SecretRef: secretRef,
@@ -211,13 +212,13 @@ func (o *InstallOptions) installChart(ctx context.Context, c client.Client, rest
 			Name:      chartName,
 			Namespace: ns,
 			Labels: map[string]string{
-				meta.LabelProviderType: "core",
+				meta.LabelProviderType: string(configv1alpha1.CoreProviderType),
 			},
 		},
 		Spec: configv1alpha1.ProviderSpec{
 			ProviderName:    chartName,
 			ProviderVersion: version.Version,
-			ProviderType:      string(v1alpha3.CoreProviderType),
+			ProviderType:    string(configv1alpha1.CoreProviderType),
 			Repository: configv1alpha1.Repository{
 				SecretRef: secretRef,
 			},
@@ -260,7 +261,7 @@ func (o *InstallOptions) installChart(ctx context.Context, c client.Client, rest
 			if err != nil {
 				return err
 			}
-		} else {
+		} else if rel.Info.Status == release.StatusDeployed {
 			_, err = runner.Upgrade(hr, chart, chart.Values)
 			if err != nil {
 				return err
@@ -548,6 +549,21 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 			}
 		}
 		if ready {
+			isKind, err := util.IsKindCluster(cmd.Context(), c)
+			if err != nil {
+				return err
+			}
+			if isKind {
+				fmt.Fprintf(o.IOStreams.Out, "\n")
+				patchCmd := exec.CommandContext(cmd.Context(), "undistro", "patch", "daemonsets", "-n", "undistro-system", "envoy", "-p", contour.PatchLocal)
+				patchCmd.Stdin = o.IOStreams.In
+				patchCmd.Stderr = o.IOStreams.ErrOut
+				patchCmd.Stdout = o.IOStreams.Out
+				err = patchCmd.Run()
+				if err != nil {
+					return err
+				}
+			}
 			fmt.Fprintln(o.IOStreams.Out, "\n\nManagement cluster is ready to use.")
 			return nil
 		}

@@ -32,8 +32,6 @@ k8s_yaml(yaml())
 
 local_resource('recompile', generate() + binary(), deps=['controllers', 'main.go', 'pkg'])
 
-local('kubectl patch daemonsets -n undistro-system envoy -p \'{"spec":{"template":{"spec":{"nodeSelector":{"ingress-ready":"true"},"tolerations":[{"key":"node-role.kubernetes.io/master","operator":"Equal","effect":"NoSchedule"}]}}}}\'')
-
 docker_build_with_restart(IMG, '.', 
  dockerfile='tilt.docker',
  entrypoint='/manager',
