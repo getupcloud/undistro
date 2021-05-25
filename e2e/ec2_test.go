@@ -94,7 +94,9 @@ var _ = Describe("Create EC2 cluster", func() {
 		Eventually(func() []corev1.Node {
 			nodes := corev1.NodeList{}
 			err = clusterClient.List(context.Background(), &nodes)
-			Expect(err).ToNot(HaveOccurred())
+			if err != nil {
+				return []corev1.Node{}
+			}
 			klog.Info(nodes.Items)
 			klog.Info(len(nodes.Items))
 			return nodes.Items
