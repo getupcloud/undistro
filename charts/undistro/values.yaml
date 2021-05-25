@@ -1,8 +1,10 @@
 devEnv: false
 ingress:
   enabled: true
+  fqdn: undistro.local
   annotations:
-    kubernetes.io/ingress.class: cantour
+    kubernetes.io/ingress.class: contour
+    projectcontour.io/ingress.class: contour
     projectcontour.io/websocket-routes: /
 resources:
   limits:
@@ -13,6 +15,6 @@ resources:
     memory: 256Mi
 image:
   repository: getupioundistro/undistro
-  tag: v0.25.5
+  tag: v0.26.3
   pullPolicy: IfNotPresent
   pullSecrets: []

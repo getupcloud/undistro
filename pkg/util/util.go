@@ -281,3 +281,21 @@ func RemoveDuplicateTaints(taints []corev1.Taint) []corev1.Taint {
 	})
 	return res
 }
+
+func IsKindCluster(ctx context.Context, c client.Client) (bool, error) {
+	nodes := corev1.NodeList{}
+	err := c.List(ctx, &nodes)
+	if err != nil {
+		return false, err
+	}
+	for _, node := range nodes.Items {
+		for _, image := range node.Status.Images {
+			for _, name := range image.Names {
+				if strings.Contains(name, "kindnet") {
+					return true, nil
+				}
+			}
+		}
+	}
+	return false, nil
+}
