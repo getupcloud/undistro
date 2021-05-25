@@ -55,7 +55,7 @@ const (
 // HandleProviderMetadata retrieves Provider metadata by type
 func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request) {
 	// extract provider type, infra provider as default
-	providerType := queryProviderType(r)	
+	providerType := queryProviderType(r)
 
 	switch providerType {
 	case string(configv1alpha1.InfraProviderType):
