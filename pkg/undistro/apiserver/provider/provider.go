@@ -17,6 +17,7 @@ package provider
 
 import (
 	"errors"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra/aws"
 	"net/http"
 	"strconv"
 
@@ -61,7 +62,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 	case string(configv1alpha1.InfraProviderType):
 		// extract provider name
 		providerName := queryField(r, string(ParamName))
-		if isEmpty(providerName) || infra.IsValidInfraProvider(providerName) {
+		if isEmpty(providerName) || !infra.IsValidInfraProvider(providerName) {
 			writeError(w, infra.ErrInvalidProviderName, http.StatusBadRequest)
 			return
 		}
@@ -96,7 +97,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 func extractMeta(r *http.Request) (meta string, err error) {
 	meta = queryField(r, string(ParamMeta))
 	if isEmpty(meta) {
-		err = infra.ErrInvalidProviderName
+		err = aws.ErrNoProviderMeta
 	}
 	return
 }

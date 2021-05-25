@@ -76,11 +76,11 @@ var (
 
 var (
 	errOnlyInfraProviderAllowed = errors.New("only infra providers are allowed to retrieve this resource")
-	errGetCredentials   = errors.New("cannot retrieve credentials from secrets")
-	errLoadConfig       = errors.New("unable to load SDK config")
-	errDescribeKeyPairs = errors.New("error to describe key pairs")
-	errInvalidPageRange = errors.New("invalid page range")
-	errNoProviderMeta   = errors.New("meta is required. supported are " +
+	errGetCredentials           = errors.New("cannot retrieve credentials from secrets")
+	errLoadConfig               = errors.New("unable to load SDK config")
+	errDescribeKeyPairs         = errors.New("error to describe key pairs")
+	errInvalidPageRange         = errors.New("invalid page range")
+	ErrNoProviderMeta           = errors.New("meta is required. supported are " +
 		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']"))
 
 type metaParam string
@@ -105,7 +105,7 @@ func DescribeMeta(config *rest.Config, m string, page int) (interface{}, error) 
 	case string(SupportedFlavorsMeta):
 		return flavors, nil
 	}
-	return nil, errNoProviderMeta
+	return nil, ErrNoProviderMeta
 }
 
 // describeSSHKeys retrieve all ssh key names from a region in an account
