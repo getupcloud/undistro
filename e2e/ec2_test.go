@@ -17,6 +17,7 @@ package e2e_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -29,7 +30,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/klog/v2"
 	"sigs.k8s.io/cluster-api/test/framework/exec"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -56,14 +56,14 @@ var _ = Describe("Create EC2 cluster", func() {
 		)
 		out, _, err := cmd.Run(context.Background())
 		Expect(err).ToNot(HaveOccurred())
-		klog.Info(string(out))
+		fmt.Println(string(out))
 		cmd = exec.NewCommand(
 			exec.WithCommand("undistro"),
 			exec.WithArgs("apply", "-f", "./testdata/ec2-policies.yaml"),
 		)
 		out, _, err = cmd.Run(context.Background())
 		Expect(err).ToNot(HaveOccurred())
-		klog.Info(string(out))
+		fmt.Println(string(out))
 		Eventually(func() bool {
 			cl := appv1alpha1.Cluster{}
 			key := client.ObjectKey{
@@ -72,10 +72,10 @@ var _ = Describe("Create EC2 cluster", func() {
 			}
 			err = k8sClient.Get(context.Background(), key, &cl)
 			Expect(err).ToNot(HaveOccurred())
-			klog.Info(cl)
+			fmt.Println(cl)
 			return meta.InReadyCondition(cl.Status.Conditions)
 		}, 120*time.Minute, 2*time.Minute).Should(BeTrue())
-		klog.Info("Get Kubeconfig")
+		fmt.Println("Get Kubeconfig")
 		cmd = exec.NewCommand(
 			exec.WithCommand("undistro"),
 			exec.WithArgs("get", "kubeconfig", "undistro-ec2-e2e", "-n", "e2e"),
@@ -97,37 +97,38 @@ var _ = Describe("Create EC2 cluster", func() {
 			if err != nil {
 				return []corev1.Node{}
 			}
-			klog.Info(nodes.Items)
-			klog.Info(len(nodes.Items))
+			fmt.Println(nodes.Items)
+			fmt.Println(len(nodes.Items))
 			return nodes.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(7))
-		klog.Info("check kyverno")
+		fmt.Println("check kyverno")
 		Eventually(func() []unstructured.Unstructured {
 			list := unstructured.UnstructuredList{}
 			list.SetGroupVersionKind(schema.FromAPIVersionAndKind("kyverno.io/v1", "ClusterPolicyList"))
 			err = clusterClient.List(context.Background(), &list)
 			if err != nil {
-				klog.Info(err)
+				fmt.Println(err)
 				return []unstructured.Unstructured{}
 			}
-			klog.Info(list.Items)
-			klog.Info(len(list.Items))
+			fmt.Println(list.Items)
+			fmt.Println(len(list.Items))
 			return list.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(16))
-		klog.Info("delete cluster")
+		fmt.Println("delete cluster")
+
 		cmd = exec.NewCommand(
 			exec.WithCommand("undistro"),
 			exec.WithArgs("delete", "-f", "./testdata/ec2-policies.yaml"),
 		)
 		out, _, err = cmd.Run(context.Background())
 		Expect(err).ToNot(HaveOccurred())
-		klog.Info(string(out))
+		fmt.Println(string(out))
 		cmd = exec.NewCommand(
 			exec.WithCommand("undistro"),
 			exec.WithArgs("delete", "-f", "./testdata/ec2-cluster.yaml"),
 		)
 		out, _, err = cmd.Run(context.Background())
 		Expect(err).ToNot(HaveOccurred())
-		klog.Info(string(out))
+		fmt.Println(string(out))
 	}, float64(240*time.Minute))
 })
