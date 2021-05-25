@@ -28,14 +28,8 @@ import (
 
 var (
 	errProviderNotSupported = errors.New("provider not supported yet")
-	errInvalidProviderName = errors.New("name is required. supported are " +
-		"['aws']")
-	errNoProviderMeta   = errors.New("meta is required. supported are " +
-		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']")
 	errInvalidProviderType = errors.New("invalid provider type, supported are " +
 		"['core', 'infra']")
-	errNoRegionSSHKeys  = errors.New("region is required to retrieve ssh keys")
-	errInvalidPageRange = errors.New("invalid page range")
 )
 
 type Handler struct {
@@ -61,30 +55,36 @@ const (
 // HandleProviderMetadata retrieves Provider metadata by type
 func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request) {
 	// extract provider type, infra provider as default
-	providerType := queryProviderType(r)
+	providerType := queryProviderType(r)	
 
 	switch providerType {
 	case string(configv1alpha1.InfraProviderType):
 		// extract provider name
 		providerName := queryField(r, string(ParamName))
 		if isEmpty(providerName) || infra.IsValidInfraProvider(providerName) {
-			writeError(w, errInvalidProviderName, http.StatusBadRequest)
+			writeError(w, infra.ErrInvalidProviderName, http.StatusBadRequest)
 			return
 		}
 
-		p, err := infraProviderMeta(r)
-		if err != nil {
-			writeError(w, errNoProviderMeta, http.StatusBadRequest)
-			return
-		}
-
-		meta, err := infra.DescribeInfraMetadata(r)
+		meta, err := extractMeta(r)
 		if err != nil {
 			writeError(w, err, http.StatusBadRequest)
 			return
 		}
 
-		writeResponse(w, meta)
+		page, err := queryPage(r)
+		if err != nil {
+			writeError(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		resp, err := infra.DescribeInfraMetadata(h.DefaultConfig, providerName, meta, page)
+		if err != nil {
+			writeError(w, err, http.StatusBadRequest)
+			return
+		}
+
+		writeResponse(w, resp)
 	case string(configv1alpha1.CoreProviderType):
 		// not supported yet
 		writeError(w, errProviderNotSupported, http.StatusBadRequest)
@@ -93,10 +93,10 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func infraProviderMeta(r *http.Request) (meta string, err error) {
+func extractMeta(r *http.Request) (meta string, err error) {
 	meta = queryField(r, string(ParamMeta))
 	if isEmpty(meta) {
-		err = errNoProviderMeta
+		err = infra.ErrInvalidProviderName
 	}
 	return
 }

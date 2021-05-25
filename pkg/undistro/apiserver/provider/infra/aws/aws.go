@@ -19,6 +19,7 @@ import (
 	"context"
 	_ "embed"
 	"errors"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -28,9 +29,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/scheme"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
-	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strconv"
 )
 
 type ec2InstanceType struct {
@@ -75,26 +74,41 @@ var (
 	machineTypesEmb []byte
 )
 
-type metadata struct {
-	MachineTypes     []ec2InstanceType `json:"machine_types"`
-	Regions          []string          `json:"regions"`
-	SupportedFlavors map[string]string `json:"supported_flavors"`
-}
-
 var (
-	ErrOnlyInfraProviderAllowed = errors.New("only infra providers are allowed to retrieve this resource")
+	errOnlyInfraProviderAllowed = errors.New("only infra providers are allowed to retrieve this resource")
 	errGetCredentials   = errors.New("cannot retrieve credentials from secrets")
 	errLoadConfig       = errors.New("unable to load SDK config")
 	errDescribeKeyPairs = errors.New("error to describe key pairs")
+	errInvalidPageRange = errors.New("invalid page range")
+	errNoProviderMeta   = errors.New("meta is required. supported are " +
+		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']"))
+
+type metaParam string
+
+const (
+	SShKeysMeta = 	metaParam("ssh_keys")
+	RegionsMeta = 	metaParam("regions")
+	MachineTypesMeta     = metaParam("machine_types")
+	SupportedFlavorsMeta  = metaParam("supported_flavors")
 )
 
-// DescribeSSHKeys parse json file and returns ec2 instance types
-func DescribeMachineTypes() (mt []ec2InstanceType, err error) {
-	err = json.Unmarshal(machineTypesEmb, &mt)
-	return
+func DescribeMeta(config *rest.Config, m string, page int) (interface{}, error) {
+	switch m {
+	case string(RegionsMeta):
+		return regions, nil
+	case string(SShKeysMeta):
+		keys, err := describeSSHKeys("", config)
+		return keys, err
+	case string(MachineTypesMeta):
+		mts, err := describeMachineTypes(page)
+		return mts, err
+	case string(SupportedFlavorsMeta):
+		return flavors, nil
+	}
+	return nil, errNoProviderMeta
 }
 
-// DescribeSSHKeys retrieve all ssh key names from a region in an account
+// describeSSHKeys retrieve all ssh key names from a region in an account
 func describeSSHKeys(region string, restConf *rest.Config) (res []string, err error) {
 	// get credentials from secrets
 	k8sClient, err := client.New(restConf, client.Options{
@@ -133,36 +147,20 @@ func describeSSHKeys(region string, restConf *rest.Config) (res []string, err er
 	return res, nil
 }
 
-type meta string
-
-const (
-	SShKeysMeta = 	meta("ssh_keys")
-	RegionsMeta = 	meta("regions")
-	MachineTypesMeta     = meta("machine_types")
-	SupportedFlavorsMeta  = meta("supported_flavors")
-)
-
-func DescribeMetadata(metadata string) (interface{}, error) {
-	switch metadata {
-	case string(RegionsMeta):
-		return regions, nil
-	case string(SShKeysMeta):
-		return, ss
-	case string(MachineTypesMeta):
-	case string(SupportedFlavorsMeta):
-	}
+func machineTypes() (mt []ec2InstanceType, err error) {
+	err = json.Unmarshal(machineTypesEmb, &mt)
+	return
 }
 
-// HandleMachineTypes receives an integer page value and returns 10 items
-func machineTypes(w http.ResponseWriter, r *http.Request) {
+// describeMachineTypes receives an integer page value and returns 10 items
+func describeMachineTypes(page int) (it []ec2InstanceType, err error) {
 	const (
 		itemsPerPage = 10
 	)
 
 	// retrieve all machine types
-	mt, err := aws.DescribeMachineTypes()
+	mt, err := machineTypes()
 	if err != nil {
-		writeError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -170,11 +168,11 @@ func machineTypes(w http.ResponseWriter, r *http.Request) {
 	start := (page - 1) * itemsPerPage
 	stop := start + itemsPerPage
 	if start > len(mt) {
-		writeError(w, errInvalidPageRange, http.StatusBadRequest)
-		return
+		return it, errInvalidPageRange
 	}
 	if stop > len(mt) {
 		stop = len(mt)
 	}
-	writeResponse(w, mt[start:stop])
+
+	return mt[start:stop], nil
 }

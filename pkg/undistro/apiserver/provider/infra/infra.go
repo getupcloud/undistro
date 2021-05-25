@@ -16,14 +16,29 @@ limitations under the License.
 package infra
 
 import (
+	"errors"
+
 	typesv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
-	"net/http"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra/aws"
+	"k8s.io/client-go/rest"
 )
 
 func IsValidInfraProvider(p string) bool {
 	return p == typesv1alpha1.Amazon.String()
 }
 
-func DescribeInfraMetadata(r *http.Request) (meta interface{}, err error) {
+var ErrInvalidProviderName = errors.New("name is required. supported are ['aws']")
 
+func DescribeInfraMetadata(config *rest.Config, name, meta string, page int) (result interface{}, err error) {
+	switch name {
+	case typesv1alpha1.Amazon.String():
+		result, err = aws.DescribeMeta(config, meta, page)
+		if err != nil {
+			return nil, err
+		}
+		return
+	}
+	return nil, ErrInvalidProviderName
 }
+
+
