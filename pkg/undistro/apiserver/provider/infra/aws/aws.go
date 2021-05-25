@@ -19,7 +19,6 @@ import (
 	"context"
 	_ "embed"
 	"errors"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -79,8 +78,8 @@ var (
 var (
 	errGetCredentials           = errors.New("cannot retrieve credentials from secrets")
 	errLoadConfig               = errors.New("unable to load SDK config")
-	errDescribeKeyPairs         = errors.New("error to describe key pairs")
 	errInvalidPageRange         = errors.New("invalid page range")
+	errRegionRequired = errors.New("region is required")
 	ErrNoProviderMeta           = errors.New("meta is required. supported are " +
 		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']"))
 
@@ -103,6 +102,9 @@ func DescribeMeta(config *rest.Config, region, meta string, page int) (interface
 	case string(RegionsMeta):
 		return regions, nil
 	case string(SShKeysMeta):
+		if region == "" {
+			return nil, errRegionRequired
+		}
 		keys, err := describeSSHKeys(region, config)
 		return keys, err
 	case string(MachineTypesMeta):

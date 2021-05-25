@@ -82,10 +82,6 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 
 		// extract provider name
 		region := queryField(r, string(ParamRegion))
-		if isEmpty(region) || !infra.IsValidInfraProviderName(providerName) {
-			writeError(w, infra.ErrInvalidProviderName, http.StatusBadRequest)
-			return
-		}
 
 		resp, err := infra.DescribeInfraMetadata(h.DefaultConfig, providerName, meta, region, page)
 		if err != nil {
