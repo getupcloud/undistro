@@ -22,14 +22,19 @@ import (
 
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
-	"github.com/gorilla/mux"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
 )
 
 var (
-	errNoProviderName = errors.New("no provider name was found")
-	errReadQueryParam = errors.New("query param invalid or empty")
+	errProviderNotSupported = errors.New("provider not supported yet")
+	errInvalidProviderName = errors.New("name is required. supported are " +
+		"['aws']")
+	errNoProviderMeta   = errors.New("meta is required. supported are " +
+		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']")
+	errInvalidProviderType = errors.New("invalid provider type, supported are " +
+		"['core', 'infra']")
+	errNoRegionSSHKeys  = errors.New("region is required to retrieve ssh keys")
 	errInvalidPageRange = errors.New("invalid page range")
 )
 
@@ -43,113 +48,57 @@ func NewHandler(cfg *rest.Config) *Handler {
 	}
 }
 
-// HandleProviderMetadata retrieves Provider metadata  by type
+type param string
+
+const (
+	ParamName = param("name")
+	ParamType = param("type")
+	ParamMeta = param("meta")
+	ParamPage = param("page")
+)
+
+// /provider/metadata?name=aws&type=infra&meta=sshkeys
+// HandleProviderMetadata retrieves Provider metadata by type
 func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request) {
-	// extract provider name
-	pn := routeField(r, "name")
-	if pn == "" {
-		writeError(w, errNoProviderName, http.StatusBadRequest)
-		return
-	}
+	// extract provider type, infra provider as default
+	providerType := queryProviderType(r)
 
-	// extract provider type
-	providerType := queryField(r, "provider_type")
-	if providerType == "" {
-		providerType = string(configv1alpha1.InfraProviderType)
-	}
-
-	// write metadata by provider type
 	switch providerType {
 	case string(configv1alpha1.InfraProviderType):
-		meta, err := infra.DescribeMetadata(pn)
-		if err != nil {
-			writeError(w, infra.ErrInvalidProvider, http.StatusBadRequest)
+		// extract provider name
+		providerName := queryField(r, string(ParamName))
+		if isEmpty(providerName) || infra.IsValidInfraProvider(providerName) {
+			writeError(w, errInvalidProviderName, http.StatusBadRequest)
 			return
 		}
+
+		p, err := infraProviderMeta(r)
+		if err != nil {
+			writeError(w, errNoProviderMeta, http.StatusBadRequest)
+			return
+		}
+
+		meta, err := infra.DescribeInfraMetadata(r)
+		if err != nil {
+			writeError(w, err, http.StatusBadRequest)
+			return
+		}
+
 		writeResponse(w, meta)
-		return
+	case string(configv1alpha1.CoreProviderType):
+		// not supported yet
+		writeError(w, errProviderNotSupported, http.StatusBadRequest)
 	default:
-		// invalid provider type
-		writeError(w, errReadQueryParam, http.StatusBadRequest)
+		writeError(w, errInvalidProviderType, http.StatusBadRequest)
 	}
 }
 
-// HandleMachineTypes receives an integer page value and returns 10 items
-func (h *Handler) HandleMachineTypes(w http.ResponseWriter, r *http.Request) {
-	// extract provider name
-	pn := routeField(r, "name")
-	if pn == "" {
-		writeError(w, errNoProviderName, http.StatusBadRequest)
-		return
+func infraProviderMeta(r *http.Request) (meta string, err error) {
+	meta = queryField(r, string(ParamMeta))
+	if isEmpty(meta) {
+		err = errNoProviderMeta
 	}
-
-	const (
-		itemsPerPage = 10
-		defaultPage = "1"
-	)
-
-	// if no page was passed so returns page 1
-	pgStr := queryField(r, "page")
-	if pgStr == "" {
-		pgStr = defaultPage
-	}
-
-	page, err := strconv.Atoi(pgStr)
-	if err != nil {
-		writeError(w, err, http.StatusBadRequest)
-		return
-	}
-
-	// retrieve all machine types
-	mt, err := infra.DescribeMachineTypes()
-	if err != nil {
-		writeError(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	// pages start at 1, can't be 0 or less.
-	start := (page - 1) * itemsPerPage
-	stop := start + itemsPerPage
-	if start > len(mt) {
-		writeError(w, errInvalidPageRange, http.StatusBadRequest)
-		return
-	}
-	if stop > len(mt) {
-		stop = len(mt)
-	}
-
-	writeResponse(w, mt[start:stop])
-}
-
-// HandleSSHKeys retrieves ssh keys from an infra provider
-func (h *Handler) HandleSSHKeys(w http.ResponseWriter, r *http.Request) {
-	pn := routeField(r, "name")
-	if pn == "" {
-		writeError(w, errNoProviderName, http.StatusBadRequest)
-		return
-	}
-
-	// extract region
-	region := queryField(r, "region")
-	if region == "" {
-		writeError(w, errReadQueryParam, http.StatusBadRequest)
-		return
-	}
-
-	// retrieve ssh keys
-	keys, err := infra.DescribeSSHKeys(region, h.DefaultConfig)
-	if err != nil {
-		writeError(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	writeResponse(w, keys)
-}
-
-func routeField(r *http.Request, field string) string {
-	vars := mux.Vars(r)
-	pn := vars[field]
-	return pn
+	return
 }
 
 func queryField(r *http.Request, field string) (extracted string) {
@@ -157,14 +106,40 @@ func queryField(r *http.Request, field string) (extracted string) {
 	return
 }
 
-type ErrResponder struct {
+func queryProviderType(r *http.Request) (providerType string) {
+	providerType = queryField(r, string(ParamType))
+	if isEmpty(providerType) {
+		providerType = string(configv1alpha1.InfraProviderType)
+	}
+	return
+}
+
+func queryPage(r *http.Request) (page int, err error) {
+	const defaultPage = "1"
+	pageSrt := queryField(r, string(ParamPage))
+	switch {
+	case !isEmpty(pageSrt):
+		page, err = strconv.Atoi(pageSrt)
+		if err != nil {
+			return -1, err
+		}
+	default:
+		page, err = strconv.Atoi(defaultPage)
+		if err != nil {
+			return -1, err
+		}
+	}
+	return
+}
+
+type errResponse struct {
 	Status  string `json:"status,omitempty"`
 	Code    int    `json:"code,omitempty"`
 	Message string `json:"message,omitempty"`
 }
 
 func writeError(w http.ResponseWriter, err error, code int) {
-	resp := ErrResponder{
+	resp := errResponse{
 		Status:  http.StatusText(code),
 		Code:    code,
 		Message: err.Error(),
@@ -183,4 +158,8 @@ func writeResponse(w http.ResponseWriter, body interface{}) {
 	if err != nil {
 		writeError(w, err, http.StatusInternalServerError)
 	}
+}
+
+func isEmpty(s string) bool {
+	return s == ""
 }

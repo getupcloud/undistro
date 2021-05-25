@@ -24,8 +24,6 @@ import (
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/util"
 	"github.com/gorilla/mux"
 	"k8s.io/apimachinery/pkg/util/json"
 )
@@ -52,7 +50,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(configv1alpha1.InfraProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          infra.ErrInvalidProvider,
+			error:          errInvalidProviderType,
 		},
 		{
 			name: "test get metadata passing no provider",
@@ -61,7 +59,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(configv1alpha1.InfraProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          infra.ErrInvalidProvider,
+			error:          errInvalidProviderType,
 		},
 		{
 			name: "test get metadata passing provider wrong type",
