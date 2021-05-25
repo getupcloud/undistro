@@ -70,7 +70,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ProviderType: string(configv1alpha1.CoreProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          readQueryParam,
+			error:          errReadQueryParam,
 		},
 		{
 			name: "test successfully infra provider metadata",
@@ -86,7 +86,7 @@ func TestRetrieveMetadata(t *testing.T) {
 	h := Handler{DefaultConfig: nil}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/provider/{name}/metadata", h.MetadataHandler)
+	r.HandleFunc("/provider/{name}/metadata", h.HandleProviderMetadata)
 
 	ts := httptest.NewServer(r)
 	defer ts.Close()

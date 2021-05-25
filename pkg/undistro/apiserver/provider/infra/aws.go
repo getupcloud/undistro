@@ -19,8 +19,6 @@ import (
 	"context"
 	_ "embed"
 	"errors"
-	"net/http"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -28,7 +26,6 @@ import (
 	undistrov1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	undistroaws "github.com/getupio-undistro/undistro/pkg/cloud/aws"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/util"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -89,13 +86,9 @@ var (
 	errDescribeKeyPairs = errors.New("error to describe key pairs")
 )
 
-func describeMachineTypes() (mt []ec2InstanceType, err error) {
+func DescribeMachineTypes() (mt []ec2InstanceType, err error) {
 	err = json.Unmarshal(machineTypesEmb, &mt)
 	return
-}
-
-func isValidInfraProvider(name string) bool {
-	return name == undistrov1alpha1.Amazon.String()
 }
 
 // DescribeSSHKeys retrieve all ssh key names from a region in an account
@@ -137,34 +130,16 @@ func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error)
 	return res, nil
 }
 
-func WriteMetadata(w http.ResponseWriter, providerName string) {
-	if !isValidInfraProvider(providerName) {
-		util.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
-		return
-	}
+func DescribeMetadata(providerName string) (interface{}, error) {
+	var result interface{}
 
 	switch providerName {
 	case undistrov1alpha1.Amazon.String():
-		mt, err := describeMachineTypes()
-
-		if err != nil {
-			util.WriteError(w, err, http.StatusInternalServerError)
-			return
-		}
-
 		pm := metadata{
-			MachineTypes:     mt,
 			ProviderRegions:  regions,
 			SupportedFlavors: flavors,
 		}
-
-		encoder := json.NewEncoder(w)
-		err = encoder.Encode(pm)
-		if err != nil {
-			util.WriteError(w, err, http.StatusInternalServerError)
-			return
-		}
-	default:
-		util.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
+		return pm, nil
 	}
+	return result, ErrInvalidProvider
 }

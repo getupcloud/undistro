@@ -70,8 +70,9 @@ func (s *Server) routes(router *mux.Router) {
 
 	router.Handle("/healthz/readiness", &s.HealthHandler)
 	router.HandleFunc("/healthz/liveness", health.HandleLive)
-	router.HandleFunc("/provider/{name}/metadata", provHandler.MetadataHandler).Methods(http.MethodGet)
-	router.HandleFunc("/provider/{name}/sshkeys", provHandler.SSHKeysHandler).Methods(http.MethodGet)
+	router.HandleFunc("/provider/{name}/metadata", provHandler.HandleProviderMetadata).Methods(http.MethodGet)
+	router.HandleFunc("/provider/{name}/metadata/machinetypes", provHandler.HandleMachineTypes).Methods(http.MethodGet)
+	router.HandleFunc("/provider/{name}/sshkeys", provHandler.HandleSSHKeys).Methods(http.MethodGet)
 	router.PathPrefix("/uapi/v1/namespaces/{namespace}/clusters/{cluster}/proxy/").Handler(proxy.NewHandler(s.K8sCfg))
 	router.PathPrefix("/").Handler(fs.ReactHandler("", "frontend"))
 }
