@@ -243,7 +243,7 @@ func (o *InstallOptions) installChart(ctx context.Context, c client.Client, rest
 				ResetValues:     &reset,
 				ForceUpgrade:    &forceUpgrade,
 				Timeout: &metav1.Duration{
-					Duration: 5 * time.Minute,
+					Duration: 1 * time.Minute,
 				},
 			},
 		}
