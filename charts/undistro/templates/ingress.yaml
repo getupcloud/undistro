@@ -12,6 +12,8 @@ metadata:
 spec:
   virtualhost:
     fqdn: {{.Values.ingress.fqdn}}
+    tls:
+      passthrough: true
     corsPolicy:
         allowCredentials: true
         allowOrigin:
