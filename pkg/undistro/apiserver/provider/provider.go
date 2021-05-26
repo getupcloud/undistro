@@ -31,7 +31,7 @@ var (
 	errProviderNotSupported = errors.New("provider not supported yet")
 	errInvalidProviderType  = errors.New("invalid provider type, supported are " +
 		"['core', 'infra']")
-	errNegativePageSize = errors.New("page size can't be less than 0")
+	errNegativePageSize = errors.New("page size can't be less or equal 0")
 )
 
 // Provider wraps DescribeMetadata method
