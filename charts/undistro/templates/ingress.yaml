@@ -12,8 +12,6 @@ metadata:
 spec:
   virtualhost:
     fqdn: {{.Values.ingress.fqdn}}
-    tls:
-      passthrough: true
     corsPolicy:
         allowCredentials: true
         allowOrigin:
@@ -29,6 +27,7 @@ spec:
     - conditions:
       - prefix: /
       enableWebsockets: true
+      permitInsecure: true
       services:
         - name: undistro-webhook-service
           port: 2020
