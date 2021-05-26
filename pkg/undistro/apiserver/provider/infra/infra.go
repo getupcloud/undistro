@@ -23,22 +23,32 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-type Provider struct{}
-
-func New() *Provider {
-	return &Provider{}
-}
-
-func IsValidInfraProviderName(p string) bool {
-	return p == typesv1alpha1.Amazon.String()
-}
-
 var ErrInvalidProviderName = errors.New("name is required. supported are ['aws']")
 
-func DescribeInfraMetadata(config *rest.Config, name, meta, region string, page int) (result interface{}, err error) {
-	switch name {
+type ProviderParams struct {
+	Name string `json:"name"`
+	Region string `json:"region,omitempty"`
+	Meta string `json:"meta,omitempty"`
+	Page int  `json:"page,omitempty"`
+	ItemsPerPage int `json:"items_per_page,omitempty"`
+	*rest.Config `json:"rest_config,omitempty"`
+}
+
+func New(conf *rest.Config, name, region, meta string, page, itemsPerPage int) *ProviderParams {
+	return &ProviderParams{
+		Name:         name,
+		Region:       region,
+		Meta:         meta,
+		Page:         page,
+		ItemsPerPage: itemsPerPage,
+		Config:       conf,
+	}
+}
+
+func (pr *ProviderParams) DescribeMetadata() (result interface{}, err error) {
+	switch pr.Name {
 	case typesv1alpha1.Amazon.String():
-		result, err = aws.DescribeMeta(config, region, meta, page)
+		result, err = aws.DescribeMeta(pr.Config, pr.Region, pr.Meta, pr.Page, pr.ItemsPerPage)
 		if err != nil {
 			return nil, err
 		}

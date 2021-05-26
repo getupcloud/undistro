@@ -33,6 +33,10 @@ var (
 		"['core', 'infra']")
 )
 
+type Provider interface {
+	DescribeMetadata() (interface{}, error)
+}
+
 type Handler struct {
 	DefaultConfig *rest.Config
 }
@@ -48,6 +52,7 @@ const (
 	ParamType   = "type"
 	ParamMeta   = "meta"
 	ParamPage   = "page"
+	ParamPageSize = "page_size"
 	ParamRegion = "region"
 )
 
@@ -58,9 +63,10 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 
 	switch providerType {
 	case string(configv1alpha1.InfraProviderType):
+
 		// extract provider name
 		providerName := queryField(r, ParamName)
-		if isEmpty(providerName) || !infra.IsValidInfraProviderName(providerName) {
+		if isEmpty(providerName) {
 			writeError(w, infra.ErrInvalidProviderName, http.StatusBadRequest)
 			return
 		}
@@ -77,10 +83,22 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		// extract provider name
+		// extract provider region
 		region := queryField(r, ParamRegion)
 
-		resp, err := infra.DescribeInfraMetadata(h.DefaultConfig, providerName, meta, region, page)
+		// extract page size
+		itemsPerPage, err := strconv.Atoi(queryField(r, ParamPageSize))
+		if err != nil {
+			writeError(w, err, http.StatusInternalServerError)
+			return
+		}
+		const defaultSize = 10
+		if itemsPerPage < defaultSize {
+			itemsPerPage = defaultSize
+		}
+
+		infraProvider := infra.New(h.DefaultConfig, providerName, meta, region, page, itemsPerPage)
+		resp, err := infraProvider.DescribeMetadata()
 		if err != nil {
 			writeError(w, err, http.StatusBadRequest)
 			return
@@ -117,7 +135,7 @@ func queryProviderType(r *http.Request) (providerType string) {
 }
 
 func queryPage(r *http.Request) (page int, err error) {
-	const defaultPage = "1"
+	const defaultInitialPage = "1"
 	pageSrt := queryField(r, ParamPage)
 	switch {
 	case !isEmpty(pageSrt):
@@ -126,7 +144,7 @@ func queryPage(r *http.Request) (page int, err error) {
 			return -1, err
 		}
 	default:
-		page, err = strconv.Atoi(defaultPage)
+		page, err = strconv.Atoi(defaultInitialPage)
 		if err != nil {
 			return -1, err
 		}

@@ -98,7 +98,7 @@ type PagerResponse struct {
 	MachineTypes []ec2InstanceType
 }
 
-func DescribeMeta(config *rest.Config, region, meta string, page int) (interface{}, error) {
+func DescribeMeta(config *rest.Config, region, meta string, page, itemsPerPage int) (interface{}, error) {
 	switch meta {
 	case string(RegionsMeta):
 		return regions, nil
@@ -109,7 +109,7 @@ func DescribeMeta(config *rest.Config, region, meta string, page int) (interface
 		keys, err := describeSSHKeys(region, config)
 		return keys, err
 	case string(MachineTypesMeta):
-		mts, err := describeMachineTypes(page)
+		mts, err := describeMachineTypes(page, itemsPerPage)
 		pr := PagerResponse{
 			Page:         page,
 			MachineTypes: mts,
@@ -166,11 +166,7 @@ func machineTypes() (mt []ec2InstanceType, err error) {
 }
 
 // describeMachineTypes receives an integer page value and returns 10 items
-func describeMachineTypes(page int) (it []ec2InstanceType, err error) {
-	const (
-		itemsPerPage = 10
-	)
-
+func describeMachineTypes(page, itemsPerPage int) (it []ec2InstanceType, err error) {
 	// retrieve all machine types
 	mt, err := machineTypes()
 	if err != nil {
