@@ -31,7 +31,7 @@ var (
 	errProviderNotSupported = errors.New("provider not supported yet")
 	errInvalidProviderType  = errors.New("invalid provider type, supported are " +
 		"['core', 'infra']")
-	errNegativePageSize = errors.New("page size can't be <= 0")
+	errNegativePageSize = errors.New("page size can't be less than 0")
 )
 
 // Provider wraps DescribeMetadata method
@@ -101,7 +101,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 			return
 		}
 		if itemsPerPage <= 0 {
-			writeError(w, errNegativePageSize, http.StatusInternalServerError)
+			writeError(w, errNegativePageSize, http.StatusBadRequest)
 			return
 		}
 
