@@ -95,6 +95,7 @@ const (
 
 type PagerResponse struct {
 	Page         int
+	TotalPages   int
 	MachineTypes []ec2InstanceType
 }
 
@@ -109,10 +110,12 @@ func DescribeMeta(config *rest.Config, region, meta string, page, itemsPerPage i
 		keys, err := describeSSHKeys(region, config)
 		return keys, err
 	case string(MachineTypesMeta):
-		mts, err := describeMachineTypes(page, itemsPerPage)
+		total, mts, err := describeMachineTypes(page, itemsPerPage)
+
 		pr := PagerResponse{
 			Page:         page,
 			MachineTypes: mts,
+			TotalPages:   total,
 		}
 		return pr, err
 	case string(SupportedFlavorsMeta):
@@ -166,22 +169,30 @@ func machineTypes() (mt []ec2InstanceType, err error) {
 }
 
 // describeMachineTypes receives an integer page value and returns 10 items
-func describeMachineTypes(page, itemsPerPage int) (it []ec2InstanceType, err error) {
+func describeMachineTypes(page, itemsPerPage int) (total int, it []ec2InstanceType, err error) {
 	// retrieve all machine types
 	mt, err := machineTypes()
 	if err != nil {
 		return
 	}
 
+	// calculate total pages
+	totalMts := len(mt)
+	total = totalMts / itemsPerPage
+	remnant := totalMts % itemsPerPage
+	if remnant != 0 {
+		total += 1
+	}
+
 	// pages start at 1, can't be 0 or less.
 	start := (page - 1) * itemsPerPage
 	stop := start + itemsPerPage
 	if start > len(mt) {
-		return it, errInvalidPageRange
+		return total, it, errInvalidPageRange
 	}
 	if stop > len(mt) {
 		stop = len(mt)
 	}
 
-	return mt[start:stop], nil
+	return total, mt[start:stop], nil
 }

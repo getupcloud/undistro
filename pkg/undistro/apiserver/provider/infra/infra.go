@@ -26,12 +26,12 @@ import (
 var ErrInvalidProviderName = errors.New("name is required. supported are ['aws']")
 
 type ProviderParams struct {
-	Name string `json:"name"`
-	Region string `json:"region,omitempty"`
-	Meta string `json:"meta,omitempty"`
-	Page int  `json:"page,omitempty"`
-	ItemsPerPage int `json:"items_per_page,omitempty"`
-	*rest.Config `json:"rest_config,omitempty"`
+	Name         string       `json:"name"`
+	Region       string       `json:"region,omitempty"`
+	Meta         string       `json:"meta,omitempty"`
+	Page         int          `json:"page,omitempty"`
+	ItemsPerPage int          `json:"items_per_page,omitempty"`
+	Config       *rest.Config `json:"rest_config,omitempty"`
 }
 
 func New(conf *rest.Config, name, region, meta string, page, itemsPerPage int) *ProviderParams {

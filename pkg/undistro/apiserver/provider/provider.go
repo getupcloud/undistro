@@ -17,12 +17,12 @@ package provider
 
 import (
 	"errors"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra/aws"
 	"net/http"
 	"strconv"
 
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra/aws"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
 )
@@ -33,27 +33,29 @@ var (
 		"['core', 'infra']")
 )
 
+// Provider wraps DescribeMetadata method
 type Provider interface {
 	DescribeMetadata() (interface{}, error)
 }
 
+// Handler holds rest config to access k8s endpoints
 type Handler struct {
 	DefaultConfig *rest.Config
 }
 
-func NewHandler(cfg *rest.Config) *Handler {
+func New(cfg *rest.Config) *Handler {
 	return &Handler{
 		DefaultConfig: cfg,
 	}
 }
 
 const (
-	ParamName   = "name"
-	ParamType   = "type"
-	ParamMeta   = "meta"
-	ParamPage   = "page"
+	ParamName     = "name"
+	ParamType     = "type"
+	ParamMeta     = "meta"
+	ParamPage     = "page"
 	ParamPageSize = "page_size"
-	ParamRegion = "region"
+	ParamRegion   = "region"
 )
 
 // HandleProviderMetadata retrieves Provider metadata by type
@@ -93,7 +95,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 			return
 		}
 		const defaultSize = 10
-		if itemsPerPage < defaultSize {
+		if itemsPerPage <= 0 {
 			itemsPerPage = defaultSize
 		}
 
