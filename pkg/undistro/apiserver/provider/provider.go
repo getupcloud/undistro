@@ -31,6 +31,7 @@ var (
 	errProviderNotSupported = errors.New("provider not supported yet")
 	errInvalidProviderType  = errors.New("invalid provider type, supported are " +
 		"['core', 'infra']")
+	errNegativePageSize = errors.New("page size can't be <= 0")
 )
 
 // Provider wraps DescribeMetadata method
@@ -89,17 +90,22 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 		region := queryField(r, ParamRegion)
 
 		// extract page size
-		itemsPerPage, err := strconv.Atoi(queryField(r, ParamPageSize))
+		const defaultSize = "10"
+		pageSize := queryField(r, ParamPageSize)
+		if isEmpty(pageSize) {
+			pageSize = defaultSize
+		}
+		itemsPerPage, err := strconv.Atoi(pageSize)
 		if err != nil {
 			writeError(w, err, http.StatusInternalServerError)
 			return
 		}
-		const defaultSize = 10
 		if itemsPerPage <= 0 {
-			itemsPerPage = defaultSize
+			writeError(w, errNegativePageSize, http.StatusInternalServerError)
+			return
 		}
 
-		infraProvider := infra.New(h.DefaultConfig, providerName, meta, region, page, itemsPerPage)
+		infraProvider := infra.New(h.DefaultConfig, providerName, region, meta, page, itemsPerPage)
 		resp, err := infraProvider.DescribeMetadata()
 		if err != nil {
 			writeError(w, err, http.StatusBadRequest)
