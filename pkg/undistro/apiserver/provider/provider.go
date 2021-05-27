@@ -18,75 +18,176 @@ package provider
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/util"
-	"github.com/gorilla/mux"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra/aws"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
 )
 
 var (
-	errNoProviderName = errors.New("no provider name was found")
-	readQueryParam    = errors.New("query param invalid or empty")
+	errProviderNotSupported = errors.New("provider not supported yet")
+	errInvalidProviderType  = errors.New("invalid provider type, supported are " +
+		"['core', 'infra']")
+	errNegativePageSize = errors.New("page size can't be less or equal 0")
 )
 
+// Provider wraps DescribeMetadata method
+type Provider interface {
+	DescribeMetadata() (interface{}, error)
+}
+
+// Handler holds rest config to access k8s endpoints
 type Handler struct {
 	DefaultConfig *rest.Config
 }
 
-func NewHandler(cfg *rest.Config) *Handler {
+func New(cfg *rest.Config) *Handler {
 	return &Handler{
 		DefaultConfig: cfg,
 	}
 }
 
-// MetadataHandler retrieves Provider metadata
-func (h *Handler) MetadataHandler(w http.ResponseWriter, r *http.Request) {
-	// extract provider name
-	vars := mux.Vars(r)
-	pn := vars["name"]
-	if pn == "" {
-		util.WriteError(w, errNoProviderName, http.StatusBadRequest)
-		return
-	}
+const (
+	ParamName     = "name"
+	ParamType     = "type"
+	ParamMeta     = "meta"
+	ParamPage     = "page"
+	ParamPageSize = "page_size"
+	ParamRegion   = "region"
+)
 
-	// extract provider type
-	providerType := r.URL.Query().Get("provider_type")
-	if providerType == "" {
-		providerType = string(configv1alpha1.InfraProviderType)
-	}
+// HandleProviderMetadata retrieves Provider metadata by type
+func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request) {
+	// extract provider type, infra provider as default
+	providerType := queryProviderType(r)
 
-	// write metadata by provider type
 	switch providerType {
 	case string(configv1alpha1.InfraProviderType):
-		infra.WriteMetadata(w, pn)
+
+		// extract provider name
+		providerName := queryField(r, ParamName)
+		if isEmpty(providerName) {
+			writeError(w, infra.ErrInvalidProviderName, http.StatusBadRequest)
+			return
+		}
+
+		meta, err := extractMeta(r)
+		if err != nil {
+			writeError(w, err, http.StatusBadRequest)
+			return
+		}
+
+		page, err := queryPage(r)
+		if err != nil {
+			writeError(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		// extract provider region
+		region := queryField(r, ParamRegion)
+
+		// extract page size
+		const defaultSize = "10"
+		pageSize := queryField(r, ParamPageSize)
+		if isEmpty(pageSize) {
+			pageSize = defaultSize
+		}
+		itemsPerPage, err := strconv.Atoi(pageSize)
+		if err != nil {
+			writeError(w, err, http.StatusInternalServerError)
+			return
+		}
+		if itemsPerPage <= 0 {
+			writeError(w, errNegativePageSize, http.StatusBadRequest)
+			return
+		}
+
+		infraProvider := infra.New(h.DefaultConfig, providerName, region, meta, page, itemsPerPage)
+		resp, err := infraProvider.DescribeMetadata()
+		if err != nil {
+			writeError(w, err, http.StatusBadRequest)
+			return
+		}
+
+		writeResponse(w, resp)
+	case string(configv1alpha1.CoreProviderType):
+		// not supported yet
+		writeError(w, errProviderNotSupported, http.StatusBadRequest)
 	default:
-		// invalid provider type
-		util.WriteError(w, readQueryParam, http.StatusBadRequest)
+		writeError(w, errInvalidProviderType, http.StatusBadRequest)
 	}
 }
 
-func (h Handler) SSHKeysHandler(w http.ResponseWriter, r *http.Request) {
-	// extract region
-	region := r.URL.Query().Get("region")
-	if region == "" {
-		util.WriteError(w, readQueryParam, http.StatusBadRequest)
-		return
+func extractMeta(r *http.Request) (meta string, err error) {
+	meta = queryField(r, ParamMeta)
+	if isEmpty(meta) {
+		err = aws.ErrNoProviderMeta
 	}
+	return
+}
 
-	// retrieve ssh keys
-	keys, err := infra.DescribeSSHKeys(region, h.DefaultConfig)
-	if err != nil {
-		util.WriteError(w, err, http.StatusInternalServerError)
-		return
+func queryField(r *http.Request, field string) (extracted string) {
+	extracted = r.URL.Query().Get(field)
+	return
+}
+
+func queryProviderType(r *http.Request) (providerType string) {
+	providerType = queryField(r, ParamType)
+	if isEmpty(providerType) {
+		providerType = string(configv1alpha1.InfraProviderType)
 	}
+	return
+}
 
-	// write response body
+func queryPage(r *http.Request) (page int, err error) {
+	const defaultInitialPage = "1"
+	pageSrt := queryField(r, ParamPage)
+	switch {
+	case !isEmpty(pageSrt):
+		page, err = strconv.Atoi(pageSrt)
+		if err != nil {
+			return -1, err
+		}
+	default:
+		page, err = strconv.Atoi(defaultInitialPage)
+		if err != nil {
+			return -1, err
+		}
+	}
+	return
+}
+
+type errResponse struct {
+	Status  string `json:"status,omitempty"`
+	Code    int    `json:"code,omitempty"`
+	Message string `json:"message,omitempty"`
+}
+
+func writeError(w http.ResponseWriter, err error, code int) {
+	resp := errResponse{
+		Status:  http.StatusText(code),
+		Code:    code,
+		Message: err.Error(),
+	}
+	w.WriteHeader(code)
 	encoder := json.NewEncoder(w)
-	err = encoder.Encode(keys)
+	err = encoder.Encode(resp)
 	if err != nil {
-		util.WriteError(w, err, http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func writeResponse(w http.ResponseWriter, body interface{}) {
+	encoder := json.NewEncoder(w)
+	err := encoder.Encode(body)
+	if err != nil {
+		writeError(w, err, http.StatusInternalServerError)
+	}
+}
+
+func isEmpty(s string) bool {
+	return s == ""
 }

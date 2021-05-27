@@ -13,14 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package infra
+package aws
 
 import (
 	"context"
 	_ "embed"
 	"errors"
-	"net/http"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -28,15 +26,16 @@ import (
 	undistrov1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	undistroaws "github.com/getupio-undistro/undistro/pkg/cloud/aws"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/util"
 	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type ec2InstanceType struct {
-	InstanceType      string `json:"instance_type"`
-	AvailabilityZones string `json:"availability_zones"`
+	InstanceType      string  `json:"instance_type,omitempty"`
+	AvailabilityZones string  `json:"availability_zones,omitempty"`
+	VCPUs             int     `json:"vcpus,omitempty"`
+	Memory            float64 `json:"memory,omitempty"`
 }
 
 var (
@@ -76,32 +75,59 @@ var (
 	machineTypesEmb []byte
 )
 
-type metadata struct {
-	MachineTypes     []ec2InstanceType `json:"machine_types"`
-	ProviderRegions  []string          `json:"provider_regions"`
-	SupportedFlavors map[string]string `json:"supported_flavors"`
-}
-
 var (
-	ErrInvalidProvider  = errors.New("invalid provider, maybe unsupported")
 	errGetCredentials   = errors.New("cannot retrieve credentials from secrets")
 	errLoadConfig       = errors.New("unable to load SDK config")
-	errDescribeKeyPairs = errors.New("error to describe key pairs")
+	errInvalidPageRange = errors.New("invalid page range")
+	errRegionRequired   = errors.New("region is required")
+	ErrNoProviderMeta   = errors.New("meta is required. supported are " +
+		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']")
 )
 
-func describeMachineTypes() (mt []ec2InstanceType, err error) {
-	err = json.Unmarshal(machineTypesEmb, &mt)
-	return
+type metaParam string
+
+const (
+	SShKeysMeta          = metaParam("ssh_keys")
+	RegionsMeta          = metaParam("regions")
+	MachineTypesMeta     = metaParam("machine_types")
+	SupportedFlavorsMeta = metaParam("supported_flavors")
+)
+
+type PagerResponse struct {
+	Page         int
+	TotalPages   int
+	MachineTypes []ec2InstanceType
 }
 
-func isValidInfraProvider(name string) bool {
-	return name == undistrov1alpha1.Amazon.String()
+func DescribeMeta(config *rest.Config, region, meta string, page, itemsPerPage int) (interface{}, error) {
+	switch meta {
+	case string(RegionsMeta):
+		return regions, nil
+	case string(SShKeysMeta):
+		if region == "" {
+			return nil, errRegionRequired
+		}
+		keys, err := describeSSHKeys(region, config)
+		return keys, err
+	case string(MachineTypesMeta):
+		total, mts, err := describeMachineTypes(page, itemsPerPage)
+
+		pr := PagerResponse{
+			Page:         page,
+			MachineTypes: mts,
+			TotalPages:   total,
+		}
+		return pr, err
+	case string(SupportedFlavorsMeta):
+		return flavors, nil
+	}
+	return nil, ErrNoProviderMeta
 }
 
-// DescribeSSHKeys retrieve all ssh key names from a region in an account
-func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error) {
+// describeSSHKeys retrieve all ssh key names from a region in an account
+func describeSSHKeys(region string, restConf *rest.Config) (res []string, err error) {
 	// get credentials from secrets
-	k8sClient, err := client.New(conf, client.Options{
+	k8sClient, err := client.New(restConf, client.Options{
 		Scheme: scheme.Scheme,
 	})
 	creds, _, err := undistroaws.Credentials(context.Background(), k8sClient)
@@ -127,7 +153,7 @@ func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error)
 	params := ec2.DescribeKeyPairsInput{}
 	out, err := ec2Client.DescribeKeyPairs(&params)
 	if err != nil {
-		return []string{}, errDescribeKeyPairs
+		return []string{}, err
 	}
 
 	// filter ssh key names
@@ -137,34 +163,36 @@ func DescribeSSHKeys(region string, conf *rest.Config) (res []string, err error)
 	return res, nil
 }
 
-func WriteMetadata(w http.ResponseWriter, providerName string) {
-	if !isValidInfraProvider(providerName) {
-		util.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
+func machineTypes() (mt []ec2InstanceType, err error) {
+	err = json.Unmarshal(machineTypesEmb, &mt)
+	return
+}
+
+// describeMachineTypes receives an integer page value and returns 10 items
+func describeMachineTypes(page, itemsPerPage int) (total int, it []ec2InstanceType, err error) {
+	// retrieve all machine types
+	mt, err := machineTypes()
+	if err != nil {
 		return
 	}
 
-	switch providerName {
-	case undistrov1alpha1.Amazon.String():
-		mt, err := describeMachineTypes()
-
-		if err != nil {
-			util.WriteError(w, err, http.StatusInternalServerError)
-			return
-		}
-
-		pm := metadata{
-			MachineTypes:     mt,
-			ProviderRegions:  regions,
-			SupportedFlavors: flavors,
-		}
-
-		encoder := json.NewEncoder(w)
-		err = encoder.Encode(pm)
-		if err != nil {
-			util.WriteError(w, err, http.StatusInternalServerError)
-			return
-		}
-	default:
-		util.WriteError(w, ErrInvalidProvider, http.StatusBadRequest)
+	// calculate total pages
+	totalMts := len(mt)
+	total = totalMts / itemsPerPage
+	remnant := totalMts % itemsPerPage
+	if remnant != 0 {
+		total += 1
 	}
+
+	// pages start at 1, can't be 0 or less.
+	start := (page - 1) * itemsPerPage
+	stop := start + itemsPerPage
+	if start > len(mt) {
+		return total, it, errInvalidPageRange
+	}
+	if stop > len(mt) {
+		stop = len(mt)
+	}
+
+	return total, mt[start:stop], nil
 }
