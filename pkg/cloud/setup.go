@@ -41,7 +41,7 @@ func ReconcileNetwork(ctx context.Context, r client.Client, cl *appv1alpha1.Clus
 		cl.Spec.Network.ClusterNetwork = *capiCluster.Spec.ClusterNetwork
 	}
 	switch cl.Spec.InfrastructureProvider.Name {
-	case "aws":
+	case appv1alpha1.Amazon.String():
 		return aws.ReconcileNetwork(ctx, r, cl, capiCluster)
 	}
 	return nil
@@ -58,7 +58,7 @@ func PostInstall(ctx context.Context, c client.Client, p configv1alpha1.Provider
 // ReconcileLaunchTemplate from clouds
 func ReconcileLaunchTemplate(ctx context.Context, r client.Client, cl *appv1alpha1.Cluster) error {
 	switch cl.Spec.InfrastructureProvider.Name {
-	case "aws":
+	case appv1alpha1.Amazon.String():
 		return aws.ReconcileLaunchTemplate(ctx, r, cl)
 	}
 	return nil
@@ -66,7 +66,7 @@ func ReconcileLaunchTemplate(ctx context.Context, r client.Client, cl *appv1alph
 
 func CNIAddrByFlavor(flavor string) string {
 	switch flavor {
-	case "eks":
+	case appv1alpha1.EKS.String():
 		return "https://docs.projectcalico.org/manifests/calico-vxlan.yaml"
 	default:
 		return "https://docs.projectcalico.org/manifests/calico.yaml"
