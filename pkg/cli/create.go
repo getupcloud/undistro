@@ -97,7 +97,7 @@ func (o *ClusterOptions) validateInfraFlavor() error {
 		switch o.Flavor {
 		case appv1alpha1.EKS.String():
 			return nil
-		case appv1alpha1.EKS.String():
+		case appv1alpha1.EC2.String():
 			if o.SshKeyName == "" {
 				return errors.New("ssh-key-name is required to favor ec2")
 			}
