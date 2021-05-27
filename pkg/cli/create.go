@@ -82,8 +82,31 @@ func (o *ClusterOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []
 	if o.Flavor == "" {
 		return errors.New("required flag: flavor")
 	}
+	err = o.validateInfraFlavor()
+	if err != nil {
+		return err
+	}
 	o.ClusterName = args[0]
 	return nil
+}
+
+func (o *ClusterOptions) validateInfraFlavor() error {
+	switch o.Infra {
+	case "aws":
+		switch o.Flavor {
+		case "eks":
+			return nil
+		case "ec2":
+			if o.SshKeyName == "" {
+				return errors.New("ssh-key-name is required to favor ec2")
+			}
+			return nil
+		default:
+			return errors.Errorf("unknown flavor: %s", o.Flavor)
+		}
+	default:
+		return errors.Errorf("unknown infrastructure: %s", o.Infra)
+	}
 }
 
 func (o *ClusterOptions) setRegionByInfra(ctx context.Context, c client.Client) error {
