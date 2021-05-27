@@ -66,13 +66,13 @@ func NewServer(cfg *rest.Config, in io.Reader, out, errOut io.Writer, healthChec
 }
 
 func (s *Server) routes(router *mux.Router) {
-	provHandler := provider.NewHandler(s.K8sCfg)
+	provHandler := provider.New(s.K8sCfg)
+	proxyHandler := proxy.NewHandler(s.K8sCfg)
 
 	router.Handle("/healthz/readiness", &s.HealthHandler)
 	router.HandleFunc("/healthz/liveness", health.HandleLive)
-	router.HandleFunc("/provider/{name}/metadata", provHandler.MetadataHandler).Methods(http.MethodGet)
-	router.HandleFunc("/provider/{name}/sshkeys", provHandler.SSHKeysHandler).Methods(http.MethodGet)
-	router.PathPrefix("/uapi/v1/namespaces/{namespace}/clusters/{cluster}/proxy/").Handler(proxy.NewHandler(s.K8sCfg))
+	router.HandleFunc("/uapi/v1/provider/metadata", provHandler.HandleProviderMetadata).Methods(http.MethodGet)
+	router.PathPrefix("/uapi/v1/namespaces/{namespace}/clusters/{cluster}/proxy/").Handler(proxyHandler)
 	router.PathPrefix("/").Handler(fs.ReactHandler("", "frontend"))
 }
 
