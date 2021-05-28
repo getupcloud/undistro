@@ -59,7 +59,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	proxyPrefix := fmt.Sprintf("/uapi/v1/namespaces/%s/clusters/%s/proxy", namespace, cluster)
-	proxy, err := kube.NewProxyHandler(proxyPrefix, cfg, time.Duration(0))
+	proxy, err := kube.NewProxyHandler(proxyPrefix, cfg, time.Minute * 30)
 	if err != nil {
 		klog.Error(err)
 		h.handleErrorCode(w, http.StatusBadRequest)
