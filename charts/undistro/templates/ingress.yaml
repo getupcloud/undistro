@@ -26,6 +26,9 @@ spec:
           - "*"
         maxAge: "10m" # preflight requests can be cached for 10 minutes.
   routes:
+    timeoutPolicy:
+      response: "30m"
+      idle: "30m"
     - conditions:
       - prefix: /
       enableWebsockets: true
