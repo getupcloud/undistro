@@ -277,7 +277,7 @@ spec:
         - --enable-leader-election
         command:
         - /manager
-        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-control-plane-controller:v0.3.17
+        image: getupioundistro/kubeadm-control-plane-controller-amd64:v0.3.17
         imagePullPolicy: IfNotPresent
         name: manager
       terminationGracePeriodSeconds: 10
@@ -321,7 +321,7 @@ spec:
         - --webhook-port=9443
         command:
         - /manager
-        image: us.gcr.io/k8s-artifacts-prod/cluster-api/kubeadm-control-plane-controller:v0.3.17
+        image: getupioundistro/kubeadm-control-plane-controller-amd64:v0.3.17
         imagePullPolicy: IfNotPresent
         name: manager
         ports:

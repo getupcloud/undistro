@@ -101,6 +101,29 @@ var _ = Describe("Create EC2 cluster", func() {
 			fmt.Println(len(nodes.Items))
 			return nodes.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(7))
+		Eventually(func() []corev1.Node {
+			cpNodes := make([]corev1.Node, 0)
+			nodes := corev1.NodeList{}
+			err = clusterClient.List(context.Background(), &nodes)
+			if err != nil {
+				return []corev1.Node{}
+			}
+			fmt.Println(nodes.Items)
+			fmt.Println(len(nodes.Items))
+			for _, n := range nodes.Items {
+				labels := n.GetLabels()
+				if labels != nil {
+					_, okCP := labels[meta.LabelK8sCP]
+					_, okMaster := labels[meta.LabelK8sMaster]
+					if okCP || okMaster {
+						cpNodes = append(cpNodes, n)
+					}
+				}
+			}
+			fmt.Println(cpNodes)
+			fmt.Println(len(cpNodes))
+			return cpNodes
+		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(3))
 		fmt.Println("check kyverno")
 		Eventually(func() []unstructured.Unstructured {
 			list := unstructured.UnstructuredList{}
