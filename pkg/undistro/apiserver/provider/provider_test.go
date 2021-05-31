@@ -73,6 +73,16 @@ func TestRetrieveMetadata(t *testing.T) {
 			},
 			expectedStatus: http.StatusOK,
 		},
+		{
+			name: "test get metadata with unsupported provider type",
+			params: map[string]string{
+				ParamName: apisv1alpha1.Amazon.String(),
+				ParamMeta: string(aws.RegionsMeta),
+				ParamType: string(configv1alpha1.CoreProviderType),
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedErr:   errCoreProviderNotSupported,
+		},
 	}
 
 	h := Handler{DefaultConfig: nil}
