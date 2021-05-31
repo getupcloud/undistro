@@ -135,6 +135,16 @@ var _ = Describe("Create EC2 cluster", func() {
 			}
 			fmt.Println(list.Items)
 			fmt.Println(len(list.Items))
+			cmd := exec.NewCommand(
+				exec.WithCommand("undistro"),
+				exec.WithArgs("logs", undistroPodName, "-n", "undistro-system", "-c", "manager"),
+			)
+			out, _, err = cmd.Run(context.Background())
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			fmt.Println(string(out))
 			return list.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(16))
 		fmt.Println("delete cluster")
