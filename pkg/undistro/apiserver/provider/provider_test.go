@@ -30,13 +30,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/json"
 )
 
-// ParamName     = "name"
-// ParamType     = "type"
-// ParamMeta     = "meta"
-// ParamPage     = "page"
-// ParamPageSize = "page_size"
-// ParamRegion   = "region"
-
 func TestRetrieveMetadata(t *testing.T) {
 	cases := []struct {
 		name           string
@@ -83,6 +76,14 @@ func TestRetrieveMetadata(t *testing.T) {
 			expectedStatus: http.StatusBadRequest,
 			expectedErr:   errCoreProviderNotSupported,
 		},
+		{
+			name: "test get metadata without meta param",
+			params: map[string]string{
+				ParamName: apisv1alpha1.Amazon.String(),
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedErr: aws.ErrNoProviderMeta,
+		},
 	}
 
 	h := Handler{DefaultConfig: nil}
@@ -101,9 +102,14 @@ func TestRetrieveMetadata(t *testing.T) {
 			if err != nil {
 				t.Errorf("error: %s\n", err.Error())
 			}
-			// add params
-			addParams(req, test.params)
 
+			// add params
+			q := req.URL.Query()
+
+			for k, v := range test.params {
+				q.Add(k, v)
+			}
+			req.URL.RawQuery = q.Encode()
 			resp, err := http.DefaultClient.Do(req)
 			if err != nil {
 				t.Errorf("error: %s\n", err.Error())
@@ -114,34 +120,25 @@ func TestRetrieveMetadata(t *testing.T) {
 					status, test.expectedStatus)
 			}
 
-			// validate body
-			var received errResponse
+			// validate error body
+			var actual errResponse
 			if test.expectedErr != nil {
 				byt, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
 					t.Errorf("error: %s\n", err.Error())
 				}
 
-				err = json.Unmarshal(byt, &received)
+				err = json.Unmarshal(byt, &actual)
 
 				if err != nil {
 					t.Errorf("error: %s\n", err.Error())
 				}
 
-				if received.Message != test.expectedErr.Error() {
+				if actual.Message != test.expectedErr.Error() {
 					t.Errorf("handler returned unexpected body: got %v want %v",
-						received.Message, test.expectedErr.Error())
+						actual.Message, test.expectedErr.Error())
 				}
 			}
 		})
 	}
-}
-
-func addParams(r *http.Request, params map[string]string) {
-	q := r.URL.Query()
-
-	for k, v := range params {
-		q.Add(k, v)
-	}
-	r.URL.RawQuery = q.Encode()
 }
