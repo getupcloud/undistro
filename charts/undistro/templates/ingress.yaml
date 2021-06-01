@@ -26,14 +26,14 @@ spec:
           - "*"
         maxAge: "10m" # preflight requests can be cached for 10 minutes.
   routes:
-    timeoutPolicy:
-      response: "30m"
-      idle: "30m"
     - conditions:
       - prefix: /
       enableWebsockets: true
       permitInsecure: true
+      timeoutPolicy:
+        response: "30m"
+        idle: "30m"
       services:
         - name: undistro-webhook-service
           port: 2020
-{{- end -}}
+{{ end -}}
