@@ -22,7 +22,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	apisv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra/aws"
@@ -61,7 +61,7 @@ func TestRetrieveMetadata(t *testing.T) {
 		{
 			name: "test get metadata using default provider type",
 			params: map[string]string{
-				ParamName: apisv1alpha1.Amazon.String(),
+				ParamName: appv1alpha1.Amazon.String(),
 				ParamMeta: string(aws.RegionsMeta),
 			},
 			expectedStatus: http.StatusOK,
@@ -69,7 +69,7 @@ func TestRetrieveMetadata(t *testing.T) {
 		{
 			name: "test get metadata with unsupported provider type",
 			params: map[string]string{
-				ParamName: apisv1alpha1.Amazon.String(),
+				ParamName: appv1alpha1.Amazon.String(),
 				ParamMeta: string(aws.RegionsMeta),
 				ParamType: string(configv1alpha1.CoreProviderType),
 			},
@@ -79,7 +79,7 @@ func TestRetrieveMetadata(t *testing.T) {
 		{
 			name: "test get metadata without meta param",
 			params: map[string]string{
-				ParamName: apisv1alpha1.Amazon.String(),
+				ParamName: appv1alpha1.Amazon.String(),
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedErr: aws.ErrNoProviderMeta,
