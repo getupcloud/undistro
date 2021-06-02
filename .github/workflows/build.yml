@@ -15,7 +15,7 @@ jobs:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.9.0
         with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
+          access_token: ${{ secrets.GIT_TOKEN }}
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v2

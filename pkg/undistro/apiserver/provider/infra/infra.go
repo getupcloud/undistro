@@ -23,7 +23,8 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-var ErrInvalidProviderName = errors.New("name is required. supported are ['aws']")
+var ErrInvalidProviderName = errors.New("a valid infra provider name is required.\n" +
+	"supported are ['aws']")
 
 type ProviderParams struct {
 	Name         string       `json:"name"`

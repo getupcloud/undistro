@@ -28,9 +28,10 @@ import (
 )
 
 var (
-	errProviderNotSupported = errors.New("provider not supported yet")
+	errCoreProviderNotSupported  = errors.New("'core' provider not supported yet")
+	errEmptyProviderName = errors.New("provider name is empty")
 	errInvalidProviderType  = errors.New("invalid provider type, supported are " +
-		"['core', 'infra']")
+		"['infra']")
 	errNegativePageSize = errors.New("page size can't be less or equal 0")
 )
 
@@ -70,7 +71,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 		// extract provider name
 		providerName := queryField(r, ParamName)
 		if isEmpty(providerName) {
-			writeError(w, infra.ErrInvalidProviderName, http.StatusBadRequest)
+			writeError(w, errEmptyProviderName, http.StatusBadRequest)
 			return
 		}
 
@@ -115,7 +116,7 @@ func (h *Handler) HandleProviderMetadata(w http.ResponseWriter, r *http.Request)
 		writeResponse(w, resp)
 	case string(configv1alpha1.CoreProviderType):
 		// not supported yet
-		writeError(w, errProviderNotSupported, http.StatusBadRequest)
+		writeError(w, errCoreProviderNotSupported, http.StatusBadRequest)
 	default:
 		writeError(w, errInvalidProviderType, http.StatusBadRequest)
 	}

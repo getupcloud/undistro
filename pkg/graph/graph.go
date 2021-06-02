@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
+	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/retry"
 	"github.com/pkg/errors"
@@ -306,6 +307,28 @@ func (o *ObjectGraph) Discovery(namespace string) error {
 		}); err != nil {
 			return err
 		}
+
+		// if we are discovering Secrets, also secrets from the providers namespace should be included.
+		if discoveryType.typeMeta.GetObjectKind().GroupVersionKind().GroupKind() == corev1.SchemeGroupVersion.WithKind("SecretList").GroupKind() {
+			providers := configv1alpha1.ProviderList{}
+			err := o.proxy.List(context.Background(), &providers)
+			if err != nil {
+				return err
+			}
+			for _, p := range providers.Items {
+				if p.Spec.ProviderType == string(configv1alpha1.InfraProviderType) {
+					providerNamespaceSelector := []client.ListOption{client.InNamespace(p.Namespace)}
+					providerNamespaceSecretList := new(unstructured.UnstructuredList)
+					if err := retry.WithExponentialBackoff(retry.NewBackoff(), func() error {
+						return getObjList(o.proxy, typeMeta, providerNamespaceSelector, providerNamespaceSecretList)
+					}); err != nil {
+						return err
+					}
+					objList.Items = append(objList.Items, providerNamespaceSecretList.Items...)
+				}
+			}
+		}
+
 		if len(objList.Items) == 0 {
 			continue
 		}

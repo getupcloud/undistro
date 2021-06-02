@@ -166,7 +166,7 @@ func (r *Cluster) validate(old *Cluster) error {
 		))
 	}
 	switch r.Spec.InfrastructureProvider.Name {
-	case "aws":
+	case Amazon.String():
 		allErrs = r.validateAWS(old, allErrs)
 	}
 	if old == nil {
@@ -199,7 +199,13 @@ func (r *Cluster) validate(old *Cluster) error {
 }
 
 func (r *Cluster) validateAWS(old runtime.Object, allErrs field.ErrorList) field.ErrorList {
-	if r.Spec.InfrastructureProvider.Name == "aws" && !isValidNameForAWS(r.Name) {
+	if r.Spec.InfrastructureProvider.Name == Amazon.String() && r.Spec.InfrastructureProvider.Flavor == EC2.String() && r.Spec.InfrastructureProvider.SSHKey == "" {
+		allErrs = append(allErrs, field.Required(
+			field.NewPath("spec", "infrastructureProvider", "sshKey"),
+			"sshKey is required when flavor is ec2",
+		))
+	}
+	if r.Spec.InfrastructureProvider.Name == Amazon.String() && !isValidNameForAWS(r.Name) {
 		allErrs = append(allErrs, field.Invalid(
 			field.NewPath("metadata", "name"),
 			r.Name,

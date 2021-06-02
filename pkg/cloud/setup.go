@@ -21,6 +21,7 @@ import (
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/cloud/aws"
+	"k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -41,7 +42,7 @@ func ReconcileNetwork(ctx context.Context, r client.Client, cl *appv1alpha1.Clus
 		cl.Spec.Network.ClusterNetwork = *capiCluster.Spec.ClusterNetwork
 	}
 	switch cl.Spec.InfrastructureProvider.Name {
-	case "aws":
+	case appv1alpha1.Amazon.String():
 		return aws.ReconcileNetwork(ctx, r, cl, capiCluster)
 	}
 	return nil
@@ -58,19 +59,21 @@ func PostInstall(ctx context.Context, c client.Client, p configv1alpha1.Provider
 // ReconcileLaunchTemplate from clouds
 func ReconcileLaunchTemplate(ctx context.Context, r client.Client, cl *appv1alpha1.Cluster) error {
 	switch cl.Spec.InfrastructureProvider.Name {
-	case "aws":
+	case appv1alpha1.Amazon.String():
 		return aws.ReconcileLaunchTemplate(ctx, r, cl)
 	}
 	return nil
 }
 
-func CNIAddrByFlavor(flavor string) string {
+func CalicoValues(flavor string) ([]byte, error) {
+	values := make(map[string]interface{})
 	switch flavor {
-	case "eks":
-		return "https://docs.projectcalico.org/manifests/calico-vxlan.yaml"
+	case appv1alpha1.EKS.String():
+		values["vxlan"] = true
 	default:
-		return "https://docs.projectcalico.org/manifests/calico.yaml"
+		values["vxlan"] = false
 	}
+	return json.Marshal(values)
 }
 
 // Init providers

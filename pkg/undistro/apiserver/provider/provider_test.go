@@ -17,7 +17,6 @@ package provider
 
 import (
 	"fmt"
-	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -25,51 +24,65 @@ import (
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra"
+	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver/provider/infra/aws"
 	"github.com/gorilla/mux"
 	"k8s.io/apimachinery/pkg/util/json"
 )
 
-type provider struct {
-	Name         string
-	ProviderType string
-}
-
-type test struct {
-	name           string
-	params         provider
-	expectedStatus int
-	error          error
-	body           interface{}
-}
-
 func TestRetrieveMetadata(t *testing.T) {
-	cases := []test{
+	cases := []struct {
+		name           string
+		params         map[string]string
+		expectedStatus int
+		expectedErr    error
+		body           interface{}
+	}{
 		{
-			name: "test get metadata passing invalid provider",
-			params: provider{
-				Name:         "amazon",
-				ProviderType: string(configv1alpha1.InfraProviderType),
+			name: "test get metadata passing no provider name",
+			params: map[string]string{
+				ParamName: "",
+				ParamType: string(configv1alpha1.InfraProviderType),
+				ParamMeta: string(aws.RegionsMeta),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          infra.ErrInvalidProviderName,
+			expectedErr:    errEmptyProviderName,
 		},
 		{
-			name: "test get metadata passing no provider",
-			params: provider{
-				Name:         "_",
-				ProviderType: string(configv1alpha1.InfraProviderType),
+			name: "test get metadata passing unsupported provider",
+			params: map[string]string{
+				ParamName: "amazon",
+				ParamType: string(configv1alpha1.InfraProviderType),
+				ParamMeta: string(aws.RegionsMeta),
 			},
 			expectedStatus: http.StatusBadRequest,
-			error:          infra.ErrInvalidProviderName,
+			expectedErr:    infra.ErrInvalidProviderName,
 		},
 		{
-			name: "test successfully infra provider metadata",
-			params: provider{
-				Name:         appv1alpha1.Amazon.String(),
-				ProviderType: string(configv1alpha1.InfraProviderType),
+			name: "test get metadata using default provider type",
+			params: map[string]string{
+				ParamName: appv1alpha1.Amazon.String(),
+				ParamMeta: string(aws.RegionsMeta),
 			},
 			expectedStatus: http.StatusOK,
-			error:          nil,
+		},
+		{
+			name: "test get metadata with unsupported provider type",
+			params: map[string]string{
+				ParamName: appv1alpha1.Amazon.String(),
+				ParamMeta: string(aws.RegionsMeta),
+				ParamType: string(configv1alpha1.CoreProviderType),
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedErr:   errCoreProviderNotSupported,
+		},
+		{
+			name: "test get metadata without meta param",
+			params: map[string]string{
+				ParamName: appv1alpha1.Amazon.String(),
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedErr: aws.ErrNoProviderMeta,
 		},
 	}
 
@@ -81,47 +94,49 @@ func TestRetrieveMetadata(t *testing.T) {
 	ts := httptest.NewServer(r)
 	defer ts.Close()
 
-	for _, p := range cases {
-		t.Run(p.name, func(t *testing.T) {
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
 			endpoint := fmt.Sprintf("%s/provider/metadata", ts.URL)
 
 			req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 			if err != nil {
 				t.Errorf("error: %s\n", err.Error())
 			}
-			// add provider type
-			q := req.URL.Query()
-			q.Add("name", p.params.Name)
-			q.Add("meta", "regions")
-			req.URL.RawQuery = q.Encode()
 
+			// add params
+			q := req.URL.Query()
+
+			for k, v := range test.params {
+				q.Add(k, v)
+			}
+			req.URL.RawQuery = q.Encode()
 			resp, err := http.DefaultClient.Do(req)
 			if err != nil {
 				t.Errorf("error: %s\n", err.Error())
 			}
 
-			if status := resp.StatusCode; status != p.expectedStatus {
+			if status := resp.StatusCode; status != test.expectedStatus {
 				t.Errorf("handler returned wrong status code: got %v want %v\n",
-					status, p.expectedStatus)
+					status, test.expectedStatus)
 			}
 
-			// validate body
-			var received errResponse
-			if p.error != nil {
+			// validate error body
+			var actual errResponse
+			if test.expectedErr != nil {
 				byt, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
 					t.Errorf("error: %s\n", err.Error())
 				}
 
-				err = json.Unmarshal(byt, &received)
+				err = json.Unmarshal(byt, &actual)
 
 				if err != nil {
 					t.Errorf("error: %s\n", err.Error())
 				}
 
-				if received.Message != p.error.Error() {
+				if actual.Message != test.expectedErr.Error() {
 					t.Errorf("handler returned unexpected body: got %v want %v",
-						received.Message, p.error.Error())
+						actual.Message, test.expectedErr.Error())
 				}
 			}
 		})

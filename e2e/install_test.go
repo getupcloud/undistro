@@ -19,6 +19,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -26,6 +27,10 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/cluster-api/test/framework/exec"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+)
+
+var (
+	undistroPodName string
 )
 
 var _ = Describe("Validate UnDistro Installation", func() {
@@ -44,6 +49,9 @@ var _ = Describe("Validate UnDistro Installation", func() {
 			for _, p := range podList.Items {
 				if p.Status.Phase == corev1.PodFailed {
 					running = false
+				}
+				if strings.Contains(p.Name, "undistro-controller-manager") {
+					undistroPodName = p.Name
 				}
 			}
 			return running

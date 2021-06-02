@@ -5,12 +5,25 @@ builds:
     goos:
       - darwin
       - linux
-    goarch:
-      - amd64
-      - arm
-      - arm64
-    goarm:
-      - 7
+
+brews:
+  - tap:
+      owner: getupio-undistro
+      name: homebrew-tap
+    folder: Formula
+    homepage: https://undistro.io
+    description: UnDistro is a vanilla, non-opinionated, and open source Kubernetes distribution
+nfpms:
+  - homepage: https://undistro.io
+    description: UnDistro is a vanilla, non-opinionated, and open source Kubernetes distribution
+    maintainer: UnDistro Team <undistro@getup.io>
+    license: Apache-2.0
+    vendor: Getup
+    formats:
+      - apk
+      - deb
+      - rpm
+
 
 release:
   github:
