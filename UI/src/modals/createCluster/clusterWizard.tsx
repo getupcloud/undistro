@@ -3,7 +3,10 @@ import React, { FC, useEffect, useState } from 'react'
 import store from '../store'
 import Input from '@components/input'
 import Select from '@components/select'
+import AsyncSelect, { OptionType } from '@components/asyncSelect'
+import { LoadOptions } from "react-select-async-paginate";
 // import Modals from 'util/modals'
+import { generateId } from 'util/helpers'
 import Steps from './steps'
 import Button from '@components/button'
 import Api from 'util/api'
@@ -13,7 +16,13 @@ type Props = {
   handleClose: () => void
 }
 
-const workers: any[] = []
+type TypeWorker = {
+  id: string,
+  machineTypes: string 
+  vcpus: string 
+  memory: string 
+  replicas: number
+}
 
 const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const body = store.useState((s: any) => s.body)
@@ -27,13 +36,21 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const [k8sVersion, setK8sVersion] = useState<string>('')
   const [replicas, setReplicas] = useState<number>(0)
   const [infraNode, setInfraNode] = useState<boolean>(false)
-  const [machineTypes, setMachineTypes] = useState<string>('')
+  const [workers, setWorkers] = useState<TypeWorker[]>([])
+  const [machineTypes, setMachineTypes] = useState<OptionType | null>(null)
+  const [memory, setMemory] = useState<string>('')
+  const [cpu, setCpu] = useState<string>('')
   const [replicasWorkers, setReplicasWorkers] = useState<number>(0)
+  const [memoryWorkers, setMemoryWorkers] = useState<string>('')
+  const [cpuWorkers, setCpuWorkers] = useState<string>('')
   const [machineTypesWorkers, setMachineTypesWorkers] = useState<string>('')
-  const machineOptions = [{ value: 't3.medium', label: 't3.medium'}]
+  const [metadata, setMetadata] = useState<OptionType[]>([])
+  const [regionOptions, setRegionOptions] = useState<[]>([])
+  const [machineOptions, setMachineOptions] = useState<[]>([])
+  const [cpuOptions, setCpuOptions] = useState<[]>([])
+  const [memOptions, setMemOptions] = useState<[]>([])
   const flavorOptions = [{ value: 'eks', label: 'EKS'}, { value: 'ec2', label: 'EC2'}]
   const providerOptions = [{ value: provider, label: 'aws' }]
-  const regionOptions = [{ value: region, label: 'us-east-1'}]
   const k8sOptions = [{ value: 'v1.18.9', label: 'v1.18.9'}]
   // const handleAction = () => {
   //   handleClose()
@@ -104,17 +121,22 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
         setRegion(atob(res.data.region))
       })
   }
-  
 
   const createWorkers = () => {
-    let newWorker = { "machineTypes": '', "replicas": 0 }
-    newWorker.machineTypes = machineTypesWorkers
-    newWorker.replicas = replicasWorkers
-    workers.push(newWorker)
+    setWorkers([...workers, 
+      {
+        id: generateId(),
+        machineTypes: machineTypesWorkers, 
+        vcpus: cpuWorkers, 
+        memory: memoryWorkers, 
+        replicas: replicasWorkers 
+      }
+    ])
   }
 
-  const deleteWorkers = (elm: any) => {
-    workers.splice(elm, 1)
+  const deleteWorkers = (id: any) => {
+    const filterWorker = workers.filter((item: any) => item.id !== id)
+    setWorkers(filterWorker)
   }
 
   const getProviders = () => {
@@ -124,10 +146,21 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
       })
   }
 
+  const getMetadata: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional) => {
+    const res = await Api.Provider.listMetadata('aws', 'machine_types', '15', additional ? additional.page : 1)
+    const totalPages = res.TotalPages
+    const machineTypes = res.MachineTypes.map((elm: Partial<{instance_type: string}>) => ({value: elm.instance_type, label: elm.instance_type}))
+    console.log(res)
+    return {
+      options: machineTypes,
+      hasMore: additional && totalPages > additional.page,
+      additional: { page: additional ? additional.page + 1 : 1 }
+    }
+  }
+
   useEffect(() => {
     getSecrets()
     getProviders()
-    Api.Cluster.list()
   }, [])
 
   //inputs
@@ -168,12 +201,28 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     setFlavor(value)
   }
 
+  const formCpu = (value: string) => {
+    setCpu(value)
+  }
+
+  const formMem = (value: string) => {
+    setMemory(value)
+  }
+
   const formK8s = (value: string) => {
     setK8sVersion(value)
   }
 
-  const formMachineTypes = (value: string) => {
-    setMachineTypes(value)
+  const formMachineTypes = (option: OptionType | null) => {
+    setMachineTypes(option)
+  }
+
+  const formCpuWorkers = (value: string) => {
+    setCpuWorkers(value)
+  }
+
+  const formMemWorkers = (value: string) => {
+    setMemoryWorkers(value)
   }
 
   const formMachineTypesWorkers = (value: string) => {
@@ -216,13 +265,12 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
 
           <>
             <h3 className="title-box">Control plane</h3>
-              <form className='control-plane'>
+              <div className='control-plane'>
                   <div className='input-container'>
                     <Input value={replicas} onChange={formReplica} type='text' label='replicas' />
-                    {/* <Select label='CPU' /> */}
-                    {/* <Select label='mem' /> */}
-
-                    <Select value={machineTypes} onChange={formMachineTypes} options={machineOptions} label='machineType' />
+                    <Select value={cpu} onChange={formCpu} options={cpuOptions} label='CPU' />
+                    <Select value={memory} onChange={formMem} options={memOptions} label='mem' />
+                    <AsyncSelect value={machineTypes} onChange={formMachineTypes} loadOptions={getMetadata} label='machineType' />
                   </div>
 
                   <div className='workers'>
@@ -230,8 +278,8 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
                     <Toggle label='InfraNode' value={infraNode} onChange={() => setInfraNode(!infraNode)} />
                     <div className='input-container'> 
                       <Input type='text' label='replicas' value={replicasWorkers} onChange={formReplicaWorkers} />
-                      {/* <Select label='CPU' /> */}
-                      {/* <Select label='mem' /> */}
+                      <Select value={cpuWorkers} onChange={formCpuWorkers} options={cpuOptions} label='CPU' />
+                      <Select value={memoryWorkers} onChange={formMemWorkers} options={memOptions} label='mem' />
                       <Select value={machineTypesWorkers} onChange={formMachineTypesWorkers} options={machineOptions} label='machineType' />
                       <div className='button-container'>
                         <Button onClick={() => createWorkers()} type='gray' size='small' children='Add' />
@@ -239,17 +287,17 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
                     </div>
 
                     <ul>
-                      {workers.map((i = 0) => {
+                      {(workers || []).map((elm, i = 0) => {
                         return (
-                          <li key={i}>
+                          <li key={elm.id}>
                             <p>clusterName-mp-{i}</p>
-                            <i onClick={() => deleteWorkers(i)} className='icon-close' />
+                            <i onClick={() => deleteWorkers(elm.id)} className='icon-close' />
                           </li>
                         )
                       })}
                     </ul>
                   </div>
-              </form>
+              </div>
           </>
         </Steps>
       </div>

@@ -21,7 +21,7 @@ export default function HomePage () {
   }
 
 	const getNodes = () => {
-		Api.Node.list()
+		Api.Provider.getEvents()
 			.then(res => {
 				setNode(res)
 			})

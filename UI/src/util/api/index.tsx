@@ -4,7 +4,9 @@ import Cluster from './cluster'
 import Provider from './provider'
 import Secret from './secret'
 
-const BASE_URL = 'http://localhost:2020/uapi/v1/namespaces/undistro-system/clusters/management/proxy'
+const HOST = 'undistro.local'
+
+const BASE_URL = `http://${HOST}/uapi/v1`
 
 const httpWrapper = axios.create({
   baseURL: BASE_URL + '/',
