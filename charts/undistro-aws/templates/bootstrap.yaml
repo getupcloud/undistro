@@ -261,7 +261,7 @@ spec:
             - "--feature-gates=MachinePool=true"
           command: 
             - /manager
-          image: "gcr.io/k8s-staging-cluster-api-aws/eks-bootstrap-controller:v0.6.6"
+          image: "us.gcr.io/k8s-artifacts-prod/cluster-api-aws/eks-bootstrap-controller:v0.6.6"
           imagePullPolicy: Always
           name: manager
       securityContext: 

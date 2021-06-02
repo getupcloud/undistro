@@ -30,7 +30,10 @@ spec:
       - prefix: /
       enableWebsockets: true
       permitInsecure: true
+      timeoutPolicy:
+        response: "30m"
+        idle: "30m"
       services:
         - name: undistro-webhook-service
           port: 2020
-{{- end -}}
+{{ end -}}

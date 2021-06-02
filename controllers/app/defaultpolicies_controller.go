@@ -150,7 +150,7 @@ func (r *DefaultPoliciesReconciler) reconcile(ctx context.Context, log logr.Logg
 		}
 	}
 	if !meta.InReadyCondition(cl.Status.Conditions) {
-		return appv1alpha1.DefaultPoliciesNotReady(p, meta.WaitProvisionReason, "wait cluster to be ready"), ctrl.Result{Requeue: true}, nil
+		return appv1alpha1.DefaultPoliciesNotReady(p, meta.WaitProvisionReason, "wait cluster to be ready"), ctrl.Result{RequeueAfter: 30 * time.Second}, nil
 	}
 	if !meta.InReadyCondition(hr.Status.Conditions) {
 		return appv1alpha1.DefaultPoliciesNotReady(p, meta.WaitProvisionReason, "wait Kyverno to be installed"), ctrl.Result{Requeue: true}, nil

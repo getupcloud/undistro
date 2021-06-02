@@ -30,7 +30,6 @@ import (
 	"github.com/spf13/cobra"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
 	cmdutil "k8s.io/kubectl/pkg/cmd/util"
@@ -96,8 +95,7 @@ func (o *ShowProgressOptions) RunShowProgress(f cmdutil.Factory, cmd *cobra.Comm
 		return err
 	}
 	w, err := c.CoreV1().Events(o.Namespace).Watch(cmd.Context(), metav1.ListOptions{
-		Watch:         true,
-		FieldSelector: fields.OneTermEqualSelector("involvedObject.namespace", o.Namespace).String(),
+		Watch: true,
 	})
 	if err != nil {
 		return err

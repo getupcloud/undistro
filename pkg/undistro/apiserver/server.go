@@ -51,9 +51,9 @@ func NewServer(cfg *rest.Config, in io.Reader, out, errOut io.Writer, healthChec
 	apiServer := &Server{
 		IOStreams: streams,
 		Server: &http.Server{
-			ReadTimeout:  30 * time.Second,
+			ReadTimeout:  30 * time.Minute,
 			WriteTimeout: 30 * time.Second,
-			IdleTimeout:  120 * time.Second,
+			IdleTimeout:  30 * time.Minute,
 		},
 		K8sCfg: cfg,
 	}

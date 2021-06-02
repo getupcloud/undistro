@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 
+	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
 	"github.com/getupio-undistro/undistro/pkg/fs"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
@@ -82,8 +83,31 @@ func (o *ClusterOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []
 	if o.Flavor == "" {
 		return errors.New("required flag: flavor")
 	}
+	err = o.validateInfraFlavor()
+	if err != nil {
+		return err
+	}
 	o.ClusterName = args[0]
 	return nil
+}
+
+func (o *ClusterOptions) validateInfraFlavor() error {
+	switch o.Infra {
+	case appv1alpha1.Amazon.String():
+		switch o.Flavor {
+		case appv1alpha1.EKS.String():
+			return nil
+		case appv1alpha1.EC2.String():
+			if o.SshKeyName == "" {
+				return errors.New("ssh-key-name is required to favor ec2")
+			}
+			return nil
+		default:
+			return errors.Errorf("unknown flavor: %s", o.Flavor)
+		}
+	default:
+		return errors.Errorf("unknown infrastructure: %s", o.Infra)
+	}
 }
 
 func (o *ClusterOptions) setRegionByInfra(ctx context.Context, c client.Client) error {

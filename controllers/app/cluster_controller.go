@@ -17,11 +17,8 @@ limitations under the License.
 package controllers
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io"
-	"net/http"
 	"strings"
 	"time"
 
@@ -35,8 +32,8 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/template"
 	"github.com/getupio-undistro/undistro/pkg/util"
 	"github.com/go-logr/logr"
-	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -179,30 +176,22 @@ func (r *ClusterReconciler) reconcile(ctx context.Context, log logr.Logger, cl a
 	for _, w := range cl.Spec.Workers {
 		cl.Status.TotalWorkerReplicas += *w.Replicas
 	}
-	if !meta.InCNIInstalledCondition(cl.Status.Conditions) {
-		// we need to install calico in managed flavors too for network policy support
-		if (capiCluster.Status.ControlPlaneInitialized && !capiCluster.Status.ControlPlaneReady) ||
-			(cl.Spec.InfrastructureProvider.IsManaged() && capiCluster.Status.ControlPlaneReady) {
-
-			log.Info("installing calico")
-			err := r.installCNI(ctx, cl)
-			if err != nil {
-				meta.SetResourceCondition(&cl, meta.CNIInstalledCondition, metav1.ConditionFalse, meta.CNIInstalledFailedReason, err.Error())
-				return cl, ctrl.Result{}, err
-			}
-			meta.SetResourceCondition(&cl, meta.CNIInstalledCondition, metav1.ConditionTrue, meta.CNIInstalledSuccessReason, "calico installed")
-		}
+	// we need to install calico in managed flavors too for network policy support
+	err := r.reconcileCNI(ctx, &cl)
+	if err != nil {
+		meta.SetResourceCondition(&cl, meta.CNIInstalledCondition, metav1.ConditionFalse, meta.CNIInstalledFailedReason, err.Error())
+		return cl, ctrl.Result{}, err
 	}
+
 	if cl.Spec.Bastion != nil {
 		if *cl.Spec.Bastion.Enabled && cl.Status.BastionPublicIP == "" {
-			var err error
 			cl.Status.BastionPublicIP, err = r.getBastionIP(ctx, cl, capiCluster)
 			if err != nil {
 				return appv1alpha1.ClusterNotReady(cl, meta.WaitProvisionReason, err.Error()), ctrl.Result{Requeue: true}, nil
 			}
 		}
 	}
-	err := cloud.ReconcileLaunchTemplate(ctx, r.Client, &cl)
+	err = cloud.ReconcileLaunchTemplate(ctx, r.Client, &cl)
 	if err != nil {
 		return appv1alpha1.ClusterNotReady(cl, meta.ReconcileLaunchTemplateFailed, err.Error()), ctrl.Result{}, err
 	}
@@ -373,41 +362,65 @@ func (r *ClusterReconciler) hasDiff(cl *appv1alpha1.Cluster) bool {
 	return false
 }
 
-func (r *ClusterReconciler) installCNI(ctx context.Context, cl appv1alpha1.Cluster) error {
-	addr := cloud.CNIAddrByFlavor(cl.Spec.InfrastructureProvider.Flavor)
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, addr, nil)
+func (r *ClusterReconciler) reconcileCNI(ctx context.Context, cl *appv1alpha1.Cluster) error {
+	const (
+		cniCalicoName = "calico"
+		chartRepo     = "https://charts.undistro.io"
+		calicoVersion = "3.19.1"
+	)
+
+	v, err := cloud.CalicoValues(cl.Spec.InfrastructureProvider.Flavor)
 	if err != nil {
 		return err
 	}
-	httpClient := &http.Client{
-		Timeout: 30 * time.Second,
+	key := client.ObjectKey{
+		Name:      cniCalicoName,
+		Namespace: cl.GetNamespace(),
 	}
-	resp, err := httpClient.Do(req)
+	hr := appv1alpha1.HelmRelease{}
+	err = r.Get(ctx, key, &hr)
 	if err != nil {
-		return err
-	}
-	defer resp.Body.Close() //nolint
-	buff := bytes.Buffer{}
-	_, err = io.Copy(&buff, resp.Body)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return errors.Errorf("unable to get calico: %s", buff.String())
-	}
-	objs, err := util.ToUnstructured(buff.Bytes())
-	if err != nil {
-		return err
-	}
-	workloadClient, err := kube.NewClusterClient(ctx, r.Client, cl.Name, cl.GetNamespace())
-	if err != nil {
-		return err
-	}
-	for _, o := range objs {
-		_, err = util.CreateOrUpdate(ctx, workloadClient, &o)
+		if client.IgnoreNotFound(err) != nil {
+			return err
+		}
+		hr = appv1alpha1.HelmRelease{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: appv1alpha1.GroupVersion.String(),
+				Kind:       "HelmRelease",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      fmt.Sprintf("%s-%s", cniCalicoName, cl.Name),
+				Namespace: cl.GetNamespace(),
+			},
+			Spec: appv1alpha1.HelmReleaseSpec{
+				TargetNamespace: "kube-system",
+				ReleaseName:     cniCalicoName,
+				Values:          &apiextensionsv1.JSON{Raw: v},
+				ClusterName:     fmt.Sprintf("%s/%s", cl.GetNamespace(), cl.Name),
+				Chart: appv1alpha1.ChartSource{
+					RepoChartSource: appv1alpha1.RepoChartSource{
+						RepoURL: chartRepo,
+						Name:    cniCalicoName,
+						Version: calicoVersion,
+					},
+				},
+			},
+		}
+		err = ctrl.SetControllerReference(cl, &hr, r.Scheme)
 		if err != nil {
 			return err
 		}
+	}
+	if hr.Annotations == nil {
+		hr.Annotations = make(map[string]string)
+	}
+	hr.Annotations[meta.CNIAnnotation] = cniCalicoName
+	_, err = util.CreateOrUpdate(ctx, r.Client, &hr)
+	if err != nil {
+		return err
+	}
+	if meta.InReadyCondition(hr.Status.Conditions) {
+		meta.SetResourceCondition(cl, meta.CNIInstalledCondition, metav1.ConditionTrue, meta.CNIInstalledSuccessReason, "calico installed")
 	}
 	return nil
 }
@@ -445,7 +458,42 @@ func (r *ClusterReconciler) reconcileDelete(ctx context.Context, cl appv1alpha1.
 			return ctrl.Result{}, err
 		}
 	}
+	err = r.removeDeps(ctx, cl)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 	return ctrl.Result{Requeue: true}, nil
+}
+
+func (r *ClusterReconciler) removeDeps(ctx context.Context, cl appv1alpha1.Cluster) error {
+	hrClusterName := fmt.Sprintf("%s/%s", cl.GetNamespace(), cl.Name)
+	hrList := appv1alpha1.HelmReleaseList{}
+	err := r.List(ctx, &hrList)
+	if err != nil {
+		return err
+	}
+	for _, item := range hrList.Items {
+		if item.Spec.ClusterName == hrClusterName {
+			err = r.Delete(ctx, &item)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	policies := appv1alpha1.DefaultPoliciesList{}
+	err = r.List(ctx, &policies, client.InNamespace(cl.GetNamespace()))
+	if err != nil {
+		return err
+	}
+	for _, item := range policies.Items {
+		if item.Spec.ClusterName == cl.Name {
+			err = r.Delete(ctx, &item)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (r *ClusterReconciler) capiToUndistro(o client.Object) []ctrl.Request {
