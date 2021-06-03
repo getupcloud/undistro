@@ -16,16 +16,18 @@ limitations under the License.
 package cli
 
 import (
+	"context"
 	"flag"
 	"path/filepath"
 
+	"github.com/getupio-undistro/undistro/pkg/util"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/util/homedir"
 	"k8s.io/klog/v2"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
@@ -89,15 +91,37 @@ type Config struct {
 	Providers     []Provider  `mapstructure:"providers" json:"providers,omitempty"`
 }
 
-func getConfigFrom(providers []Provider, name string) *apiextensionsv1.JSON {
-	for _, p := range providers {
-		if p.Name == name {
-			byt, err := json.Marshal(p.Configuration)
-			if err != nil {
-				return &apiextensionsv1.JSON{}
+func defaultValues(ctx context.Context, c client.Client, name string) map[string]interface{} {
+	isKind, _ := util.IsKindCluster(ctx, c)
+	switch name {
+	case "undistro":
+		if isKind {
+			return map[string]interface{}{
+				"local": true,
 			}
-			return &apiextensionsv1.JSON{Raw: byt}
+		}
+	case "ingress-nginx":
+		if isKind {
+			return map[string]interface{}{
+				"controller": map[string]interface{}{
+					"service": map[string]interface{}{
+						"type": "NodePort",
+					},
+				},
+			}
 		}
 	}
-	return &apiextensionsv1.JSON{}
+	return make(map[string]interface{})
+}
+
+func getConfigFrom(ctx context.Context, c client.Client, providers []Provider, name string) map[string]interface{} {
+	m := defaultValues(ctx, c, name)
+	cfg := make(map[string]interface{})
+	for _, p := range providers {
+		if p.Name == name {
+			cfg = p.Configuration
+			break
+		}
+	}
+	return util.MergeMaps(m, cfg)
 }

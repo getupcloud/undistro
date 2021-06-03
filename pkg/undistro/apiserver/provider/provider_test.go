@@ -74,7 +74,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ParamType: string(configv1alpha1.CoreProviderType),
 			},
 			expectedStatus: http.StatusBadRequest,
-			expectedErr:   errCoreProviderNotSupported,
+			expectedErr:    errCoreProviderNotSupported,
 		},
 		{
 			name: "test get metadata without meta param",
@@ -82,7 +82,7 @@ func TestRetrieveMetadata(t *testing.T) {
 				ParamName: appv1alpha1.Amazon.String(),
 			},
 			expectedStatus: http.StatusBadRequest,
-			expectedErr: aws.ErrNoProviderMeta,
+			expectedErr:    aws.ErrNoProviderMeta,
 		},
 	}
 
