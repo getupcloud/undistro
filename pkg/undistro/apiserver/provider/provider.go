@@ -28,9 +28,9 @@ import (
 )
 
 var (
-	errCoreProviderNotSupported  = errors.New("'core' provider not supported yet")
-	errEmptyProviderName = errors.New("provider name is empty")
-	errInvalidProviderType  = errors.New("invalid provider type, supported are " +
+	errCoreProviderNotSupported = errors.New("'core' provider not supported yet")
+	errEmptyProviderName        = errors.New("provider name is empty")
+	errInvalidProviderType      = errors.New("invalid provider type, supported are " +
 		"['infra']")
 	errNegativePageSize = errors.New("page size can't be less or equal 0")
 )
