@@ -154,7 +154,9 @@ func (r *HelmReleaseReconciler) reconcile(ctx context.Context, log logr.Logger, 
 		defer cleanup()
 		clientOpts = opts
 	}
-	clientOpts = append(clientOpts, getter.WithTimeout(hr.Spec.Timeout.Duration))
+	if hr.Spec.Timeout != nil {
+		clientOpts = append(clientOpts, getter.WithTimeout(hr.Spec.Timeout.Duration))
+	}
 	chartRepo, err := helm.NewChartRepository(hr.Spec.Chart.RepoURL, getters, clientOpts)
 	if err != nil {
 		switch err.(type) {

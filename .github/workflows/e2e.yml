@@ -3,6 +3,9 @@ name: Tests E2E
 on:
   workflow_dispatch:
   push:
+    paths-ignore:
+      - "README.md"
+      - ".github/**"
     branches: ["main"]
 
 jobs:

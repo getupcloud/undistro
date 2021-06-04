@@ -60,7 +60,7 @@ jobs:
           helm push undistro undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
           helm push undistro-aws undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
           helm push kyverno undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
-          helm push contour undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
+          helm push ingress-nginx undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
