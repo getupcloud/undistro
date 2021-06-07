@@ -13,17 +13,17 @@ require (
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.12.0
 	github.com/pkg/errors v0.9.1
-	github.com/spf13/cobra v1.1.1
+	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
-	helm.sh/helm/v3 v3.5.4
-	k8s.io/api v0.20.6
-	k8s.io/apiextensions-apiserver v0.20.6
-	k8s.io/apimachinery v0.20.6
-	k8s.io/cli-runtime v0.20.6
-	k8s.io/client-go v0.20.6
-	k8s.io/klog/v2 v2.5.0
-	k8s.io/kubectl v0.20.6
+	helm.sh/helm/v3 v3.6.0
+	k8s.io/api v0.21.0
+	k8s.io/apiextensions-apiserver v0.21.0
+	k8s.io/apimachinery v0.21.0
+	k8s.io/cli-runtime v0.21.0
+	k8s.io/client-go v0.21.0
+	k8s.io/klog/v2 v2.8.0
+	k8s.io/kubectl v0.21.0
 	sigs.k8s.io/cluster-api v0.3.17
 	sigs.k8s.io/controller-runtime v0.8.3
 	sigs.k8s.io/yaml v1.2.0
