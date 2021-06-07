@@ -1,23 +1,29 @@
 version: 2
 updates:
-  # Daily updates for main go.mod
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
       interval: "daily"
+    commit_message:
+      prefix: "[skip e2e]"
 
-  # Weekly updates for everything else
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "daily"
+    commit_message:
+      prefix: "[skip e2e]"
 
   - package-ecosystem: "npm"
     directory: "/UI"
     schedule:
       interval: "daily"
+    commit_message:
+      prefix: "[skip e2e]"
 
   - package-ecosystem: "npm"
     directory: "/website"
     schedule:
       interval: "daily"
+    commit_message:
+      prefix: "[skip e2e]"
