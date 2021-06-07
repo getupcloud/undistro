@@ -77,7 +77,7 @@
     "icon-font-generator": "^2.1.11",
     "image-webpack-loader": "^7.0.1",
     "node-sass": "^5.0.0",
-    "prettier": "2.2.1",
+    "prettier": "2.3.1",
     "sass-loader": "^11.0.1",
     "style-loader": "^2.0.0",
     "stylelint": "^13.11.0",
