@@ -10,7 +10,7 @@ require (
 	github.com/go-logr/logr v0.4.0
 	github.com/gorilla/mux v1.8.0
 	github.com/json-iterator/go v1.1.11
-	github.com/onsi/ginkgo v1.16.2
+	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.12.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.1
