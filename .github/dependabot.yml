@@ -4,26 +4,26 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    commit_message:
+    commit-message:
       prefix: "[skip e2e]"
 
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "daily"
-    commit_message:
+    commit-message:
       prefix: "[skip e2e]"
 
   - package-ecosystem: "npm"
     directory: "/UI"
     schedule:
       interval: "daily"
-    commit_message:
+    commit-message:
       prefix: "[skip e2e]"
 
   - package-ecosystem: "npm"
     directory: "/website"
     schedule:
       interval: "daily"
-    commit_message:
+    commit-message:
       prefix: "[skip e2e]"
