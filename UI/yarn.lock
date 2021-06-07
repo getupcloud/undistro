@@ -5455,10 +5455,10 @@ cosmiconfig@^7.0.0:
     path-type "^4.0.0"
     yaml "^1.10.0"
 
-craco-alias@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/craco-alias/-/craco-alias-2.2.0.tgz#adfd37f1623d394cd5e72ef9bab54a1e451bd205"
-  integrity sha512-FLSRaCWI/CKLUO+Cb/GH9ljSYWdrlzkYf3N373Kuof0hckJ1tj+wPN0XyToR8KPUggoIB5+IDkGs1uKUBuGUiA==
+craco-alias@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/craco-alias/-/craco-alias-3.0.1.tgz#45e5cb338b222a7f62d17e398b54aff7cf1572af"
+  integrity sha512-N+Qaf/Gr/f3o5ZH2TQjMu5NhR9PnT1ZYsfejpNvZPpB0ujdrhsSr4Ct6GVjnV5ostCVquhTKJpIVBKyL9qDQYA==
 
 create-ecdh@^4.0.0:
   version "4.0.4"
