@@ -35,7 +35,7 @@
     "sass": "^1.34.1",
     "surge": "^0.23.0",
     "typescript": "^4.3.2",
-    "web-vitals": "^1.0.1"
+    "web-vitals": "^2.0.1"
   },
   "scripts": {
     "start": "craco start",
