@@ -6,7 +6,7 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/Masterminds/sprig/v3 v3.2.2
-	github.com/aws/aws-sdk-go v1.38.56
+	github.com/aws/aws-sdk-go v1.38.57
 	github.com/go-logr/logr v0.4.0
 	github.com/gorilla/mux v1.8.0
 	github.com/json-iterator/go v1.1.11
