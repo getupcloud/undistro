@@ -53,7 +53,7 @@ func (r *DefaultPoliciesReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	if err := r.Get(ctx, req.NamespacedName, &p); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-	log := r.Log.WithValues("defalutpolicies", req.NamespacedName)
+	log := r.Log.WithValues("defaultpolicies", req.NamespacedName)
 	patchHelper, err := patch.NewHelper(&p, r.Client)
 	if err != nil {
 		return ctrl.Result{}, err
