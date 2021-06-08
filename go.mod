@@ -16,22 +16,18 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
-	helm.sh/helm/v3 v3.5.4
-	k8s.io/api v0.20.7
-	k8s.io/apiextensions-apiserver v0.20.7
-	k8s.io/apimachinery v0.20.7
-	k8s.io/cli-runtime v0.20.7
-	k8s.io/client-go v0.20.7
+	helm.sh/helm/v3 v3.6.0
+	k8s.io/api v0.21.1
+	k8s.io/apiextensions-apiserver v0.21.1
+	k8s.io/apimachinery v0.21.1
+	k8s.io/cli-runtime v0.21.1
+	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.9.0
-	k8s.io/kubectl v0.20.7
+	k8s.io/kubectl v0.21.1
+	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/cluster-api v0.3.17
-	sigs.k8s.io/controller-runtime v0.8.3
+	sigs.k8s.io/controller-runtime v0.9.0
 	sigs.k8s.io/yaml v1.2.0
 )
 
-replace (
-	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
-	github.com/docker/docker => github.com/moby/moby v17.12.0-ce-rc1.0.20200618181300-9dc6525e6118+incompatible
-	github.com/gorilla/rpc => github.com/getupio-undistro/rpc v1.2.1-0.20210520161253-a32dcc464920
-	sigs.k8s.io/cluster-api => github.com/getupio-undistro/cluster-api v0.3.11-0.20210211140125-d0ad83191c76
-)
+replace sigs.k8s.io/cluster-api => github.com/getupio-undistro/cluster-api v0.3.11-0.20210608202222-4052f5f87b90
