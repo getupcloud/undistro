@@ -52,7 +52,7 @@ jobs:
 
       - name: Run E2E
         working-directory: ./e2e
-        if: "!contains(github.event.head_commit.message, 'ci e2e')"
+        if: "!contains(github.event.head_commit.message, 'skip e2e')"
         env:
           E2E_AWS_ACCESS_KEY_ID: ${{ secrets.E2E_AWS_ACCESS_KEY_ID }}
           E2E_AWS_SECRET_ACCESS_KEY: ${{ secrets.E2E_AWS_SECRET_ACCESS_KEY }}
