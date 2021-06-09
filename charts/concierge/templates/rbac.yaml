@@ -240,7 +240,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: pinniped-concierge-kube-system-pod-read
-  namespace: undistro-system
+  namespace: kube-system
   labels:
     app: pinniped-concierge
 rules:
@@ -257,7 +257,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: pinniped-concierge-kube-system-pod-read
-  namespace: undistro-system
+  namespace: kube-system
   labels:
     app: pinniped-concierge
 subjects:
@@ -328,7 +328,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: pinniped-concierge-extension-apiserver-authentication-reader
-  namespace: undistro-system
+  namespace: kube-system
   labels:
     app: pinniped-concierge
 subjects:
