@@ -3,6 +3,7 @@ replicaCount: 2
 image:
   repository: projects.registry.vmware.com/pinniped/pinniped-server
   pullPolicy: IfNotPresent  
+  tag: 'v0.9.1'
 
 resources:
   requests:
