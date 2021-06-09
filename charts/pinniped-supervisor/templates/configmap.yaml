@@ -1,0 +1,14 @@
+--- 
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  labels: 
+    app: pinniped-supervisor
+  name: pinniped-supervisor-static-config
+  namespace: undistro-system
+data: 
+  pinniped.yaml: |-
+      apiGroupSuffix: pinniped.dev
+      names:
+        defaultTLSCertificateSecret: pinniped-supervisor-default-tls-certificate
+      labels: {"app":"pinniped-supervisor"}

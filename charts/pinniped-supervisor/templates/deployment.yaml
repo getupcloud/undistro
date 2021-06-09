@@ -1,113 +1,102 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: pinniped-supervisor
-  namespace: undistro-system
-  labels:
-    app: pinniped-supervisor
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: pinniped-supervisor-static-config
-  namespace: undistro-system
-  labels:
-    app: pinniped-supervisor
-data:
-  pinniped.yaml: |+
-    apiGroupSuffix: pinniped.dev
-    names:
-      defaultTLSCertificateSecret: pinniped-supervisor-default-tls-certificate
-    labels: {"app":"pinniped-supervisor"}
-
----
+--- 
 apiVersion: apps/v1
 kind: Deployment
-metadata:
+metadata: 
+  labels: 
+    app: pinniped-supervisor
   name: pinniped-supervisor
   namespace: undistro-system
-  labels:
-    app: pinniped-supervisor
-spec:
+spec: 
   replicas: 2
-  selector:
-    matchLabels:
+  selector: 
+    matchLabels: 
       app: pinniped-supervisor
-  template:
-    metadata:
-      labels:
+  template: 
+    metadata: 
+      labels: 
         app: pinniped-supervisor
-    spec:
-      securityContext:
-        runAsUser: 1001
+    spec: 
+      affinity: 
+        podAntiAffinity: 
+          preferredDuringSchedulingIgnoredDuringExecution: 
+            - 
+              podAffinityTerm: 
+                labelSelector: 
+                  matchLabels: 
+                    app: pinniped-supervisor
+                topologyKey: kubernetes.io/hostname
+              weight: 50
+      containers: 
+        - 
+          args: 
+            - /etc/podinfo
+            - /etc/config/pinniped.yaml
+          command: 
+            - /usr/local/bin/pinniped-supervisor
+          image: "projects.registry.vmware.com/pinniped/pinniped-server:v0.9.1"
+          imagePullPolicy: IfNotPresent
+          livenessProbe: 
+            failureThreshold: 5
+            httpGet: 
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 15
+          name: pinniped-supervisor
+          ports: 
+            - 
+              containerPort: 8080
+              protocol: TCP
+            - 
+              containerPort: 8443
+              protocol: TCP
+          readinessProbe: 
+            failureThreshold: 3
+            httpGet: 
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources: 
+            limits: 
+              cpu: 100m
+              memory: 128Mi
+            requests: 
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts: 
+            - 
+              mountPath: /etc/config
+              name: config-volume
+            - 
+              mountPath: /etc/podinfo
+              name: podinfo
+      securityContext: 
         runAsGroup: 1001
+        runAsUser: 1001
       serviceAccountName: pinniped-supervisor
-      containers:
-      - name: pinniped-supervisor
-        image: projects.registry.vmware.com/pinniped/pinniped-server:v0.9.1
-        imagePullPolicy: IfNotPresent
-        command:
-        - /usr/local/bin/pinniped-supervisor
-        args:
-        - /etc/podinfo
-        - /etc/config/pinniped.yaml
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 100m
-            memory: 128Mi
-        volumeMounts:
-        - name: config-volume
-          mountPath: /etc/config
-        - name: podinfo
-          mountPath: /etc/podinfo
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        - containerPort: 8443
-          protocol: TCP
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 2
-          timeoutSeconds: 15
-          periodSeconds: 10
-          failureThreshold: 5
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 2
-          timeoutSeconds: 3
-          periodSeconds: 10
-          failureThreshold: 3
-      volumes:
-      - name: config-volume
-        configMap:
-          name: pinniped-supervisor-static-config
-      - name: podinfo
-        downwardAPI:
-          items:
-          - path: labels
-            fieldRef:
-              fieldPath: metadata.labels
-          - path: namespace
-            fieldRef:
-              fieldPath: metadata.namespace
-          - path: name
-            fieldRef:
-              fieldPath: metadata.name
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 50
-            podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app: pinniped-supervisor
-              topologyKey: kubernetes.io/hostname
+      volumes: 
+        - 
+          configMap: 
+            name: pinniped-supervisor-static-config
+          name: config-volume
+        - 
+          downwardAPI: 
+            items: 
+              - 
+                fieldRef: 
+                  fieldPath: metadata.labels
+                path: labels
+              - 
+                fieldRef: 
+                  fieldPath: metadata.namespace
+                path: namespace
+              - 
+                fieldRef: 
+                  fieldPath: metadata.name
+                path: name
+          name: podinfo
