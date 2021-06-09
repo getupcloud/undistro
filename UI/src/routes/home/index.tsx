@@ -10,7 +10,6 @@ import './index.scss'
 
 export default function HomePage () {
 	const [test, setTest] = useState(false)
-	const [node, setNode] = useState<[]>([])
 	const showModal = () => {
     Modals.show('create-cluster', {
       title: 'Create',
@@ -19,19 +18,6 @@ export default function HomePage () {
       height: '420'
     })
   }
-
-	const getNodes = () => {
-		Api.Provider.getEvents()
-			.then(res => {
-				setNode(res)
-			})
-	}
-
-	useEffect(() => {
-		getNodes()
-	}, [])
-
-	console.log(node)
 
 	return (
 		<div className='home-page-route'>

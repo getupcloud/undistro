@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
+import { AsyncPaginate } from "react-select-async-paginate";
 
 export type OptionType = { value: string, label: string }
 

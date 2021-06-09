@@ -4,13 +4,13 @@ import Cluster from './cluster'
 import Provider from './provider'
 import Secret from './secret'
 
-const HOST = 'undistro.local'
+const HOST = 'localhost'
 
 const BASE_URL = `http://${HOST}/uapi/v1`
 
 const httpWrapper = axios.create({
   baseURL: BASE_URL + '/',
-  timeout: 10000
+  timeout: 600000
 })
 
 const Api = {
