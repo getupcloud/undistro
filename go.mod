@@ -25,7 +25,7 @@ require (
 	k8s.io/klog/v2 v2.9.0
 	k8s.io/kubectl v0.21.1
 	rsc.io/letsencrypt v0.0.3 // indirect
-	sigs.k8s.io/cluster-api v0.3.17
+	sigs.k8s.io/cluster-api v0.3.18
 	sigs.k8s.io/controller-runtime v0.9.0
 	sigs.k8s.io/yaml v1.2.0
 )
