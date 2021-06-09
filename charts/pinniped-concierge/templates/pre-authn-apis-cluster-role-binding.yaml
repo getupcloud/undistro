@@ -1,0 +1,20 @@
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata: 
+  labels: 
+    app: pinniped-concierge
+  name: pinniped-concierge-pre-authn-apis
+roleRef: 
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pinniped-concierge-pre-authn-apis
+subjects: 
+  - 
+    apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: "system:authenticated"
+  - 
+    apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: "system:unauthenticated"

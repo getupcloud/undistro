@@ -1,0 +1,16 @@
+--- 
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata: 
+  labels: 
+    app: pinniped-concierge
+  name: v1alpha1.login.concierge.pinniped.dev
+spec: 
+  group: login.concierge.pinniped.dev
+  groupPriorityMinimum: 9900
+  service: 
+    name: pinniped-concierge-api
+    namespace: undistro-system
+    port: 443
+  version: v1alpha1
+  versionPriority: 15

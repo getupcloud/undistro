@@ -1,0 +1,16 @@
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata: 
+  labels: 
+    app: pinniped-concierge
+  name: pinniped-concierge-aggregated-api-server
+roleRef: 
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pinniped-concierge-aggregated-api-server
+subjects: 
+  - 
+    kind: ServiceAccount
+    name: pinniped-concierge
+    namespace: undistro-system

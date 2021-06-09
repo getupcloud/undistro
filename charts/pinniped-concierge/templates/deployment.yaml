@@ -1,193 +1,102 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: pinniped-concierge
-  namespace: undistro-system
-  labels:
-    app: pinniped-concierge
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: pinniped-concierge-kube-cert-agent
-  namespace: undistro-system
-  labels:
-    app: pinniped-concierge
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: pinniped-concierge-config
-  namespace: undistro-system
-  labels:
-    app: pinniped-concierge
-data:
-  pinniped.yaml: "discovery:\n  url: null\napi:\n  servingCertificate:\n    durationSeconds: 2592000\n    renewBeforeSeconds: 2160000\napiGroupSuffix: pinniped.dev\nnames:\n  servingCertificateSecret: pinniped-concierge-api-tls-serving-certificate\n  credentialIssuer: pinniped-concierge-config\n  apiService: pinniped-concierge-api\n  impersonationLoadBalancerService: pinniped-concierge-impersonation-proxy-load-balancer\n  impersonationClusterIPService: pinniped-concierge-impersonation-proxy-cluster-ip\n  impersonationTLSCertificateSecret: pinniped-concierge-impersonation-proxy-tls-serving-certificate\n  impersonationCACertificateSecret: pinniped-concierge-impersonation-proxy-ca-certificate\n  impersonationSignerSecret: pinniped-concierge-impersonation-proxy-signer-ca-certificate\n  agentServiceAccount: pinniped-concierge-kube-cert-agent\nlabels: {\"app\":\"pinniped-concierge\"}\nkubeCertAgent:\n  namePrefix: pinniped-concierge-kube-cert-agent-\n  \n  \n  image: projects.registry.vmware.com/pinniped/pinniped-server:0.9.1\n  \n  \n  \n\n"
----
+--- 
 apiVersion: apps/v1
 kind: Deployment
-metadata:
+metadata: 
+  labels: 
+    app: pinniped-concierge
   name: pinniped-concierge
   namespace: undistro-system
-  labels:
-    app: pinniped-concierge
-spec:
+spec: 
   replicas: 2
-  selector:
-    matchLabels:
+  selector: 
+    matchLabels: 
       app: pinniped-concierge
-  template:
-    metadata:
-      labels:
-        app: pinniped-concierge
-      annotations:
+  template: 
+    metadata: 
+      annotations: 
         scheduler.alpha.kubernetes.io/critical-pod: ""
-    spec:
-      securityContext:
-        runAsUser: 1001
+      labels: 
+        app: pinniped-concierge
+    spec: 
+      affinity: 
+        podAntiAffinity: 
+          preferredDuringSchedulingIgnoredDuringExecution: 
+            - 
+              podAffinityTerm: 
+                labelSelector: 
+                  matchLabels: 
+                    app: pinniped-concierge
+                topologyKey: kubernetes.io/hostname
+              weight: 50
+      containers: 
+        - 
+          args: 
+            - "--config=/etc/config/pinniped.yaml"
+            - "--downward-api-path=/etc/podinfo"
+          image: "projects.registry.vmware.com/pinniped/pinniped-server:0.9.1"
+          imagePullPolicy: IfNotPresent
+          livenessProbe: 
+            failureThreshold: 5
+            httpGet: 
+              path: /healthz
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 15
+          name: pinniped-concierge
+          readinessProbe: 
+            failureThreshold: 3
+            httpGet: 
+              path: /healthz
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources: 
+            limits: 
+              cpu: 100m
+              memory: 128Mi
+            requests: 
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts: 
+            - 
+              mountPath: /etc/config
+              name: config-volume
+            - 
+              mountPath: /etc/podinfo
+              name: podinfo
+      securityContext: 
         runAsGroup: 1001
+        runAsUser: 1001
       serviceAccountName: pinniped-concierge
-      containers:
-      - name: pinniped-concierge
-        image: projects.registry.vmware.com/pinniped/pinniped-server:0.9.1
-        imagePullPolicy: IfNotPresent
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 100m
-            memory: 128Mi
-        args:
-        - --config=/etc/config/pinniped.yaml
-        - --downward-api-path=/etc/podinfo
-        volumeMounts:
-        - name: config-volume
-          mountPath: /etc/config
-        - name: podinfo
-          mountPath: /etc/podinfo
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8443
-            scheme: HTTPS
-          initialDelaySeconds: 2
-          timeoutSeconds: 15
-          periodSeconds: 10
-          failureThreshold: 5
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 8443
-            scheme: HTTPS
-          initialDelaySeconds: 2
-          timeoutSeconds: 3
-          periodSeconds: 10
-          failureThreshold: 3
-      volumes:
-      - name: config-volume
-        configMap:
-          name: pinniped-concierge-config
-      - name: podinfo
-        downwardAPI:
-          items:
-          - path: labels
-            fieldRef:
-              fieldPath: metadata.labels
-          - path: name
-            fieldRef:
-              fieldPath: metadata.name
-          - path: namespace
-            fieldRef:
-              fieldPath: metadata.namespace
-      tolerations:
-      - key: CriticalAddonsOnly
-        operator: Exists
-      - key: node-role.kubernetes.io/master
-        effect: NoSchedule
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 50
-            podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app: pinniped-concierge
-              topologyKey: kubernetes.io/hostname
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: pinniped-concierge-api
-  namespace: undistro-system
-  labels:
-    app: pinniped-concierge
-spec:
-  type: ClusterIP
-  selector:
-    app: pinniped-concierge
-  ports:
-  - protocol: TCP
-    port: 443
-    targetPort: 8443
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: pinniped-concierge-proxy
-  namespace: undistro-system
-  labels:
-    app: pinniped-concierge
-spec:
-  type: ClusterIP
-  selector:
-    app: pinniped-concierge
-  ports:
-  - protocol: TCP
-    port: 443
-    targetPort: 8444
----
-apiVersion: apiregistration.k8s.io/v1
-kind: APIService
-metadata:
-  name: v1alpha1.login.concierge.pinniped.dev
-  labels:
-    app: pinniped-concierge
-spec:
-  version: v1alpha1
-  group: login.concierge.pinniped.dev
-  groupPriorityMinimum: 9900
-  versionPriority: 15
-  service:
-    name: pinniped-concierge-api
-    namespace: undistro-system
-    port: 443
----
-apiVersion: apiregistration.k8s.io/v1
-kind: APIService
-metadata:
-  name: v1alpha1.identity.concierge.pinniped.dev
-  labels:
-    app: pinniped-concierge
-spec:
-  version: v1alpha1
-  group: identity.concierge.pinniped.dev
-  groupPriorityMinimum: 9900
-  versionPriority: 15
-  service:
-    name: pinniped-concierge-api
-    namespace: undistro-system
-    port: 443
----
-apiVersion: config.concierge.pinniped.dev/v1alpha1
-kind: CredentialIssuer
-metadata:
-  name: pinniped-concierge-config
-  labels:
-    app: pinniped-concierge
-spec:
-  impersonationProxy:
-    mode: enabled
-    service:
-      type: ClusterIP
-      annotations: null
+      tolerations: 
+        - 
+          key: CriticalAddonsOnly
+          operator: Exists
+        - 
+          effect: NoSchedule
+          key: node-role.kubernetes.io/master
+      volumes: 
+        - 
+          configMap: 
+            name: pinniped-concierge-config
+          name: config-volume
+        - 
+          downwardAPI: 
+            items: 
+              - 
+                fieldRef: 
+                  fieldPath: metadata.labels
+                path: labels
+              - 
+                fieldRef: 
+                  fieldPath: metadata.name
+                path: name
+              - 
+                fieldRef: 
+                  fieldPath: metadata.namespace
+                path: namespace
+          name: podinfo

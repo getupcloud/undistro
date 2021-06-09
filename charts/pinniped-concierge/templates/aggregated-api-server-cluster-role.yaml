@@ -1,0 +1,109 @@
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata: 
+  labels: 
+    app: pinniped-concierge
+  name: pinniped-concierge-aggregated-api-server
+rules: 
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - namespaces
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - apiregistration.k8s.io
+    resources: 
+      - apiservices
+    verbs: 
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - 
+    apiGroups: 
+      - admissionregistration.k8s.io
+    resources: 
+      - validatingwebhookconfigurations
+      - mutatingwebhookconfigurations
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - flowcontrol.apiserver.k8s.io
+    resources: 
+      - flowschemas
+      - prioritylevelconfigurations
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - security.openshift.io
+    resourceNames: 
+      - nonroot
+    resources: 
+      - securitycontextconstraints
+    verbs: 
+      - use
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - users
+      - groups
+      - serviceaccounts
+    verbs: 
+      - impersonate
+  - 
+    apiGroups: 
+      - authentication.k8s.io
+    resources: 
+      - "*"
+    verbs: 
+      - impersonate
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - nodes
+    verbs: 
+      - list
+  - 
+    apiGroups: 
+      - config.concierge.pinniped.dev
+    resources: 
+      - credentialissuers
+    verbs: 
+      - get
+      - list
+      - watch
+      - create
+  - 
+    apiGroups: 
+      - config.concierge.pinniped.dev
+    resources: 
+      - credentialissuers/status
+    verbs: 
+      - get
+      - patch
+      - update
+  - 
+    apiGroups: 
+      - authentication.concierge.pinniped.dev
+    resources: 
+      - jwtauthenticators
+      - webhookauthenticators
+    verbs: 
+      - get
+      - list
+      - watch

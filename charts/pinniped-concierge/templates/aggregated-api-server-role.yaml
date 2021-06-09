@@ -1,0 +1,86 @@
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: 
+  labels: 
+    app: pinniped-concierge
+  name: pinniped-concierge-aggregated-api-server
+  namespace: undistro-system
+rules: 
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - services
+    verbs: 
+      - create
+      - get
+      - list
+      - patch
+      - update
+      - watch
+      - delete
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - secrets
+    verbs: 
+      - create
+      - get
+      - list
+      - patch
+      - update
+      - watch
+      - delete
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - pods
+    verbs: 
+      - get
+      - list
+      - watch
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - pods/exec
+    verbs: 
+      - create
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - pods
+    verbs: 
+      - delete
+  - 
+    apiGroups: 
+      - apps
+    resources: 
+      - deployments
+    verbs: 
+      - create
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - 
+    apiGroups: 
+      - apps
+    resources: 
+      - replicasets
+    verbs: 
+      - get
+  - 
+    apiGroups: 
+      - ""
+    resources: 
+      - configmaps
+    verbs: 
+      - list
+      - get
+      - watch
