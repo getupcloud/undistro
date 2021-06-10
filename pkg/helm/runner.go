@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
@@ -34,11 +35,11 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// Runner represents a Helm action runner capable of performing Helm
-// operations for a v2beta1.HelmRelease.
+// Runner represents a Helm action runner capable of performing Helm operations
 type Runner struct {
 	config *action.Configuration
 	client client.Client
+	mu     sync.Mutex
 }
 
 // NewRunner constructs a new Runner configured to run Helm actions with the
@@ -62,8 +63,9 @@ func NewRunner(getter genericclioptions.RESTClientGetter, storageNamespace strin
 	return &Runner{config: cfg, client: c}, nil
 }
 
-// Install runs an Helm install action for the given v2beta1.HelmRelease.
 func (r *Runner) Install(hr appv1alpha1.HelmRelease, chart *chart.Chart, values chartutil.Values) (*release.Release, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	install := action.NewInstall(r.config)
 	install.ReleaseName = hr.Spec.ReleaseName
 	install.Namespace = hr.Spec.TargetNamespace
@@ -77,6 +79,8 @@ func (r *Runner) Install(hr appv1alpha1.HelmRelease, chart *chart.Chart, values 
 
 // Upgrade runs an Helm upgrade action for the given v2beta1.HelmRelease.
 func (r *Runner) Upgrade(hr appv1alpha1.HelmRelease, chart *chart.Chart, values chartutil.Values) (*release.Release, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	upgrade := action.NewUpgrade(r.config)
 	upgrade.Namespace = hr.Spec.TargetNamespace
 	upgrade.ResetValues = *hr.Spec.ResetValues
@@ -86,12 +90,16 @@ func (r *Runner) Upgrade(hr appv1alpha1.HelmRelease, chart *chart.Chart, values 
 	upgrade.Wait = *hr.Spec.Wait
 	upgrade.Force = *hr.Spec.ForceUpgrade
 	upgrade.CleanupOnFail = true
+	upgrade.Devel = true
+	upgrade.Install = true
 	rel, err := upgrade.Run(hr.Spec.ReleaseName, chart, values.AsMap())
 	return rel, err
 }
 
 // Test runs an Helm test action for the given v2beta1.HelmRelease.
 func (r *Runner) Test(hr appv1alpha1.HelmRelease) (*release.Release, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	test := action.NewReleaseTesting(r.config)
 	test.Namespace = hr.Spec.TargetNamespace
 	test.Timeout = hr.Spec.Test.Timeout.Duration
@@ -99,8 +107,9 @@ func (r *Runner) Test(hr appv1alpha1.HelmRelease) (*release.Release, error) {
 	return test.Run(hr.Spec.ReleaseName)
 }
 
-// Rollback runs an Helm rollback action for the given v2beta1.HelmRelease.
 func (r *Runner) Rollback(hr appv1alpha1.HelmRelease) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	rollback := action.NewRollback(r.config)
 	rollback.Timeout = hr.Spec.Rollback.Timeout.Duration
 	rollback.Wait = hr.Spec.Rollback.Wait
@@ -111,8 +120,9 @@ func (r *Runner) Rollback(hr appv1alpha1.HelmRelease) error {
 	return rollback.Run(hr.Spec.ReleaseName)
 }
 
-// Uninstall runs an Helm uninstall action for the given v2beta1.HelmRelease.
 func (r *Runner) Uninstall(hr appv1alpha1.HelmRelease) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	uninstall := action.NewUninstall(r.config)
 	uninstall.Timeout = hr.Spec.Timeout.Duration
 	uninstall.DisableHooks = false
@@ -138,6 +148,8 @@ func (r *Runner) Uninstall(hr appv1alpha1.HelmRelease) error {
 }
 
 func (r *Runner) Status(hr appv1alpha1.HelmRelease) (*release.Release, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	status := action.NewStatus(r.config)
 	rel, err := status.Run(hr.Spec.ReleaseName)
 	if err != nil {
@@ -147,6 +159,8 @@ func (r *Runner) Status(hr appv1alpha1.HelmRelease) (*release.Release, error) {
 }
 
 func (r *Runner) List() ([]*release.Release, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	list := action.NewList(r.config)
 	list.AllNamespaces = true
 	list.All = true
@@ -156,6 +170,8 @@ func (r *Runner) List() ([]*release.Release, error) {
 // ObserveLastRelease observes the last revision, if there is one,
 // for the actual Helm release associated with the given v2beta1.HelmRelease.
 func (r *Runner) ObserveLastRelease(hr appv1alpha1.HelmRelease) (*release.Release, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	rel, err := r.config.Releases.Last(hr.Spec.ReleaseName)
 	if err != nil && errors.Is(err, driver.ErrReleaseNotFound) {
 		err = nil

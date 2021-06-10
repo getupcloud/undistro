@@ -2,6 +2,8 @@
 apiVersion: app.undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
+  annotations:
+    security.undistro.io/kyverno: ""
   name: "kyverno-{{.Cluster.Name}}"
   namespace: "{{.Cluster.Namespace}}"
 spec:
