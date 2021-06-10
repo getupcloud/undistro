@@ -24,6 +24,7 @@ require (
 	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.9.0
 	k8s.io/kubectl v0.21.1
+	k8s.io/utils v0.0.0-20210527160623-6fdb442a123b
 	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/cluster-api v0.3.18
 	sigs.k8s.io/controller-runtime v0.9.0
