@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: traffic-deny
 spec:
+  validationFailureAction: enforce
   rules:
     - name: deny-all-traffic
       match:

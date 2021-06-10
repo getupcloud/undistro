@@ -254,6 +254,13 @@ func resetFailureCounts(hr *HelmRelease) {
 	hr.Status.UpgradeFailures = 0
 }
 
+func ResetHelmReleaseStatus(hr HelmRelease) HelmRelease {
+	hr.Status.LastAttemptedRevision = ""
+	hr.Status.LastReleaseRevision = 0
+	hr.Status.LastAttemptedValuesChecksum = ""
+	return hr
+}
+
 // +genclient
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:shortName=hr,scope=Namespaced

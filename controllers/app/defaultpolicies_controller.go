@@ -38,6 +38,7 @@ import (
 	"sigs.k8s.io/cluster-api/util/patch"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
@@ -181,7 +182,7 @@ func (r *DefaultPoliciesReconciler) applyPolicies(ctx context.Context, log logr.
 		if f.IsDir() {
 			continue
 		}
-
+		log = log.WithValues("policy", f.Name())
 		byt, err := fs.PoliciesFS.ReadFile(filepath.Join("policies", f.Name()))
 		if err != nil {
 			return p, err
@@ -209,6 +210,7 @@ func (r *DefaultPoliciesReconciler) applyPolicies(ctx context.Context, log logr.
 			}
 			_, err = util.CreateOrUpdate(ctx, clusterClient, &o)
 			if err != nil {
+				log.Info("failed to apply policy")
 				return p, err
 			}
 			p.Status.AppliedPolicies = append(p.Status.AppliedPolicies, o.GetName())
@@ -241,5 +243,6 @@ func (r *DefaultPoliciesReconciler) installKyverno(ctx context.Context, p appv1a
 func (r *DefaultPoliciesReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&appv1alpha1.DefaultPolicies{}).
+		WithOptions(controller.Options{MaxConcurrentReconciles: 10}).
 		Complete(r)
 }

@@ -20,7 +20,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"os"
-	"os/exec"
 	"time"
 
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
@@ -28,7 +27,6 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/capi"
 	"github.com/getupio-undistro/undistro/pkg/certmanager"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
-	"github.com/getupio-undistro/undistro/pkg/contour"
 	"github.com/getupio-undistro/undistro/pkg/helm"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
@@ -180,7 +178,15 @@ func (o *InstallOptions) installProviders(ctx context.Context, streams genericcl
 	return nil
 }
 
-func (o *InstallOptions) installChart(ctx context.Context, c client.Client, restGetter genericclioptions.RESTClientGetter, chartRepo *helm.ChartRepository, secretRef *corev1.LocalObjectReference, chartName string, overrideValues *apiextensionsv1.JSON) (*configv1alpha1.Provider, error) {
+func (o *InstallOptions) installChart(ctx context.Context, c client.Client, restGetter genericclioptions.RESTClientGetter, chartRepo *helm.ChartRepository, secretRef *corev1.LocalObjectReference, chartName string, overrideValuesMap map[string]interface{}) (*configv1alpha1.Provider, error) {
+	overrideValues := &apiextensionsv1.JSON{}
+	if len(overrideValuesMap) > 0 {
+		byt, err := json.Marshal(overrideValuesMap)
+		if err != nil {
+			return nil, err
+		}
+		overrideValues.Raw = byt
+	}
 	versions := chartRepo.Index.Entries[chartName]
 	if versions.Len() == 0 {
 		return nil, errors.Errorf("chart %s not found", chartName)
@@ -378,7 +384,7 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 	}
 	providers := make([]*configv1alpha1.Provider, 0)
 	if installCert {
-		provider, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cert-manager", getConfigFrom(cfg.CoreProviders, "cert-manager"))
+		provider, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cert-manager", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "cert-manager"))
 		if err != nil {
 			return err
 		}
@@ -409,7 +415,7 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		}
 	}
 	if installCapi {
-		providerCapi, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cluster-api", getConfigFrom(cfg.CoreProviders, "cluster-api"))
+		providerCapi, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cluster-api", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "cluster-api"))
 		if err != nil {
 			return err
 		}
@@ -427,26 +433,7 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 			return err
 		}
 	}
-	installContour := false
-	contourObjs, err := util.ToUnstructured([]byte(contour.TestResources))
-	if err != nil {
-		return err
-	}
-	for _, o := range contourObjs {
-		_, errContour := util.CreateOrUpdate(cmd.Context(), c, &o)
-		if errContour != nil {
-			installContour = true
-			break
-		}
-	}
-	if installContour {
-		providerContour, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "contour", getConfigFrom(cfg.CoreProviders, "contour"))
-		if err != nil {
-			return err
-		}
-		providers = append(providers, providerContour)
 
-	}
 	installUndistro := false
 	undistroObjs, err := util.ToUnstructured([]byte(undistro.TestResources))
 	if err != nil {
@@ -460,7 +447,12 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		}
 	}
 	if installUndistro {
-		providerUndistro, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "undistro", getConfigFrom(cfg.CoreProviders, "undistro"))
+		providerNginx, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "ingress-nginx", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "ingress-nginx"))
+		if err != nil {
+			return err
+		}
+		providers = append(providers, providerNginx)
+		providerUndistro, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "undistro", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro"))
 		if err != nil {
 			return err
 		}
@@ -549,21 +541,6 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 			}
 		}
 		if ready {
-			isKind, err := util.IsKindCluster(cmd.Context(), c)
-			if err != nil {
-				return err
-			}
-			if isKind {
-				fmt.Fprintf(o.IOStreams.Out, "\n")
-				patchCmd := exec.CommandContext(cmd.Context(), "undistro", "patch", "daemonsets", "-n", "undistro-system", "envoy", "-p", contour.PatchLocal)
-				patchCmd.Stdin = o.IOStreams.In
-				patchCmd.Stderr = o.IOStreams.ErrOut
-				patchCmd.Stdout = o.IOStreams.Out
-				err = patchCmd.Run()
-				if err != nil {
-					return err
-				}
-			}
 			fmt.Fprintln(o.IOStreams.Out, "\n\nManagement cluster is ready to use.")
 			return nil
 		}

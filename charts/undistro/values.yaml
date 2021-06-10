@@ -1,10 +1,10 @@
-devEnv: false
+local: false
 ingress:
   enabled: true
-  fqdn: undistro.local
-  annotations:
-    kubernetes.io/ingress.class: contour
-    projectcontour.io/ingress.class: contour
+  host: localhost
+  tls:
+    email: undistro@getup.io
+  annotations: {}
 resources:
   limits:
     cpu: "2"
@@ -14,6 +14,6 @@ resources:
     memory: 256Mi
 image:
   repository: getupioundistro/undistro
-  tag: v0.26.10
+  tag: v0.29.1
   pullPolicy: IfNotPresent
   pullSecrets: []
