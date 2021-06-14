@@ -3,20 +3,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: 
   labels: 
-    app: pinniped-concierge
-  name: pinniped-concierge
-  namespace: undistro-system
+    app: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}
+  namespace: {{ .Values.metadata.namespace }}
 spec: 
-  replicas: 2
-  selector: 
+  replicas: {{ .Values.replicaCount }}
+  selector:
     matchLabels: 
-      app: pinniped-concierge
+      app: {{ .Values.metadata.labels.app }}
   template: 
     metadata: 
       annotations: 
         scheduler.alpha.kubernetes.io/critical-pod: ""
       labels: 
-        app: pinniped-concierge
+        app: {{ .Values.metadata.labels.app }}
     spec: 
       affinity: 
         podAntiAffinity: 
@@ -25,7 +25,7 @@ spec:
               podAffinityTerm: 
                 labelSelector: 
                   matchLabels: 
-                    app: pinniped-concierge
+                    app: {{ .Values.metadata.labels.app }}
                 topologyKey: kubernetes.io/hostname
               weight: 50
       containers: 
@@ -33,19 +33,19 @@ spec:
           args: 
             - "--config=/etc/config/pinniped.yaml"
             - "--downward-api-path=/etc/podinfo"
-          image: "projects.registry.vmware.com/pinniped/pinniped-server:0.9.1"
-          imagePullPolicy: IfNotPresent
-          livenessProbe: 
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          name: {{ .Values.metadata.name }}
+          livenessProbe:
             failureThreshold: 5
-            httpGet: 
+            httpGet:
               path: /healthz
               port: 8443
               scheme: HTTPS
             initialDelaySeconds: 2
             periodSeconds: 10
             timeoutSeconds: 15
-          name: pinniped-concierge
-          readinessProbe: 
+          readinessProbe:
             failureThreshold: 3
             httpGet: 
               path: /healthz
@@ -56,11 +56,11 @@ spec:
             timeoutSeconds: 3
           resources: 
             limits: 
-              cpu: 100m
-              memory: 128Mi
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
             requests: 
-              cpu: 100m
-              memory: 128Mi
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
           volumeMounts: 
             - 
               mountPath: /etc/config
@@ -68,10 +68,11 @@ spec:
             - 
               mountPath: /etc/podinfo
               name: podinfo
-      securityContext: 
-        runAsGroup: 1001
-        runAsUser: 1001
-      serviceAccountName: pinniped-concierge
+      securityContext:
+        runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+      serviceAccountName: {{ .Values.service.name }}
       tolerations: 
         - 
           key: CriticalAddonsOnly

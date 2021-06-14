@@ -7,7 +7,7 @@ type: application
 version: "0.9.1"
 appVersion: "0.9.1"
  
-home: "http://pinniped.dev/"
+home: "https://pinniped.dev/"
 
 maintainers:
   - name: Undistro Authors

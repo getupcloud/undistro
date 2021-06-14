@@ -1,9 +1,15 @@
 replicaCount: 2
 
 image:
-  repository: projects.registry.vmware.com/pinniped/pinniped-server
+  repository: "projects.registry.vmware.com/pinniped/pinniped-server"
   pullPolicy: IfNotPresent  
-  tag: 'v0.9.1'
+  tag: "v0.9.1"
+
+metadata:
+  name: pinniped-concierge
+  namespace: undistro-system
+  labels:
+    app: pinniped-concierge
 
 resources:
   requests:
@@ -13,16 +19,10 @@ resources:
     cpu: 100m
     memory: 128Mi
 
-podSecurityContext:
-  fsGroup: 1001
-
 securityContext:
-  capabilities:
-    drop:
-    - ALL
-  readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 1001
+  runAsGroup: 1001
 
 service:
   type: ClusterIP
