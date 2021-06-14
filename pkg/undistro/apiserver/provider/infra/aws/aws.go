@@ -32,10 +32,10 @@ import (
 )
 
 type ec2InstanceType struct {
-	InstanceType      string  `json:"instance_type,omitempty"`
-	AvailabilityZones []string  `json:"availability_zones,omitempty"`
-	VCPUs             int     `json:"vcpus,omitempty"`
-	Memory            float64 `json:"memory,omitempty"`
+	InstanceType      string   `json:"instance_type,omitempty"`
+	AvailabilityZones []string `json:"availability_zones,omitempty"`
+	VCPUs             int      `json:"vcpus,omitempty"`
+	Memory            float64  `json:"memory,omitempty"`
 }
 
 var (
