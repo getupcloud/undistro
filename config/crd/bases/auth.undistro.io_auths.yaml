@@ -43,22 +43,6 @@ spec:
             type: object
           status:
             description: AuthStatus defines the observed state of Auth
-            properties:
-              failures:
-                description: Failures is the reconciliation failure count against
-                  the latest desired state. It is reset after a successful reconciliation.
-                format: int64
-                type: integer
-              installFailures:
-                description: InstallFailures is the install failure count against
-                  the latest desired state. It is reset after a successful reconciliation.
-                format: int64
-                type: integer
-              upgradeFailures:
-                description: UpgradeFailures is the upgrade failure count against
-                  the latest desired state. It is reset after a successful reconciliation.
-                format: int64
-                type: integer
             type: object
         type: object
     served: true

@@ -36,19 +36,6 @@ type AuthSpec struct {
 type AuthStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-	Conditions []metav1.Condition
-
-	// Failures is the reconciliation failure count against the latest desired
-	// state. It is reset after a successful reconciliation.
-	Failures int64 `json:"failures,omitempty"`
-
-	// InstallFailures is the install failure count against the latest desired
-	// state. It is reset after a successful reconciliation.
-	InstallFailures int64 `json:"installFailures,omitempty"`
-
-	// UpgradeFailures is the upgrade failure count against the latest desired
-	// state. It is reset after a successful reconciliation.
-	UpgradeFailures int64 `json:"upgradeFailures,omitempty"`
 }
 
 //+kubebuilder:object:root=true
