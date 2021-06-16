@@ -3,15 +3,15 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata: 
   labels: 
-    app: pinniped-supervisor
-  name: pinniped-supervisor
-  namespace: undistro-system
+    name: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}
+  namespace: {{ .Values.metadata.namespace }}
 roleRef: 
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: pinniped-supervisor
+  name: {{ .Values.metadata.name }}
 subjects: 
   - 
     kind: ServiceAccount
-    name: pinniped-supervisor
-    namespace: undistro-system
+    name: {{ .Values.metadata.name }}
+    namespace: {{ .Values.metadata.namespace }}

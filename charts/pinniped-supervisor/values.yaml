@@ -3,8 +3,11 @@ image:
   pullPolicy: IfNotPresent
   repository: projects.registry.vmware.com/pinniped/pinniped-server
   tag: v0.9.1
-podSecurityContext: 
-  fsGroup: 1001
+metadata: 
+  labels: 
+    app: pinniped-supervisor
+  name: pinniped-supervisor
+  namespace: undistro-system
 replicaCount: 2
 resources: 
   limits: 
@@ -14,10 +17,7 @@ resources:
     cpu: 100m
     memory: 128Mi
 securityContext: 
-  capabilities: 
-    drop: 
-      - ALL
-  readOnlyRootFilesystem: true
+  runAsGroup: 1001
   runAsNonRoot: true
   runAsUser: 1001
 service: 

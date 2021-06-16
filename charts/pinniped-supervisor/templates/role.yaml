@@ -3,9 +3,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata: 
   labels: 
-    app: pinniped-supervisor
-  name: pinniped-supervisor
-  namespace: undistro-system
+    name: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}
+  namespace: {{ .Values.metadata.namespace }}
 rules: 
   - 
     apiGroups: 

@@ -3,9 +3,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata: 
   labels: 
-    app: pinniped-supervisor
-  name: pinniped-supervisor-static-config
-  namespace: undistro-system
+    name: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}-static-config
+  namespace: {{ .Values.metadata.namespace }}
 data: 
   pinniped.yaml: |-
       apiGroupSuffix: pinniped.dev

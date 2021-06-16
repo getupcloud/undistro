@@ -1,29 +1,25 @@
-replicaCount: 2
-
-image:
-  repository: "projects.registry.vmware.com/pinniped/pinniped-server"
-  pullPolicy: IfNotPresent  
-  tag: "v0.9.1"
-
-metadata:
+--- 
+image: 
+  pullPolicy: IfNotPresent
+  repository: projects.registry.vmware.com/pinniped/pinniped-server
+  tag: v0.9.1
+metadata: 
+  labels: 
+    app: pinniped-concierge
   name: pinniped-concierge
   namespace: undistro-system
-  labels:
-    app: pinniped-concierge
-
-resources:
-  requests:
+replicaCount: 2
+resources: 
+  limits: 
     cpu: 100m
     memory: 128Mi
-  limits:
+  requests: 
     cpu: 100m
     memory: 128Mi
-
-securityContext:
+securityContext: 
+  runAsGroup: 1001
   runAsNonRoot: true
   runAsUser: 1001
-  runAsGroup: 1001
-
-service:
-  type: ClusterIP
+service: 
   port: 443
+  type: ClusterIP
