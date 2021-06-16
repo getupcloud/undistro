@@ -1,0 +1,7 @@
+apiVersion: auth.undistro.io/v1alpha1
+kind: Auth
+metadata:
+  name: auth-sample
+spec:
+  # Add fields here
+  foo: bar
