@@ -3,9 +3,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata: 
   labels: 
-    app: pinniped-concierge
-  name: pinniped-concierge-aggregated-api-server
-  namespace: undistro-system
+    name: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}-aggregated-api-server
+  namespace: {{ .Values.metadata.namespace }}
 rules: 
   - 
     apiGroups: 

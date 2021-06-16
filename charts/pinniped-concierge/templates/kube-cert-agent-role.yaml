@@ -3,9 +3,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata: 
   labels: 
-    app: pinniped-concierge
-  name: pinniped-concierge-kube-cert-agent
-  namespace: undistro-system
+    name: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}-kube-cert-agent
+  namespace: {{ .Values.metadata.namespace }}
 rules: 
   - 
     apiGroups: 

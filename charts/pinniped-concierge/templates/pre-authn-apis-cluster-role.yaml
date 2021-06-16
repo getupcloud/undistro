@@ -3,8 +3,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata: 
   labels: 
-    app: pinniped-concierge
-  name: pinniped-concierge-pre-authn-apis
+    name: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}-pre-authn-apis
 rules: 
   - 
     apiGroups: 

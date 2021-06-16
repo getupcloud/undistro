@@ -3,8 +3,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata: 
   labels: 
-    app: pinniped-concierge
-  name: pinniped-concierge-kube-system-pod-read
+    name: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}-kube-system-pod-read
   namespace: kube-system
 rules: 
   - 

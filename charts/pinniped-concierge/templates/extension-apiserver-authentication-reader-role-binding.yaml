@@ -3,8 +3,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata: 
   labels: 
-    app: pinniped-concierge
-  name: pinniped-concierge-extension-apiserver-authentication-reader
+    name: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}-extension-apiserver-authentication-reader
   namespace: kube-system
 roleRef: 
   apiGroup: rbac.authorization.k8s.io
@@ -13,5 +13,5 @@ roleRef:
 subjects: 
   - 
     kind: ServiceAccount
-    name: pinniped-concierge
-    namespace: undistro-system
+    name: {{ .Values.metadata.name }}
+    namespace: {{ .Values.metadata.namespace }}

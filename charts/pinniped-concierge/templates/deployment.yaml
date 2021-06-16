@@ -34,7 +34,7 @@ spec:
             - "--config=/etc/config/pinniped.yaml"
             - "--downward-api-path=/etc/podinfo"
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: {{ .Values.metadata.name }}
           livenessProbe:
             failureThreshold: 5
@@ -72,7 +72,7 @@ spec:
         runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
         runAsGroup: {{ .Values.securityContext.runAsGroup }}
         runAsUser: {{ .Values.securityContext.runAsUser }}
-      serviceAccountName: {{ .Values.service.name }}
+      serviceAccountName: {{ .Values.metadata.name }}
       tolerations: 
         - 
           key: CriticalAddonsOnly
@@ -83,7 +83,7 @@ spec:
       volumes: 
         - 
           configMap: 
-            name: pinniped-concierge-config
+            name: {{ .Values.metadata.name }}-config
           name: config-volume
         - 
           downwardAPI: 

@@ -2,15 +2,15 @@
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: pinniped-concierge-cluster-info-lister-watcher
+  name: {{ .Values.metadata.name }}-cluster-info-lister-watcher
   namespace: kube-public
   labels:
-    app: pinniped-concierge
+    name: {{ .Values.metadata.labels.app }}
 subjects:
 - kind: ServiceAccount
-  name: pinniped-concierge
-  namespace: undistro-system
+  name: {{ .Values.metadata.name }}
+  namespace: {{ .Values.metadata.namespace }}
 roleRef:
   kind: Role
-  name: pinniped-concierge-cluster-info-lister-watcher
+  name: {{ .Values.metadata.name }}-cluster-info-lister-watcher
   apiGroup: rbac.authorization.k8s.io
