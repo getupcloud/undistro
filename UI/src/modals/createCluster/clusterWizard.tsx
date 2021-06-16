@@ -62,8 +62,6 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   //   })
   // }
 
-  console.log(regionOptions)
-
   const handleAction = () => {
     const cluster = {
       "name": clusterName,
@@ -146,10 +144,10 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   }
 
   const getMachineTypes: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional: any) => {
-    const res = await Api.Provider.listMetadata('aws', 'machine_types', '15', additional ? additional.page : 1)
+    const res = await Api.Provider.listMetadata('aws', 'machine_types', '15', additional ? additional.page : 1, region)
     const totalPages = res.TotalPages
-    const filteredMachineTypes = res.MachineTypes.filter((elm: any) => elm.availability_zones.split("|") === region)
-    console.log(res.MachineTypes.map((elm: any) => elm.availability_zones.split(" | ")))
+    const filteredMachineTypes = res.MachineTypes.filter((elm: any) => elm.availability_zones === region)
+    console.log(filteredMachineTypes)
     const machineTypes = res.MachineTypes.map((elm: Partial<{instance_type: string}>) => ({ value: elm.instance_type, label: elm.instance_type }))
     return {
       options: machineTypes,
@@ -158,24 +156,22 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     }
   }
 
-  const getZones = () => {
-    Api.Provider.listMetadata('aws', 'machine_types', '15', 1)
-      .then(res => {
-        const zones = res.MachineTypes.map((elm: any) => elm.availability_zones.split("|"))
-        console.log(zones)
-      })  
+  // const getMetadata = async () => {
+  //   const promises = []
 
-
-  }
-  const getRegion = () => {
-    Api.Provider.listMetadata('aws', 'regions', '24', 1)
-      .then(res => {  
-        setRegionOptions(res.map((elm: any) => ({ value: elm, label: elm })))
-      })
+  //   const fetchData = async (promise) => {
+  //     const res = await promise
+  //     return res;
+  //   }
+  // }
+  const getRegion = async () => {
+    const res = await Api.Provider.listMetadata('aws', 'regions', '24', 1, region)
+    
+    setRegionOptions(res.map((elm: any) => ({ value: elm, label: elm })))
   }
 
   const getCpu: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional: any) => {
-    const res = await Api.Provider.listMetadata('aws', 'machine_types', '15', additional ? additional.page : 1)
+    const res = await Api.Provider.listMetadata('aws', 'machine_types', '15', additional ? additional.page : 1, region)
     const totalPages = res.TotalPages
     const cpu = res.MachineTypes.map((elm: Partial<{vcpus: string}>) => ({ value: elm.vcpus, label: elm.vcpus }))
     return {

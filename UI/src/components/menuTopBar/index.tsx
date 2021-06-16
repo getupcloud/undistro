@@ -19,15 +19,7 @@ const MenuTopBar: FC = () => {
 					<Dropdown />
 				</li>
 				<li>
-					<p>Settings</p>
-					<Dropdown />
-				</li>
-				<li>
-					<p>User</p>
-					<Dropdown />
-				</li>
-				<li>
-					<p>Options</p>
+					<p>Preferences</p>
 					<Dropdown />
 				</li>
 			</ul>

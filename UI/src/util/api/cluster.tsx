@@ -18,7 +18,7 @@ class Cluster {
   }
 
   async postPolicies (data: {}) {
-    const url = 'namespaces/undistro-system/clusters/management/proxy/apis/app.undistro.io/v1alpha1/namespaces/default/defaultPolicies'
+    const url = 'namespaces/undistro-system/clusters/management/proxy/apis/app.undistro.io/v1alpha1/namespaces/default/defaultpolicies'
     const res = await this.http.post(url, data)
     return res.data
   }

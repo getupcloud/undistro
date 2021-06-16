@@ -22,6 +22,11 @@ const AsyncSelect: FC<Props> = ({
   loadOptions,
   value
 }) => {
+
+  const handleChange = (option: any) => {
+    onChange(option.value)
+  }
+
   return (
     <div className='select'>
     <div className='title-section'>
@@ -31,7 +36,7 @@ const AsyncSelect: FC<Props> = ({
     <AsyncPaginate
       defaultOptions
       loadOptions={loadOptions}
-      onChange={onChange}
+      onChange={(e) => handleChange(e)}
       classNamePrefix="select-container"
       value={value}
       additional={{ page: 1 }}
