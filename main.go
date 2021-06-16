@@ -45,8 +45,12 @@ func main() {
 	var metricsAddr string
 	var undistroApiAddr string
 	var enableLeaderElection bool
+	var enableAuth bool
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&undistroApiAddr, "undistro-api-addr", ":2020", "The address and port of the UnDistro API server")
+	flag.BoolVar(&enableAuth, "enable-auth", false,
+		"Enable auth management."+
+			"Enabling this will ensure that both mechanisms authn and authz are activates.")
 	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
@@ -105,6 +109,15 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "DefaultPolicies")
 		os.Exit(1)
 	}
+	if enableAuth {
+		if err = (&authcontrollers.AuthReconciler{
+			Client: mgr.GetClient(),
+			Scheme: mgr.GetScheme(),
+		}).SetupWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Auth")
+			os.Exit(1)
+		}
+	}
 	if err = (&configv1alpha1.Provider{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Provider")
 		os.Exit(1)
@@ -123,13 +136,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&authcontrollers.AuthReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Auth")
-		os.Exit(1)
-	}
 	// +kubebuilder:scaffold:builder
 	cerr := make(chan error)
 	done := make(chan struct{})
