@@ -1,6 +1,6 @@
 --- 
 apiVersion: v2
-appVersion: "0.9.2"
+appVersion: "0.9.1"
 description: "A Pinniped Supervisor Helm chart for Kubernetes"
 home: "http://pinniped.dev/"
 maintainers: 
@@ -8,4 +8,4 @@ maintainers:
     name: "Undistro Authors"
 name: pinniped-supervisor
 type: application
-version: "0.9.2"
+version: "0.9.1"
