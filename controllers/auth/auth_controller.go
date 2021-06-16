@@ -19,18 +19,20 @@ package auth
 import (
 	"context"
 
+	authv1alpha1 "github.com/getupio-undistro/undistro/apis/auth/v1alpha1"
+	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
-
-	authv1alpha1 "github.com/getupio-undistro/undistro/apis/auth/v1alpha1"
 )
 
 // AuthReconciler reconciles a Auth object
 type AuthReconciler struct {
 	client.Client
+	Log    logr.Logger
 	Scheme *runtime.Scheme
+	config *rest.Config
 }
 
 //+kubebuilder:rbac:groups=auth.undistro.io,resources=auths,verbs=get;list;watch;create;update;patch;delete
@@ -47,9 +49,8 @@ type AuthReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.8.3/pkg/reconcile
 func (r *AuthReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
-
-	// your logic here
+	// desired state?
+	// pinniped and concierge installed
 
 	return ctrl.Result{}, nil
 }
