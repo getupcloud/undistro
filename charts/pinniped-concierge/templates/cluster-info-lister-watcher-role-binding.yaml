@@ -5,7 +5,7 @@ metadata:
   name: {{ .Values.metadata.name }}-cluster-info-lister-watcher
   namespace: kube-public
   labels:
-    name: {{ .Values.metadata.labels.app }}
+    app: {{ .Values.metadata.labels.app }}
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.metadata.name }}

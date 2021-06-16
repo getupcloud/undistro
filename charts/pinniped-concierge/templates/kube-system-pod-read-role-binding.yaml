@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata: 
   labels: 
-    name: {{ .Values.metadata.labels.app }}
+    app: {{ .Values.metadata.labels.app }}
   name: {{ .Values.metadata.name }}-kube-system-pod-read
   namespace: kube-system
 roleRef: 

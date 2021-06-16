@@ -3,18 +3,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: 
   labels: 
-    name: {{ .Values.metadata.labels.app }}
+    app: {{ .Values.metadata.labels.app }}
   name: {{ .Values.metadata.name }}
   namespace: {{ .Values.metadata.namespace }}
 spec: 
   replicas: {{ .Values.replicaCount }}
   selector: 
     matchLabels: 
-      name: {{ .Values.metadata.labels.app }}
+      app: {{ .Values.metadata.labels.app }}
   template: 
     metadata: 
       labels: 
-        name: {{ .Values.metadata.labels.app }}
+        app: {{ .Values.metadata.labels.app }}
     spec: 
       affinity: 
         podAntiAffinity: 
@@ -23,7 +23,7 @@ spec:
               podAffinityTerm: 
                 labelSelector: 
                   matchLabels: 
-                    name: {{ .Values.metadata.labels.app }}
+                    app: {{ .Values.metadata.labels.app }}
                 topologyKey: kubernetes.io/hostname
               weight: 50
       containers: 

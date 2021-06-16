@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata: 
   labels: 
-    name: {{ .Values.metadata.labels.app }}
+    app: {{ .Values.metadata.labels.app }}
   name: {{ .Values.metadata.name }}-config
   namespace: {{ .Values.metadata.namespace }}
 data: 
