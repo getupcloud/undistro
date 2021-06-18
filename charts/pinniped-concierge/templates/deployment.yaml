@@ -1,0 +1,103 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  labels: 
+    app: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}
+  namespace: {{ .Values.metadata.namespace }}
+spec: 
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels: 
+      app: {{ .Values.metadata.labels.app }}
+  template: 
+    metadata: 
+      annotations: 
+        scheduler.alpha.kubernetes.io/critical-pod: ""
+      labels: 
+        app: {{ .Values.metadata.labels.app }}
+    spec: 
+      affinity: 
+        podAntiAffinity: 
+          preferredDuringSchedulingIgnoredDuringExecution: 
+            - 
+              podAffinityTerm: 
+                labelSelector: 
+                  matchLabels: 
+                    app: {{ .Values.metadata.labels.app }}
+                topologyKey: kubernetes.io/hostname
+              weight: 50
+      containers: 
+        - 
+          args: 
+            - "--config=/etc/config/pinniped.yaml"
+            - "--downward-api-path=/etc/podinfo"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: {{ .Values.metadata.name }}
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 15
+          readinessProbe:
+            failureThreshold: 3
+            httpGet: 
+              path: /healthz
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources: 
+            limits: 
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests: 
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+          volumeMounts: 
+            - 
+              mountPath: /etc/config
+              name: config-volume
+            - 
+              mountPath: /etc/podinfo
+              name: podinfo
+      securityContext:
+        runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+      serviceAccountName: {{ .Values.metadata.name }}
+      tolerations: 
+        - 
+          key: CriticalAddonsOnly
+          operator: Exists
+        - 
+          effect: NoSchedule
+          key: node-role.kubernetes.io/master
+      volumes: 
+        - 
+          configMap: 
+            name: {{ .Values.metadata.name }}-config
+          name: config-volume
+        - 
+          downwardAPI: 
+            items: 
+              - 
+                fieldRef: 
+                  fieldPath: metadata.labels
+                path: labels
+              - 
+                fieldRef: 
+                  fieldPath: metadata.name
+                path: name
+              - 
+                fieldRef: 
+                  fieldPath: metadata.namespace
+                path: namespace
+          name: podinfo
