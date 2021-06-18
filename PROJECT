@@ -1,17 +1,7 @@
 domain: undistro.io
+layout:
+- go.kubebuilder.io/v3
 multigroup: true
+projectName: undistro
 repo: github.com/getupio-undistro/undistro
-resources:
-- group: app
-  kind: Cluster
-  version: v1alpha1
-- group: app
-  kind: DefaultPolicies
-  version: v1alpha1
-- group: app
-  kind: HelmRelease
-  version: v1alpha1
-- group: config
-  kind: Provider
-  version: v1alpha1
 version: "3"
