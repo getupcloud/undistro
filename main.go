@@ -164,6 +164,17 @@ func main() {
 		setupLog.Error(err, "unable to create webhook", "webhook", "DefaultPolicies")
 		os.Exit(1)
 	}
+	if err = (&configv1alpha1.Provider{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "Provider")
+		os.Exit(1)
+	}
+	if err = (&appcontrollers.ClusterReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Cluster")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 	cerr := make(chan error)
 	done := make(chan struct{})
