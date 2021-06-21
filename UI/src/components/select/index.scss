@@ -106,7 +106,7 @@
 
       &--is-selected {
         background-color: $blackground;
-        color: var(--gray-blue-2, $gray-blue-2);
+        color: var(--text, $text);
         font-weight: 600;
       }
 

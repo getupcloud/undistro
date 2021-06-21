@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import Dropdown from '@components/dropdownMenu'
+// import Dropdown from '@components/dropdownMenu'
 import Logo from '@assets/images/logo.png'
 import './index.scss'
 
@@ -12,23 +12,12 @@ const MenuTopBar: FC = () => {
 			<ul>
 				<li>
 					<p>Create</p>
-					<Dropdown />
 				</li>
 				<li>
 					<p>Manage</p>
-					<Dropdown />
 				</li>
 				<li>
-					<p>Settings</p>
-					<Dropdown />
-				</li>
-				<li>
-					<p>User</p>
-					<Dropdown />
-				</li>
-				<li>
-					<p>Options</p>
-					<Dropdown />
+					<p>Preferences</p>
 				</li>
 			</ul>
 		</div>

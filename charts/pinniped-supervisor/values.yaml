@@ -1,0 +1,25 @@
+--- 
+image: 
+  pullPolicy: IfNotPresent
+  repository: projects.registry.vmware.com/pinniped/pinniped-server
+  tag: v0.9.2
+metadata: 
+  labels: 
+    app: pinniped-supervisor
+  name: pinniped-supervisor
+  namespace: undistro-system
+replicaCount: 2
+resources: 
+  limits: 
+    cpu: 100m
+    memory: 128Mi
+  requests: 
+    cpu: 100m
+    memory: 128Mi
+securityContext: 
+  runAsGroup: 1001
+  runAsNonRoot: true
+  runAsUser: 1001
+service: 
+  port: 443
+  type: ClusterIP

@@ -3,9 +3,9 @@ import cn from 'classnames'
 import './index.scss'
 
 type Props = {
-  label: string,
+  label?: string,
   value: boolean,
-  onChange: () => void
+  onChange: Function
 }
 
 const Toggle: FC<Props> = ({
@@ -14,14 +14,14 @@ const Toggle: FC<Props> = ({
   onChange
 }) => {
   const style = cn('toggle', {
-    '--right': value,
+    '--right': !value,
     '--left': value
   })
 
   return (
     <div className='toggle-container'>
       <label>{label}</label>
-      <div className={style} onClick={() => onChange()} />
+      <div className={style} onClick={() => onChange(!value)} />
     </div>
   )
 }

@@ -1,0 +1,102 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  labels: 
+    app: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}
+  namespace: {{ .Values.metadata.namespace }}
+spec: 
+  replicas: {{ .Values.replicaCount }}
+  selector: 
+    matchLabels: 
+      app: {{ .Values.metadata.labels.app }}
+  template: 
+    metadata: 
+      labels: 
+        app: {{ .Values.metadata.labels.app }}
+    spec: 
+      affinity: 
+        podAntiAffinity: 
+          preferredDuringSchedulingIgnoredDuringExecution: 
+            - 
+              podAffinityTerm: 
+                labelSelector: 
+                  matchLabels: 
+                    app: {{ .Values.metadata.labels.app }}
+                topologyKey: kubernetes.io/hostname
+              weight: 50
+      containers: 
+        - 
+          args: 
+            - /etc/podinfo
+            - /etc/config/pinniped.yaml
+          command: 
+            - /usr/local/bin/pinniped-supervisor
+          image: "projects.registry.vmware.com/pinniped/pinniped-server:v0.9.1"
+          imagePullPolicy: IfNotPresent
+          livenessProbe: 
+            failureThreshold: 5
+            httpGet: 
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 15
+          name: {{ .Values.metadata.name }}
+          ports: 
+            - 
+              containerPort: 8080
+              protocol: TCP
+            - 
+              containerPort: 8443
+              protocol: TCP
+          readinessProbe: 
+            failureThreshold: 3
+            httpGet: 
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources: 
+            limits: 
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests: 
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+          volumeMounts: 
+            - 
+              mountPath: /etc/config
+              name: config-volume
+            - 
+              mountPath: /etc/podinfo
+              name: podinfo
+      securityContext: 
+        runAsGroup: 1001
+        runAsUser: 1001
+      serviceAccountName: pinniped-supervisor
+      volumes: 
+        - 
+          configMap: 
+            name: {{ .Values.metadata.name }}-static-config
+          name: config-volume
+        - 
+          downwardAPI: 
+            items: 
+              - 
+                fieldRef: 
+                  fieldPath: metadata.labels
+                path: labels
+              - 
+                fieldRef: 
+                  fieldPath: metadata.namespace
+                path: namespace
+              - 
+                fieldRef: 
+                  fieldPath: metadata.name
+                path: name
+          name: podinfo

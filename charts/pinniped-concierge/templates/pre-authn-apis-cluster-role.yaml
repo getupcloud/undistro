@@ -1,0 +1,24 @@
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata: 
+  labels: 
+    app: {{ .Values.metadata.labels.app }}
+  name: {{ .Values.metadata.name }}-pre-authn-apis
+rules: 
+  - 
+    apiGroups: 
+      - login.concierge.pinniped.dev
+    resources: 
+      - tokencredentialrequests
+    verbs: 
+      - create
+      - list
+  - 
+    apiGroups: 
+      - identity.concierge.pinniped.dev
+    resources: 
+      - whoamirequests
+    verbs: 
+      - create
+      - list
