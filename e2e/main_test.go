@@ -59,8 +59,9 @@ func TestMain(m *testing.M) {
 		exec.WithCommand("docker"),
 		exec.WithArgs("build", "-t", image, "../"),
 	)
-	stout, _, err := cmd.Run(ctx)
+	stout, stderr, err := cmd.Run(ctx)
 	if err != nil {
+		fmt.Println(string(stderr))
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
