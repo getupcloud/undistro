@@ -1,9 +1,16 @@
 {
     "arrow-down": "\\f101",
-    "arrow-up": "\\f102",
-    "close": "\\f103",
-    "cluster": "\\f104",
-    "git": "\\f105",
-    "network": "\\f106",
-    "workload": "\\f107"
+    "arrow-solid-up": "\\f102",
+    "arrow-up": "\\f103",
+    "close-solid": "\\f104",
+    "close": "\\f105",
+    "cluster": "\\f106",
+    "dots": "\\f107",
+    "git": "\\f108",
+    "helm": "\\f109",
+    "network": "\\f10a",
+    "node": "\\f10b",
+    "settings": "\\f10c",
+    "stop": "\\f10d",
+    "workload": "\\f10e"
 }
