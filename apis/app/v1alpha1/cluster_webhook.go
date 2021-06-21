@@ -48,7 +48,7 @@ func (r *Cluster) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-//+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-cluster,mutating=true,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=mcluster.kb.io,admissionReviewVersions={v1,v1beta1}
+//+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-cluster,mutating=true,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=mcluster.undistro.io,admissionReviewVersions=v1beta1
 
 var _ webhook.Defaulter = &Cluster{}
 
@@ -97,7 +97,7 @@ func (r *Cluster) Default() {
 	}
 }
 
-//+kubebuilder:webhook:path=/validate-app-undistro-io-v1alpha1-cluster,mutating=false,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=vcluster.kb.io,admissionReviewVersions={v1,v1beta1}
+//+kubebuilder:webhook:path=/validate-app-undistro-io-v1alpha1-cluster,mutating=false,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=vcluster.undistro.io,admissionReviewVersions=v1beta1
 
 var _ webhook.Validator = &Cluster{}
 

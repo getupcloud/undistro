@@ -27,12 +27,13 @@ import (
 var defaultpolicieslog = logf.Log.WithName("defaultpolicies-resource")
 
 func (r *DefaultPolicies) SetupWebhookWithManager(mgr ctrl.Manager) error {
+	if k8sClient == nil {
+		k8sClient = mgr.GetClient()
+	}
 	return ctrl.NewWebhookManagedBy(mgr).
 		For(r).
 		Complete()
 }
-
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
 //+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-defaultpolicies,mutating=true,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=defaultpolicies,verbs=create;update,versions=v1alpha1,name=mdefaultpolicies.kb.io,admissionReviewVersions={v1,v1beta1}
 
