@@ -4,4 +4,23 @@ layout:
 multigroup: true
 projectName: undistro
 repo: github.com/getupio-undistro/undistro
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: undistro.io
+  group: config
+  kind: Provider
+  path: github.com/getupio-undistro/undistro/apis/config/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: undistro.io
+  group: app
+  kind: Cluster
+  path: github.com/getupio-undistro/undistro/apis/app/v1alpha1
+  version: v1alpha1
 version: "3"
