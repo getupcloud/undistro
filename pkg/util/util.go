@@ -226,25 +226,6 @@ func IsControlPlaneMachine(machine *capi.Machine) bool {
 	return ok
 }
 
-func GetProviderMachinesUnstructured(ctx context.Context, c client.Client, list *capi.MachineList) (*unstructured.UnstructuredList, error) {
-	machines := unstructured.UnstructuredList{}
-	for _, m := range list.Items {
-		o := unstructured.Unstructured{}
-		ref := m.Spec.InfrastructureRef
-		key := client.ObjectKey{
-			Name:      ref.Name,
-			Namespace: ref.Namespace,
-		}
-		o.SetGroupVersionKind(ref.GroupVersionKind())
-		err := c.Get(ctx, key, &o)
-		if err != nil {
-			return nil, err
-		}
-		machines.Items = append(machines.Items, o)
-	}
-	return &machines, nil
-}
-
 func ContainsStringInSlice(ss []string, str string) bool {
 	for _, s := range ss {
 		if s == str {
