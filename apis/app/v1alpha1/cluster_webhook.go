@@ -19,18 +19,18 @@ package v1alpha1
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"strings"
+	"unicode"
+
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/util"
 	"github.com/getupio-undistro/undistro/pkg/version"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/util/validation/field"
-	"reflect"
-	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
-	"strings"
-	"unicode"
-
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/validation/field"
+	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -48,7 +48,7 @@ func (r *Cluster) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-//+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-cluster,mutating=true,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=mcluster.undistro.io,admissionReviewVersions=v1beta1
+//+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-cluster,mutating=true,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=mcluster.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Defaulter = &Cluster{}
 
@@ -97,7 +97,7 @@ func (r *Cluster) Default() {
 	}
 }
 
-//+kubebuilder:webhook:path=/validate-app-undistro-io-v1alpha1-cluster,mutating=false,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=vcluster.undistro.io,admissionReviewVersions=v1beta1
+//+kubebuilder:webhook:path=/validate-app-undistro-io-v1alpha1-cluster,mutating=false,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=clusters,verbs=create;update,versions=v1alpha1,name=vcluster.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Validator = &Cluster{}
 

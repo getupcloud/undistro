@@ -17,8 +17,17 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"context"
+	"fmt"
+
+	"github.com/getupio-undistro/undistro/pkg/meta"
+	"github.com/getupio-undistro/undistro/pkg/util"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/validation/field"
+	capi "sigs.k8s.io/cluster-api/api/v1alpha3"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
@@ -35,42 +44,78 @@ func (r *DefaultPolicies) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-//+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-defaultpolicies,mutating=true,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=defaultpolicies,verbs=create;update,versions=v1alpha1,name=mdefaultpolicies.kb.io,admissionReviewVersions={v1,v1beta1}
+//+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-defaultpolicies,mutating=true,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=defaultpolicies,verbs=create;update,versions=v1alpha1,name=mdefaultpolicies.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Defaulter = &DefaultPolicies{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (r *DefaultPolicies) Default() {
 	defaultpolicieslog.Info("default", "name", r.Name)
-
-	// TODO(user): fill in your defaulting logic.
+	if r.Labels == nil {
+		r.Labels = make(map[string]string)
+	}
+	r.Labels[meta.LabelUndistro] = ""
+	key := util.ObjectKeyFromString(r.Spec.ClusterName)
+	r.Labels[meta.LabelUndistroClusterName] = key.Name
+	r.Labels[capi.ClusterLabelName] = r.Name
+	if r.Spec.ClusterName == "" {
+		r.Labels[meta.LabelUndistroClusterType] = "management"
+	} else {
+		r.Labels[meta.LabelUndistroClusterType] = "workload"
+	}
 }
 
-// TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-//+kubebuilder:webhook:path=/validate-app-undistro-io-v1alpha1-defaultpolicies,mutating=false,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=defaultpolicies,verbs=create;update,versions=v1alpha1,name=vdefaultpolicies.kb.io,admissionReviewVersions={v1,v1beta1}
+//+kubebuilder:webhook:path=/validate-app-undistro-io-v1alpha1-defaultpolicies,mutating=false,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=defaultpolicies,verbs=create;update,versions=v1alpha1,name=vdefaultpolicies.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Validator = &DefaultPolicies{}
+
+func (r *DefaultPolicies) validate(old *DefaultPolicies) error {
+	var allErrs field.ErrorList
+	if old != nil && old.Spec.ClusterName != r.Spec.ClusterName {
+		allErrs = append(allErrs, field.Invalid(
+			field.NewPath("spec", "clusterName"),
+			r.Spec.ClusterName,
+			"field is immutable",
+		))
+	}
+	if r.Spec.ClusterName != "" {
+		cl := Cluster{}
+		key := client.ObjectKey{
+			Name:      r.Spec.ClusterName,
+			Namespace: r.GetNamespace(),
+		}
+		err := k8sClient.Get(context.TODO(), key, &cl)
+		if err != nil {
+			allErrs = append(allErrs, field.NotFound(
+				field.NewPath("spec", "clusterName"),
+				r.Spec.ClusterName,
+			))
+		}
+	}
+	if len(allErrs) == 0 {
+		return nil
+	}
+	return apierrors.NewInvalid(GroupVersion.WithKind("DefaultPolicies").GroupKind(), r.Name, allErrs)
+}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *DefaultPolicies) ValidateCreate() error {
 	defaultpolicieslog.Info("validate create", "name", r.Name)
-
-	// TODO(user): fill in your validation logic upon object creation.
-	return nil
+	return r.validate(nil)
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (r *DefaultPolicies) ValidateUpdate(old runtime.Object) error {
 	defaultpolicieslog.Info("validate update", "name", r.Name)
-
-	// TODO(user): fill in your validation logic upon object update.
-	return nil
+	oldDp, ok := old.(*DefaultPolicies)
+	if !ok {
+		return apierrors.NewBadRequest(fmt.Sprintf("expected a DefaultPolicies but got a %T", old))
+	}
+	return r.validate(oldDp)
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
 func (r *DefaultPolicies) ValidateDelete() error {
 	defaultpolicieslog.Info("validate delete", "name", r.Name)
-
-	// TODO(user): fill in your validation logic upon object deletion.
 	return nil
 }
