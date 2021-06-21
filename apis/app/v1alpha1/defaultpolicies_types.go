@@ -17,29 +17,36 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"github.com/getupio-undistro/undistro/pkg/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // DefaultPoliciesSpec defines the desired state of DefaultPolicies
 type DefaultPoliciesSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of DefaultPolicies. Edit defaultpolicies_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	Paused          bool     `json:"paused,omitempty"`
+	ClusterName     string   `json:"clusterName,omitempty"`
+	ExcludePolicies []string `json:"excludePolicies,omitempty"`
 }
 
 // DefaultPoliciesStatus defines the observed state of DefaultPolicies
 type DefaultPoliciesStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// ObservedGeneration is the last observed generation.
+	ObservedGeneration int64 `json:"observedGeneration,omitempty"`
+
+	// +patchMergeKey=type
+	// +patchStrategy=merge
+	// +listType=map
+	// +listMapKey=type
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
+
+	AppliedPolicies []string `json:"appliedPolicies,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.conditions[?(@.type==\"Ready\")].status",description=""
+// +kubebuilder:printcolumn:name="Status",type="string",JSONPath=".status.conditions[?(@.type==\"Ready\")].message",description=""
+// +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp",description=""
 
 // DefaultPolicies is the Schema for the defaultpolicies API
 type DefaultPolicies struct {
@@ -48,6 +55,21 @@ type DefaultPolicies struct {
 
 	Spec   DefaultPoliciesSpec   `json:"spec,omitempty"`
 	Status DefaultPoliciesStatus `json:"status,omitempty"`
+}
+
+func (p *DefaultPolicies) GetStatusConditions() *[]metav1.Condition {
+	return &p.Status.Conditions
+}
+
+func DefaultPoliciesNotReady(p DefaultPolicies, reason, message string) DefaultPolicies {
+	meta.SetResourceCondition(&p, meta.ReadyCondition, metav1.ConditionFalse, reason, message)
+	return p
+}
+
+func DefaultPoliciesReady(p DefaultPolicies) DefaultPolicies {
+	msg := "Default policies reconciliation succeeded"
+	meta.SetResourceCondition(&p, meta.ReadyCondition, metav1.ConditionTrue, meta.ReconciliationSucceededReason, msg)
+	return p
 }
 
 //+kubebuilder:object:root=true

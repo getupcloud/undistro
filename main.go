@@ -152,6 +152,18 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "HelmRelease")
 		os.Exit(1)
 	}
+	if err = (&appv1alpha1.Cluster{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "Cluster")
+		os.Exit(1)
+	}
+	if err = (&appv1alpha1.HelmRelease{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "HelmRelease")
+		os.Exit(1)
+	}
+	if err = (&appv1alpha1.DefaultPolicies{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "DefaultPolicies")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 	cerr := make(chan error)
 	done := make(chan struct{})
