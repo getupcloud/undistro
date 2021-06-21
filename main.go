@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package main
 
 import (
@@ -21,20 +22,17 @@ import (
 	"flag"
 	"os"
 
-	_ "k8s.io/client-go/plugin/pkg/client/auth"
-	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
-
 	appv1alpha1 "github.com/getupio-undistro/undistro/apis/app/v1alpha1"
 	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
 	appcontroller "github.com/getupio-undistro/undistro/controllers/app"
-	appcontrollers "github.com/getupio-undistro/undistro/controllers/app"
 	configcontroller "github.com/getupio-undistro/undistro/controllers/config"
-	configcontrollers "github.com/getupio-undistro/undistro/controllers/config"
 	"github.com/getupio-undistro/undistro/pkg/record"
 	"github.com/getupio-undistro/undistro/pkg/scheme"
 	"github.com/getupio-undistro/undistro/pkg/undistro/apiserver"
 	"github.com/getupio-undistro/undistro/pkg/version"
+	_ "k8s.io/client-go/plugin/pkg/client/auth"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -124,64 +122,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&configcontrollers.ProviderReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Provider")
-		os.Exit(1)
-	}
-	if err = (&appcontrollers.ClusterReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Cluster")
-		os.Exit(1)
-	}
-	if err = (&appcontrollers.DefaultPoliciesReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "DefaultPolicies")
-		os.Exit(1)
-	}
-	if err = (&appcontrollers.HelmReleaseReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "HelmRelease")
-		os.Exit(1)
-	}
-	if err = (&appv1alpha1.Cluster{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Cluster")
-		os.Exit(1)
-	}
-	if err = (&appv1alpha1.HelmRelease{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "HelmRelease")
-		os.Exit(1)
-	}
-	if err = (&appv1alpha1.DefaultPolicies{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "DefaultPolicies")
-		os.Exit(1)
-	}
-	if err = (&configv1alpha1.Provider{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Provider")
-		os.Exit(1)
-	}
-	if err = (&appcontrollers.ClusterReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Cluster")
-		os.Exit(1)
-	}
-	if err = (&appcontrollers.DefaultPoliciesReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "DefaultPolicies")
-		os.Exit(1)
-	}
 	// +kubebuilder:scaffold:builder
 	cerr := make(chan error)
 	done := make(chan struct{})

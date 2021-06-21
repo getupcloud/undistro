@@ -281,7 +281,6 @@ type HelmRelease struct {
 	Status HelmReleaseStatus `json:"status,omitempty"`
 }
 
-
 // GetStatusConditions returns a pointer to the Status.Conditions slice
 func (hr *HelmRelease) GetStatusConditions() *[]metav1.Condition {
 	return &hr.Status.Conditions
@@ -293,7 +292,6 @@ func (hr *HelmRelease) GetNamespace() string {
 	}
 	return hr.Namespace
 }
-
 
 //+kubebuilder:object:root=true
 

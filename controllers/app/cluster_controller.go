@@ -105,7 +105,6 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	return result, err
 }
 
-
 func (r *ClusterReconciler) templateVariables(ctx context.Context, c client.Client, cl *appv1alpha1.Cluster) (map[string]interface{}, error) {
 	vars := make(map[string]interface{})
 	v := make(map[string]interface{})
@@ -521,4 +520,3 @@ func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		).
 		Complete(r)
 }
-
