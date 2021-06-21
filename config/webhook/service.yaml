@@ -8,5 +8,9 @@ spec:
   ports:
     - port: 443
       targetPort: 9443
+      name: webhook-server
+    - port: 2020
+      targetPort: 2020
+      name: undistro-server
   selector:
     control-plane: controller-manager

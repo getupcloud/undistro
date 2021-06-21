@@ -1,7 +1,17 @@
 apiVersion: app.undistro.io/v1alpha1
 kind: Cluster
 metadata:
-  name: cluster-sample
+  name: undistro-quickstart
+  namespace: default
 spec:
-  # Add fields here
-  foo: bar
+  kubernetesVersion: v1.18.2
+  controlPlane:
+    replicas: 3
+    machineType: t3.large
+  workers:
+    - replicas: 3
+      machineType: t3.large
+  infrastructureProvider:
+    name: aws
+    sshKey: undistro
+    region: us-east-1
