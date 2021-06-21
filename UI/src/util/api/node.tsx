@@ -6,9 +6,9 @@ class Node {
   }
 
   async list () {
-    const url = '/api/v1/nodes'
+    const url = 'namespaces/undistro-system/clusters/management/proxy/api/v1/nodes'
     const res = await this.http.get(url)
-    return res.data
+    return res.data 
   }
 }
 

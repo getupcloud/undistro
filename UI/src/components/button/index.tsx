@@ -3,11 +3,11 @@ import Classnames from 'classnames'
 import './index.scss'
 
 type Props = {
-  children?: string,
+  children: string,
   type: string,
   size: string,
   disabled?: boolean,
-  onClick?: () => void
+  onClick: () => void
 }
 
 const Button: FC<Props> = ({ 
