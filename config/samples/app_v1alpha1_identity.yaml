@@ -1,0 +1,7 @@
+apiVersion: app.undistro.io/v1alpha1
+kind: Identity
+metadata:
+  name: identity-sample
+spec:
+  # Add fields here
+  foo: bar

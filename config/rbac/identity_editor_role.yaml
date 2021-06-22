@@ -1,17 +1,9 @@
-
----
+# permissions for end users to edit identities.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  creationTimestamp: null
-  name: manager-role
+  name: identity-editor-role
 rules:
-- apiGroups:
-  - '*'
-  resources:
-  - '*'
-  verbs:
-  - '*'
 - apiGroups:
   - app.undistro.io
   resources:
@@ -27,14 +19,6 @@ rules:
 - apiGroups:
   - app.undistro.io
   resources:
-  - identities/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - app.undistro.io
-  resources:
   - identities/status
   verbs:
   - get
-  - patch
-  - update

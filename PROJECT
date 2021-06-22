@@ -57,4 +57,13 @@ resources:
     defaulting: true
     validation: true
     webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: undistro.io
+  group: app
+  kind: Identity
+  path: github.com/getupio-undistro/undistro/apis/app/v1alpha1
+  version: v1alpha1
 version: "3"
