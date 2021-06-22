@@ -39,8 +39,8 @@ type ec2InstanceType struct {
 }
 
 type flavor struct {
-	Name string `json:"name"`
-	KubernetesVersions	[]string `json:"kubernetes_version"`
+	Name               string   `json:"name"`
+	KubernetesVersions []string `json:"kubernetes_version"`
 }
 
 var (
@@ -69,7 +69,7 @@ var (
 			},
 		},
 		{
-			Name: undistrov1alpha1.EKS.String(),
+			Name:               undistrov1alpha1.EKS.String(),
 			KubernetesVersions: []string{"v1.20.4", "v1.19.8", "v1.18.16"},
 		},
 	}
