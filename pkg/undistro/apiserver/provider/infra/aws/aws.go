@@ -38,6 +38,11 @@ type ec2InstanceType struct {
 	Memory            float64  `json:"memory,omitempty"`
 }
 
+type flavor struct {
+	Name string `json:"name"`
+	KubernetesVersions	[]string `json:"kubernetes_version"`
+}
+
 var (
 	regions = []string{
 		"us-east-2",
@@ -66,10 +71,13 @@ var (
 		"us-gov-east-1",
 		"us-gov-west-1",
 	}
-	flavors = map[string]string{
-		undistrov1alpha1.EC2.String(): "1.20",
-		undistrov1alpha1.EKS.String(): "1.19",
+	flavors = []flavor{
+		{Name: "", KubernetesVersions: ""},
 	}
+	//	map[string]string{
+	//	undistrov1alpha1.EC2.String(): "1.20",
+	//	undistrov1alpha1.EKS.String(): "1.19",
+	//}
 
 	//go:embed instancetypesaws.json
 	machineTypesEmb []byte
