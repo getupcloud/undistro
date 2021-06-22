@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The UnDistro authors
+Copyright 2020-2021 The UnDistro authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ func (r *DefaultPolicies) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-//+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-defaultpolicies,mutating=true,failurePolicy=fail,groups=app.undistro.io,resources=defaultpolicies,verbs=create;update,versions=v1alpha1,name=mdefaultpolicies.kb.io,sideEffects=None,admissionReviewVersions=v1beta1
+//+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-defaultpolicies,mutating=true,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=defaultpolicies,verbs=create;update,versions=v1alpha1,name=mdefaultpolicies.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Defaulter = &DefaultPolicies{}
 
@@ -65,7 +65,7 @@ func (r *DefaultPolicies) Default() {
 	}
 }
 
-//+kubebuilder:webhook:verbs=create;update,path=/validate-app-undistro-io-v1alpha1-defaultpolicies,mutating=false,failurePolicy=fail,groups=app.undistro.io,resources=defaultpolicies,versions=v1alpha1,name=vdefaultpolicies.kb.io,sideEffects=None,admissionReviewVersions=v1beta1
+//+kubebuilder:webhook:path=/validate-app-undistro-io-v1alpha1-defaultpolicies,mutating=false,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=defaultpolicies,verbs=create;update,versions=v1alpha1,name=vdefaultpolicies.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Validator = &DefaultPolicies{}
 

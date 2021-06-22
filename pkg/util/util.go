@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The UnDistro authors
+Copyright 2020-2021 The UnDistro authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -224,25 +224,6 @@ func GetMachinesForCluster(ctx context.Context, c client.Client, cluster *capi.C
 func IsControlPlaneMachine(machine *capi.Machine) bool {
 	_, ok := machine.ObjectMeta.Labels[capi.MachineControlPlaneLabelName]
 	return ok
-}
-
-func GetProviderMachinesUnstructured(ctx context.Context, c client.Client, list *capi.MachineList) (*unstructured.UnstructuredList, error) {
-	machines := unstructured.UnstructuredList{}
-	for _, m := range list.Items {
-		o := unstructured.Unstructured{}
-		ref := m.Spec.InfrastructureRef
-		key := client.ObjectKey{
-			Name:      ref.Name,
-			Namespace: ref.Namespace,
-		}
-		o.SetGroupVersionKind(ref.GroupVersionKind())
-		err := c.Get(ctx, key, &o)
-		if err != nil {
-			return nil, err
-		}
-		machines.Items = append(machines.Items, o)
-	}
-	return &machines, nil
 }
 
 func ContainsStringInSlice(ss []string, str string) bool {

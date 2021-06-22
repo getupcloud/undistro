@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The UnDistro authors
+Copyright 2020-2021 The UnDistro authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package v1alpha1
 
 import (
 	"fmt"
-
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/version"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -40,7 +39,7 @@ func (r *Provider) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:path=/mutate-config-undistro-io-v1alpha1-provider,mutating=true,failurePolicy=fail,groups=config.undistro.io,resources=providers,verbs=create;update,versions=v1alpha1,name=mprovider.undistro.io,sideEffects=None,admissionReviewVersions=v1beta1
+//+kubebuilder:webhook:path=/mutate-config-undistro-io-v1alpha1-provider,mutating=true,failurePolicy=fail,sideEffects=None,groups=config.undistro.io,resources=providers,verbs=create;update,versions=v1alpha1,name=mprovider.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Defaulter = &Provider{}
 
@@ -64,7 +63,7 @@ func (r *Provider) Default() {
 	}
 }
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-config-undistro-io-v1alpha1-provider,mutating=false,failurePolicy=fail,groups=config.undistro.io,resources=providers,versions=v1alpha1,name=vprovider.undistro.io,sideEffects=None,admissionReviewVersions=v1beta1
+//+kubebuilder:webhook:path=/validate-config-undistro-io-v1alpha1-provider,mutating=false,failurePolicy=fail,sideEffects=None,groups=config.undistro.io,resources=providers,verbs=create;update,versions=v1alpha1,name=vprovider.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Validator = &Provider{}
 
@@ -130,6 +129,5 @@ func (r *Provider) ValidateUpdate(old runtime.Object) error {
 func (r *Provider) ValidateDelete() error {
 	providerlog.Info("validate delete", "name", r.Name)
 
-	// TODO(user): fill in your validation logic upon object deletion.
 	return nil
 }

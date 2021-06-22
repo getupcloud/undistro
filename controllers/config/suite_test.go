@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The UnDistro authors
+Copyright 2020-2021 The UnDistro authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,68 +13,68 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package controllers
+
+package config
 
 import (
-	"fmt"
-	"os"
+	"path/filepath"
 	"testing"
-	"time"
 
-	"github.com/getupio-undistro/undistro/pkg/test"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	ctrl "sigs.k8s.io/controller-runtime"
+	"k8s.io/client-go/kubernetes/scheme"
+	"k8s.io/client-go/rest"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
-	// +kubebuilder:scaffold:imports
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+
+	configv1alpha1 "github.com/getupio-undistro/undistro/apis/config/v1alpha1"
+	//+kubebuilder:scaffold:imports
 )
 
-const (
-	timeout = time.Second * 30
-)
+// These tests use Ginkgo (BDD-style Go testing framework). Refer to
+// http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
-var (
-	testEnv *test.Environment
-	ctx     = ctrl.SetupSignalHandler()
-)
+var cfg *rest.Config
+var k8sClient client.Client
+var testEnv *envtest.Environment
 
-func TestMain(m *testing.M) {
-	fmt.Println("Creating new test environment")
-	testEnv = test.NewEnvironment()
-	if err := (&ProviderReconciler{
-		Client: testEnv,
-		Scheme: testEnv.GetScheme(),
-		Log:    testEnv.GetLogger(),
-	}).SetupWithManager(testEnv); err != nil {
-		panic(fmt.Sprintf("Failed to start ProviderReconciler : %v", err))
-	}
-	go func() {
-		fmt.Println("Starting the manager")
-		if err := testEnv.StartManager(ctx); err != nil {
-			panic(fmt.Sprintf("Failed to start the envtest manager: %v", err))
-		}
-	}()
-	// wait for webhook port to be open prior to running tests
-	testEnv.WaitForWebhooks()
-
-	code := m.Run()
-
-	fmt.Println("Tearing down test suite")
-	if err := testEnv.Stop(); err != nil {
-		panic(fmt.Sprintf("Failed to stop envtest: %v", err))
-	}
-
-	os.Exit(code)
-}
-
-// TestGinkgoSuite will run the ginkgo tests.
-// This will run with the testEnv setup and teardown in TestMain.
-func TestGinkgoSuite(t *testing.T) {
-	SetDefaultEventuallyPollingInterval(100 * time.Millisecond)
-	SetDefaultEventuallyTimeout(timeout)
+func TestAPIs(t *testing.T) {
 	RegisterFailHandler(Fail)
 
 	RunSpecsWithDefaultAndCustomReporters(t,
-		"Controllers Suite",
+		"Controller Suite",
 		[]Reporter{printer.NewlineReporter{}})
 }
+
+var _ = BeforeSuite(func() {
+	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
+
+	By("bootstrapping test environment")
+	testEnv = &envtest.Environment{
+		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
+		ErrorIfCRDPathMissing: true,
+	}
+
+	cfg, err := testEnv.Start()
+	Expect(err).NotTo(HaveOccurred())
+	Expect(cfg).NotTo(BeNil())
+
+	err = configv1alpha1.AddToScheme(scheme.Scheme)
+	Expect(err).NotTo(HaveOccurred())
+
+	//+kubebuilder:scaffold:scheme
+
+	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
+	Expect(err).NotTo(HaveOccurred())
+	Expect(k8sClient).NotTo(BeNil())
+
+}, 60)
+
+var _ = AfterSuite(func() {
+	By("tearing down the test environment")
+	err := testEnv.Stop()
+	Expect(err).NotTo(HaveOccurred())
+})

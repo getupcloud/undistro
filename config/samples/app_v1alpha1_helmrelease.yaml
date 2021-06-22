@@ -1,16 +1,15 @@
 apiVersion: app.undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
-    name: kubernetes-dashboard
-    namespace: default
+  name: kubernetes-dashboard
+  namespace: default
 spec:
   chart:
     repository: https://kubernetes.github.io/dashboard
     name: kubernetes-dashboard
     version: 3.0.0
   afterApplyObjects:
-    -
-      apiVersion: rbac.authorization.k8s.io/v1
+    - apiVersion: rbac.authorization.k8s.io/v1
       kind: ClusterRoleBinding
       metadata:
         name: dashboard-access
@@ -21,7 +20,7 @@ spec:
       subjects:
         - kind: ServiceAccount
           name: undistro-quickstart-dash
-          namespace: default 
+          namespace: default
   values:
     serviceAccount:
       name: undistro-quickstart-dash

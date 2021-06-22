@@ -1,20 +1,48 @@
-import React, { FC } from 'react'
-import Item from '@components/itemSideMenu'
+import React, { FC, useState } from 'react'
+import Classnames from 'classnames'
+
 import './index.scss'
 
-const MenuSideBar: FC = () => {
+export type TypeSubItem = {
+  name: string
+}
+
+export type TypeItem = {
+  name: string
+  icon: string
+  subItens: TypeSubItem[]
+}
+
+type TypeMenu = {
+	itens: TypeItem[]
+}
+
+
+const MenuSideBar: FC<TypeMenu> = ({ 
+	itens
+}) => {
+	const [show, setShow] = useState<boolean>(false)
+	const style = Classnames('side-item', {
+		active: show
+	})
 
 	return (
 		<div className='menu-side-container'>
 			<ul className='side-itens'>
-				<Item name='Cluster' icon='icon-cluster' />
-				<Item name='Nodes' icon='icon-cluster' />
-				<Item name='Network' icon='icon-network' />
-				<Item name='Configuration' icon='icon-workload' />
-				<Item name='Item 05' icon='icon-cluster' />
-				<Item name='Item 06' icon='icon-network' />
-				<Item name='Item 07' icon='icon-workload' />
-				<Item name='Item 08' icon='icon-cluster' />
+				{itens.map((elm: any) => {
+					return (
+						<>
+							<li onClick={() => setShow(!show)} className={style}>
+								<i className={elm.icon} />
+								<p>{elm.name}</p>
+								{show ? <i className='icon-arrow-up' /> : <i className='icon-arrow-down' />}
+							</li>
+							{show && <div className='item-menu'>
+								{elm.subItens.map((elm: Partial<{name: string}>) => (<p>{elm.name}</p>))}
+							</div>}
+						</>
+					)
+				})}
 			</ul>			
 		</div>
 	)

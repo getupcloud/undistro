@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The UnDistro authors
+Copyright 2020-2021 The UnDistro authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package app
 
 import (
 	"context"
@@ -54,13 +54,13 @@ func (r *DefaultPoliciesReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	if err := r.Get(ctx, req.NamespacedName, &p); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-	log := r.Log.WithValues("defalutpolicies", req.NamespacedName)
+	log := r.Log.WithValues("defaultpolicies", req.NamespacedName)
 	patchHelper, err := patch.NewHelper(&p, r.Client)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
 	defer func() {
-		patchOpts := []patch.Option{}
+		var patchOpts []patch.Option
 		if err == nil {
 			patchOpts = append(patchOpts, patch.WithStatusObservedGeneration{})
 		}

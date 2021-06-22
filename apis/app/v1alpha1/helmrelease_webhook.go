@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The UnDistro authors
+Copyright 2020-2021 The UnDistro authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ func (r *HelmRelease) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-helmrelease,mutating=true,failurePolicy=fail,groups=app.undistro.io,resources=helmreleases,verbs=create;update,versions=v1alpha1,name=mhelmrelease.undistro.io,sideEffects=None,admissionReviewVersions=v1beta1
+//+kubebuilder:webhook:path=/mutate-app-undistro-io-v1alpha1-helmrelease,mutating=true,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=helmreleases,verbs=create;update,versions=v1alpha1,name=mhelmrelease.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Defaulter = &HelmRelease{}
 
@@ -106,7 +106,7 @@ func (r *HelmRelease) Default() {
 	}
 }
 
-// +kubebuilder:webhook:verbs=create;update,path=/validate-app-undistro-io-v1alpha1-helmrelease,mutating=false,failurePolicy=fail,groups=app.undistro.io,resources=helmreleases,versions=v1alpha1,name=vhelmrelease.undistro.io,sideEffects=None,admissionReviewVersions=v1beta1
+//+kubebuilder:webhook:path=/validate-app-undistro-io-v1alpha1-helmrelease,mutating=false,failurePolicy=fail,sideEffects=None,groups=app.undistro.io,resources=helmreleases,verbs=create;update,versions=v1alpha1,name=vhelmrelease.undistro.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Validator = &HelmRelease{}
 

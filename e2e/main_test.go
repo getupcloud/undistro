@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The UnDistro authors
+Copyright 2020-2021 The UnDistro authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -59,8 +59,9 @@ func TestMain(m *testing.M) {
 		exec.WithCommand("docker"),
 		exec.WithArgs("build", "-t", image, "../"),
 	)
-	stout, _, err := cmd.Run(ctx)
+	stout, stderr, err := cmd.Run(ctx)
 	if err != nil {
+		fmt.Println(string(stderr))
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}

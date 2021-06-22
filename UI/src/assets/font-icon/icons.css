@@ -1,10 +1,10 @@
 @font-face {
     font-family: "icons";
-    src: url("./icons.eot?1dbdcc9c81ed4d62a8e1f41d01d777c7?#iefix") format("embedded-opentype"),
-url("./icons.woff2?1dbdcc9c81ed4d62a8e1f41d01d777c7") format("woff2"),
-url("./icons.woff?1dbdcc9c81ed4d62a8e1f41d01d777c7") format("woff"),
-url("./icons.ttf?1dbdcc9c81ed4d62a8e1f41d01d777c7") format("truetype"),
-url("./icons.svg?1dbdcc9c81ed4d62a8e1f41d01d777c7#icons") format("svg");
+    src: url("./icons.eot?51939d8a2f5b2a18d04ed0ad6ec0fda9?#iefix") format("embedded-opentype"),
+url("./icons.woff2?51939d8a2f5b2a18d04ed0ad6ec0fda9") format("woff2"),
+url("./icons.woff?51939d8a2f5b2a18d04ed0ad6ec0fda9") format("woff"),
+url("./icons.ttf?51939d8a2f5b2a18d04ed0ad6ec0fda9") format("truetype"),
+url("./icons.svg?51939d8a2f5b2a18d04ed0ad6ec0fda9#icons") format("svg");
 }
 
 i[class^="icon-"]:before, i[class*=" icon-"]:before {
@@ -21,21 +21,42 @@ i[class^="icon-"]:before, i[class*=" icon-"]:before {
 .icon-arrow-down:before {
     content: "\f101";
 }
-.icon-arrow-up:before {
+.icon-arrow-solid-up:before {
     content: "\f102";
 }
-.icon-close:before {
+.icon-arrow-up:before {
     content: "\f103";
 }
-.icon-cluster:before {
+.icon-close-solid:before {
     content: "\f104";
 }
-.icon-git:before {
+.icon-close:before {
     content: "\f105";
 }
-.icon-network:before {
+.icon-cluster:before {
     content: "\f106";
 }
-.icon-workload:before {
+.icon-dots:before {
     content: "\f107";
+}
+.icon-git:before {
+    content: "\f108";
+}
+.icon-helm:before {
+    content: "\f109";
+}
+.icon-network:before {
+    content: "\f10a";
+}
+.icon-node:before {
+    content: "\f10b";
+}
+.icon-settings:before {
+    content: "\f10c";
+}
+.icon-stop:before {
+    content: "\f10d";
+}
+.icon-workload:before {
+    content: "\f10e";
 }

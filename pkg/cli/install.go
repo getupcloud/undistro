@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The UnDistro authors
+Copyright 2020-2021 The UnDistro authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -178,7 +178,7 @@ func (o *InstallOptions) installProviders(ctx context.Context, streams genericcl
 	return nil
 }
 
-func (o *InstallOptions) installChart(ctx context.Context, c client.Client, restGetter genericclioptions.RESTClientGetter, chartRepo *helm.ChartRepository, secretRef *corev1.LocalObjectReference, chartName string, overrideValuesMap map[string]interface{}) (*configv1alpha1.Provider, error) {
+func (o *InstallOptions) installChart(restGetter genericclioptions.RESTClientGetter, chartRepo *helm.ChartRepository, secretRef *corev1.LocalObjectReference, chartName string, overrideValuesMap map[string]interface{}) (*configv1alpha1.Provider, error) {
 	overrideValues := &apiextensionsv1.JSON{}
 	if len(overrideValuesMap) > 0 {
 		byt, err := json.Marshal(overrideValuesMap)
@@ -384,7 +384,7 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 	}
 	providers := make([]*configv1alpha1.Provider, 0)
 	if installCert {
-		provider, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cert-manager", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "cert-manager"))
+		provider, err := o.installChart(restGetter, chartRepo, secretRef, "cert-manager", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "cert-manager"))
 		if err != nil {
 			return err
 		}
@@ -415,7 +415,7 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		}
 	}
 	if installCapi {
-		providerCapi, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "cluster-api", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "cluster-api"))
+		providerCapi, err := o.installChart(restGetter, chartRepo, secretRef, "cluster-api", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "cluster-api"))
 		if err != nil {
 			return err
 		}
@@ -447,12 +447,12 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		}
 	}
 	if installUndistro {
-		providerNginx, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "ingress-nginx", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "ingress-nginx"))
+		providerNginx, err := o.installChart(restGetter, chartRepo, secretRef, "ingress-nginx", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "ingress-nginx"))
 		if err != nil {
 			return err
 		}
 		providers = append(providers, providerNginx)
-		providerUndistro, err := o.installChart(cmd.Context(), c, restGetter, chartRepo, secretRef, "undistro", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro"))
+		providerUndistro, err := o.installChart(restGetter, chartRepo, secretRef, "undistro", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro"))
 		if err != nil {
 			return err
 		}

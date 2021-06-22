@@ -22,13 +22,29 @@ spec:
       labels:
         control-plane: controller-manager
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - command:
         - /manager
         args:
-        - --enable-leader-election
+        - --leader-elect
         image: controller:latest
         name: manager
+        securityContext:
+          allowPrivilegeEscalation: false
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
         resources:
           limits:
             cpu: "1"
@@ -36,4 +52,5 @@ spec:
           requests:
             cpu: "0.5"
             memory: 256Mi
+      serviceAccountName: controller-manager
       terminationGracePeriodSeconds: 10

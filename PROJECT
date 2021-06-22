@@ -1,17 +1,60 @@
 domain: undistro.io
+layout:
+- go.kubebuilder.io/v3
 multigroup: true
+projectName: undistro
 repo: github.com/getupio-undistro/undistro
 resources:
-- group: app
-  kind: Cluster
-  version: v1alpha1
-- group: app
-  kind: DefaultPolicies
-  version: v1alpha1
-- group: app
-  kind: HelmRelease
-  version: v1alpha1
-- group: config
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: undistro.io
+  group: config
   kind: Provider
+  path: github.com/getupio-undistro/undistro/apis/config/v1alpha1
   version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: undistro.io
+  group: app
+  kind: Cluster
+  path: github.com/getupio-undistro/undistro/apis/app/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: undistro.io
+  group: app
+  kind: DefaultPolicies
+  path: github.com/getupio-undistro/undistro/apis/app/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: undistro.io
+  group: app
+  kind: HelmRelease
+  path: github.com/getupio-undistro/undistro/apis/app/v1alpha1
+  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
 version: "3"

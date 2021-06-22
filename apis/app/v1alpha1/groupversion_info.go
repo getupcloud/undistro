@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The UnDistro authors
+Copyright 2020-2021 The UnDistro authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 // Package v1alpha1 contains API Schema definitions for the app v1alpha1 API group
-// +kubebuilder:object:generate=true
-// +groupName=app.undistro.io
+//+kubebuilder:object:generate=true
+//+groupName=app.undistro.io
 package v1alpha1
 
 import (
