@@ -38,37 +38,40 @@ type ec2InstanceType struct {
 	Memory            float64  `json:"memory,omitempty"`
 }
 
+type flavor struct {
+	Name               string   `json:"name"`
+	KubernetesVersions []string `json:"kubernetes_version"`
+}
+
 var (
 	regions = []string{
-		"us-east-2",
-		"us-east-1",
-		"us-west-1",
-		"us-west-2",
-		"af-south-1",
-		"ap-east-1",
-		"ap-south-1",
-		"ap-northeast-3",
-		"ap-northeast-2",
-		"ap-southeast-1",
-		"ap-southeast-2",
 		"ap-northeast-1",
+		"ap-northeast-2",
+		"ap-south-1",
+		"ap-southeast-1",
+		"ap-northeast-2",
 		"ca-central-1",
-		"cn-north-1",
-		"cn-northwest-1",
 		"eu-central-1",
 		"eu-west-1",
 		"eu-west-2",
-		"eu-south-1",
 		"eu-west-3",
-		"eu-north-1",
-		"me-south-1",
 		"sa-east-1",
-		"us-gov-east-1",
-		"us-gov-west-1",
+		"us-east-1",
+		"us-east-2",
+		"us-west-1",
+		"us-west-2",
 	}
-	flavors = map[string]string{
-		undistrov1alpha1.EC2.String(): "1.20",
-		undistrov1alpha1.EKS.String(): "1.19",
+	flavors = []flavor{
+		{
+			Name: undistrov1alpha1.EC2.String(),
+			KubernetesVersions: []string{
+				"v1.18.19", "v1.18.20", "v1.21.2", "v1.19.12", "v1.20.8",
+			},
+		},
+		{
+			Name:               undistrov1alpha1.EKS.String(),
+			KubernetesVersions: []string{"v1.20.4", "v1.19.8", "v1.18.16"},
+		},
 	}
 
 	//go:embed instancetypesaws.json
