@@ -1,4 +1,4 @@
-@import 'styles/theme';
+@import "styles/theme";
 
 .table {
   border-collapse: collapse;
@@ -17,26 +17,19 @@
 
   .action-row {
     width: 35px;
+    padding: 0;
   }
 
   td {
     box-sizing: border-box;
 
     &:not(:last-child) {
-      border-right: 2px solid transparent;
-    }
-
-    &:last-child {
-      border-radius: 0 4px 4px 0;
-    }
-
-    &:first-child {
-      border-radius: 4px 0 0 4px;
+      border-right: 2px solid var(--table-black-color, $table-black-color);
     }
   }
 
   thead {
-    background-color: var(--black, $black);
+    background-color: var(--table-color-3, $table-color-3);
 
     tr {
       border-bottom: 1px solid transparent;
@@ -45,11 +38,11 @@
 
   tbody {
     .select-row {
-      width: 50px;
+      width: 35px;
     }
 
     td {
-      padding: 8px 16px;
+      padding: 8px 12px;
 
       div {
         display: flex;
@@ -62,14 +55,14 @@
     }
 
     tr {
-      background-color: var(--gray-blue-2, $gray-blue-2);
+      background-color: var(--table-color-1, $table-color-1);
 
       &:not(:last-child) {
-        border-bottom: 1px solid var(--gray-blue-2, $gray-blue-2);
+        border-bottom: 1px solid var(--table-color-2, $table-color-2);
       }
 
       &:nth-child(2n) {
-        background-color: var(--gray-blue-3, $gray-blue-3);
+        background-color: var(--table-color-2, $table-color-2);
       }
     }
   }
