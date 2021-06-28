@@ -1138,7 +1138,7 @@ spec:
                           type: string
                       type: object
                     url:
-                      default: https://charts.undistro.io
+                      default: https://registry.undistro.io/chartrepo/library
                       type: string
                   type: object
               type: object
