@@ -61,7 +61,7 @@ var (
 )
 
 const (
-	undistroRepo = "https://charts.undistro.io"
+	undistroRepo = "https://registry.undistro.io/chartrepo/library"
 	ns           = "undistro-system"
 )
 
