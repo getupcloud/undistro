@@ -149,7 +149,6 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     const res = await Api.Provider.listMetadata('aws', 'machine_types', '15', additional ? additional.page : 1, region)
     const totalPages = res.TotalPages
     const filteredMachineTypes = res.MachineTypes.filter((elm: any) => elm.availability_zones === region)
-    console.log(filteredMachineTypes)
     const machineTypes = res.MachineTypes.map((elm: Partial<{instance_type: string}>) => ({ value: elm.instance_type, label: elm.instance_type }))
     return {
       options: machineTypes,
@@ -193,9 +192,6 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
 
   const getKeys = async () => {
     const res = await Api.Provider.listMetadata('aws', 'ssh_keys', '1', 1, region)
-
-    console.log(res)
-
     setSshKeyOptions(res.map((elm: string) => ({ value: elm, label: elm })))
   }
 
