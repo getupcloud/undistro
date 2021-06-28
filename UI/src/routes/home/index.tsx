@@ -70,6 +70,12 @@ export default function HomePage () {
 
 	return (
 		<div className='home-page-route'>
+			<ul>
+				<li><i className='icon-stop' /> <p>Stop</p></li>
+				<li><i className='icon-arrow-solid-up' /> <p>Update</p></li>
+				<li><i className='icon-settings' /> <p>Settings</p></li>
+				<li><i className='icon-close-solid' /> <p>Delete</p></li>
+			</ul>
 			<Button onClick={() => showModal()} size='large' type='primary' children='LgBtnText' />
 			<Table data={(clusters || [])}  header={headers}/>	
 		</div>
