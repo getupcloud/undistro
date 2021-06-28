@@ -148,7 +148,6 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const getMachineTypes: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional: any) => {
     const res = await Api.Provider.listMetadata('aws', 'machine_types', '15', additional ? additional.page : 1, region)
     const totalPages = res.TotalPages
-    const filteredMachineTypes = res.MachineTypes.filter((elm: any) => elm.availability_zones === region)
     const machineTypes = res.MachineTypes.map((elm: Partial<{instance_type: string}>) => ({ value: elm.instance_type, label: elm.instance_type }))
     return {
       options: machineTypes,
