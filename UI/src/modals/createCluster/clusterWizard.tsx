@@ -58,6 +58,8 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const [regionOptions, setRegionOptions] = useState<[]>([])
   const [flavorOptions, setFlavorOptions] = useState<Option[]>([])
   const [k8sOptions, setK8sOptions] = useState<newStruct>()
+  const [sshKey, setSshKey] = useState<string>('')
+  const [sshKeyOptions, setSshKeyOptions] = useState<string[]>([])
   const providerOptions = [{ value: provider, label: 'aws' }]
 
   const handleAction = () => {
@@ -78,7 +80,8 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
       "infrastructureProvider": {
         "flavor": flavor,
         "name": provider,
-        "region": region
+        "region": region,
+        "sshKey": sshKey
       },
 
       "workers": getWorkers
@@ -188,6 +191,14 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     setK8sOptions(parseData)
   }
 
+  const getKeys = async () => {
+    const res = await Api.Provider.listMetadata('aws', 'ssh_keys', '1', 1, region)
+
+    console.log(res)
+
+    setSshKeyOptions(res.map((elm: string) => ({ value: elm, label: elm })))
+  }
+
   const getCpu: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional: any) => {
     const res = await Api.Provider.listMetadata('aws', 'machine_types', '15', additional ? additional.page : 1, region)
     const totalPages = res.TotalPages
@@ -214,10 +225,8 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     getSecrets()
     getProviders()
     getRegion()
-  }, [])
-
-  useEffect(() => {
     getFlavors()
+    getKeys()
   }, [])
 
   //inputs
@@ -248,6 +257,10 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   //selects
   const formProvider = (value: string) => {
     setProvider(value)
+  }
+
+  const formSshKey = (value: string) => {
+    setSshKey(value)
   }
 
   const formRegion = (value: string) => {
@@ -316,7 +329,7 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
                 <Select value={flavor} onChange={formFlavor} options={flavorOptions} label='flavor' />
                 <Select options={regionOptions} value={region} onChange={formRegion} label='region' />
                 <Select value={k8sVersion} onChange={formK8s} options={k8sOptions?.[flavor]?.selectOptions ?? []} label='kubernetes version' />
-                <Input type='text' value='' onChange={() => console.log('aa')} label='sshKey' />
+                <Select value={sshKey} onChange={formSshKey} options={sshKeyOptions} label='sshKey' />
             </form>
           </>
 

@@ -14,7 +14,7 @@ class Provider {
   }
 
   async listMetadata (providerName: string, metadata: string, size: string, page: number, region: string) {
-    const url = `/provider/metadata?name=${providerName}&meta=${metadata}&page_size=${size}&page=${page}&=region${region}`
+    const url = `/provider/metadata?name=${providerName}&meta=${metadata}&page_size=${size}&page=${page}&region=${region}`
     const res = await this.http.get(url)
     return res.data
   }
