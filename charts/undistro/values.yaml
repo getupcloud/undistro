@@ -13,7 +13,7 @@ resources:
     cpu: "0.5"
     memory: 256Mi
 image:
-  repository: getupioundistro/undistro
-  tag: v0.29.3
+  repository: registry.undistro.io/undistro
+  tag: v0.29.4
   pullPolicy: IfNotPresent
   pullSecrets: []

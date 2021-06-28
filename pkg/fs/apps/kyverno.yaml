@@ -15,7 +15,7 @@ spec:
   releaseNme: kyverno
   targetNamespace: kyverno
   chart:
-    repository: "https://charts.undistro.io"
+    repository: "https://registry.undistro.io/chartrepo/library"
     name: kyverno
     version: 1.3.6
   values:
