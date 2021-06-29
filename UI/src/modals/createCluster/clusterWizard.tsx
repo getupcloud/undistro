@@ -23,6 +23,18 @@ type TypeWorker = {
   infraNode: boolean
 }
 
+type Option = {
+  value: string,
+  label: string,
+}
+
+type newStruct = {
+  [instanceType: string]: {
+    selectOptions: Option[];
+  };
+};
+
+
 const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const body = store.useState((s: any) => s.body)
   const [accessKey, setAccesskey] = useState<string>('')
@@ -44,9 +56,11 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const [cpuWorkers, setCpuWorkers] = useState<OptionType | null>(null)
   const [machineTypesWorkers, setMachineTypesWorkers] = useState<OptionType | null>(null)
   const [regionOptions, setRegionOptions] = useState<[]>([])
-  const flavorOptions = [{ value: 'eks', label: 'EKS'}, { value: 'ec2', label: 'EC2'}]
+  const [flavorOptions, setFlavorOptions] = useState<Option[]>([])
+  const [k8sOptions, setK8sOptions] = useState<newStruct>()
+  const [sshKey, setSshKey] = useState<string>('')
+  const [sshKeyOptions, setSshKeyOptions] = useState<string[]>([])
   const providerOptions = [{ value: provider, label: 'aws' }]
-  const k8sOptions = [{ value: 'v1.18.9', label: 'v1.18.9'}]
 
   const handleAction = () => {
     const getWorkers = workers.map(elm => ({ machineType: elm.machineType, replicas: elm.replicas, infraNode: elm.infraNode  }))
@@ -66,7 +80,8 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
       "infrastructureProvider": {
         "flavor": flavor,
         "name": provider,
-        "region": region
+        "region": region,
+        "sshKey": sshKey
       },
 
       "workers": getWorkers
@@ -133,8 +148,6 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const getMachineTypes: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional: any) => {
     const res = await Api.Provider.listMetadata('aws', 'machine_types', '15', additional ? additional.page : 1, region)
     const totalPages = res.TotalPages
-    const filteredMachineTypes = res.MachineTypes.filter((elm: any) => elm.availability_zones === region)
-    console.log(filteredMachineTypes)
     const machineTypes = res.MachineTypes.map((elm: Partial<{instance_type: string}>) => ({ value: elm.instance_type, label: elm.instance_type }))
     return {
       options: machineTypes,
@@ -147,6 +160,38 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     const res = await Api.Provider.listMetadata('aws', 'regions', '24', 1, region)
     
     setRegionOptions(res.map((elm: any) => ({ value: elm, label: elm })))
+  }
+
+  const getFlavors = async () => {
+    const res = await Api.Provider.listMetadata('aws', 'supported_flavors', '1', 1, region)
+    type apiOption = {
+      name: string;
+      kubernetes_version: string[];
+    };
+    
+    type apiResponse = apiOption[];
+    
+    const parse = (data: apiResponse): newStruct => {
+      return data.reduce<newStruct>((acc, curr) => {
+        acc[curr.name] = {
+          selectOptions: curr.kubernetes_version.map((ver) => ({
+            label: ver,
+            value: ver,
+          })),
+        };
+    
+        return acc;
+      }, {});
+    };
+
+    const parseData = parse(res)
+    setFlavorOptions(Object.keys(parseData).map(elm => ({ value: elm, label: elm })))
+    setK8sOptions(parseData)
+  }
+
+  const getKeys = async () => {
+    const res = await Api.Provider.listMetadata('aws', 'ssh_keys', '1', 1, region)
+    setSshKeyOptions(res.map((elm: string) => ({ value: elm, label: elm })))
   }
 
   const getCpu: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional: any) => {
@@ -175,6 +220,8 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     getSecrets()
     getProviders()
     getRegion()
+    getFlavors()
+    getKeys()
   }, [])
 
   //inputs
@@ -205,6 +252,10 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   //selects
   const formProvider = (value: string) => {
     setProvider(value)
+  }
+
+  const formSshKey = (value: string) => {
+    setSshKey(value)
   }
 
   const formRegion = (value: string) => {
@@ -272,8 +323,8 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
                 <Select value={provider} onChange={formProvider} options={providerOptions} label='provider' />
                 <Select value={flavor} onChange={formFlavor} options={flavorOptions} label='flavor' />
                 <Select options={regionOptions} value={region} onChange={formRegion} label='region' />
-                <Select value={k8sVersion} onChange={formK8s} options={k8sOptions} label='kubernetes version' />
-                <Input type='text' value='' onChange={() => console.log('aa')} label='sshKey' />
+                <Select value={k8sVersion} onChange={formK8s} options={k8sOptions?.[flavor]?.selectOptions ?? []} label='kubernetes version' />
+                <Select value={sshKey} onChange={formSshKey} options={sshKeyOptions} label='sshKey' />
             </form>
           </>
 
