@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine
+FROM registry.undistro.io/gcr/distroless/base:debug
 WORKDIR /
 COPY ./bin/manager /
 USER 65532:65532
