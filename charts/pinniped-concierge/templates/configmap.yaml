@@ -28,4 +28,4 @@ data:
       labels: {"app":"pinniped-concierge"}
       kubeCertAgent:
         namePrefix: pinniped-concierge-kube-cert-agent-
-        image: projects.registry.vmware.com/pinniped/pinniped-server:0.9.1
+        image: registry.undistro.io/vmware/pinniped/pinniped-server:0.9.1

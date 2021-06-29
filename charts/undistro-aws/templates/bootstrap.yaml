@@ -247,7 +247,7 @@ spec:
             - "--upstream=http://127.0.0.1:8080/"
             - "--logtostderr=true"
             - "--v=10"
-          image: "gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0"
+          image: "registry.undistro.io/gcr/kubebuilder/kube-rbac-proxy:v0.5.0"
           imagePullPolicy: IfNotPresent
           name: kube-rbac-proxy
           ports: 
@@ -261,7 +261,7 @@ spec:
             - "--feature-gates=MachinePool=true"
           command: 
             - /manager
-          image: "us.gcr.io/k8s-artifacts-prod/cluster-api-aws/eks-bootstrap-controller:v0.6.6"
+          image: "us.registry.undistro.io/gcr/k8s-artifacts-prod/cluster-api-aws/eks-bootstrap-controller:v0.6.6"
           imagePullPolicy: Always
           name: manager
       securityContext: 

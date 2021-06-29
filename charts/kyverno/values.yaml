@@ -21,14 +21,14 @@ rbac:
     #   example.com/annotation: value
 
 image:
-  repository: ghcr.io/kyverno/kyverno
+  repository: registry.undistro.io/github/kyverno/kyverno
   # Defaults to appVersion in Chart.yaml if omitted
   tag:
   pullPolicy: IfNotPresent
   pullSecrets: []
   # - secretName
 initImage:
-  repository: ghcr.io/kyverno/kyvernopre
+  repository: registry.undistro.io/github/kyverno/kyvernopre
   # If initImage.tag is missing, defaults to image.tag
   tag:
   # If initImage.pullPolicy is missing, defaults to image.pullPolicy
@@ -112,27 +112,27 @@ config:
   # Make sure to surround each entry in quotes so that it doesn't get parsed
   # as a nested YAML list. These are joined together without spaces in the configmap
   resourceFilters:
-  - "[Event,*,*]"
-  - "[*,kube-system,*]"
-  - "[*,kube-public,*]"
-  - "[*,kube-node-lease,*]"
-  - "[Node,*,*]"
-  - "[APIService,*,*]"
-  - "[TokenReview,*,*]"
-  - "[SubjectAccessReview,*,*]"
-  - "[SelfSubjectAccessReview,*,*]"
-  - "[*,kyverno,*]"
-  - "[Binding,*,*]"
-  - "[ReplicaSet,*,*]"
-  - "[ReportChangeRequest,*,*]"
-  - "[ClusterReportChangeRequest,*,*]"
+    - "[Event,*,*]"
+    - "[*,kube-system,*]"
+    - "[*,kube-public,*]"
+    - "[*,kube-node-lease,*]"
+    - "[Node,*,*]"
+    - "[APIService,*,*]"
+    - "[TokenReview,*,*]"
+    - "[SubjectAccessReview,*,*]"
+    - "[SelfSubjectAccessReview,*,*]"
+    - "[*,kyverno,*]"
+    - "[Binding,*,*]"
+    - "[ReplicaSet,*,*]"
+    - "[ReportChangeRequest,*,*]"
+    - "[ClusterReportChangeRequest,*,*]"
   # Or give the name of an existing config map (ignores default/provided resourceFilters)
-  existingConfig: ''
+  existingConfig: ""
   excludeGroupRole:
-#  - ""
+  #  - ""
   excludeUsername:
 #  - ""
-  # existingConfig: init-config
+# existingConfig: init-config
 
 service:
   port: 443

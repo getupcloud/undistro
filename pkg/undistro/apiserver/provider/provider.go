@@ -56,7 +56,7 @@ const (
 	ParamType     = "type"
 	ParamMeta     = "meta"
 	ParamPage     = "page"
-	ParamPageSize = "page_size"
+	ParamPageSize = "pageSize"
 	ParamRegion   = "region"
 )
 

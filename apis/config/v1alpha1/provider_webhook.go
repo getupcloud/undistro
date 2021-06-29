@@ -18,6 +18,7 @@ package v1alpha1
 
 import (
 	"fmt"
+
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/version"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -31,7 +32,7 @@ import (
 // log is for logging in this package.
 var providerlog = logf.Log.WithName("provider-resource")
 
-const defaultRepo = "https://charts.undistro.io"
+const defaultRepo = "https://registry.undistro.io/chartrepo/library"
 
 func (r *Provider) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewWebhookManagedBy(mgr).

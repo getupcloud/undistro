@@ -10,7 +10,7 @@
 controller:
   name: controller
   image:
-    registry: k8s.gcr.io
+    registry: k8s.registry.undistro.io/gcr
     image: ingress-nginx/controller
     # for backwards compatibility consider setting the full image url via the repository value below
     # use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
@@ -110,23 +110,23 @@ controller:
   ##
   scope:
     enabled: false
-    namespace: ""   # defaults to .Release.Namespace
+    namespace: "" # defaults to .Release.Namespace
 
   ## Allows customization of the configmap / nginx-configmap namespace
   ##
-  configMapNamespace: ""   # defaults to .Release.Namespace
+  configMapNamespace: "" # defaults to .Release.Namespace
 
   ## Allows customization of the tcp-services-configmap
   ##
   tcp:
-    configMapNamespace: ""   # defaults to .Release.Namespace
+    configMapNamespace: "" # defaults to .Release.Namespace
     ## Annotations to be added to the tcp config configmap
     annotations: {}
 
   ## Allows customization of the udp-services-configmap
   ##
   udp:
-    configMapNamespace: ""   # defaults to .Release.Namespace
+    configMapNamespace: "" # defaults to .Release.Namespace
     ## Annotations to be added to the udp config configmap
     annotations: {}
 
@@ -164,7 +164,6 @@ controller:
   #  keel.sh/policy: patch
   #  keel.sh/trigger: poll
 
-
   # The update strategy to apply to the Deployment or DaemonSet
   ##
   updateStrategy: {}
@@ -175,7 +174,6 @@ controller:
   # minReadySeconds to avoid killing pods before we are ready
   ##
   minReadySeconds: 0
-
 
   ## Node tolerations for server scheduling to nodes with taints
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
@@ -189,7 +187,8 @@ controller:
   ## Affinity and anti-affinity
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ##
-  affinity: {}
+  affinity:
+    {}
     # # An example of preferred pod anti-affinity, weight is in the range 1-100
     # podAntiAffinity:
     #   preferredDuringSchedulingIgnoredDuringExecution:
@@ -210,7 +209,6 @@ controller:
     #           values:
     #           - controller
     #       topologyKey: kubernetes.io/hostname
-
     # # An example of required pod anti-affinity
     # podAntiAffinity:
     #   requiredDuringSchedulingIgnoredDuringExecution:
@@ -233,7 +231,8 @@ controller:
   ## Topology spread constraints rely on node labels to identify the topology domain(s) that each Node is in.
   ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   ##
-  topologySpreadConstraints: []
+  topologySpreadConstraints:
+    []
     # - maxSkew: 1
     #   topologyKey: failure-domain.beta.kubernetes.io/zone
     #   whenUnsatisfiable: DoNotSchedule
@@ -289,7 +288,6 @@ controller:
     successThreshold: 1
     failureThreshold: 3
 
-
   # Path of the health check endpoint. All requests received on the port defined by
   # the healthz-port parameter are forwarded internally to this path.
   healthCheckPath: "/healthz"
@@ -307,9 +305,9 @@ controller:
   # Ideally, there should be no limits.
   # https://engineering.indeedblog.com/blog/2019/12/cpu-throttling-regression-fix/
   resources:
-  #  limits:
-  #    cpu: 100m
-  #    memory: 90Mi
+    #  limits:
+    #    cpu: 100m
+    #    memory: 90Mi
     requests:
       cpu: 100m
       memory: 90Mi
@@ -336,9 +334,9 @@ controller:
   # Mutually exclusive with hpa autoscaling
   keda:
     apiVersion: "keda.sh/v1alpha1"
-  # apiVersion changes with keda 1.x vs 2.x
-  # 2.x = keda.sh/v1alpha1
-  # 1.x = keda.k8s.io/v1alpha1
+    # apiVersion changes with keda 1.x vs 2.x
+    # 2.x = keda.sh/v1alpha1
+    # 1.x = keda.k8s.io/v1alpha1
     enabled: false
     minReplicas: 1
     maxReplicas: 11
@@ -351,26 +349,26 @@ controller:
       #  annotations:
       # key: value
     triggers: []
- #     - type: prometheus
- #       metadata:
- #         serverAddress: http://<prometheus-host>:9090
- #         metricName: http_requests_total
- #         threshold: '100'
- #         query: sum(rate(http_requests_total{deployment="my-deployment"}[2m]))
+    #     - type: prometheus
+    #       metadata:
+    #         serverAddress: http://<prometheus-host>:9090
+    #         metricName: http_requests_total
+    #         threshold: '100'
+    #         query: sum(rate(http_requests_total{deployment="my-deployment"}[2m]))
 
     behavior: {}
- #     scaleDown:
- #       stabilizationWindowSeconds: 300
- #       policies:
- #       - type: Pods
- #         value: 1
- #         periodSeconds: 180
- #     scaleUp:
- #       stabilizationWindowSeconds: 300
- #       policies:
- #       - type: Pods
- #         value: 2
- #         periodSeconds: 60
+  #     scaleDown:
+  #       stabilizationWindowSeconds: 300
+  #       policies:
+  #       - type: Pods
+  #         value: 1
+  #         periodSeconds: 180
+  #     scaleUp:
+  #       stabilizationWindowSeconds: 300
+  #       policies:
+  #       - type: Pods
+  #         value: 2
+  #         periodSeconds: 60
 
   ## Enable mimalloc as a drop-in replacement for malloc.
   ## ref: https://github.com/microsoft/mimalloc
@@ -518,7 +516,7 @@ controller:
     patch:
       enabled: true
       image:
-        registry: docker.io
+        registry: registry.undistro.io/dockerhub
         image: jettech/kube-webhook-certgen
         # for backwards compatibility consider setting the full image url via the repository value below
         # use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
@@ -577,7 +575,8 @@ controller:
       enabled: false
       additionalLabels: {}
       # namespace: ""
-      rules: []
+      rules:
+        []
         # # These are just examples rules, please adapt them to your needs
         # - alert: NGINXConfigFailed
         #   expr: count(nginx_ingress_controller_config_last_reload_successful == 0) > 0
@@ -639,7 +638,7 @@ defaultBackend:
 
   name: defaultbackend
   image:
-    registry: k8s.gcr.io
+    registry: k8s.registry.undistro.io/gcr
     image: defaultbackend-amd64
     # for backwards compatibility consider setting the full image url via the repository value below
     # use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail

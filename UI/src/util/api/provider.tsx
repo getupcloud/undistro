@@ -3,23 +3,23 @@ import ndjsonStream from 'can-ndjson-stream'
 class Provider {
   http: any
 
-  constructor (httpWrapper: any) {
+  constructor(httpWrapper: any) {
     this.http = httpWrapper
   }
 
-  async list () {
+  async list() {
     const url = 'namespaces/undistro-system/clusters/management/proxy/apis/config.undistro.io/v1alpha1/namespaces/undistro-system/providers'
     const res = await this.http.get(url)
     return res.data
   }
 
-  async listMetadata (providerName: string, metadata: string, size: string, page: number, region: string) {
-    const url = `/provider/metadata?name=${providerName}&meta=${metadata}&page_size=${size}&page=${page}&=region${region}`
+  async listMetadata(providerName: string, metadata: string, size: string, page: number, region: string) {
+    const url = `/provider/metadata?name=${providerName}&meta=${metadata}&pageSize=${size}&page=${page}&region=${region}`
     const res = await this.http.get(url)
     return res.data
   }
- 
-  getEvents () {
+
+  getEvents() {
     const url = 'http://localhost/uapi/v1/namespaces/undistro-system/clusters/management/proxy/api/v1/namespaces/undistro-system/events?watch=true'
     fetch(url)
       .then((res) => {
@@ -28,11 +28,11 @@ class Provider {
         try {
           let read: any
           stream?.getReader().read().then(read = (result: any) => {
-            if(result.done) {
+            if (result.done) {
               console.log(result.value)
               return
             }
-  
+
             console.log(result.value)
             stream.getReader().read().then(read)
           })
@@ -42,7 +42,7 @@ class Provider {
       })
   }
 
-  async getEvents2 () {
+  async getEvents2() {
     const url = 'http://undistro.local/uapi/v1/namespaces/undistro-system/clusters/management/proxy/api/v1/namespaces/undistro-system/events?watch=true'
     const res = await fetch(url)
     const reader = res.body?.getReader()
@@ -60,7 +60,7 @@ class Provider {
     reader?.read().then(processText)
   }
 
-  getEvents3 () {
+  getEvents3() {
     const url = 'http://undistro.local/uapi/v1/namespaces/undistro-system/clusters/management/proxy/api/v1/namespaces/undistro-system/events?watch=true'
     fetch(url)
       .then((res) => {
@@ -71,7 +71,7 @@ class Provider {
             console.log(stream.value, 'done')
             return
           }
-          
+
           console.log(reader)
           return reader?.getReader().read().then(processText)
         }
