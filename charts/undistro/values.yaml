@@ -1,4 +1,6 @@
 local: false
+prometheus:
+  enabled: false
 ingress:
   enabled: true
   host: localhost
@@ -14,6 +16,6 @@ resources:
     memory: 256Mi
 image:
   repository: registry.undistro.io/library/undistro
-  tag: v0.29.4
+  tag: v0.30.0
   pullPolicy: IfNotPresent
   pullSecrets: []
