@@ -19,6 +19,7 @@ import (
 	"context"
 	_ "embed"
 	"errors"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -32,15 +33,15 @@ import (
 )
 
 type ec2InstanceType struct {
-	InstanceType      string   `json:"instance_type,omitempty"`
-	AvailabilityZones []string `json:"availability_zones,omitempty"`
+	InstanceType      string   `json:"instanceType,omitempty"`
+	AvailabilityZones []string `json:"availabilityZones,omitempty"`
 	VCPUs             int      `json:"vcpus,omitempty"`
 	Memory            float64  `json:"memory,omitempty"`
 }
 
 type flavor struct {
 	Name               string   `json:"name"`
-	KubernetesVersions []string `json:"kubernetes_version"`
+	KubernetesVersions []string `json:"kubernetesVersion"`
 }
 
 var (
@@ -84,16 +85,16 @@ var (
 	errInvalidPageRange = errors.New("invalid page range")
 	errRegionRequired   = errors.New("region is required")
 	ErrNoProviderMeta   = errors.New("meta is required. supported are " +
-		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']")
+		"['sshKeys', 'regions', 'machineTypes', 'supportedFlavors']")
 )
 
 type metaParam string
 
 const (
-	SShKeysMeta          = metaParam("ssh_keys")
+	SShKeysMeta          = metaParam("sshKeys")
 	RegionsMeta          = metaParam("regions")
-	MachineTypesMeta     = metaParam("machine_types")
-	SupportedFlavorsMeta = metaParam("supported_flavors")
+	MachineTypesMeta     = metaParam("machineTypes")
+	SupportedFlavorsMeta = metaParam("supportedFlavors")
 )
 
 type PagerResponse struct {
@@ -133,6 +134,9 @@ func describeSSHKeys(region string, restConf *rest.Config) (res []string, err er
 	k8sClient, err := client.New(restConf, client.Options{
 		Scheme: scheme.Scheme,
 	})
+	if err != nil {
+		return []string{}, errGetCredentials
+	}
 	creds, _, err := undistroaws.Credentials(context.Background(), k8sClient)
 	if err != nil {
 		return []string{}, errGetCredentials

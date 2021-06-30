@@ -46,3 +46,8 @@ jobs:
 
       - name: Test
         run: make test
+
+      - name: Check GoReleaser config
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          args: check

@@ -31,8 +31,8 @@ type ProviderParams struct {
 	Region       string       `json:"region,omitempty"`
 	Meta         string       `json:"meta,omitempty"`
 	Page         int          `json:"page,omitempty"`
-	ItemsPerPage int          `json:"items_per_page,omitempty"`
-	Config       *rest.Config `json:"rest_config,omitempty"`
+	ItemsPerPage int          `json:"itemsPerPage,omitempty"`
+	Config       *rest.Config `json:"restConfig,omitempty"`
 }
 
 func New(conf *rest.Config, name, region, meta string, page, itemsPerPage int) *ProviderParams {

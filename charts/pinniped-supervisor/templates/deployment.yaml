@@ -33,7 +33,7 @@ spec:
             - /etc/config/pinniped.yaml
           command: 
             - /usr/local/bin/pinniped-supervisor
-          image: "projects.registry.vmware.com/pinniped/pinniped-server:v0.9.1"
+          image: "registry.undistro.io/vmware/pinniped/pinniped-server:v0.9.1"
           imagePullPolicy: IfNotPresent
           livenessProbe: 
             failureThreshold: 5

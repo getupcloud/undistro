@@ -32,6 +32,9 @@ jobs:
       - name: Get dependencies
         run: go mod download
 
+      - name: vars from bash
+        run: ./hack/version.sh
+
       - name: Build CLI and add path
         run: |
           make cli
