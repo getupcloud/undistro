@@ -58,8 +58,8 @@ func TestMain(m *testing.M) {
 	sha := os.Getenv("GITHUB_SHA")
 	image := fmt.Sprintf("localhost:5000/undistro:%s", sha)
 	cmd := exec.NewCommand(
-		exec.WithCommand("docker"),
-		exec.WithArgs("build", "-t", image, "../tilt.docker"),
+		exec.WithCommand("bash"),
+		exec.WithArgs("-c", fmt.Sprintf("../testbin/docker-build-e2e.sh %s", image)),
 	)
 	stout, stderr, err := cmd.Run(ctx)
 	if err != nil {
@@ -131,7 +131,14 @@ func TestMain(m *testing.M) {
 		fmt.Println(msg)
 		cmd = exec.NewCommand(
 			exec.WithCommand("kubectl"),
-			exec.WithArgs("get", "pods", "-n", "undistro-system"),
+			exec.WithArgs("get", "pods", "--all-namespaces"),
+		)
+		out, stderr, _ = cmd.Run(ctx)
+		fmt.Println(string(out))
+		fmt.Println("err:", string(stderr))
+		cmd = exec.NewCommand(
+			exec.WithCommand("kubectl"),
+			exec.WithArgs("describe", "nodes"),
 		)
 		out, stderr, _ = cmd.Run(ctx)
 		fmt.Println(string(out))

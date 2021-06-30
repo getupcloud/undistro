@@ -10,6 +10,8 @@ builds:
   - binary: manager
     id: manager
     main: main.go
+    flags:
+      - -a
     ldflags: -X github.com/getupio-undistro/undistro/pkg/version.buildDate={{.Env.BUILD_DATETIME}} -X github.com/getupio-undistro/undistro/pkg/version.gitCommit={{.Env.BUILD_COMMIT}} -X github.com/getupio-undistro/undistro/pkg/version.gitTreeState={{.Env.BUILD_STATE}} -X github.com/getupio-undistro/undistro/pkg/version.gitMajor={{.Env.GIT_MAJOR}} -X github.com/getupio-undistro/undistro/pkg/version.gitMinor={{.Env.GIT_MINOR}} -X github.com/getupio-undistro/undistro/pkg/version.gitVersion={{.Env.GIT_VERSION}} -X github.com/getupio-undistro/undistro/pkg/version.gitReleaseCommit={{.Env.RELEASE_COMMIT}}
     goos:
       - linux
@@ -24,7 +26,7 @@ dockers:
       - "registry.undistro.io/library/undistro-amd64:{{ .Tag }}"
     use: buildx
     ids: [manager]
-    goarch: arm64
+    goarch: amd64
     dockerfile: Dockerfile
     build_flag_templates:
       - "--pull"

@@ -32,9 +32,6 @@ jobs:
       - name: Get dependencies
         run: go mod download
 
-      - name: vars from bash
-        run: ./hack/version.sh
-
       - name: Build CLI and add path
         run: |
           make cli
@@ -43,7 +40,7 @@ jobs:
 
       - name: Install Kind and create cluster
         run: |
-          GO111MODULE="on" go get sigs.k8s.io/kind@v0.10.0
+          GO111MODULE="on" go get sigs.k8s.io/kind@v0.11.1
           ./hack/kind.sh
 
       - name: Configure AWS credentials for E2E
