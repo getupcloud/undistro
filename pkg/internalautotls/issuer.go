@@ -32,8 +32,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/caddyserver/caddy/v2"
-	"github.com/caddyserver/certmagic"
 	"github.com/pkg/errors"
 	"github.com/smallstep/certificates/authority"
 	"github.com/smallstep/certificates/authority/provisioner"
@@ -44,14 +42,11 @@ import (
 )
 
 const (
-	rootCert                      = "root.cert"
-	rootKey                       = "root.key"
-	defaultCAName                 = "UnDistro Local Authority"
-	defaultRootCommonName         = "{pki.ca.name} - {time.now.year} ECC Root"
-	defaultIntermediateCommonName = "{pki.ca.name} - ECC Intermediate"
-	defaultRootLifetime           = 24 * time.Hour * 30 * 12 * 10
-	defaultIntermediateLifetime   = 24 * time.Hour * 7
-	defaultInternalCertLifetime   = 12 * time.Hour
+	rootCert                    = "root.cert"
+	rootKey                     = "root.key"
+	defaultCAName               = "UnDistro Local Authority"
+	defaultRootLifetime         = 24 * time.Hour * 30 * 12 * 10
+	defaultInternalCertLifetime = 12 * time.Hour
 )
 
 // Issuer is a type that can issue certificates.
@@ -69,8 +64,6 @@ type Issuer interface {
 type InternalIssuer struct {
 	CertificateAuthority string
 	RootLifetime         time.Duration
-	IntermediateLifetime time.Duration
-	InternalCertLifetime time.Duration
 	genericclioptions.IOStreams
 }
 
@@ -78,16 +71,14 @@ func New() *InternalIssuer {
 	return &InternalIssuer{
 		CertificateAuthority: defaultCAName,
 		RootLifetime:         defaultRootLifetime,
-		IntermediateLifetime: defaultIntermediateLifetime,
-		InternalCertLifetime: defaultInternalCertLifetime,
 	}
 }
 
 // sans
 func (at *InternalIssuer) Issue(sans []string) (err error) {
-	rp := caddy.NewReplacer()
-	rp.Set("pki.ca.name", defaultCAName)
-	rootCert, rootKey, err := generateRoot(rp.ReplaceAll(defaultRootCommonName, ""))
+	year := time.Now().Year()
+	commonName := fmt.Sprintf("%s - %d ECC Root", defaultCAName, year)
+	rootCert, rootKey, err := generateRoot(commonName)
 	if err != nil {
 		return errors.Errorf("unable to generate root certs: %s", err.Error())
 	}
@@ -221,15 +212,6 @@ func generateRoot(commonName string) (rootCrt *x509.Certificate, privateKey inte
 	return newCert(rootProfile)
 }
 
-func generateIntermediate(commonName string, rootCrt *x509.Certificate, rootKey interface{}) (cert *x509.Certificate, privateKey interface{}, err error) {
-	interProfile, err := x509util.NewIntermediateProfile(commonName, rootCrt, rootKey)
-	if err != nil {
-		return
-	}
-	interProfile.Subject().NotAfter = time.Now().Add(defaultIntermediateLifetime) // TODO: make configurable
-	return newCert(interProfile)
-}
-
 func newCert(profile x509util.Profile) (cert *x509.Certificate, privateKey interface{}, err error) {
 	certBytes, err := profile.CreateCertificate()
 	if err != nil {
@@ -267,7 +249,3 @@ func generateCSR(privateKey crypto.PrivateKey, sans []string) (*x509.Certificate
 
 	return x509.ParseCertificateRequest(csrDER)
 }
-
-var (
-	_ certmagic.Issuer = (*InternalIssuer)(nil)
-)
