@@ -4,9 +4,7 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata: 
   annotations: 
-    {{if .Values.local}}
-    cert-manager.io/cluster-issuer: selfsigned
-    {{else}}
+    {{if not .Values.local}}
     cert-manager.io/cluster-issuer: letsencrypt-prod
     {{end}}
     kubernetes.io/ingress.class: nginx
