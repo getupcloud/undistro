@@ -54,8 +54,16 @@ const (
 	defaultInternalCertLifetime   = 12 * time.Hour
 )
 
-type UndistroIssuer interface {
-	Issue([]string) error
+// Issuer is a type that can issue certificates.
+type Issuer interface {
+	// Issue receives the list of Subject Alternative Names that
+	// a certificate should cover and inserts it in a K8S secret,
+	// being used by the Ingress.
+	Issue(sans []string) error
+
+	// Renew checks if a such certificate has the lifetime complete,
+	// if yes will renew the certificate, in other case do nothing.
+	Renew() error
 }
 
 type InternalIssuer struct {
@@ -76,7 +84,7 @@ func New() *InternalIssuer {
 }
 
 // sans
-func (at *InternalIssuer) Issue([]string) error {
+func (at *InternalIssuer) Issue(sans []string) (err error) {
 	rp := caddy.NewReplacer()
 	rp.Set("pki.ca.name", defaultCAName)
 	rootCert, rootKey, err := generateRoot(rp.ReplaceAll(defaultRootCommonName, ""))
@@ -92,10 +100,10 @@ func (at *InternalIssuer) Issue([]string) error {
 		return errors.Errorf("unable to encode root key to pem: %s", err.Error())
 	}
 
-	// create a secret in k8s
+	// TODO create a secret in k8s
 	err = os.WriteFile(path.Join("pki", "root.crt"), rootCertPEM, 0644)
 	if err != nil {
-		panic(err)
+		return errors.Errorf("unable to encode root key to pem: %s", err.Error())
 	}
 	err = os.WriteFile(path.Join("pki", "root.key"), rootKeyPEM, 0644)
 	if err != nil {
@@ -115,7 +123,7 @@ func (at *InternalIssuer) Issue([]string) error {
 	}
 	auth, err := authority.NewEmbedded(opts...)
 	if err != nil {
-		panic(err)
+		return errors.Errorf("unable to create an Embedded Authority: %s", err.Error())
 	}
 	lft := defaultInternalCertLifetime
 	// ensure issued certificate does not expire later than its issuer
@@ -123,26 +131,28 @@ func (at *InternalIssuer) Issue([]string) error {
 		lft = time.Until(rootCert.NotAfter)
 	}
 
-	csr, err := generateCSR(rootKey.(crypto.PrivateKey), []string{"localhost", "127.0.0.1", "undistro.local"})
+	// []string{"localhost", "127.0.0.1", "undistro.local"}
+	csr, err := generateCSR(rootKey.(crypto.PrivateKey), sans)
 	if err != nil {
-		panic(err)
+		return errors.Errorf("unable to generate th Certicate Signing Request: %s", err.Error())
 	}
 	certChain, err := auth.Sign(csr, provisioner.SignOptions{}, customCertLifetime(lft))
 	if err != nil {
-		panic(err)
+		return errors.Errorf("unable to sign certs: %s", err.Error())
 	}
 
 	f, err := os.Create(path.Join("pki", "certificate.crt"))
 	if err != nil {
-		panic(err)
+		return errors.Errorf("unable to generate th Certicate Signing Request: %s", err.Error())
 	}
 	defer f.Close()
 	for _, cert := range certChain {
 		err := pem.Encode(f, &pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw})
 		if err != nil {
-			panic(err)
+			return errors.Errorf("unable to encode the certificate: %s", err.Error())
 		}
 	}
+	return
 }
 
 type customCertLifetime time.Duration
@@ -153,8 +163,8 @@ func (d customCertLifetime) Modify(cert *x509.Certificate, _ provisioner.SignOpt
 	return nil
 }
 
-func (at *InternalIssuer) Renew() {
-
+func (at *InternalIssuer) Renew() error {
+	return nil
 }
 
 func pemEncodeCert(der []byte) ([]byte, error) {
