@@ -28,6 +28,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/certmanager"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
 	"github.com/getupio-undistro/undistro/pkg/helm"
+	"github.com/getupio-undistro/undistro/pkg/internalautotls"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/retry"
@@ -297,6 +298,15 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 	if err != nil {
 		return err
 	}
+
+	if local {
+		issuer := internalautotls.New(internalautotls.NewSecretStore())
+		sans := []string{"localhost", "127.0.0.1", "undistro.local"}
+		if err := issuer.Issue(sans); err != nil {
+			return errors.Errorf("unable to issue local certificate: %v", err)
+		}
+	}
+
 	restGetter := kube.NewInClusterRESTClientGetter(restCfg, ns)
 	if o.ClusterName != "" {
 		byt, err := kubeconfig.FromSecret(cmd.Context(), c, util.ObjectKeyFromString(o.ClusterName))

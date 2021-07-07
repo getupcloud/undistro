@@ -17,6 +17,7 @@ package internalautotls
 
 import (
 	"bytes"
+	"context"
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/ed25519"
@@ -27,8 +28,6 @@ import (
 	"fmt"
 	"net"
 	"net/url"
-	"os"
-	"path"
 	"strings"
 	"time"
 
@@ -54,11 +53,11 @@ type Issuer interface {
 	// Issue receives the list of Subject Alternative Names that
 	// a certificate should cover and inserts it in a K8S secret,
 	// being used by the Ingress.
-	Issue(sans []string) error
+	Issue(ctx context.Context, sans []string) error
 
 	// Renew checks if a such certificate has the lifetime complete,
 	// if yes will renew the certificate, in other case do nothing.
-	Renew() error
+	Renew(ctx context.Context) error
 }
 
 // InternalIssuer is a concrete type that implements Issuer interface.
@@ -80,9 +79,11 @@ func New(s Storage) Issuer {
 
 // Issue implements the logic for generate certificates to internal
 // domais like localhost, 127.0.0.1, app.local, app.internal, etc.
-func (at *InternalIssuer) Issue(sans []string) (err error) {
+func (at *InternalIssuer) Issue(ctx context.Context, sans []string) (err error) {
 	year := time.Now().Year()
 	commonName := fmt.Sprintf("%s - %d ECC Root", at.CAName, year)
+
+	fmt.Fprintf(at.IOStreams.Out, "Ensure cert-manager is installed\n")
 	rootCert, rootKey, err := generateRoot(commonName)
 	if err != nil {
 		return errors.Errorf("unable to generate root certs: %s", err.Error())
@@ -95,9 +96,6 @@ func (at *InternalIssuer) Issue(sans []string) (err error) {
 	if err != nil {
 		return errors.Errorf("unable to encode root key to pem: %s", err.Error())
 	}
-
-	// TODO create a secret in k8s
-	at.Storage.Store()
 
 	// install certificate localy
 	if !trusted(rootCert) {
@@ -131,23 +129,18 @@ func (at *InternalIssuer) Issue(sans []string) (err error) {
 		return errors.Errorf("unable to sign certs: %s", err.Error())
 	}
 
-	// store certificate
-	f, err := os.Create(path.Join("pki", "certificate.crt"))
+	// store certificates
+	err = at.Storage.Store(certChain, rootCertPEM, rootKeyPEM)
 	if err != nil {
-		return errors.Errorf("unable to generate th Certicate Signing Request: %s", err.Error())
+		return errors.Errorf("unable to store certificate chain")
 	}
-	defer f.Close()
-	for _, cert := range certChain {
-		err := pem.Encode(f, &pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw})
-		if err != nil {
-			return errors.Errorf("unable to encode the certificate: %s", err.Error())
-		}
-	}
+
 	return
 }
 
-func (at *InternalIssuer) Renew() error {
+func (at *InternalIssuer) Renew(ctx context.Context) error {
 	// TODO
+	defer ctx.Done()
 	return nil
 }
 

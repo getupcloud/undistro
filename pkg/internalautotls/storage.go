@@ -16,16 +16,20 @@ limitations under the License.
 package internalautotls
 
 import (
+	"context"
+	"crypto/x509"
+	"encoding/pem"
 	"os"
 	"path"
 
+	"github.com/getupio-undistro/undistro/pkg/util"
 	"github.com/pkg/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 //
 type Storage interface {
-	Store(payload []byte) error
+	Store(chain []*x509.Certificate, rootCert, rootKey []byte) error
 }
 
 type FileStore struct {
@@ -35,14 +39,27 @@ func NewFileStorage() Storage {
 	return &FileStore{}
 }
 
-func (fs *FileStore) Store(payload []byte) (err error) {
-	err = os.WriteFile(path.Join("pki", "root.crt"), rootCertPEM, 0644)
+func (fs *FileStore) Store(chain []*x509.Certificate, rootCert, rootKey []byte) (err error) {
+	err = os.WriteFile(path.Join("pki", "root.crt"), rootCert, 0644)
 	if err != nil {
 		return errors.Errorf("unable to encode root crt to pem: %s", err.Error())
 	}
-	err = os.WriteFile(path.Join("pki", "root.key"), rootKeyPEM, 0644)
+	err = os.WriteFile(path.Join("pki", "root.key"), rootKey, 0644)
 	if err != nil {
 		return errors.Errorf("unable to encode root key to pem: %s", err.Error())
+	}
+
+	//
+	f, err := os.Create(path.Join("pki", "certificate.crt"))
+	if err != nil {
+		return errors.Errorf("unable to generate the Certicate Signing Request: %s", err.Error())
+	}
+	defer f.Close()
+	for _, cert := range chain {
+		err := pem.Encode(f, &pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw})
+		if err != nil {
+			return errors.Errorf("unable to encode the certificate: %s", err.Error())
+		}
 	}
 	return nil
 }
@@ -55,7 +72,25 @@ func NewSecretStore() Storage {
 	return &SecretStore{}
 }
 
-func (s *SecretStore) Store(payload []byte) error {
-
+func (s *SecretStore) Store(chain []*x509.Certificate, rootCert, rootKey []byte) error {
+	secret := corev1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Secret",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      secretName,
+			Namespace: ns,
+		},
+		Data: map[string][]byte{
+			"ca.crt":  string(rootCert),
+			"tls.crt": string(rootKey),
+			"tls.key": "",
+		},
+	}
+	_, err = util.CreateOrUpdate(context.Background(), s.Client, &secret)
+	if err != nil {
+		return err
+	}
 	return nil
 }
