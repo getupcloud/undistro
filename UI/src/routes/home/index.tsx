@@ -7,8 +7,35 @@ import moment from 'moment'
 
 import './index.scss'
 
+const headers = [
+	{ name: 'Name', field: 'name'},
+	{ name: 'Provider', field: 'provider'},
+	{ name: 'Flavor', field: 'flavor'},
+	{ name: 'Version', field: 'version'},
+	{ name: 'Cluster Groups', field: 'clusterGroups'},
+	{ name: 'Machines', field: 'machines'},
+	{ name: 'Age', field: 'age'},
+	{ name: 'Status', field: 'status'},
+]
+
+type TypeCluster = {
+	name: string,
+	provider: string,
+	flavor: string,
+	version: string,
+	clusterGroups: string,
+	machines: number,
+	age: Date,
+	status: string
+}
+
 export default function HomePage () {
-	const [clusters, setClusters] = useState()
+	const [clusters, setClusters] = useState<TypeCluster[]>([])
+	const [pause, setPause] = useState<boolean>(false)
+	const name = (clusters || []).map(elm => elm.name).toString()
+	const namespace = (clusters || []).map(elm => elm.clusterGroups).toString()
+
+
 	const showModal = () => {
     Modals.show('create-cluster', {
       title: 'Create',
@@ -45,6 +72,8 @@ export default function HomePage () {
 						provider: elm.spec.infrastructureProvider.name,
 						flavor: elm.spec.infrastructureProvider.flavor,
 						version: elm.spec.kubernetesVersion,
+						clusterGroups: elm.metadata.namespace,
+						machines: elm.status.controlPlane.replicas + elm.status.totalWorkerReplicas,
 						age: moment(elm.metadata.creationTimestamp).startOf('day').fromNow(),
 						status: elm.status.conditions[0].type
 					}
@@ -52,32 +81,38 @@ export default function HomePage () {
 			})
 	}
 
+	const pauseCluster = () => {
+		setPause(!pause)	
+		const payload = {
+			"spec": {
+				"paused": pause
+			}
+		}
 
-	const headers = [
-		{ name: 'Name', field: 'name'},
-		{ name: 'Provider', field: 'provider'},
-		{ name: 'Flavor', field: 'flavor'},
-		{ name: 'Version', field: 'version'},
-		// { name: 'IP address', field: 'ver'},
-		{ name: 'Age', field: 'age'},
-		{ name: 'Status', field: 'status'},
-	]
+		Api.Cluster.put(payload, namespace, name)
+			.then(_ => {
+				console.log('success')
+			})
+	}
 
-	console.log(clusters)
+	const deleteCluster = () => {
+		Api.Cluster.delete(namespace, name)
+			.then(_ => {
+				console.log('success')
+			})
+	}
+
+
 	useEffect(() => {
 		getClusters()
 	}, [])
 
+	console.log(pause)
+
 	return (
 		<div className='home-page-route'>
-			<ul>
-				<li><i className='icon-stop' /> <p>Stop</p></li>
-				<li><i className='icon-arrow-solid-up' /> <p>Update</p></li>
-				<li><i className='icon-settings' /> <p>Settings</p></li>
-				<li><i className='icon-close-solid' /> <p>Delete</p></li>
-			</ul>
 			<Button onClick={() => showModal()} size='large' type='primary' children='LgBtnText' />
-			<Table data={(clusters || [])}  header={headers}/>	
+			<Table data={(clusters || [])} icon={pause} delete={() => deleteCluster()} pause={() => pauseCluster()} header={headers}/>	
 		</div>
 	)
 }

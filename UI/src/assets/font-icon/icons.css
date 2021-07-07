@@ -1,10 +1,10 @@
 @font-face {
     font-family: "icons";
-    src: url("./icons.eot?51939d8a2f5b2a18d04ed0ad6ec0fda9?#iefix") format("embedded-opentype"),
-url("./icons.woff2?51939d8a2f5b2a18d04ed0ad6ec0fda9") format("woff2"),
-url("./icons.woff?51939d8a2f5b2a18d04ed0ad6ec0fda9") format("woff"),
-url("./icons.ttf?51939d8a2f5b2a18d04ed0ad6ec0fda9") format("truetype"),
-url("./icons.svg?51939d8a2f5b2a18d04ed0ad6ec0fda9#icons") format("svg");
+    src: url("./icons.eot?6d934ee208cdcf84218a8f8a779bd4cd?#iefix") format("embedded-opentype"),
+url("./icons.woff2?6d934ee208cdcf84218a8f8a779bd4cd") format("woff2"),
+url("./icons.woff?6d934ee208cdcf84218a8f8a779bd4cd") format("woff"),
+url("./icons.ttf?6d934ee208cdcf84218a8f8a779bd4cd") format("truetype"),
+url("./icons.svg?6d934ee208cdcf84218a8f8a779bd4cd#icons") format("svg");
 }
 
 i[class^="icon-"]:before, i[class*=" icon-"]:before {
@@ -51,12 +51,15 @@ i[class^="icon-"]:before, i[class*=" icon-"]:before {
 .icon-node:before {
     content: "\f10b";
 }
-.icon-settings:before {
+.icon-play:before {
     content: "\f10c";
 }
-.icon-stop:before {
+.icon-settings:before {
     content: "\f10d";
 }
-.icon-workload:before {
+.icon-stop:before {
     content: "\f10e";
+}
+.icon-workload:before {
+    content: "\f10f";
 }

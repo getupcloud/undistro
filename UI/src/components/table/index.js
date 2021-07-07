@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Classnames from 'classnames'
 import './index.scss'
 
 const Table = (props) => {
@@ -11,7 +12,7 @@ const Table = (props) => {
         </tr>
       </thead>
       <tbody>
-        {props.data.map((elm, i) => <Row onChange={props.onChange} header={props.header} key={i} data={elm} onClick={props.onClick} />)}
+        {props.data.map((elm, i) => <Row delete={props.delete} onChange={props.onChange} header={props.header} key={i} data={elm} icon={props.icon} pause={props.pause} />)}
       </tbody>
     </table>
   )
@@ -34,6 +35,7 @@ const ColumnHeader = (props) => {
 
 const Row = (props) => {
   const [keys, setKeys] = useState([])
+  const [show, setShow] = useState(false)
 
   useEffect(() => {
     const headers = props.header.map(elm => elm.field)
@@ -41,9 +43,18 @@ const Row = (props) => {
   }, [props.data, props.header])
 
   return (
-    <tr onClick={props.onClick}>
+    <tr>
       <td className='select-row'>
-        <i className='icon-dots' />
+        <i onClick={() => setShow(!show)} className='icon-dots' />
+        {show && <ul>
+          <li onClick={props.pause}>
+            <i className={Classnames(props.icon ? 'icon-play' : 'icon-stop')} /> 
+            {props.icon ? <p>Resume</p> : <p>Stop</p>}
+          </li>
+          <li><i className='icon-arrow-solid-up' /> <p>Update</p></li>
+          <li><i className='icon-settings' /> <p>Settings</p></li>
+          <li onClick={props.delete}><i className='icon-close-solid' /> <p>Delete</p></li>
+			  </ul>}
       </td>
       {keys.map((key) => {
         return (

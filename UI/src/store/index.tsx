@@ -19,19 +19,10 @@ type TypeCreateClusterDefault = {
       sshKey: string
     }
   },
-  workers: [
-    { 
-      machineType: string, 
-      replicas: number 
-    }, 
-    { 
-      infraNode: boolean,
-      machineType: string
-    }
-  ]
+  workers: []
 }
 
-const storeWizard = new Store<TypeCreateClusterDefault>({ 
+const storeWizard = new Store<any>({ 
   metadata: {
     name: '',
     namespace: ''
@@ -49,16 +40,7 @@ const storeWizard = new Store<TypeCreateClusterDefault>({
       sshKey: ''
     }
   },
-  workers: [
-    {
-      machineType: '',
-      replicas: 0
-    },
-    {
-      infraNode: false,
-      machineType: ''
-    }
-  ]
+  workers: []
 })
 
 export default storeWizard

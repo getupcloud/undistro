@@ -39,6 +39,41 @@
   tbody {
     .select-row {
       width: 35px;
+      position: relative;
+
+      ul {
+        position: absolute;
+        width: 112px;
+        list-style: none;
+        background-color: #495059;
+        border: 1px solid #7b7f86;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        
+        li {
+          display: flex;
+          padding: 8px 10px;
+          cursor: pointer;
+    
+          p {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+          }
+      
+          &:hover {
+            background-color: #657F97;
+          }
+    
+          i {
+            display: flex;
+            align-items: center;
+            margin-right: 6px;
+            font-size: 20px;
+          }
+        }
+      }
     }
 
     td {
@@ -50,7 +85,6 @@
 
       i:hover {
         cursor: pointer;
-        color: rgba(#000, 0.8);
       }
     }
 
