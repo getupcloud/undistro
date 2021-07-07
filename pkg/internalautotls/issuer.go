@@ -61,23 +61,28 @@ type Issuer interface {
 	Renew() error
 }
 
+// InternalIssuer is a concrete type that implements Issuer interface.
 type InternalIssuer struct {
-	CertificateAuthority string
-	RootLifetime         time.Duration
+	CAName       string
+	RootLifetime time.Duration
 	genericclioptions.IOStreams
+	Storage
 }
 
-func New() *InternalIssuer {
+// New retrieves an instance of the Internal Issuer.
+func New(s Storage) Issuer {
 	return &InternalIssuer{
-		CertificateAuthority: defaultCAName,
-		RootLifetime:         defaultRootLifetime,
+		CAName:       defaultCAName,
+		RootLifetime: defaultRootLifetime,
+		Storage:      s,
 	}
 }
 
-// sans
+// Issue implements the logic for generate certificates to internal
+// domais like localhost, 127.0.0.1, app.local, app.internal, etc.
 func (at *InternalIssuer) Issue(sans []string) (err error) {
 	year := time.Now().Year()
-	commonName := fmt.Sprintf("%s - %d ECC Root", defaultCAName, year)
+	commonName := fmt.Sprintf("%s - %d ECC Root", at.CAName, year)
 	rootCert, rootKey, err := generateRoot(commonName)
 	if err != nil {
 		return errors.Errorf("unable to generate root certs: %s", err.Error())
@@ -92,15 +97,9 @@ func (at *InternalIssuer) Issue(sans []string) (err error) {
 	}
 
 	// TODO create a secret in k8s
-	err = os.WriteFile(path.Join("pki", "root.crt"), rootCertPEM, 0644)
-	if err != nil {
-		return errors.Errorf("unable to encode root key to pem: %s", err.Error())
-	}
-	err = os.WriteFile(path.Join("pki", "root.key"), rootKeyPEM, 0644)
-	if err != nil {
-		panic(err)
-	}
+	at.Storage.Store()
 
+	// install certificate localy
 	if !trusted(rootCert) {
 		truststore.Install(rootCert,
 			truststore.WithDebug(),
@@ -116,13 +115,13 @@ func (at *InternalIssuer) Issue(sans []string) (err error) {
 	if err != nil {
 		return errors.Errorf("unable to create an Embedded Authority: %s", err.Error())
 	}
+
 	lft := defaultInternalCertLifetime
 	// ensure issued certificate does not expire later than its issuer
 	if time.Now().Add(lft).After(rootCert.NotAfter) {
 		lft = time.Until(rootCert.NotAfter)
 	}
 
-	// []string{"localhost", "127.0.0.1", "undistro.local"}
 	csr, err := generateCSR(rootKey.(crypto.PrivateKey), sans)
 	if err != nil {
 		return errors.Errorf("unable to generate th Certicate Signing Request: %s", err.Error())
@@ -132,6 +131,7 @@ func (at *InternalIssuer) Issue(sans []string) (err error) {
 		return errors.Errorf("unable to sign certs: %s", err.Error())
 	}
 
+	// store certificate
 	f, err := os.Create(path.Join("pki", "certificate.crt"))
 	if err != nil {
 		return errors.Errorf("unable to generate th Certicate Signing Request: %s", err.Error())
@@ -146,6 +146,11 @@ func (at *InternalIssuer) Issue(sans []string) (err error) {
 	return
 }
 
+func (at *InternalIssuer) Renew() error {
+	// TODO
+	return nil
+}
+
 type customCertLifetime time.Duration
 
 func (d customCertLifetime) Modify(cert *x509.Certificate, _ provisioner.SignOptions) error {
@@ -154,16 +159,9 @@ func (d customCertLifetime) Modify(cert *x509.Certificate, _ provisioner.SignOpt
 	return nil
 }
 
-func (at *InternalIssuer) Renew() error {
-	return nil
-}
-
 func pemEncodeCert(der []byte) ([]byte, error) {
 	return pemEncode("CERTIFICATE", der)
 }
-
-// pemEncodePrivateKey marshals a EC or RSA private key into a PEM-encoded array of bytes.
-// TODO: this is the same thing as in certmagic. Should we reuse that code somehow? It's unexported.
 
 func pemEncodePrivateKey(key crypto.PrivateKey) ([]byte, error) {
 	var pemType string
@@ -208,7 +206,7 @@ func generateRoot(commonName string) (rootCrt *x509.Certificate, privateKey inte
 	if err != nil {
 		return
 	}
-	rootProfile.Subject().NotAfter = time.Now().Add(defaultRootLifetime) // TODO: make configurable
+	rootProfile.Subject().NotAfter = time.Now().Add(defaultRootLifetime)
 	return newCert(rootProfile)
 }
 
