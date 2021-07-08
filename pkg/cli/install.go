@@ -447,16 +447,17 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		}
 	}
 	if installUndistro {
-		providerNginx, err := o.installChart(restGetter, chartRepo, secretRef, "ingress-nginx", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "ingress-nginx"))
-		if err != nil {
-			return err
-		}
-		providers = append(providers, providerNginx)
 		providerUndistro, err := o.installChart(restGetter, chartRepo, secretRef, "undistro", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro"))
 		if err != nil {
 			return err
 		}
 		providers = append(providers, providerUndistro)
+
+		providerNginx, err := o.installChart(restGetter, chartRepo, secretRef, "ingress-nginx", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "ingress-nginx"))
+		if err != nil {
+			return err
+		}
+		providers = append(providers, providerNginx)
 		err = retry.WithExponentialBackoff(retry.NewBackoff(), func() error {
 			for _, o := range undistroObjs {
 				_, errCert := util.CreateOrUpdate(cmd.Context(), c, &o)
