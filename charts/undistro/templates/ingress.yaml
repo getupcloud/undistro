@@ -4,11 +4,6 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata: 
   annotations: 
-    {{if .Values.local}}
-    cert-manager.io/cluster-issuer: selfsigned
-    {{ else }}
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    {{end}}
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/custom-response-headers: Access-Control-Allow-Origin:*||Access-Control-Allow-Methods:GET,POST,OPTIONS||Access-Control-Allow-Headers:DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range||Access-Control-Expose-Headers:Content-Length,Content-Range
     traefik.ingress.kubernetes.io/frontend-entry-points: http, https
