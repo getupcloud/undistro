@@ -28,6 +28,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/certmanager"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
 	"github.com/getupio-undistro/undistro/pkg/helm"
+	"github.com/getupio-undistro/undistro/pkg/internalautohttps"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/retry"
@@ -35,7 +36,6 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/undistro"
 	"github.com/getupio-undistro/undistro/pkg/util"
 	"github.com/pkg/errors"
-	"github.com/smallstep/truststore"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"helm.sh/helm/v3/pkg/chart/loader"
@@ -63,7 +63,7 @@ var (
 
 const (
 	undistroRepo = "https://registry.undistro.io/chartrepo/library"
-	ns           = "undistro-system"
+	ns           = undistro.Namespace
 )
 
 type InstallOptions struct {
@@ -299,17 +299,6 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		return err
 	}
 
-	// get root cert from secret
-
-	// install certificate localy
-	if !util.Trusted(rootCert) {
-		truststore.Install(rootCert,
-			truststore.WithDebug(),
-			truststore.WithFirefox(),
-			truststore.WithJava(),
-		)
-	}
-
 	restGetter := kube.NewInClusterRESTClientGetter(restCfg, ns)
 	if o.ClusterName != "" {
 		byt, err := kubeconfig.FromSecret(cmd.Context(), c, util.ObjectKeyFromString(o.ClusterName))
@@ -465,7 +454,8 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 			return err
 		}
 		providers = append(providers, providerTraefik)
-		providerUndistro, err := o.installChart(restGetter, chartRepo, secretRef, "undistro", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro"))
+		undistroChartValues := getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro")
+		providerUndistro, err := o.installChart(restGetter, chartRepo, secretRef, "undistro", undistroChartValues)
 		if err != nil {
 			return err
 		}
@@ -479,6 +469,11 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 			}
 			return nil
 		})
+		if err != nil {
+			return err
+		}
+		// install cert in local environments
+		err = internalautohttps.InstallLocalCert(cmd.Context(), undistroChartValues, c)
 		if err != nil {
 			return err
 		}

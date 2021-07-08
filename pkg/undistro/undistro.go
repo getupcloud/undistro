@@ -15,6 +15,8 @@ limitations under the License.
 */
 package undistro
 
+const Namespace = "undistro-system"
+
 var TestResources = `---
 apiVersion: v1
 kind: Namespace
