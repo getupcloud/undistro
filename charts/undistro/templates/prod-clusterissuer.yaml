@@ -1,3 +1,4 @@
+{{- if not .Values.local -}}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -14,3 +15,4 @@ spec:
         http01: 
           ingress: 
             class: nginx
+{{- end -}}
