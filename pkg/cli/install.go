@@ -473,9 +473,13 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 			return err
 		}
 		// install cert in local environments
-		err = internalautohttps.InstallLocalCert(cmd.Context(), undistroChartValues, c)
-		if err != nil {
-			return err
+		isLocal := undistroChartValues["local"].(bool)
+		if isLocal {
+			fmt.Fprintf(o.IOStreams.Out, "Installing local certificates\n")
+			err = internalautohttps.InstallLocalCert(cmd.Context(), undistroChartValues, c)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	err = retry.WithExponentialBackoff(retry.NewBackoff(), func() error {

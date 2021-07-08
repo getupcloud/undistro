@@ -11,34 +11,31 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func InstallLocalCert(ctx context.Context, undistroChartValues map[string]interface{}, c client.Client) (err error) {
-	isLocal := undistroChartValues["local"].(bool)
-	if isLocal {
-		const caSecretName = "ca-secret"
-		const caName = "ca.crt"
-		objKey := client.ObjectKey{
-			Namespace: undistro.Namespace,
-			Name:      caSecretName,
-		}
-		secret := corev1.Secret{}
-		err = c.Get(ctx, objKey, &secret)
-		if err != nil {
-			return errors.Errorf("unable to get CA secret %s: %v", caSecretName, err)
-		}
+func InstallLocalCert(ctx context.Context, c client.Client) (err error) {
+	const caSecretName = "ca-secret"
+	const caName = "ca.crt"
+	objKey := client.ObjectKey{
+		Namespace: undistro.Namespace,
+		Name:      caSecretName,
+	}
+	secret := corev1.Secret{}
+	err = c.Get(ctx, objKey, &secret)
+	if err != nil {
+		return errors.Errorf("unable to get CA secret %s: %v", caSecretName, err)
+	}
 
-		crtByt := secret.Data[caName]
-		rootCert, err := x509.ParseCertificate(crtByt)
-		if err != nil {
-			return errors.Errorf("unable to parse certificate %s: %v", caName, err)
-		}
+	crtByt := secret.Data[caName]
+	rootCert, err := x509.ParseCertificate(crtByt)
+	if err != nil {
+		return errors.Errorf("unable to parse certificate %s: %v", caName, err)
+	}
 
-		if !trusted(rootCert) {
-			truststore.Install(rootCert,
-				truststore.WithDebug(),
-				truststore.WithFirefox(),
-				truststore.WithJava(),
-			)
-		}
+	if !trusted(rootCert) {
+		truststore.Install(rootCert,
+			truststore.WithDebug(),
+			truststore.WithFirefox(),
+			truststore.WithJava(),
+		)
 	}
 	return
 }
