@@ -1,16 +1,8 @@
 import React, { FC } from 'react'
+import { TypeAsyncSelect } from '../../types/cluster'
 import { AsyncPaginate } from "react-select-async-paginate";
 
-export type OptionType = { value: string, label: string }
-
-type Props = {
-  label?: string,
-  onChange: (option: OptionType | null) => void,
-  loadOptions: any,
-  value: OptionType | null
-}
-
-const AsyncSelect: FC<Props> = ({ 
+const AsyncSelect: FC<TypeAsyncSelect> = ({ 
   label,
   onChange,
   loadOptions,

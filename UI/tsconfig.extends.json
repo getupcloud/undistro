@@ -6,7 +6,9 @@
       "@routes/*": ["./routes/*"],
       "styles": ["./styles/*"],
       "@assets/*": ["./assets/*"],
-      "@modals": ["./modals/*"]
+      "@modals": ["./modals/*"],
+      "@store": ["./store/*"],
+      "@types": ["./types/*"]
     }
   }
 }
