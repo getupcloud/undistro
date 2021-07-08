@@ -79,11 +79,11 @@ func New(s Storage) Issuer {
 
 // Issue implements the logic for generate certificates to internal
 // domais like localhost, 127.0.0.1, app.local, app.internal, etc.
-func (at *InternalIssuer) Issue(ctx context.Context, sans []string) (err error) {
+func (i *InternalIssuer) Issue(ctx context.Context, sans []string) (err error) {
 	year := time.Now().Year()
-	commonName := fmt.Sprintf("%s - %d ECC Root", at.CAName, year)
+	commonName := fmt.Sprintf("%s - %d ECC Root", i.CAName, year)
 
-	fmt.Fprintf(at.IOStreams.Out, "Ensure cert-manager is installed\n")
+	fmt.Fprintf(i.IOStreams.Out, "Ensure cert-manager is installed\n")
 	rootCert, rootKey, err := generateRoot(commonName)
 	if err != nil {
 		return errors.Errorf("unable to generate root certs: %s", err.Error())
@@ -130,7 +130,7 @@ func (at *InternalIssuer) Issue(ctx context.Context, sans []string) (err error) 
 	}
 
 	// store certificates
-	err = at.Storage.Store(certChain, rootCertPEM, rootKeyPEM)
+	err = i.Storage.Store(certChain, rootCertPEM, rootKeyPEM)
 	if err != nil {
 		return errors.Errorf("unable to store certificate chain")
 	}
@@ -138,7 +138,8 @@ func (at *InternalIssuer) Issue(ctx context.Context, sans []string) (err error) 
 	return
 }
 
-func (at *InternalIssuer) Renew(ctx context.Context) error {
+// Renew checks if a such certificate
+func (i *InternalIssuer) Renew(ctx context.Context) error {
 	// TODO
 	defer ctx.Done()
 	return nil

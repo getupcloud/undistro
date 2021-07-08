@@ -32,8 +32,7 @@ type Storage interface {
 	Store(chain []*x509.Certificate, rootCert, rootKey []byte) error
 }
 
-type FileStore struct {
-}
+type FileStore struct{}
 
 func NewFileStorage() Storage {
 	return &FileStore{}
@@ -73,6 +72,8 @@ func NewSecretStore() Storage {
 }
 
 func (s *SecretStore) Store(chain []*x509.Certificate, rootCert, rootKey []byte) error {
+	const secretName = ""
+
 	secret := corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",

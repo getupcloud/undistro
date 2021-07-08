@@ -101,7 +101,7 @@ func defaultValues(ctx context.Context, c client.Client, name string) map[string
 				"local": true,
 			}
 		}
-	case "ingress-nginx":
+	case "ingress-traefik":
 		if isKind {
 			return map[string]interface{}{
 				"controller": map[string]interface{}{

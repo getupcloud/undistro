@@ -65,6 +65,6 @@ jobs:
           helm push undistro undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
           helm push undistro-aws undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
           helm push kyverno undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
-          helm push ingress-nginx undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
+          helm push ingress-traefik undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
           helm push pinniped-concierge undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
           helm push pinniped-supervisor undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force

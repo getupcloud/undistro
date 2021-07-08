@@ -100,21 +100,21 @@ helmrelease-wait-install()
 }
 
 echo -----------------------------------
-echo Installing Helm Chart ingress-nginx
+echo Installing Helm Chart ingress-traefik
 echo -----------------------------------
 
-cat > helm-release-ingress-nginx.yaml <<EOF
+cat > helm-release-traefik-nginx.yaml <<EOF
 apiVersion: app.undistro.io/v1alpha1
 kind: HelmRelease
 metadata:
-    name: ingress-nginx
+    name: ingress-traefik
     namespace: default
 spec:
   chart:
-    repository: https://kubernetes.github.io/ingress-nginx
-    name: ingress-nginx
+    repository: https://kubernetes.github.io/ingress-traefik
+    name: ingress-traefik
     version: 3.19.0
-  targetNamespace: ingress-nginx
+  targetNamespace: ingress-traefik
   clusterName: default/$WRK_CLUSTER
   values:
     controller:
@@ -123,7 +123,7 @@ spec:
         type: LoadBalancer
 EOF
 
-helmrelease-wait-install ingress-nginx helm-release-ingress-nginx.yaml
+helmrelease-wait-install ingress-traefik helm-release-ingress-traefik.yaml
 
 echo ------------------------------------------
 echo Installing Helm Chart kubernetes-dashboard
