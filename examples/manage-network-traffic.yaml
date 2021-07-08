@@ -5,11 +5,11 @@ metadata:
   name: nginx
   namespace: example
 spec:
-  targetNamespace: ingress-nginx
+  targetNamespace: traefik-nginx
   clusterName: example/example-ec2
   chart:
-    repository: https://kubernetes.github.io/ingress-nginx
-    name: ingress-nginx
+    repository: https://kubernetes.github.io/traefik-nginx
+    name: traefik-nginx
     version: 3.30.0
   autoUpgrade: true
   values:

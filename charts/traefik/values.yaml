@@ -1,13 +1,9 @@
-# Default values for Traefik
 image:
   name: traefik
   # defaults to appVersion
   tag: ""
   pullPolicy: IfNotPresent
 
-#
-# Configure the deployment
-#
 deployment:
   enabled: true
   # Can be either Deployment or DaemonSet

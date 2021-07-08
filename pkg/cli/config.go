@@ -20,7 +20,6 @@ import (
 	"flag"
 	"path/filepath"
 
-	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/util"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/spf13/pflag"
@@ -104,20 +103,16 @@ func defaultValues(ctx context.Context, c client.Client, name string) map[string
 	case "ingress-traefik":
 		if isKind {
 			return map[string]interface{}{
-				"controller": map[string]interface{}{
-					"hostPort": map[string]interface{}{
-						"enabled": true,
+				"ports": map[string]interface{}{
+					"web": map[string]interface{}{
+						"hostPort": 80,
 					},
-					"service": map[string]interface{}{
-						"type": "NodePort",
+					"websecure": map[string]interface{}{
+						"hostPort": 443,
 					},
-					"tolerations": []map[string]interface{}{
-						{
-							"effect":   "NoSchedule",
-							"key":      meta.LabelK8sMaster,
-							"operator": "Equal",
-						},
-					},
+				},
+				"service": map[string]interface{}{
+					"type": "NodePort",
 				},
 			}
 		}
