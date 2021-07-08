@@ -141,27 +141,6 @@ subjects:
   namespace: undistro-system
 ---
 apiVersion: v1
-data:
-  controller_manager_config.yaml: |
-    apiVersion: controller-runtime.sigs.k8s.io/v1alpha1
-    kind: ControllerManagerConfig
-    health:
-      healthProbeBindAddress: :8081
-    metrics:
-      bindAddress: 127.0.0.1:8080
-    webhook:
-      port: 9443
-    leaderElection:
-      leaderElect: true
-      resourceName: 19acc88f.undistro.io
-kind: ConfigMap
-metadata:
-  labels:
-    undistro.io: undistro
-  name: undistro-manager-config
-  namespace: undistro-system
----
-apiVersion: v1
 kind: Service
 metadata:
   labels:
@@ -219,7 +198,7 @@ spec:
     spec:
       containers:
       - args:
-        - --config=controller_manager_config.yaml
+        - --leader-elect
         command:
         - /manager
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -257,9 +236,6 @@ spec:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: cert
           readOnly: true
-        - mountPath: /controller_manager_config.yaml
-          name: manager-config
-          subPath: controller_manager_config.yaml
       - args:
         - --secure-listen-address=0.0.0.0:8443
         - --upstream=http://127.0.0.1:8080/
@@ -270,18 +246,11 @@ spec:
         ports:
         - containerPort: 8443
           name: https
-      resources:
-        limits:
-          cpu: "1"
-          memory: 512Mi
-        requests:
-          cpu: "0.5"
-          memory: 256Mi
-      securityContext:
-        allowPrivilegeEscalation: false
-        runAsGroup: 65532
-        runAsNonRoot: true
-        runAsUser: 65532
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsGroup: 65532
+          runAsNonRoot: true
+          runAsUser: 65532
       serviceAccountName: undistro-controller-manager
       terminationGracePeriodSeconds: 10
       volumes:
@@ -292,6 +261,16 @@ spec:
       - configMap:
           name: undistro-manager-config
         name: manager-config
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  labels:
+    undistro.io: undistro
+  name: undistro-selfsigned-issuer
+  namespace: undistro-system
+spec:
+  selfSigned: {}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -308,16 +287,6 @@ spec:
     kind: Issuer
     name: undistro-selfsigned-issuer
   secretName: webhook-server-cert
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  labels:
-    undistro.io: undistro
-  name: undistro-selfsigned-issuer
-  namespace: undistro-system
-spec:
-  selfSigned: {}
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration

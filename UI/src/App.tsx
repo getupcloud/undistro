@@ -1,9 +1,9 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import HomePageRoute from '@routes/home'
-import TestRoute from '@routes/test'
 import MenuTop from '@components/menuTopBar'
-import MenuSideBar, { TypeSubItem, TypeItem } from '@components/menuSideBar'
+import MenuSideBar from '@components/menuSideBar'
+import { TypeSubItem, TypeItem } from './types/generic'
 import Modals from './modals'
 import 'styles/app.scss'
 
@@ -32,12 +32,10 @@ export default function App() {
 			<MenuSideBar 
 				itens={Itens}
 			/>
-
 			<div className='route-content'>
 				<Switch>
 						<Route path='/' component={HomePageRoute} />
-						<Route exact path='/test' component={TestRoute} />
-				</Switch>
+s				</Switch>
 				<Modals />
 				</div>
 		</div>

@@ -45,12 +45,12 @@ jobs:
           yarn
           yarn build
 
-      - name: docker build and push
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-        run: |
-          docker build -t registry.undistro.io/library/undistro:$GIT_VERSION .
-          docker push registry.undistro.io/library/undistro:$GIT_VERSION
 
       - name: Helm Push
         working-directory: ./charts
@@ -68,11 +68,3 @@ jobs:
           helm push ingress-nginx undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
           helm push pinniped-concierge undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
           helm push pinniped-supervisor undistro --username $HELM_LOGIN --password  $HELM_PASSWORD --force
-
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          version: v0.166.0
-          args: release --rm-dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}

@@ -31,7 +31,7 @@ func NewBackoff() wait.Backoff {
 		Duration: time.Second,
 		Factor:   1.5,
 		Steps:    10,
-		Jitter:   0.4,
+		Jitter:   0.5,
 	}
 }
 

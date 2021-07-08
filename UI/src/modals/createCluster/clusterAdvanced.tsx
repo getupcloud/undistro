@@ -1,30 +1,45 @@
-import React, { FC, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/no-access-key */
+import React, { FC, useState, useEffect } from 'react'
 import store from '../store'
 import Input from '@components/input'
-import Select from '@components/select'
-// import Modals from 'util/modals'
+import CreateCluster from '@components/modals/cluster'
+import Infra from '@components/modals/infrastructureProvider'
 import Steps from './steps'
 import Button from '@components/button'
+import Api from 'util/api'
 import Toggle from '@components/toggle'
-type Props = {
-  handleClose: () => void
-}
+import { TypeOption, TypeSelectOptions } from '../../types/cluster'
+import { TypeModal } from '../../types/generic'
 
-const ClusterAdvanced: FC<Props> = ({ handleClose }) => {
+const ClusterAdvanced: FC<TypeModal> = ({ handleClose }) => {
   const body = store.useState((s: any) => s.body)
-  // const [accessKey, setAccesskey] = useState<string>('')
-  // const [secret, setSecret] = useState<string>('')
-  // const [region, setRegion] = useState<string>('')
-  // const [clusterName, setClusterName] = useState<string>('')
-  // const [namespace, setNamespace] = useState<string>('')
+  const [accessKey, setAccesskey] = useState<string>('')
+  const [secret, setSecret] = useState<string>('')
+  const [region, setRegion] = useState<string>('')
+  const [clusterName, setClusterName] = useState<string>('')
+  const [namespace, setNamespace] = useState<string>('')
   const [provider, setProvider] = useState<string>('')
   const [flavor, setFlavor] = useState<string>('')
-  // const [regionOptions, setRegionOptions] = useState<[]>([])
   const [k8sVersion, setK8sVersion] = useState<string>('')
+  // const [replicas, setReplicas] = useState<number>(0)
+  // const [infraNode, setInfraNode] = useState<boolean>(false)
+  // const [workers, setWorkers] = useState<TypeWorker[]>([])
+  // const [machineTypes, setMachineTypes] = useState<TypeOption | null>(null)
+  // const [memory, setMemory] = useState<TypeOption | null>(null)
+  // const [cpu, setCpu] = useState<TypeOption | null>(null)
+  // const [replicasWorkers, setReplicasWorkers] = useState<number>(0)
+  // const [memoryWorkers, setMemoryWorkers] = useState<TypeOption | null>(null)
+  // const [cpuWorkers, setCpuWorkers] = useState<TypeOption | null>(null)
+  // const [machineTypesWorkers, setMachineTypesWorkers] = useState<TypeOption | null>(null)
+  const [regionOptions, setRegionOptions] = useState<[]>([])
+  const [flavorOptions, setFlavorOptions] = useState<TypeOption[]>([])
+  const [k8sOptions, setK8sOptions] = useState<TypeSelectOptions>()
+  const [sshKey, setSshKey] = useState<string>('')
+  const [sshKeyOptions, setSshKeyOptions] = useState<string[]>([])
   const providerOptions = [{ value: provider, label: 'aws' }]
-  const flavorOptions = [{ value: 'eks', label: 'EKS'}, { value: 'ec2', label: 'EC2'}]
-  const k8sOptions = [{ value: 'v1.18.9', label: 'v1.18.9'}]
 	const [test, setTest] = useState(false)
+  
   // const handleAction = () => {
   //   handleClose()
   //   if (body.handleAction) body.handleAction()
@@ -38,22 +53,62 @@ const ClusterAdvanced: FC<Props> = ({ handleClose }) => {
   //   })
   // }
 
-  //selects
-  const formProvider = (value: string) => {
-    setProvider(value)
+
+  const getSecrets = () => {
+    Api.Secret.list()
+      .then(res => {
+        setAccesskey(atob(res.data.accessKeyID))
+        setSecret(atob(res.data.secretAccessKey))
+        setRegion(atob(res.data.region))
+      })
   }
 
-  // const formRegion = (value: string) => {
-  //   setRegion(value)
-  // }
+  const getRegion = async () => {
+    const res = await Api.Provider.listMetadata('aws', 'regions', '24', 1, region)
 
-  const formFlavor = (value: string) => {
-    setFlavor(value)
+    setRegionOptions(res.map((elm: any) => ({ value: elm, label: elm })))
   }
 
-  const formK8s = (value: string) => {
-    setK8sVersion(value)
+  const getFlavors = async () => {
+    const res = await Api.Provider.listMetadata('aws', 'supportedFlavors', '1', 1, region)
+    type apiOption = {
+      name: string;
+      kubernetesVersion: string[];
+    };
+
+    type apiResponse = apiOption[];
+
+    const parse = (data: apiResponse): TypeSelectOptions => {
+      return data.reduce<TypeSelectOptions>((acc, curr) => {
+        acc[curr.name] = {
+          selectOptions: curr.kubernetesVersion.map((ver) => ({
+            label: ver,
+            value: ver,
+          })),
+        };
+
+        return acc;
+      }, {});
+    };
+
+    const parseData = parse(res)
+    setFlavorOptions(Object.keys(parseData).map(elm => ({ value: elm, label: elm })))
+    setK8sOptions(parseData)
   }
+
+  const getKeys = async () => {
+    const res = await Api.Provider.listMetadata('aws', 'sshKeys', '1', 1, region)
+    setSshKeyOptions(res.map((elm: string) => ({ value: elm, label: elm })))
+  }
+
+  useEffect(() => {
+    getSecrets()
+    getRegion()
+    getFlavors()
+    getKeys()
+  }, [])
+
+
 
   return (
     <>
@@ -63,31 +118,40 @@ const ClusterAdvanced: FC<Props> = ({ handleClose }) => {
     </header>
       <div className='box'>
         <Steps handleAction={() => console.log('test')}>
-          <>
-            <h3 className="title-box">Cluster</h3>
-            <form className='create-cluster'>
-              <Input type='text' label='cluster name' value='' onChange={() => console.log('aa')} />
-              <Input type='text' label='namespace' value='' onChange={() => console.log('aa')} />
-              <div className='select-flex'>
-                {/* <Select label='select provider' /> */}
-                {/* <Select label='select provider' /> */}
-              </div>
-              <Input type='text' label='secret access ID' value='' onChange={() => console.log('aa')} />
-              <Input type='text' label='secret access key' value='' onChange={() => console.log('aa')} />
-              <Input type='text' label='session token' value='' onChange={() => console.log('aa')} />
-            </form>
-          </>
-      
-          <>
-            <h3 className="title-box">Infrastructure provider</h3>
-            <form className='infra-provider'>
-                <Select value={provider} onChange={formProvider} options={providerOptions} label='provider' />
-                <Select value={flavor} onChange={formFlavor} options={flavorOptions} label='flavor' />
-                {/* <Select options={regionOptions} value={region} onChange={formRegion} label='region' /> */}
-                <Select value={k8sVersion} onChange={formK8s} options={k8sOptions} label='kubernetes version' />
-                <Input type='text' value='' onChange={() => console.log('aa')} label='sshKey' />
-            </form>
-          </>
+          <CreateCluster 
+            clusterName={clusterName}
+            setClusterName={setClusterName}
+            namespace={namespace}
+            setNamespace={setNamespace}
+            provider={provider}
+            setProvider={setProvider}
+            providerOptions={providerOptions}
+            region={region}
+            setRegion={setRegion}
+            regionOptions={regionOptions}
+            accessKey={accessKey}
+            setAccesskey={setAccesskey}
+            secret={secret}
+            setSecret={setSecret}
+          />
+
+          <Infra 
+            provider={provider}
+            setProvider={setProvider}
+            providerOptions={providerOptions}
+            flavor={flavor}
+            setFlavor={setFlavor}
+            flavorOptions={flavorOptions}
+            region={region}
+            setRegion={setRegion}
+            regionOptions={regionOptions}
+            k8sVersion={k8sVersion}
+            setK8sVersion={setK8sVersion}
+            k8sOptions={k8sOptions}
+            sshKey={sshKey}
+            setSshKey={setSshKey}
+            sshKeyOptions={sshKeyOptions}
+          />
           <>
             <h3 className="title-box">infra network - VPC</h3>
             <form className='infra-network'>
@@ -263,7 +327,5 @@ export default ClusterAdvanced
     <Input type='text' label='replicas' value='' onChange={() => console.log('aa')} />
     <Select label='CPU' />
     <Select label='mem' />
-    <Select label='machineType' />
-  </div>
-</form>
+
 </> */

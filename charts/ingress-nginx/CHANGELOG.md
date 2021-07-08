@@ -196,7 +196,7 @@ This file documents all notable changes to [ingress-nginx](https://github.com/ku
 ### 2.13.0
 
 - [X] [#6093](https://github.com/kubernetes/ingress-nginx/pull/6093) Release v0.35.0
-- [X] [#6080](https://github.com/kubernetes/ingress-nginx/pull/6080) Switch images to k8s.registry.undistro.io/gcr after Vanity Domain Flip
+- [X] [#6080](https://github.com/kubernetes/ingress-nginx/pull/6080) Switch images to registry.undistro.io/k8s after Vanity Domain Flip
 
 ### 2.12.1
 

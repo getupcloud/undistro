@@ -11,7 +11,7 @@ else
 GOBIN=$(shell go env GOBIN)
 endif
 
-LDFLAGS := $(shell hack/version-local.sh)
+LDFLAGS := $(shell ./hack/version-local.sh)
 
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # This is a requirement for 'setup-envtest.sh' in the test target.

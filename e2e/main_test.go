@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -30,6 +31,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/scheme"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
 	"sigs.k8s.io/cluster-api/test/framework/exec"
@@ -56,8 +58,8 @@ func TestMain(m *testing.M) {
 	sha := os.Getenv("GITHUB_SHA")
 	image := fmt.Sprintf("localhost:5000/undistro:%s", sha)
 	cmd := exec.NewCommand(
-		exec.WithCommand("docker"),
-		exec.WithArgs("build", "-t", image, "../"),
+		exec.WithCommand("bash"),
+		exec.WithArgs("-c", fmt.Sprintf("../testbin/docker-build-e2e.sh %s", image)),
 	)
 	stout, stderr, err := cmd.Run(ctx)
 	if err != nil {
@@ -105,18 +107,6 @@ func TestMain(m *testing.M) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Println("Install UnDistro")
-	cmd = exec.NewCommand(
-		exec.WithCommand("undistro"),
-		exec.WithArgs("--config", "undistro-config.yaml", "install"),
-	)
-	out, stderr, _ := cmd.Run(ctx)
-	fmt.Println(string(out))
-	if !bytes.Contains(out, []byte("Management cluster is ready to use.")) {
-		msg := "failed to install undistro: " + string(stderr)
-		fmt.Println(msg)
-		os.Exit(1)
-	}
 	config, err := clientcmd.BuildConfigFromFlags("", filepath.Join(homedir.HomeDir(), ".kube", "config"))
 	if err != nil {
 		fmt.Println(err)
@@ -129,6 +119,57 @@ func TestMain(m *testing.M) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	fmt.Println("Install UnDistro")
+	cmd = exec.NewCommand(
+		exec.WithCommand("undistro"),
+		exec.WithArgs("--config", "undistro-config.yaml", "install"),
+	)
+	out, stderr, _ := cmd.Run(ctx)
+	fmt.Println(string(out))
+	if !bytes.Contains(out, []byte("Management cluster is ready to use.")) {
+		msg := "failed to install undistro: " + string(stderr)
+		fmt.Println(msg)
+		cmd = exec.NewCommand(
+			exec.WithCommand("kubectl"),
+			exec.WithArgs("get", "pods", "--all-namespaces"),
+		)
+		out, stderr, _ = cmd.Run(ctx)
+		fmt.Println(string(out))
+		fmt.Println("err:", string(stderr))
+		cmd = exec.NewCommand(
+			exec.WithCommand("kubectl"),
+			exec.WithArgs("describe", "nodes"),
+		)
+		out, stderr, _ = cmd.Run(ctx)
+		fmt.Println(string(out))
+		fmt.Println("err:", string(stderr))
+		cmd = exec.NewCommand(
+			exec.WithCommand("kubectl"),
+			exec.WithArgs("describe", "pods", "-n", "undistro-system"),
+		)
+		out, stderr, _ = cmd.Run(ctx)
+		fmt.Println(string(out))
+		fmt.Println("err:", string(stderr))
+		podList := corev1.PodList{}
+		err = k8sClient.List(ctx, &podList, client.InNamespace("undistro-system"))
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		for _, p := range podList.Items {
+			if strings.Contains(p.Name, "undistro") {
+				cmd = exec.NewCommand(
+					exec.WithCommand("undistro"),
+					exec.WithArgs("logs", p.Name, "-n", "undistro-system", "-c", "manager", "--previous"),
+				)
+				out, stderr, _ = cmd.Run(ctx)
+				fmt.Println(string(out))
+				fmt.Println("err:", string(stderr))
+			}
+		}
+		os.Exit(1)
+	}
+
 	cmd = exec.NewCommand(
 		exec.WithCommand("undistro"),
 		exec.WithArgs("get", "pods", "-n", "undistro-system"),

@@ -1,22 +1,7 @@
 import React, { FC, useState } from 'react'
 import Classnames from 'classnames'
-
+import { TypeMenu } from '../../types/generic'
 import './index.scss'
-
-export type TypeSubItem = {
-  name: string
-}
-
-export type TypeItem = {
-  name: string
-  icon: string
-  subItens: TypeSubItem[]
-}
-
-type TypeMenu = {
-	itens: TypeItem[]
-}
-
 
 const MenuSideBar: FC<TypeMenu> = ({ 
 	itens

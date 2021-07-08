@@ -143,6 +143,12 @@ spec:
           node-labels: "{{$labels}}"
           {{end}}
     clusterConfiguration:
+      imageRepository: registry.undistro.io/k8s
+      dns:
+        imageRepository: registry.undistro.io/k8s
+      etcd:
+        local:
+          imageRepository: registry.undistro.io/k8s
       apiServer:
         extraArgs:
           cloud-provider: aws
@@ -292,6 +298,13 @@ metadata:
   namespace: "{{$namespace}}"
 spec:
   useExperimentalRetryJoin: true
+  clusterConfiguration:
+    imageRepository: registry.undistro.io/k8s
+    dns:
+      imageRepository: registry.undistro.io/k8s
+    etcd:
+      local:
+        imageRepository: registry.undistro.io/k8s
   joinConfiguration:
     nodeRegistration:
       name: {{"'{{ ds.meta_data.local_hostname }}'"}}

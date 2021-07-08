@@ -10,7 +10,7 @@
 controller:
   name: controller
   image:
-    registry: k8s.registry.undistro.io/gcr
+    registry: registry.undistro.io/k8s
     image: ingress-nginx/controller
     # for backwards compatibility consider setting the full image url via the repository value below
     # use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
@@ -638,7 +638,7 @@ defaultBackend:
 
   name: defaultbackend
   image:
-    registry: k8s.registry.undistro.io/gcr
+    registry: registry.undistro.io/k8s
     image: defaultbackend-amd64
     # for backwards compatibility consider setting the full image url via the repository value below
     # use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail

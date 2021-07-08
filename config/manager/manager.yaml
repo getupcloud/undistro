@@ -22,18 +22,6 @@ spec:
       labels:
         control-plane: controller-manager
     spec:
-      resources:
-        limits:
-          cpu: "1"
-          memory: 512Mi
-        requests:
-          cpu: "0.5"
-          memory: 256Mi
-      securityContext:
-        runAsNonRoot: true
-        runAsGroup: 65532
-        runAsUser: 65532
-        allowPrivilegeEscalation: false
       containers:
         - command:
             - /manager

@@ -16,6 +16,6 @@ resources:
     memory: 256Mi
 image:
   repository: registry.undistro.io/library/undistro
-  tag: v0.30.0
+  tag: v0.31.1
   pullPolicy: IfNotPresent
   pullSecrets: []

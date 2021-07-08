@@ -261,7 +261,7 @@ spec:
             - "--feature-gates=MachinePool=true"
           command: 
             - /manager
-          image: "us.registry.undistro.io/gcr/k8s-artifacts-prod/cluster-api-aws/eks-bootstrap-controller:v0.6.6"
+          image: "registry.undistro.io/usgcr/k8s-artifacts-prod/cluster-api-aws/eks-bootstrap-controller:v0.6.6"
           imagePullPolicy: Always
           name: manager
       securityContext: 

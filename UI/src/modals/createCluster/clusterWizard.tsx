@@ -1,41 +1,18 @@
+/* eslint-disable jsx-a11y/no-access-key */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { FC, useEffect, useState } from 'react'
 import store from '../store'
-import Input from '@components/input'
-import Select from '@components/select'
-import AsyncSelect, { OptionType } from '@components/asyncSelect'
 import { LoadOptions } from "react-select-async-paginate";
-// import Modals from 'util/modals'
+import CreateCluster from '@components/modals/cluster'
+import Infra from '@components/modals/infrastructureProvider'
+import ControlPlane from '@components/modals/controlPlane'
 import { generateId } from 'util/helpers'
 import Steps from './steps'
-import Button from '@components/button'
 import Api from 'util/api'
-import Toggle from '@components/toggle'
+import { TypeOption, TypeWorker, TypeSelectOptions } from '../../types/cluster'
+import { TypeModal } from '../../types/generic'
 
-type Props = {
-  handleClose: () => void
-}
-
-type TypeWorker = {
-  id: string,
-  machineType: OptionType | null,
-  replicas: number,
-  infraNode: boolean
-}
-
-type Option = {
-  value: string,
-  label: string,
-}
-
-type newStruct = {
-  [instanceType: string]: {
-    selectOptions: Option[];
-  };
-};
-
-
-const ClusterWizard: FC<Props> = ({ handleClose }) => {
+const ClusterWizard: FC<TypeModal> = ({ handleClose }) => {
   const body = store.useState((s: any) => s.body)
   const [accessKey, setAccesskey] = useState<string>('')
   const [secret, setSecret] = useState<string>('')
@@ -48,16 +25,16 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const [replicas, setReplicas] = useState<number>(0)
   const [infraNode, setInfraNode] = useState<boolean>(false)
   const [workers, setWorkers] = useState<TypeWorker[]>([])
-  const [machineTypes, setMachineTypes] = useState<OptionType | null>(null)
-  const [memory, setMemory] = useState<OptionType | null>(null)
-  const [cpu, setCpu] = useState<OptionType | null>(null)
+  const [machineTypes, setMachineTypes] = useState<TypeOption | null>(null)
+  const [memory, setMemory] = useState<TypeOption | null>(null)
+  const [cpu, setCpu] = useState<TypeOption | null>(null)
   const [replicasWorkers, setReplicasWorkers] = useState<number>(0)
-  const [memoryWorkers, setMemoryWorkers] = useState<OptionType | null>(null)
-  const [cpuWorkers, setCpuWorkers] = useState<OptionType | null>(null)
-  const [machineTypesWorkers, setMachineTypesWorkers] = useState<OptionType | null>(null)
+  const [memoryWorkers, setMemoryWorkers] = useState<TypeOption | null>(null)
+  const [cpuWorkers, setCpuWorkers] = useState<TypeOption | null>(null)
+  const [machineTypesWorkers, setMachineTypesWorkers] = useState<TypeOption | null>(null)
   const [regionOptions, setRegionOptions] = useState<[]>([])
-  const [flavorOptions, setFlavorOptions] = useState<Option[]>([])
-  const [k8sOptions, setK8sOptions] = useState<newStruct>()
+  const [flavorOptions, setFlavorOptions] = useState<TypeOption[]>([])
+  const [k8sOptions, setK8sOptions] = useState<TypeSelectOptions>()
   const [sshKey, setSshKey] = useState<string>('')
   const [sshKeyOptions, setSshKeyOptions] = useState<string[]>([])
   const providerOptions = [{ value: provider, label: 'aws' }]
@@ -145,7 +122,7 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
       })
   }
 
-  const getMachineTypes: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional: any) => {
+  const getMachineTypes: LoadOptions<TypeOption, { page: number }> = async (value, loadedOptions, additional: any) => {
     const res = await Api.Provider.listMetadata('aws', 'machineTypes', '15', additional ? additional.page : 1, region)
     const totalPages = res.TotalPages
     const machineTypes = res.MachineTypes.map((elm: Partial<{ instanceType: string }>) => ({ value: elm.instanceType, label: elm.instanceType }))
@@ -171,8 +148,8 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
 
     type apiResponse = apiOption[];
 
-    const parse = (data: apiResponse): newStruct => {
-      return data.reduce<newStruct>((acc, curr) => {
+    const parse = (data: apiResponse): TypeSelectOptions => {
+      return data.reduce<TypeSelectOptions>((acc, curr) => {
         acc[curr.name] = {
           selectOptions: curr.kubernetesVersion.map((ver) => ({
             label: ver,
@@ -194,7 +171,7 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     setSshKeyOptions(res.map((elm: string) => ({ value: elm, label: elm })))
   }
 
-  const getCpu: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional: any) => {
+  const getCpu: LoadOptions<TypeOption, { page: number }> = async (value, loadedOptions, additional: any) => {
     const res = await Api.Provider.listMetadata('aws', 'machineTypes', '15', additional ? additional.page : 1, region)
     const totalPages = res.TotalPages
     const cpu = res.MachineTypes.map((elm: Partial<{ vcpus: string }>) => ({ value: elm.vcpus, label: elm.vcpus }))
@@ -205,7 +182,7 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     }
   }
 
-  const getMem: LoadOptions<OptionType, { page: number }> = async (value, loadedOptions, additional: any) => {
+  const getMem: LoadOptions<TypeOption, { page: number }> = async (value, loadedOptions, additional: any) => {
     const res = await Api.Provider.listMetadata('aws', 'machineTypes', '15', additional ? additional.page : 1, region)
     const totalPages = res.TotalPages
     const cpu = res.MachineTypes.map((elm: Partial<{ memory: string }>) => ({ value: elm.memory, label: elm.memory }))
@@ -224,76 +201,6 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
     getKeys()
   }, [])
 
-  //inputs
-  const formCluster = (e: React.FormEvent<HTMLInputElement>) => {
-    setClusterName(e.currentTarget.value)
-  }
-
-  const formNamespace = (e: React.FormEvent<HTMLInputElement>) => {
-    setNamespace(e.currentTarget.value)
-  }
-
-  const formAccessKey = (e: React.FormEvent<HTMLInputElement>) => {
-    setAccesskey(e.currentTarget.value)
-  }
-
-  const formSecret = (e: React.FormEvent<HTMLInputElement>) => {
-    setSecret(e.currentTarget.value)
-  }
-
-  const formReplica = (e: React.FormEvent<HTMLInputElement>) => {
-    setReplicas(parseInt(e.currentTarget.value) || 0)
-  }
-
-  const formReplicaWorkers = (e: React.FormEvent<HTMLInputElement>) => {
-    setReplicasWorkers(parseInt(e.currentTarget.value) || 0)
-  }
-
-  //selects
-  const formProvider = (value: string) => {
-    setProvider(value)
-  }
-
-  const formSshKey = (value: string) => {
-    setSshKey(value)
-  }
-
-  const formRegion = (value: string) => {
-    setRegion(value)
-  }
-
-  const formFlavor = (value: string) => {
-    setFlavor(value)
-  }
-
-  const formCpu = (option: OptionType | null) => {
-    setCpu(option)
-  }
-
-  const formMem = (option: OptionType | null) => {
-    setMemory(option)
-  }
-
-  const formK8s = (value: string) => {
-    setK8sVersion(value)
-  }
-
-  const formMachineTypes = (option: OptionType | null) => {
-    setMachineTypes(option)
-  }
-
-  const formCpuWorkers = (option: OptionType | null) => {
-    setCpuWorkers(option)
-  }
-
-  const formMemWorkers = (option: OptionType | null) => {
-    setMemoryWorkers(option)
-  }
-
-  const formMachineTypesWorkers = (option: OptionType | null) => {
-    setMachineTypesWorkers(option)
-  }
-
   return (
     <>
       <header>
@@ -302,68 +209,69 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
       </header>
       <div className='box'>
         <Steps handleAction={() => handleAction()}>
-          <>
-            <h3 className="title-box">Cluster</h3>
-            <form className='create-cluster'>
-              <Input value={clusterName} onChange={formCluster} type='text' label='cluster name' />
-              <Input value={namespace} onChange={formNamespace} type='text' label='namespace' />
-              <div className='select-flex'>
-                <Select value={provider} onChange={formProvider} options={providerOptions} label='select provider' />
-                <Select options={regionOptions} value={region} onChange={formRegion} label='default region' />
-              </div>
-              <Input disabled type='text' label='secret access ID' value={accessKey} onChange={formAccessKey} />
-              <Input disabled type='text' label='secret access key' value={secret} onChange={formSecret} />
-              <Input disabled type='text' label='session token' value='' onChange={() => console.log('aa')} />
-            </form>
-          </>
+          <CreateCluster 
+            clusterName={clusterName}
+            setClusterName={setClusterName}
+            namespace={namespace}
+            setNamespace={setNamespace}
+            provider={provider}
+            setProvider={setProvider}
+            providerOptions={providerOptions}
+            region={region}
+            setRegion={setRegion}
+            regionOptions={regionOptions}
+            accessKey={accessKey}
+            setAccesskey={setAccesskey}
+            secret={secret}
+            setSecret={setSecret}
+          />
 
-          <>
-            <h3 className="title-box">Infrastructure provider</h3>
-            <form className='infra-provider'>
-              <Select value={provider} onChange={formProvider} options={providerOptions} label='provider' />
-              <Select value={flavor} onChange={formFlavor} options={flavorOptions} label='flavor' />
-              <Select options={regionOptions} value={region} onChange={formRegion} label='region' />
-              <Select value={k8sVersion} onChange={formK8s} options={k8sOptions?.[flavor]?.selectOptions ?? []} label='kubernetes version' />
-              <Select value={sshKey} onChange={formSshKey} options={sshKeyOptions} label='sshKey' />
-            </form>
-          </>
+          <Infra 
+            provider={provider}
+            setProvider={setProvider}
+            providerOptions={providerOptions}
+            flavor={flavor}
+            setFlavor={setFlavor}
+            flavorOptions={flavorOptions}
+            region={region}
+            setRegion={setRegion}
+            regionOptions={regionOptions}
+            k8sVersion={k8sVersion}
+            setK8sVersion={setK8sVersion}
+            k8sOptions={k8sOptions}
+            sshKey={sshKey}
+            setSshKey={setSshKey}
+            sshKeyOptions={sshKeyOptions}
+          />
 
-          <>
-            <h3 className="title-box">Control plane</h3>
-            <div className='control-plane'>
-              <div className='input-container'>
-                <Input value={replicas} onChange={formReplica} type='text' label='replicas' />
-                <AsyncSelect value={cpu} onChange={formCpu} loadOptions={getCpu} label='CPU' />
-                <AsyncSelect value={memory} onChange={formMem} loadOptions={getMem} label='mem' />
-                <AsyncSelect value={machineTypes} onChange={formMachineTypes} loadOptions={getMachineTypes} label='machineType' />
-              </div>
+          <ControlPlane 
+            replicas={replicas}
+            setReplicas={setReplicas}
+            cpu={cpu}
+            setCpu={setCpu}
+            getCpu={getCpu}
+            memory={memory}
+            setMemory={setMemory}
+            getMem={getMem}
+            machineTypes={machineTypes}
+            setMachineTypes={setMachineTypes}
+            getMachineTypes={getMachineTypes}
+            infraNode={infraNode}
+            setInfraNode={setInfraNode}
+            workers={workers}
+            createWorkers={createWorkers}
+            deleteWorkers={deleteWorkers}
+            replicasWorkers={replicasWorkers}
+            setReplicasWorkers={setReplicasWorkers}
+            cpuWorkers={cpuWorkers}
+            setCpuWorkers={setCpuWorkers}
+            memoryWorkers={memoryWorkers}
+            setMemoryWorkers={setMemoryWorkers}
+            machineTypesWorkers={machineTypesWorkers}
+            setMachineTypesWorkers={setMachineTypesWorkers}
+            clusterName={clusterName}
+          />
 
-              <div className='workers'>
-                <h3 className="title-box">Workers</h3>
-                <Toggle label='InfraNode' value={infraNode} onChange={() => setInfraNode(!infraNode)} />
-                <div className='input-container'>
-                  <Input type='text' label='replicas' value={replicasWorkers} onChange={formReplicaWorkers} />
-                  <AsyncSelect value={cpuWorkers} onChange={formCpuWorkers} loadOptions={getCpu} label='CPU' />
-                  <AsyncSelect value={memoryWorkers} onChange={formMemWorkers} loadOptions={getMem} label='mem' />
-                  <AsyncSelect value={machineTypesWorkers} onChange={formMachineTypesWorkers} loadOptions={getMachineTypes} label='machineType' />
-                  <div className='button-container'>
-                    <Button onClick={() => createWorkers()} type='gray' size='small' children='Add' />
-                  </div>
-                </div>
-
-                <ul>
-                  {(workers || []).map((elm, i = 0) => {
-                    return (
-                      <li key={elm.id}>
-                        <p>{clusterName}-mp-{i}</p>
-                        <i onClick={() => deleteWorkers(elm.id)} className='icon-close' />
-                      </li>
-                    )
-                  })}
-                </ul>
-              </div>
-            </div>
-          </>
         </Steps>
       </div>
     </>

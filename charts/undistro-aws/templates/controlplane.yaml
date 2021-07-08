@@ -316,7 +316,7 @@ spec:
             - 
               name: AWS_SHARED_CREDENTIALS_FILE
               value: /home/.aws/credentials
-          image: "us.registry.undistro.io/gcr/k8s-artifacts-prod/cluster-api-aws/eks-controlplane-controller:v0.6.6"
+          image: "registry.undistro.io/usgcr/k8s-artifacts-prod/cluster-api-aws/eks-controlplane-controller:v0.6.6"
           imagePullPolicy: IfNotPresent
           name: manager
           volumeMounts: 
@@ -376,7 +376,7 @@ spec:
             - "--webhook-port=9443"
           command: 
             - /manager
-          image: "us.registry.undistro.io/gcr/k8s-artifacts-prod/cluster-api-aws/eks-controlplane-controller:v0.6.6"
+          image: "registry.undistro.io/usgcr/k8s-artifacts-prod/cluster-api-aws/eks-controlplane-controller:v0.6.6"
           imagePullPolicy: IfNotPresent
           name: manager
           ports: 
