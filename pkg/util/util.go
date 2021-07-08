@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha1"
+	"crypto/x509"
 	"fmt"
 	"io"
 	"math"
@@ -279,4 +280,9 @@ func IsKindCluster(ctx context.Context, c client.Client) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func Trusted(cert *x509.Certificate) bool {
+	chains, err := cert.Verify(x509.VerifyOptions{})
+	return len(chains) > 0 && err == nil
 }

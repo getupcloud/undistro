@@ -28,7 +28,6 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/certmanager"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
 	"github.com/getupio-undistro/undistro/pkg/helm"
-	"github.com/getupio-undistro/undistro/pkg/internalautotls"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/retry"
@@ -36,6 +35,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/undistro"
 	"github.com/getupio-undistro/undistro/pkg/util"
 	"github.com/pkg/errors"
+	"github.com/smallstep/truststore"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"helm.sh/helm/v3/pkg/chart/loader"
@@ -299,12 +299,15 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		return err
 	}
 
-	if local {
-		issuer := internalautotls.New(internalautotls.NewSecretStore())
-		sans := []string{"localhost", "127.0.0.1", "undistro.local"}
-		if err := issuer.Issue(sans); err != nil {
-			return errors.Errorf("unable to issue local certificate: %v", err)
-		}
+	// get root cert from secret
+
+	// install certificate localy
+	if !util.Trusted(rootCert) {
+		truststore.Install(rootCert,
+			truststore.WithDebug(),
+			truststore.WithFirefox(),
+			truststore.WithJava(),
+		)
 	}
 
 	restGetter := kube.NewInClusterRESTClientGetter(restCfg, ns)

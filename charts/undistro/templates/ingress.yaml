@@ -6,9 +6,9 @@ metadata:
   annotations: 
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/custom-response-headers: Access-Control-Allow-Origin:*||Access-Control-Allow-Methods:GET,POST,OPTIONS||Access-Control-Allow-Headers:DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range||Access-Control-Expose-Headers:Content-Length,Content-Range
-    traefik.ingress.kubernetes.io/frontend-entry-points: http, https
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    ingress.kubernetes.io/ssl-redirect: "true"
+    traefik.ingress.kubernetes.io/frontend-entry-points: web, websecure
+    traefik.ingress.kubernetes.io/router.tls: true
+    ingress.kubernetes.io/ssl-redirect: true
   name: undistro-ingress
   namespace: undistro-system
 spec: 
@@ -24,7 +24,9 @@ spec:
             pathType: Prefix
   tls: 
     - 
-      hosts: 
-        - {{.Values.ingress.host}}
+      hosts:
+      {{- range .Values.ingress.hosts }}
+      - {{ . }}
+      {{- end }}
       secretName: undistro-ingress-cert
 {{- end -}}
