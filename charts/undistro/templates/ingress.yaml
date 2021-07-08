@@ -3,12 +3,7 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata: 
-  annotations: 
-    {{if .Values.local}}
-    cert-manager.io/cluster-issuer: selfsigned
-    {{else}}
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    {{end}}
+  annotations:    
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/enable-cors: "true"
   name: undistro-ingress
@@ -26,7 +21,10 @@ spec:
             pathType: Prefix
   tls: 
     - 
-      hosts: 
-        - {{.Values.ingress.host}}
+      hosts:
+        - localhost
+        - ingress.local
+        - undistro.local
+        - undistro.internal
       secretName: undistro-ingress-cert
 {{- end -}}

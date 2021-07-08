@@ -138,7 +138,7 @@ controller:
   ## E.g. to specify the default SSL certificate you can use
   ## extraArgs:
   ##   default-ssl-certificate: "<namespace>/<secret_name>"
-  extraArgs: {}
+  extraArgs: {}    
 
   ## Additional environment variables to set
   extraEnvs: []

@@ -3,7 +3,11 @@ prometheus:
   enabled: false
 ingress:
   enabled: true
-  host: localhost
+  hosts: 
+    - localhost
+    - ingress.local
+    - undistro.local
+    - undistro.internal
   tls:
     email: undistro@getup.io
   annotations: {}

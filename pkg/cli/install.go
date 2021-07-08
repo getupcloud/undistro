@@ -28,6 +28,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/certmanager"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
 	"github.com/getupio-undistro/undistro/pkg/helm"
+	"github.com/getupio-undistro/undistro/pkg/internalautohttps"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/retry"
@@ -62,7 +63,7 @@ var (
 
 const (
 	undistroRepo = "https://registry.undistro.io/chartrepo/library"
-	ns           = "undistro-system"
+	ns           = undistro.Namespace
 )
 
 type InstallOptions struct {
@@ -447,7 +448,8 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		}
 	}
 	if installUndistro {
-		providerUndistro, err := o.installChart(restGetter, chartRepo, secretRef, "undistro", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro"))
+		undistroChartValues := getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro")
+		providerUndistro, err := o.installChart(restGetter, chartRepo, secretRef, "undistro", undistroChartValues)
 		if err != nil {
 			return err
 		}
@@ -469,6 +471,15 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		})
 		if err != nil {
 			return err
+		}
+		// install cert in local environments
+		isLocal := undistroChartValues["local"].(bool)
+		if isLocal {
+			fmt.Fprintf(o.IOStreams.Out, "Installing local certificates\n")
+			err = internalautohttps.InstallLocalCert(cmd.Context(), c)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	err = retry.WithExponentialBackoff(retry.NewBackoff(), func() error {

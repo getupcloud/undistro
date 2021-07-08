@@ -118,6 +118,9 @@ func defaultValues(ctx context.Context, c client.Client, name string) map[string
 							"operator": "Equal",
 						},
 					},
+					"extraArgs": map[string]interface{}{
+						"default-ssl-certificate": "undistro-system/undistro-ingress-cert",
+					},
 				},
 			}
 		}
