@@ -45,8 +45,7 @@ spec:
     name: undistro-local-issuer
     kind: Issuer
   dnsNames:
-    - localhost
-    - ingress.local
-    - undistro.local
-    - undistro.internal
+  {{- range .Values.ingress.hosts -}}
+  - {{ . }}
+  {{- end -}}
 {{- end -}}

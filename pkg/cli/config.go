@@ -21,6 +21,7 @@ import (
 	"path/filepath"
 
 	"github.com/getupio-undistro/undistro/pkg/meta"
+	"github.com/getupio-undistro/undistro/pkg/undistro"
 	"github.com/getupio-undistro/undistro/pkg/util"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/spf13/pflag"
@@ -119,7 +120,7 @@ func defaultValues(ctx context.Context, c client.Client, name string) map[string
 						},
 					},
 					"extraArgs": map[string]interface{}{
-						"default-ssl-certificate": "undistro-system/undistro-ingress-cert",
+						"default-ssl-certificate": undistro.Namespace + "/undistro-ingress-cert",
 					},
 				},
 			}
