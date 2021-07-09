@@ -14,7 +14,7 @@ metadata:
   namespace: undistro-system
 spec:
   isCA: true
-  commonName: "UnDistro Local Authority - 2021 ECC Root"
+  commonName: "UnDistro Local Authority - ECC Root"
   secretName: ca-secret
   privateKey:
     algorithm: ECDSA
@@ -40,7 +40,7 @@ metadata:
   namespace: undistro-system
 spec: 
   secretName: undistro-ingress-cert    
-  commonName: "UnDistro Local Authority - 2021 ECC Root"
+  commonName: "UnDistro Local Authority - ECC Root"
   issuerRef:
     name: undistro-local-issuer
     kind: Issuer

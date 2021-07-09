@@ -1,9 +1,10 @@
 {{- if not .Values.local -}}
 ---
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+kind: Issuer
 metadata: 
   name: letsencrypt-prod
+  namespace: undistro-system
 spec: 
   acme: 
     email: {{.Values.ingress.tls.email}}
