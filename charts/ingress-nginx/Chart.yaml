@@ -1,9 +1,5 @@
 apiVersion: v2
 name: ingress-nginx
-
-
-# When the version is modified, make sure the artifacthub.io/changes list is updated
-# Also update CHANGELOG.md
 version: 3.32.0
 appVersion: 3.32.0
 home: https://github.com/kubernetes/ingress-nginx
@@ -18,10 +14,6 @@ type: application
 engine: gotpl
 kubeVersion: ">=1.16.0-0"
 annotations:
-
-
-  # List of changes for the release in artifacthub.io
-  # https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx?modal=changelog
   artifacthub.io/changes: |
     - Removes the possibility of using localhost in ExternalNames as endpoints
 maintainers:
