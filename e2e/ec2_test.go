@@ -151,6 +151,14 @@ var _ = Describe("Create EC2 cluster", func() {
 			}
 			return list.Items
 		}, 120*time.Minute, 2*time.Minute).Should(HaveLen(16))
+		podList := corev1.PodList{}
+		err = clusterClient.List(context.Background(), &podList, client.InNamespace("kube-system"))
+		Expect(err).ToNot(HaveOccurred())
+		for _, p := range podList.Items {
+			for _, container := range p.Spec.Containers {
+				Expect(container.Image).To(HavePrefix("registry.undistro.io"))
+			}
+		}
 		fmt.Println("delete cluster")
 
 		cmd = exec.NewCommand(

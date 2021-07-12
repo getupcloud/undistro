@@ -213,7 +213,7 @@ spec:
         - --upstream=http://127.0.0.1:8080/
         - --logtostderr=true
         - --v=10
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.4.1
+        image: registry.undistro.io/gcr/kubebuilder/kube-rbac-proxy:v0.4.1
         name: kube-rbac-proxy
         ports:
         - containerPort: 8443
@@ -224,7 +224,7 @@ spec:
         - --feature-gates=MachinePool=true
         command:
         - /manager
-        image: getupioundistro/kubeadm-bootstrap-controller-amd64:v0.3.17
+        image: registry.undistro.io/usgcr/k8s-artifacts-prod/cluster-api/kubeadm-bootstrap-controller:v0.3.20
         imagePullPolicy: IfNotPresent
         name: manager
       terminationGracePeriodSeconds: 10
@@ -258,7 +258,7 @@ spec:
         - --upstream=http://127.0.0.1:8080/
         - --logtostderr=true
         - --v=10
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.4.1
+        image: registry.undistro.io/gcr/kubebuilder/kube-rbac-proxy:v0.4.1
         name: kube-rbac-proxy
         ports:
         - containerPort: 8443
@@ -269,7 +269,7 @@ spec:
         - --feature-gates=MachinePool=true
         command:
         - /manager
-        image: getupioundistro/kubeadm-bootstrap-controller-amd64:v0.3.17
+        image: registry.undistro.io/usgcr/k8s-artifacts-prod/cluster-api/kubeadm-bootstrap-controller:v0.3.20
         imagePullPolicy: IfNotPresent
         name: manager
         ports:

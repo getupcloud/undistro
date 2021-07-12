@@ -414,7 +414,7 @@ spec:
             - 
               name: AWS_SHARED_CREDENTIALS_FILE
               value: /home/.aws/credentials
-          image: "us.gcr.io/k8s-artifacts-prod/cluster-api-aws/cluster-api-aws-controller:v0.6.6"
+          image: "registry.undistro.io/usgcr/k8s-artifacts-prod/cluster-api-aws/cluster-api-aws-controller:v0.6.6"
           imagePullPolicy: IfNotPresent
           livenessProbe: 
             httpGet: 
@@ -440,7 +440,7 @@ spec:
             - "--upstream=http://127.0.0.1:8080/"
             - "--logtostderr=true"
             - "--v=10"
-          image: "gcr.io/kubebuilder/kube-rbac-proxy:v0.4.1"
+          image: "registry.undistro.io/gcr/kubebuilder/kube-rbac-proxy:v0.4.1"
           name: kube-rbac-proxy
           ports: 
             - 
@@ -486,7 +486,7 @@ spec:
             - "--metrics-addr=127.0.0.1:8080"
             - "--webhook-port=9443"
             - "--feature-gates=EKS=true,EKSEnableIAM=true,MachinePool=true,EventBridgeInstanceState=false,AutoControllerIdentityCreator=false"
-          image: "us.gcr.io/k8s-artifacts-prod/cluster-api-aws/cluster-api-aws-controller:v0.6.6"
+          image: "registry.undistro.io/usgcr/k8s-artifacts-prod/cluster-api-aws/cluster-api-aws-controller:v0.6.6"
           imagePullPolicy: IfNotPresent
           livenessProbe: 
             httpGet: 
@@ -517,7 +517,7 @@ spec:
             - "--upstream=http://127.0.0.1:8080/"
             - "--logtostderr=true"
             - "--v=10"
-          image: "gcr.io/kubebuilder/kube-rbac-proxy:v0.4.1"
+          image: "registry.undistro.io/gcr/kubebuilder/kube-rbac-proxy:v0.4.1"
           name: kube-rbac-proxy
           ports: 
             - 

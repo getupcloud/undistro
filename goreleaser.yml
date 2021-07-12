@@ -1,15 +1,59 @@
 builds:
   - binary: undistro
+    id: undistro
     main: ./cmd/undistro/main.go
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -a
     ldflags: -X github.com/getupio-undistro/undistro/pkg/version.buildDate={{.Env.BUILD_DATETIME}} -X github.com/getupio-undistro/undistro/pkg/version.gitCommit={{.Env.BUILD_COMMIT}} -X github.com/getupio-undistro/undistro/pkg/version.gitTreeState={{.Env.BUILD_STATE}} -X github.com/getupio-undistro/undistro/pkg/version.gitMajor={{.Env.GIT_MAJOR}} -X github.com/getupio-undistro/undistro/pkg/version.gitMinor={{.Env.GIT_MINOR}} -X github.com/getupio-undistro/undistro/pkg/version.gitVersion={{.Env.GIT_VERSION}} -X github.com/getupio-undistro/undistro/pkg/version.gitReleaseCommit={{.Env.RELEASE_COMMIT}}
     goos:
       - darwin
       - linux
 
+  - binary: manager
+    id: manager
+    main: main.go
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -a
+    ldflags: -X github.com/getupio-undistro/undistro/pkg/version.buildDate={{.Env.BUILD_DATETIME}} -X github.com/getupio-undistro/undistro/pkg/version.gitCommit={{.Env.BUILD_COMMIT}} -X github.com/getupio-undistro/undistro/pkg/version.gitTreeState={{.Env.BUILD_STATE}} -X github.com/getupio-undistro/undistro/pkg/version.gitMajor={{.Env.GIT_MAJOR}} -X github.com/getupio-undistro/undistro/pkg/version.gitMinor={{.Env.GIT_MINOR}} -X github.com/getupio-undistro/undistro/pkg/version.gitVersion={{.Env.GIT_VERSION}} -X github.com/getupio-undistro/undistro/pkg/version.gitReleaseCommit={{.Env.RELEASE_COMMIT}}
+    goos:
+      - linux
+
+archives:
+  - builds: ["undistro"]
+    id: undistro
+
+dockers:
+  - image_templates:
+      - "registry.undistro.io/library/undistro:{{ .Tag }}"
+      - "registry.undistro.io/library/undistro-amd64:{{ .Tag }}"
+    use: buildx
+    ids: [manager]
+    goarch: amd64
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--pull"
+      - "--platform=linux/amd64"
+
+  - image_templates:
+      - "registry.undistro.io/library/undistro-arm64:{{ .Tag }}"
+    use: buildx
+    ids: [manager]
+    goarch: arm64
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--pull"
+      - "--platform=linux/arm64"
+
 brews:
   - tap:
       owner: getupio-undistro
       name: homebrew-tap
+    ids:
+      - undistro
     folder: Formula
     homepage: https://undistro.io
     description: UnDistro is a vanilla, non-opinionated, and open source Kubernetes distribution
@@ -19,11 +63,12 @@ nfpms:
     maintainer: UnDistro Team <undistro@getup.io>
     license: Apache-2.0
     vendor: Getup
+    builds:
+      - undistro
     formats:
       - apk
       - deb
       - rpm
-
 
 release:
   github:

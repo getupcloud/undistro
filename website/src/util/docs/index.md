@@ -31,7 +31,11 @@ Before you start, make sure the following prerequisites are installed:
 - Install and setup [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in your local environment.
 - Install and setup [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and [Docker](https://www.docker.com/get-started). **(required just for kind installation method)**
 - Install and setup [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html) in your local environment. **(required just for AWS provider)**
-- Download [UnDistro CLI](https://github.com/getupio-undistro/undistro/releases)
+- Download [UnDistro CLI](https://github.com/getupio-undistro/undistro/releases) or use Homebrew to install.
+
+~~~bash
+brew install getupio-undistro/tap/undistro
+~~~
 
 **Great tips!**
 - The cluster name cannot be changed after it is created, choose it right, choose it well!
@@ -174,7 +178,11 @@ a target
 
 The UnDistro CLI tool handles the lifecycle of an UnDistro management cluster.
 
-Download the latest version from the releases page: https://github.com/getupio-undistro/undistro/releases.
+Download the latest version from the releases page: https://github.com/getupio-undistro/undistro/releases or use Homebrew to install. 
+
+~~~bash
+brew install getupio-undistro/tap/undistro
+~~~
 
 ## Create the configuration file
 

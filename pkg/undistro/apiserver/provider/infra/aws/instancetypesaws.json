@@ -1,7 +1,7 @@
 [
 	{
-		"instance_type": "t1.micro",
-		"availability_zones": [
+		"instanceType": "t1.micro",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -12,8 +12,8 @@
 		"memory": 0.612
 	},
 	{
-		"instance_type": "t2.nano",
-		"availability_zones": [
+		"instanceType": "t2.nano",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -25,8 +25,8 @@
 		"memory": 0.5
 	},
 	{
-		"instance_type": "t2.micro",
-		"availability_zones": [
+		"instanceType": "t2.micro",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -38,8 +38,8 @@
 		"memory": 1
 	},
 	{
-		"instance_type": "t2.small",
-		"availability_zones": [
+		"instanceType": "t2.small",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -51,8 +51,8 @@
 		"memory": 2
 	},
 	{
-		"instance_type": "t2.medium",
-		"availability_zones": [
+		"instanceType": "t2.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -64,8 +64,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "t2.large",
-		"availability_zones": [
+		"instanceType": "t2.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -77,8 +77,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "t2.xlarge",
-		"availability_zones": [
+		"instanceType": "t2.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -90,8 +90,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "t2.2xlarge",
-		"availability_zones": [
+		"instanceType": "t2.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -103,8 +103,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "t3.nano",
-		"availability_zones": [
+		"instanceType": "t3.nano",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -115,8 +115,8 @@
 		"memory": 0.5
 	},
 	{
-		"instance_type": "t3.micro",
-		"availability_zones": [
+		"instanceType": "t3.micro",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -127,8 +127,8 @@
 		"memory": 1
 	},
 	{
-		"instance_type": "t3.small",
-		"availability_zones": [
+		"instanceType": "t3.small",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -139,8 +139,8 @@
 		"memory": 2
 	},
 	{
-		"instance_type": "t3.medium",
-		"availability_zones": [
+		"instanceType": "t3.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -151,8 +151,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "t3.large",
-		"availability_zones": [
+		"instanceType": "t3.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -163,8 +163,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "t3.xlarge",
-		"availability_zones": [
+		"instanceType": "t3.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -175,8 +175,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "t3.2xlarge",
-		"availability_zones": [
+		"instanceType": "t3.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -187,8 +187,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "a1.medium",
-		"availability_zones": [
+		"instanceType": "a1.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -197,8 +197,8 @@
 		"memory": 2
 	},
 	{
-		"instance_type": "a1.large",
-		"availability_zones": [
+		"instanceType": "a1.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -207,8 +207,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "a1.xlarge",
-		"availability_zones": [
+		"instanceType": "a1.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -217,8 +217,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "a1.2xlarge",
-		"availability_zones": [
+		"instanceType": "a1.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -227,8 +227,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "a1.4xlarge",
-		"availability_zones": [
+		"instanceType": "a1.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -237,8 +237,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "a1.metal",
-		"availability_zones": [
+		"instanceType": "a1.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -247,8 +247,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "c1.medium",
-		"availability_zones": [
+		"instanceType": "c1.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -258,8 +258,8 @@
 		"memory": 1.7
 	},
 	{
-		"instance_type": "c1.xlarge",
-		"availability_zones": [
+		"instanceType": "c1.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -269,8 +269,8 @@
 		"memory": 7
 	},
 	{
-		"instance_type": "c3.large",
-		"availability_zones": [
+		"instanceType": "c3.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -280,8 +280,8 @@
 		"memory": 3.75
 	},
 	{
-		"instance_type": "c3.xlarge",
-		"availability_zones": [
+		"instanceType": "c3.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -291,8 +291,8 @@
 		"memory": 7.5
 	},
 	{
-		"instance_type": "c3.2xlarge",
-		"availability_zones": [
+		"instanceType": "c3.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -302,8 +302,8 @@
 		"memory": 15
 	},
 	{
-		"instance_type": "c3.4xlarge",
-		"availability_zones": [
+		"instanceType": "c3.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -313,8 +313,8 @@
 		"memory": 30
 	},
 	{
-		"instance_type": "c3.8xlarge",
-		"availability_zones": [
+		"instanceType": "c3.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -324,8 +324,8 @@
 		"memory": 60
 	},
 	{
-		"instance_type": "c4.large",
-		"availability_zones": [
+		"instanceType": "c4.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -337,8 +337,8 @@
 		"memory": 3.75
 	},
 	{
-		"instance_type": "c4.xlarge",
-		"availability_zones": [
+		"instanceType": "c4.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -350,8 +350,8 @@
 		"memory": 7.5
 	},
 	{
-		"instance_type": "c4.2xlarge",
-		"availability_zones": [
+		"instanceType": "c4.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -363,8 +363,8 @@
 		"memory": 15
 	},
 	{
-		"instance_type": "c4.4xlarge",
-		"availability_zones": [
+		"instanceType": "c4.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -376,8 +376,8 @@
 		"memory": 30
 	},
 	{
-		"instance_type": "c4.8xlarge",
-		"availability_zones": [
+		"instanceType": "c4.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -389,8 +389,8 @@
 		"memory": 60
 	},
 	{
-		"instance_type": "c5.large",
-		"availability_zones": [
+		"instanceType": "c5.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -401,8 +401,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "c5.xlarge",
-		"availability_zones": [
+		"instanceType": "c5.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -413,8 +413,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "c5.2xlarge",
-		"availability_zones": [
+		"instanceType": "c5.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -425,8 +425,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "c5.4xlarge",
-		"availability_zones": [
+		"instanceType": "c5.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -437,8 +437,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "c5.9xlarge",
-		"availability_zones": [
+		"instanceType": "c5.9xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -449,8 +449,8 @@
 		"memory": 72
 	},
 	{
-		"instance_type": "c5.12xlarge",
-		"availability_zones": [
+		"instanceType": "c5.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -461,8 +461,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "c5.18xlarge",
-		"availability_zones": [
+		"instanceType": "c5.18xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -473,8 +473,8 @@
 		"memory": 144
 	},
 	{
-		"instance_type": "c5.24xlarge",
-		"availability_zones": [
+		"instanceType": "c5.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -485,8 +485,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "c5.metal",
-		"availability_zones": [
+		"instanceType": "c5.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -497,8 +497,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "c5a.large",
-		"availability_zones": [
+		"instanceType": "c5a.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -509,8 +509,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "c5a.xlarge",
-		"availability_zones": [
+		"instanceType": "c5a.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -521,8 +521,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "c5a.2xlarge",
-		"availability_zones": [
+		"instanceType": "c5a.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -533,8 +533,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "c5a.4xlarge",
-		"availability_zones": [
+		"instanceType": "c5a.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -545,8 +545,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "c5a.8xlarge",
-		"availability_zones": [
+		"instanceType": "c5a.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -557,8 +557,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "c5a.12xlarge",
-		"availability_zones": [
+		"instanceType": "c5a.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -569,8 +569,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "c5a.16xlarge",
-		"availability_zones": [
+		"instanceType": "c5a.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -581,8 +581,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "c5a.24xlarge",
-		"availability_zones": [
+		"instanceType": "c5a.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -593,8 +593,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "c5ad.large",
-		"availability_zones": [
+		"instanceType": "c5ad.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -605,8 +605,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "c5ad.xlarge",
-		"availability_zones": [
+		"instanceType": "c5ad.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -617,8 +617,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "c5ad.2xlarge",
-		"availability_zones": [
+		"instanceType": "c5ad.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -629,8 +629,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "c5ad.4xlarge",
-		"availability_zones": [
+		"instanceType": "c5ad.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -641,8 +641,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "c5ad.8xlarge",
-		"availability_zones": [
+		"instanceType": "c5ad.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -653,8 +653,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "c5ad.12xlarge",
-		"availability_zones": [
+		"instanceType": "c5ad.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -665,8 +665,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "c5ad.16xlarge",
-		"availability_zones": [
+		"instanceType": "c5ad.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -677,8 +677,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "c5ad.24xlarge",
-		"availability_zones": [
+		"instanceType": "c5ad.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -689,8 +689,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "c5d.large",
-		"availability_zones": [
+		"instanceType": "c5d.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -701,8 +701,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "c5d.xlarge",
-		"availability_zones": [
+		"instanceType": "c5d.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -713,8 +713,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "c5d.2xlarge",
-		"availability_zones": [
+		"instanceType": "c5d.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -725,8 +725,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "c5d.4xlarge",
-		"availability_zones": [
+		"instanceType": "c5d.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -737,8 +737,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "c5d.9xlarge",
-		"availability_zones": [
+		"instanceType": "c5d.9xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -749,8 +749,8 @@
 		"memory": 72
 	},
 	{
-		"instance_type": "c5d.12xlarge",
-		"availability_zones": [
+		"instanceType": "c5d.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -759,8 +759,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "c5d.18xlarge",
-		"availability_zones": [
+		"instanceType": "c5d.18xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -771,8 +771,8 @@
 		"memory": 144
 	},
 	{
-		"instance_type": "c5d.24xlarge",
-		"availability_zones": [
+		"instanceType": "c5d.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -781,8 +781,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "c5d.metal",
-		"availability_zones": [
+		"instanceType": "c5d.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -792,8 +792,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "c5n.large",
-		"availability_zones": [
+		"instanceType": "c5n.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -804,8 +804,8 @@
 		"memory": 5.3
 	},
 	{
-		"instance_type": "c5n.xlarge",
-		"availability_zones": [
+		"instanceType": "c5n.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -816,8 +816,8 @@
 		"memory": 10.5
 	},
 	{
-		"instance_type": "c5n.2xlarge",
-		"availability_zones": [
+		"instanceType": "c5n.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -828,8 +828,8 @@
 		"memory": 21
 	},
 	{
-		"instance_type": "c5n.4xlarge",
-		"availability_zones": [
+		"instanceType": "c5n.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -840,8 +840,8 @@
 		"memory": 42
 	},
 	{
-		"instance_type": "c5n.9xlarge",
-		"availability_zones": [
+		"instanceType": "c5n.9xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -852,8 +852,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "c5n.18xlarge",
-		"availability_zones": [
+		"instanceType": "c5n.18xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -864,8 +864,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "c5n.metal",
-		"availability_zones": [
+		"instanceType": "c5n.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -876,8 +876,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "c6g.medium",
-		"availability_zones": [
+		"instanceType": "c6g.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -888,8 +888,8 @@
 		"memory": 2
 	},
 	{
-		"instance_type": "c6g.large",
-		"availability_zones": [
+		"instanceType": "c6g.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -900,8 +900,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "c6g.xlarge",
-		"availability_zones": [
+		"instanceType": "c6g.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -912,8 +912,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "c6g.2xlarge",
-		"availability_zones": [
+		"instanceType": "c6g.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -924,8 +924,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "c6g.4xlarge",
-		"availability_zones": [
+		"instanceType": "c6g.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -936,8 +936,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "c6g.8xlarge",
-		"availability_zones": [
+		"instanceType": "c6g.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -948,8 +948,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "c6g.12xlarge",
-		"availability_zones": [
+		"instanceType": "c6g.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -960,8 +960,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "c6g.16xlarge",
-		"availability_zones": [
+		"instanceType": "c6g.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -972,8 +972,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "c6g.metal",
-		"availability_zones": [
+		"instanceType": "c6g.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -984,8 +984,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "c6gd.medium",
-		"availability_zones": [
+		"instanceType": "c6gd.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -996,8 +996,8 @@
 		"memory": 2
 	},
 	{
-		"instance_type": "c6gd.large",
-		"availability_zones": [
+		"instanceType": "c6gd.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1008,8 +1008,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "c6gd.xlarge",
-		"availability_zones": [
+		"instanceType": "c6gd.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1020,8 +1020,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "c6gd.2xlarge",
-		"availability_zones": [
+		"instanceType": "c6gd.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1032,8 +1032,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "c6gd.4xlarge",
-		"availability_zones": [
+		"instanceType": "c6gd.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1044,8 +1044,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "c6gd.8xlarge",
-		"availability_zones": [
+		"instanceType": "c6gd.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1056,8 +1056,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "c6gd.12xlarge",
-		"availability_zones": [
+		"instanceType": "c6gd.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1068,8 +1068,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "c6gd.16xlarge",
-		"availability_zones": [
+		"instanceType": "c6gd.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1080,8 +1080,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "c6gd.metal",
-		"availability_zones": [
+		"instanceType": "c6gd.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1092,8 +1092,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "c6gn.medium",
-		"availability_zones": [
+		"instanceType": "c6gn.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1103,8 +1103,8 @@
 		"memory": 2
 	},
 	{
-		"instance_type": "c6gn.large",
-		"availability_zones": [
+		"instanceType": "c6gn.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1114,8 +1114,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "c6gn.xlarge",
-		"availability_zones": [
+		"instanceType": "c6gn.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1125,8 +1125,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "c6gn.2xlarge",
-		"availability_zones": [
+		"instanceType": "c6gn.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1136,8 +1136,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "c6gn.4xlarge",
-		"availability_zones": [
+		"instanceType": "c6gn.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1147,8 +1147,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "c6gn.8xlarge",
-		"availability_zones": [
+		"instanceType": "c6gn.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1158,8 +1158,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "c6gn.12xlarge",
-		"availability_zones": [
+		"instanceType": "c6gn.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1169,8 +1169,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "c6gn.16xlarge",
-		"availability_zones": [
+		"instanceType": "c6gn.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1180,8 +1180,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "cc2.8xlarge",
-		"availability_zones": [
+		"instanceType": "cc2.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -1190,8 +1190,8 @@
 		"memory": 60.5
 	},
 	{
-		"instance_type": "d2.xlarge",
-		"availability_zones": [
+		"instanceType": "d2.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1203,8 +1203,8 @@
 		"memory": 30.5
 	},
 	{
-		"instance_type": "d2.2xlarge",
-		"availability_zones": [
+		"instanceType": "d2.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1216,8 +1216,8 @@
 		"memory": 61
 	},
 	{
-		"instance_type": "d2.4xlarge",
-		"availability_zones": [
+		"instanceType": "d2.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1229,8 +1229,8 @@
 		"memory": 122
 	},
 	{
-		"instance_type": "d2.8xlarge",
-		"availability_zones": [
+		"instanceType": "d2.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1242,8 +1242,8 @@
 		"memory": 244
 	},
 	{
-		"instance_type": "d3.xlarge",
-		"availability_zones": [
+		"instanceType": "d3.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1253,8 +1253,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "d3.2xlarge",
-		"availability_zones": [
+		"instanceType": "d3.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1264,8 +1264,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "d3.4xlarge",
-		"availability_zones": [
+		"instanceType": "d3.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1275,8 +1275,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "d3.8xlarge",
-		"availability_zones": [
+		"instanceType": "d3.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1286,8 +1286,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "d3en.xlarge",
-		"availability_zones": [
+		"instanceType": "d3en.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1297,8 +1297,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "d3en.2xlarge",
-		"availability_zones": [
+		"instanceType": "d3en.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1308,8 +1308,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "d3en.4xlarge",
-		"availability_zones": [
+		"instanceType": "d3en.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1319,8 +1319,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "d3en.6xlarge",
-		"availability_zones": [
+		"instanceType": "d3en.6xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1330,8 +1330,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "d3en.8xlarge",
-		"availability_zones": [
+		"instanceType": "d3en.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1341,8 +1341,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "d3en.12xlarge",
-		"availability_zones": [
+		"instanceType": "d3en.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1352,8 +1352,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "f1.2xlarge",
-		"availability_zones": [
+		"instanceType": "f1.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1364,8 +1364,8 @@
 		"memory": 122
 	},
 	{
-		"instance_type": "f1.4xlarge",
-		"availability_zones": [
+		"instanceType": "f1.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1376,8 +1376,8 @@
 		"memory": 244
 	},
 	{
-		"instance_type": "f1.16xlarge",
-		"availability_zones": [
+		"instanceType": "f1.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1388,8 +1388,8 @@
 		"memory": 976
 	},
 	{
-		"instance_type": "g2.2xlarge",
-		"availability_zones": [
+		"instanceType": "g2.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1399,8 +1399,8 @@
 		"memory": 15
 	},
 	{
-		"instance_type": "g2.8xlarge",
-		"availability_zones": [
+		"instanceType": "g2.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1410,8 +1410,8 @@
 		"memory": 60
 	},
 	{
-		"instance_type": "g3.4xlarge",
-		"availability_zones": [
+		"instanceType": "g3.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1421,8 +1421,8 @@
 		"memory": 122
 	},
 	{
-		"instance_type": "g3.8xlarge",
-		"availability_zones": [
+		"instanceType": "g3.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1432,8 +1432,8 @@
 		"memory": 244
 	},
 	{
-		"instance_type": "g3.16xlarge",
-		"availability_zones": [
+		"instanceType": "g3.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1443,8 +1443,8 @@
 		"memory": 488
 	},
 	{
-		"instance_type": "g3s.xlarge",
-		"availability_zones": [
+		"instanceType": "g3s.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1454,8 +1454,8 @@
 		"memory": 30.5
 	},
 	{
-		"instance_type": "g4ad.4xlarge",
-		"availability_zones": [
+		"instanceType": "g4ad.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1465,8 +1465,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "g4ad.8xlarge",
-		"availability_zones": [
+		"instanceType": "g4ad.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1476,8 +1476,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "g4ad.16xlarge",
-		"availability_zones": [
+		"instanceType": "g4ad.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1487,8 +1487,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "g4dn.xlarge",
-		"availability_zones": [
+		"instanceType": "g4dn.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1499,8 +1499,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "g4dn.2xlarge",
-		"availability_zones": [
+		"instanceType": "g4dn.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1511,8 +1511,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "g4dn.4xlarge",
-		"availability_zones": [
+		"instanceType": "g4dn.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1523,8 +1523,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "g4dn.8xlarge",
-		"availability_zones": [
+		"instanceType": "g4dn.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1535,8 +1535,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "g4dn.12xlarge",
-		"availability_zones": [
+		"instanceType": "g4dn.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1547,8 +1547,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "g4dn.16xlarge",
-		"availability_zones": [
+		"instanceType": "g4dn.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1559,8 +1559,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "g4dn.metal",
-		"availability_zones": [
+		"instanceType": "g4dn.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1571,8 +1571,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "h1.2xlarge",
-		"availability_zones": [
+		"instanceType": "h1.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1582,8 +1582,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "h1.4xlarge",
-		"availability_zones": [
+		"instanceType": "h1.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1593,8 +1593,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "h1.8xlarge",
-		"availability_zones": [
+		"instanceType": "h1.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1604,8 +1604,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "h1.16xlarge",
-		"availability_zones": [
+		"instanceType": "h1.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1615,8 +1615,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "i2.xlarge",
-		"availability_zones": [
+		"instanceType": "i2.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1627,8 +1627,8 @@
 		"memory": 30.5
 	},
 	{
-		"instance_type": "i2.2xlarge",
-		"availability_zones": [
+		"instanceType": "i2.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1639,8 +1639,8 @@
 		"memory": 61
 	},
 	{
-		"instance_type": "i2.4xlarge",
-		"availability_zones": [
+		"instanceType": "i2.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1651,8 +1651,8 @@
 		"memory": 122
 	},
 	{
-		"instance_type": "i2.8xlarge",
-		"availability_zones": [
+		"instanceType": "i2.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1663,8 +1663,8 @@
 		"memory": 244
 	},
 	{
-		"instance_type": "i3.large",
-		"availability_zones": [
+		"instanceType": "i3.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1676,8 +1676,8 @@
 		"memory": 15.3
 	},
 	{
-		"instance_type": "i3.xlarge",
-		"availability_zones": [
+		"instanceType": "i3.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1689,8 +1689,8 @@
 		"memory": 30.5
 	},
 	{
-		"instance_type": "i3.2xlarge",
-		"availability_zones": [
+		"instanceType": "i3.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1702,8 +1702,8 @@
 		"memory": 61
 	},
 	{
-		"instance_type": "i3.4xlarge",
-		"availability_zones": [
+		"instanceType": "i3.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1715,8 +1715,8 @@
 		"memory": 122
 	},
 	{
-		"instance_type": "i3.8xlarge",
-		"availability_zones": [
+		"instanceType": "i3.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1728,8 +1728,8 @@
 		"memory": 244
 	},
 	{
-		"instance_type": "i3.16xlarge",
-		"availability_zones": [
+		"instanceType": "i3.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1741,8 +1741,8 @@
 		"memory": 488
 	},
 	{
-		"instance_type": "i3.metal",
-		"availability_zones": [
+		"instanceType": "i3.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1753,8 +1753,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "i3en.large",
-		"availability_zones": [
+		"instanceType": "i3en.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1765,8 +1765,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "i3en.xlarge",
-		"availability_zones": [
+		"instanceType": "i3en.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1777,8 +1777,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "i3en.2xlarge",
-		"availability_zones": [
+		"instanceType": "i3en.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1789,8 +1789,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "i3en.3xlarge",
-		"availability_zones": [
+		"instanceType": "i3en.3xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1801,8 +1801,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "i3en.6xlarge",
-		"availability_zones": [
+		"instanceType": "i3en.6xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1813,8 +1813,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "i3en.12xlarge",
-		"availability_zones": [
+		"instanceType": "i3en.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1825,8 +1825,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "i3en.24xlarge",
-		"availability_zones": [
+		"instanceType": "i3en.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1837,8 +1837,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "i3en.metal",
-		"availability_zones": [
+		"instanceType": "i3en.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1849,8 +1849,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "inf1.xlarge",
-		"availability_zones": [
+		"instanceType": "inf1.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1861,8 +1861,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "inf1.2xlarge",
-		"availability_zones": [
+		"instanceType": "inf1.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1873,8 +1873,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "inf1.6xlarge",
-		"availability_zones": [
+		"instanceType": "inf1.6xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1885,8 +1885,8 @@
 		"memory": 48
 	},
 	{
-		"instance_type": "inf1.24xlarge",
-		"availability_zones": [
+		"instanceType": "inf1.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1897,8 +1897,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m1.small",
-		"availability_zones": [
+		"instanceType": "m1.small",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1908,8 +1908,8 @@
 		"memory": 1.7
 	},
 	{
-		"instance_type": "m1.medium",
-		"availability_zones": [
+		"instanceType": "m1.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1919,8 +1919,8 @@
 		"memory": 3.7
 	},
 	{
-		"instance_type": "m1.large",
-		"availability_zones": [
+		"instanceType": "m1.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1930,8 +1930,8 @@
 		"memory": 7.5
 	},
 	{
-		"instance_type": "m1.xlarge",
-		"availability_zones": [
+		"instanceType": "m1.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1941,8 +1941,8 @@
 		"memory": 15
 	},
 	{
-		"instance_type": "m2.xlarge",
-		"availability_zones": [
+		"instanceType": "m2.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1952,8 +1952,8 @@
 		"memory": 17.1
 	},
 	{
-		"instance_type": "m2.2xlarge",
-		"availability_zones": [
+		"instanceType": "m2.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1963,8 +1963,8 @@
 		"memory": 34.2
 	},
 	{
-		"instance_type": "m2.4xlarge",
-		"availability_zones": [
+		"instanceType": "m2.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -1974,8 +1974,8 @@
 		"memory": 68.4
 	},
 	{
-		"instance_type": "m3.medium",
-		"availability_zones": [
+		"instanceType": "m3.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1985,8 +1985,8 @@
 		"memory": 3.75
 	},
 	{
-		"instance_type": "m3.large",
-		"availability_zones": [
+		"instanceType": "m3.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -1996,8 +1996,8 @@
 		"memory": 7.5
 	},
 	{
-		"instance_type": "m3.xlarge",
-		"availability_zones": [
+		"instanceType": "m3.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -2007,8 +2007,8 @@
 		"memory": 15
 	},
 	{
-		"instance_type": "m3.2xlarge",
-		"availability_zones": [
+		"instanceType": "m3.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -2018,8 +2018,8 @@
 		"memory": 30
 	},
 	{
-		"instance_type": "m4.large",
-		"availability_zones": [
+		"instanceType": "m4.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2031,8 +2031,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m4.xlarge",
-		"availability_zones": [
+		"instanceType": "m4.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2044,8 +2044,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m4.2xlarge",
-		"availability_zones": [
+		"instanceType": "m4.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2057,8 +2057,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m4.4xlarge",
-		"availability_zones": [
+		"instanceType": "m4.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2070,8 +2070,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "m4.10xlarge",
-		"availability_zones": [
+		"instanceType": "m4.10xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2083,8 +2083,8 @@
 		"memory": 160
 	},
 	{
-		"instance_type": "m4.16xlarge",
-		"availability_zones": [
+		"instanceType": "m4.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2096,8 +2096,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m5.large",
-		"availability_zones": [
+		"instanceType": "m5.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2108,8 +2108,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m5.xlarge",
-		"availability_zones": [
+		"instanceType": "m5.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2120,8 +2120,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m5.2xlarge",
-		"availability_zones": [
+		"instanceType": "m5.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2132,8 +2132,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m5.4xlarge",
-		"availability_zones": [
+		"instanceType": "m5.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2144,8 +2144,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "m5.8xlarge",
-		"availability_zones": [
+		"instanceType": "m5.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2156,8 +2156,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "m5.12xlarge",
-		"availability_zones": [
+		"instanceType": "m5.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2168,8 +2168,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m5.16xlarge",
-		"availability_zones": [
+		"instanceType": "m5.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2180,8 +2180,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m5.24xlarge",
-		"availability_zones": [
+		"instanceType": "m5.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2192,8 +2192,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5.metal",
-		"availability_zones": [
+		"instanceType": "m5.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2204,8 +2204,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5a.large",
-		"availability_zones": [
+		"instanceType": "m5a.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2216,8 +2216,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m5a.xlarge",
-		"availability_zones": [
+		"instanceType": "m5a.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2228,8 +2228,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m5a.2xlarge",
-		"availability_zones": [
+		"instanceType": "m5a.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2240,8 +2240,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m5a.4xlarge",
-		"availability_zones": [
+		"instanceType": "m5a.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2252,8 +2252,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "m5a.8xlarge",
-		"availability_zones": [
+		"instanceType": "m5a.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2264,8 +2264,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "m5a.12xlarge",
-		"availability_zones": [
+		"instanceType": "m5a.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2276,8 +2276,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m5a.16xlarge",
-		"availability_zones": [
+		"instanceType": "m5a.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2288,8 +2288,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m5a.24xlarge",
-		"availability_zones": [
+		"instanceType": "m5a.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2300,8 +2300,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5ad.large",
-		"availability_zones": [
+		"instanceType": "m5ad.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2312,8 +2312,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m5ad.xlarge",
-		"availability_zones": [
+		"instanceType": "m5ad.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2324,8 +2324,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m5ad.2xlarge",
-		"availability_zones": [
+		"instanceType": "m5ad.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2336,8 +2336,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m5ad.4xlarge",
-		"availability_zones": [
+		"instanceType": "m5ad.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2348,8 +2348,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "m5ad.8xlarge",
-		"availability_zones": [
+		"instanceType": "m5ad.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2360,8 +2360,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "m5ad.12xlarge",
-		"availability_zones": [
+		"instanceType": "m5ad.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2372,8 +2372,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m5ad.16xlarge",
-		"availability_zones": [
+		"instanceType": "m5ad.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2384,8 +2384,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m5ad.24xlarge",
-		"availability_zones": [
+		"instanceType": "m5ad.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2396,8 +2396,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5d.large",
-		"availability_zones": [
+		"instanceType": "m5d.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2408,8 +2408,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m5d.xlarge",
-		"availability_zones": [
+		"instanceType": "m5d.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2420,8 +2420,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m5d.2xlarge",
-		"availability_zones": [
+		"instanceType": "m5d.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2432,8 +2432,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m5d.4xlarge",
-		"availability_zones": [
+		"instanceType": "m5d.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2444,8 +2444,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "m5d.8xlarge",
-		"availability_zones": [
+		"instanceType": "m5d.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2456,8 +2456,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "m5d.12xlarge",
-		"availability_zones": [
+		"instanceType": "m5d.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2468,8 +2468,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m5d.16xlarge",
-		"availability_zones": [
+		"instanceType": "m5d.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2480,8 +2480,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m5d.24xlarge",
-		"availability_zones": [
+		"instanceType": "m5d.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2492,8 +2492,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5d.metal",
-		"availability_zones": [
+		"instanceType": "m5d.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2504,8 +2504,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5dn.large",
-		"availability_zones": [
+		"instanceType": "m5dn.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2516,8 +2516,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m5dn.xlarge",
-		"availability_zones": [
+		"instanceType": "m5dn.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2528,8 +2528,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m5dn.2xlarge",
-		"availability_zones": [
+		"instanceType": "m5dn.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2540,8 +2540,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m5dn.4xlarge",
-		"availability_zones": [
+		"instanceType": "m5dn.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2552,8 +2552,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "m5dn.8xlarge",
-		"availability_zones": [
+		"instanceType": "m5dn.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2564,8 +2564,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "m5dn.12xlarge",
-		"availability_zones": [
+		"instanceType": "m5dn.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2576,8 +2576,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m5dn.16xlarge",
-		"availability_zones": [
+		"instanceType": "m5dn.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2588,8 +2588,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m5dn.24xlarge",
-		"availability_zones": [
+		"instanceType": "m5dn.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2600,8 +2600,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5dn.metal",
-		"availability_zones": [
+		"instanceType": "m5dn.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2612,8 +2612,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5n.large",
-		"availability_zones": [
+		"instanceType": "m5n.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2624,8 +2624,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m5n.xlarge",
-		"availability_zones": [
+		"instanceType": "m5n.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2636,8 +2636,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m5n.2xlarge",
-		"availability_zones": [
+		"instanceType": "m5n.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2648,8 +2648,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m5n.4xlarge",
-		"availability_zones": [
+		"instanceType": "m5n.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2660,8 +2660,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "m5n.8xlarge",
-		"availability_zones": [
+		"instanceType": "m5n.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2672,8 +2672,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "m5n.12xlarge",
-		"availability_zones": [
+		"instanceType": "m5n.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2684,8 +2684,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m5n.16xlarge",
-		"availability_zones": [
+		"instanceType": "m5n.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2696,8 +2696,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m5n.24xlarge",
-		"availability_zones": [
+		"instanceType": "m5n.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2708,8 +2708,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5n.metal",
-		"availability_zones": [
+		"instanceType": "m5n.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -2719,8 +2719,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "m5zn.large",
-		"availability_zones": [
+		"instanceType": "m5zn.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2731,8 +2731,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m5zn.xlarge",
-		"availability_zones": [
+		"instanceType": "m5zn.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2743,8 +2743,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m5zn.2xlarge",
-		"availability_zones": [
+		"instanceType": "m5zn.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2755,8 +2755,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m5zn.3xlarge",
-		"availability_zones": [
+		"instanceType": "m5zn.3xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2767,8 +2767,8 @@
 		"memory": 48
 	},
 	{
-		"instance_type": "m5zn.6xlarge",
-		"availability_zones": [
+		"instanceType": "m5zn.6xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2779,8 +2779,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "m5zn.12xlarge",
-		"availability_zones": [
+		"instanceType": "m5zn.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2791,8 +2791,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m5zn.metal",
-		"availability_zones": [
+		"instanceType": "m5zn.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2803,8 +2803,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m6g.medium",
-		"availability_zones": [
+		"instanceType": "m6g.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2815,8 +2815,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "m6g.large",
-		"availability_zones": [
+		"instanceType": "m6g.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2827,8 +2827,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m6g.xlarge",
-		"availability_zones": [
+		"instanceType": "m6g.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2839,8 +2839,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m6g.2xlarge",
-		"availability_zones": [
+		"instanceType": "m6g.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2851,8 +2851,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m6g.4xlarge",
-		"availability_zones": [
+		"instanceType": "m6g.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2863,8 +2863,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "m6g.8xlarge",
-		"availability_zones": [
+		"instanceType": "m6g.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2875,8 +2875,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "m6g.12xlarge",
-		"availability_zones": [
+		"instanceType": "m6g.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2887,8 +2887,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m6g.16xlarge",
-		"availability_zones": [
+		"instanceType": "m6g.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2899,8 +2899,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m6g.metal",
-		"availability_zones": [
+		"instanceType": "m6g.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2911,8 +2911,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m6gd.medium",
-		"availability_zones": [
+		"instanceType": "m6gd.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2923,8 +2923,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "m6gd.large",
-		"availability_zones": [
+		"instanceType": "m6gd.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2935,8 +2935,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "m6gd.xlarge",
-		"availability_zones": [
+		"instanceType": "m6gd.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2947,8 +2947,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "m6gd.2xlarge",
-		"availability_zones": [
+		"instanceType": "m6gd.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2959,8 +2959,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "m6gd.4xlarge",
-		"availability_zones": [
+		"instanceType": "m6gd.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2971,8 +2971,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "m6gd.8xlarge",
-		"availability_zones": [
+		"instanceType": "m6gd.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2983,8 +2983,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "m6gd.12xlarge",
-		"availability_zones": [
+		"instanceType": "m6gd.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -2995,8 +2995,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "m6gd.16xlarge",
-		"availability_zones": [
+		"instanceType": "m6gd.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3007,8 +3007,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "m6gd.metal",
-		"availability_zones": [
+		"instanceType": "m6gd.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3019,8 +3019,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "mac1.metal",
-		"availability_zones": [
+		"instanceType": "mac1.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b"
 		],
@@ -3028,8 +3028,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "p2.xlarge",
-		"availability_zones": [
+		"instanceType": "p2.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3040,8 +3040,8 @@
 		"memory": 61
 	},
 	{
-		"instance_type": "p2.8xlarge",
-		"availability_zones": [
+		"instanceType": "p2.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3052,8 +3052,8 @@
 		"memory": 488
 	},
 	{
-		"instance_type": "p2.16xlarge",
-		"availability_zones": [
+		"instanceType": "p2.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3064,8 +3064,8 @@
 		"memory": 732
 	},
 	{
-		"instance_type": "p3.2xlarge",
-		"availability_zones": [
+		"instanceType": "p3.2xlarge",
+		"availabilityZones": [
 			"us-east-1b",
 			"us-east-1c",
 			"us-east-1f"
@@ -3074,8 +3074,8 @@
 		"memory": 61
 	},
 	{
-		"instance_type": "p3.8xlarge",
-		"availability_zones": [
+		"instanceType": "p3.8xlarge",
+		"availabilityZones": [
 			"us-east-1b",
 			"us-east-1c",
 			"us-east-1f"
@@ -3084,8 +3084,8 @@
 		"memory": 244
 	},
 	{
-		"instance_type": "p3.16xlarge",
-		"availability_zones": [
+		"instanceType": "p3.16xlarge",
+		"availabilityZones": [
 			"us-east-1b",
 			"us-east-1c",
 			"us-east-1f"
@@ -3094,8 +3094,8 @@
 		"memory": 488
 	},
 	{
-		"instance_type": "p3dn.24xlarge",
-		"availability_zones": [
+		"instanceType": "p3dn.24xlarge",
+		"availabilityZones": [
 			"us-east-1b",
 			"us-east-1c"
 		],
@@ -3103,8 +3103,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "p4d.24xlarge",
-		"availability_zones": [
+		"instanceType": "p4d.24xlarge",
+		"availabilityZones": [
 			"us-east-1b",
 			"us-east-1c",
 			"us-east-1d"
@@ -3113,8 +3113,8 @@
 		"memory": 1152
 	},
 	{
-		"instance_type": "r3.large",
-		"availability_zones": [
+		"instanceType": "r3.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -3124,8 +3124,8 @@
 		"memory": 15
 	},
 	{
-		"instance_type": "r3.xlarge",
-		"availability_zones": [
+		"instanceType": "r3.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -3135,8 +3135,8 @@
 		"memory": 30.5
 	},
 	{
-		"instance_type": "r3.2xlarge",
-		"availability_zones": [
+		"instanceType": "r3.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -3146,8 +3146,8 @@
 		"memory": 61
 	},
 	{
-		"instance_type": "r3.4xlarge",
-		"availability_zones": [
+		"instanceType": "r3.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -3157,8 +3157,8 @@
 		"memory": 122
 	},
 	{
-		"instance_type": "r3.8xlarge",
-		"availability_zones": [
+		"instanceType": "r3.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d",
@@ -3168,8 +3168,8 @@
 		"memory": 244
 	},
 	{
-		"instance_type": "r4.large",
-		"availability_zones": [
+		"instanceType": "r4.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3181,8 +3181,8 @@
 		"memory": 15.3
 	},
 	{
-		"instance_type": "r4.xlarge",
-		"availability_zones": [
+		"instanceType": "r4.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3194,8 +3194,8 @@
 		"memory": 30.5
 	},
 	{
-		"instance_type": "r4.2xlarge",
-		"availability_zones": [
+		"instanceType": "r4.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3207,8 +3207,8 @@
 		"memory": 61
 	},
 	{
-		"instance_type": "r4.4xlarge",
-		"availability_zones": [
+		"instanceType": "r4.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3220,8 +3220,8 @@
 		"memory": 122
 	},
 	{
-		"instance_type": "r4.8xlarge",
-		"availability_zones": [
+		"instanceType": "r4.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3233,8 +3233,8 @@
 		"memory": 244
 	},
 	{
-		"instance_type": "r4.16xlarge",
-		"availability_zones": [
+		"instanceType": "r4.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3246,8 +3246,8 @@
 		"memory": 488
 	},
 	{
-		"instance_type": "r5.large",
-		"availability_zones": [
+		"instanceType": "r5.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3258,8 +3258,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "r5.xlarge",
-		"availability_zones": [
+		"instanceType": "r5.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3270,8 +3270,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "r5.2xlarge",
-		"availability_zones": [
+		"instanceType": "r5.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3282,8 +3282,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "r5.4xlarge",
-		"availability_zones": [
+		"instanceType": "r5.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3294,8 +3294,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "r5.8xlarge",
-		"availability_zones": [
+		"instanceType": "r5.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3306,8 +3306,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "r5.12xlarge",
-		"availability_zones": [
+		"instanceType": "r5.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3318,8 +3318,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "r5.16xlarge",
-		"availability_zones": [
+		"instanceType": "r5.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3330,8 +3330,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "r5.24xlarge",
-		"availability_zones": [
+		"instanceType": "r5.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3342,8 +3342,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r5.metal",
-		"availability_zones": [
+		"instanceType": "r5.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3354,8 +3354,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r5a.large",
-		"availability_zones": [
+		"instanceType": "r5a.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3366,8 +3366,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "r5a.xlarge",
-		"availability_zones": [
+		"instanceType": "r5a.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3378,8 +3378,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "r5a.2xlarge",
-		"availability_zones": [
+		"instanceType": "r5a.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3390,8 +3390,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "r5a.4xlarge",
-		"availability_zones": [
+		"instanceType": "r5a.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3402,8 +3402,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "r5a.8xlarge",
-		"availability_zones": [
+		"instanceType": "r5a.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3414,8 +3414,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "r5a.12xlarge",
-		"availability_zones": [
+		"instanceType": "r5a.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3426,8 +3426,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "r5a.16xlarge",
-		"availability_zones": [
+		"instanceType": "r5a.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3438,8 +3438,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "r5a.24xlarge",
-		"availability_zones": [
+		"instanceType": "r5a.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3450,8 +3450,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r5ad.large",
-		"availability_zones": [
+		"instanceType": "r5ad.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3462,8 +3462,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "r5ad.xlarge",
-		"availability_zones": [
+		"instanceType": "r5ad.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3474,8 +3474,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "r5ad.2xlarge",
-		"availability_zones": [
+		"instanceType": "r5ad.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3486,8 +3486,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "r5ad.4xlarge",
-		"availability_zones": [
+		"instanceType": "r5ad.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3498,8 +3498,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "r5ad.8xlarge",
-		"availability_zones": [
+		"instanceType": "r5ad.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3510,8 +3510,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "r5ad.12xlarge",
-		"availability_zones": [
+		"instanceType": "r5ad.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3522,8 +3522,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "r5ad.16xlarge",
-		"availability_zones": [
+		"instanceType": "r5ad.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3534,8 +3534,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "r5ad.24xlarge",
-		"availability_zones": [
+		"instanceType": "r5ad.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3546,8 +3546,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r5b.large",
-		"availability_zones": [
+		"instanceType": "r5b.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c"
@@ -3556,8 +3556,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "r5b.xlarge",
-		"availability_zones": [
+		"instanceType": "r5b.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c"
@@ -3566,8 +3566,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "r5b.2xlarge",
-		"availability_zones": [
+		"instanceType": "r5b.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c"
@@ -3576,8 +3576,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "r5b.4xlarge",
-		"availability_zones": [
+		"instanceType": "r5b.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c"
@@ -3586,8 +3586,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "r5b.8xlarge",
-		"availability_zones": [
+		"instanceType": "r5b.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c"
@@ -3596,8 +3596,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "r5b.12xlarge",
-		"availability_zones": [
+		"instanceType": "r5b.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c"
@@ -3606,8 +3606,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "r5b.16xlarge",
-		"availability_zones": [
+		"instanceType": "r5b.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c"
@@ -3616,8 +3616,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "r5b.24xlarge",
-		"availability_zones": [
+		"instanceType": "r5b.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c"
@@ -3626,8 +3626,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r5b.metal",
-		"availability_zones": [
+		"instanceType": "r5b.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c"
@@ -3636,116 +3636,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r5d.large",
-		"availability_zones": [
-			"us-east-1a",
-			"us-east-1b",
-			"us-east-1c",
-			"us-east-1d",
-			"us-east-1f"
-		],
-		"vcpus": 2,
-		"memory": 16
-	},
-	{
-		"instance_type": "r5d.xlarge",
-		"availability_zones": [
-			"us-east-1a",
-			"us-east-1b",
-			"us-east-1c",
-			"us-east-1d",
-			"us-east-1f"
-		],
-		"vcpus": 4,
-		"memory": 32
-	},
-	{
-		"instance_type": "r5d.2xlarge",
-		"availability_zones": [
-			"us-east-1a",
-			"us-east-1b",
-			"us-east-1c",
-			"us-east-1d",
-			"us-east-1f"
-		],
-		"vcpus": 8,
-		"memory": 64
-	},
-	{
-		"instance_type": "r5d.4xlarge",
-		"availability_zones": [
-			"us-east-1a",
-			"us-east-1b",
-			"us-east-1c",
-			"us-east-1d",
-			"us-east-1f"
-		],
-		"vcpus": 16,
-		"memory": 128
-	},
-	{
-		"instance_type": "r5d.8xlarge",
-		"availability_zones": [
-			"us-east-1a",
-			"us-east-1b",
-			"us-east-1c",
-			"us-east-1d",
-			"us-east-1f"
-		],
-		"vcpus": 32,
-		"memory": 256
-	},
-	{
-		"instance_type": "r5d.12xlarge",
-		"availability_zones": [
-			"us-east-1a",
-			"us-east-1b",
-			"us-east-1c",
-			"us-east-1d",
-			"us-east-1f"
-		],
-		"vcpus": 48,
-		"memory": 384
-	},
-	{
-		"instance_type": "r5d.16xlarge",
-		"availability_zones": [
-			"us-east-1a",
-			"us-east-1b",
-			"us-east-1c",
-			"us-east-1d",
-			"us-east-1f"
-		],
-		"vcpus": 64,
-		"memory": 512
-	},
-	{
-		"instance_type": "r5d.24xlarge",
-		"availability_zones": [
-			"us-east-1a",
-			"us-east-1b",
-			"us-east-1c",
-			"us-east-1d",
-			"us-east-1f"
-		],
-		"vcpus": 96,
-		"memory": 768
-	},
-	{
-		"instance_type": "r5d.metal",
-		"availability_zones": [
-			"us-east-1a",
-			"us-east-1b",
-			"us-east-1c",
-			"us-east-1d",
-			"us-east-1f"
-		],
-		"vcpus": 96,
-		"memory": 768
-	},
-	{
-		"instance_type": "r5dn.large",
-		"availability_zones": [
+		"instanceType": "r5d.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3756,8 +3648,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "r5dn.xlarge",
-		"availability_zones": [
+		"instanceType": "r5d.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3768,8 +3660,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "r5dn.2xlarge",
-		"availability_zones": [
+		"instanceType": "r5d.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3780,8 +3672,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "r5dn.4xlarge",
-		"availability_zones": [
+		"instanceType": "r5d.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3792,8 +3684,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "r5dn.8xlarge",
-		"availability_zones": [
+		"instanceType": "r5d.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3804,8 +3696,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "r5dn.12xlarge",
-		"availability_zones": [
+		"instanceType": "r5d.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3816,8 +3708,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "r5dn.16xlarge",
-		"availability_zones": [
+		"instanceType": "r5d.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3828,8 +3720,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "r5dn.24xlarge",
-		"availability_zones": [
+		"instanceType": "r5d.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3840,8 +3732,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r5dn.metal",
-		"availability_zones": [
+		"instanceType": "r5d.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3852,8 +3744,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r5n.large",
-		"availability_zones": [
+		"instanceType": "r5dn.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3864,8 +3756,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "r5n.xlarge",
-		"availability_zones": [
+		"instanceType": "r5dn.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3876,8 +3768,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "r5n.2xlarge",
-		"availability_zones": [
+		"instanceType": "r5dn.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3888,8 +3780,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "r5n.4xlarge",
-		"availability_zones": [
+		"instanceType": "r5dn.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3900,8 +3792,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "r5n.8xlarge",
-		"availability_zones": [
+		"instanceType": "r5dn.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3912,8 +3804,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "r5n.12xlarge",
-		"availability_zones": [
+		"instanceType": "r5dn.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3924,8 +3816,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "r5n.16xlarge",
-		"availability_zones": [
+		"instanceType": "r5dn.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3936,8 +3828,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "r5n.24xlarge",
-		"availability_zones": [
+		"instanceType": "r5dn.24xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3948,8 +3840,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r5n.metal",
-		"availability_zones": [
+		"instanceType": "r5dn.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3960,8 +3852,116 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "r6g.medium",
-		"availability_zones": [
+		"instanceType": "r5n.large",
+		"availabilityZones": [
+			"us-east-1a",
+			"us-east-1b",
+			"us-east-1c",
+			"us-east-1d",
+			"us-east-1f"
+		],
+		"vcpus": 2,
+		"memory": 16
+	},
+	{
+		"instanceType": "r5n.xlarge",
+		"availabilityZones": [
+			"us-east-1a",
+			"us-east-1b",
+			"us-east-1c",
+			"us-east-1d",
+			"us-east-1f"
+		],
+		"vcpus": 4,
+		"memory": 32
+	},
+	{
+		"instanceType": "r5n.2xlarge",
+		"availabilityZones": [
+			"us-east-1a",
+			"us-east-1b",
+			"us-east-1c",
+			"us-east-1d",
+			"us-east-1f"
+		],
+		"vcpus": 8,
+		"memory": 64
+	},
+	{
+		"instanceType": "r5n.4xlarge",
+		"availabilityZones": [
+			"us-east-1a",
+			"us-east-1b",
+			"us-east-1c",
+			"us-east-1d",
+			"us-east-1f"
+		],
+		"vcpus": 16,
+		"memory": 128
+	},
+	{
+		"instanceType": "r5n.8xlarge",
+		"availabilityZones": [
+			"us-east-1a",
+			"us-east-1b",
+			"us-east-1c",
+			"us-east-1d",
+			"us-east-1f"
+		],
+		"vcpus": 32,
+		"memory": 256
+	},
+	{
+		"instanceType": "r5n.12xlarge",
+		"availabilityZones": [
+			"us-east-1a",
+			"us-east-1b",
+			"us-east-1c",
+			"us-east-1d",
+			"us-east-1f"
+		],
+		"vcpus": 48,
+		"memory": 384
+	},
+	{
+		"instanceType": "r5n.16xlarge",
+		"availabilityZones": [
+			"us-east-1a",
+			"us-east-1b",
+			"us-east-1c",
+			"us-east-1d",
+			"us-east-1f"
+		],
+		"vcpus": 64,
+		"memory": 512
+	},
+	{
+		"instanceType": "r5n.24xlarge",
+		"availabilityZones": [
+			"us-east-1a",
+			"us-east-1b",
+			"us-east-1c",
+			"us-east-1d",
+			"us-east-1f"
+		],
+		"vcpus": 96,
+		"memory": 768
+	},
+	{
+		"instanceType": "r5n.metal",
+		"availabilityZones": [
+			"us-east-1a",
+			"us-east-1b",
+			"us-east-1c",
+			"us-east-1d",
+			"us-east-1f"
+		],
+		"vcpus": 96,
+		"memory": 768
+	},
+	{
+		"instanceType": "r6g.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3972,8 +3972,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "r6g.large",
-		"availability_zones": [
+		"instanceType": "r6g.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3984,8 +3984,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "r6g.xlarge",
-		"availability_zones": [
+		"instanceType": "r6g.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -3996,8 +3996,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "r6g.2xlarge",
-		"availability_zones": [
+		"instanceType": "r6g.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4008,8 +4008,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "r6g.4xlarge",
-		"availability_zones": [
+		"instanceType": "r6g.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4020,8 +4020,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "r6g.8xlarge",
-		"availability_zones": [
+		"instanceType": "r6g.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4032,8 +4032,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "r6g.12xlarge",
-		"availability_zones": [
+		"instanceType": "r6g.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4044,8 +4044,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "r6g.16xlarge",
-		"availability_zones": [
+		"instanceType": "r6g.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4056,8 +4056,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "r6g.metal",
-		"availability_zones": [
+		"instanceType": "r6g.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4068,8 +4068,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "r6gd.medium",
-		"availability_zones": [
+		"instanceType": "r6gd.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4080,8 +4080,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "r6gd.large",
-		"availability_zones": [
+		"instanceType": "r6gd.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4092,8 +4092,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "r6gd.xlarge",
-		"availability_zones": [
+		"instanceType": "r6gd.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4104,8 +4104,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "r6gd.2xlarge",
-		"availability_zones": [
+		"instanceType": "r6gd.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4116,8 +4116,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "r6gd.4xlarge",
-		"availability_zones": [
+		"instanceType": "r6gd.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4128,8 +4128,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "r6gd.8xlarge",
-		"availability_zones": [
+		"instanceType": "r6gd.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4140,8 +4140,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "r6gd.12xlarge",
-		"availability_zones": [
+		"instanceType": "r6gd.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4152,8 +4152,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "r6gd.16xlarge",
-		"availability_zones": [
+		"instanceType": "r6gd.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4164,8 +4164,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "r6gd.metal",
-		"availability_zones": [
+		"instanceType": "r6gd.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4176,8 +4176,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "t3a.nano",
-		"availability_zones": [
+		"instanceType": "t3a.nano",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4188,8 +4188,8 @@
 		"memory": 0.5
 	},
 	{
-		"instance_type": "t3a.micro",
-		"availability_zones": [
+		"instanceType": "t3a.micro",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4200,8 +4200,8 @@
 		"memory": 1
 	},
 	{
-		"instance_type": "t3a.small",
-		"availability_zones": [
+		"instanceType": "t3a.small",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4212,8 +4212,8 @@
 		"memory": 2
 	},
 	{
-		"instance_type": "t3a.medium",
-		"availability_zones": [
+		"instanceType": "t3a.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4224,8 +4224,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "t3a.large",
-		"availability_zones": [
+		"instanceType": "t3a.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4236,8 +4236,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "t3a.xlarge",
-		"availability_zones": [
+		"instanceType": "t3a.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4248,8 +4248,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "t3a.2xlarge",
-		"availability_zones": [
+		"instanceType": "t3a.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4260,8 +4260,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "t4g.nano",
-		"availability_zones": [
+		"instanceType": "t4g.nano",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4272,8 +4272,8 @@
 		"memory": 0.5
 	},
 	{
-		"instance_type": "t4g.micro",
-		"availability_zones": [
+		"instanceType": "t4g.micro",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4284,8 +4284,8 @@
 		"memory": 1
 	},
 	{
-		"instance_type": "t4g.small",
-		"availability_zones": [
+		"instanceType": "t4g.small",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4296,8 +4296,8 @@
 		"memory": 2
 	},
 	{
-		"instance_type": "t4g.medium",
-		"availability_zones": [
+		"instanceType": "t4g.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4308,8 +4308,8 @@
 		"memory": 4
 	},
 	{
-		"instance_type": "t4g.large",
-		"availability_zones": [
+		"instanceType": "t4g.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4320,8 +4320,8 @@
 		"memory": 8
 	},
 	{
-		"instance_type": "t4g.xlarge",
-		"availability_zones": [
+		"instanceType": "t4g.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4332,8 +4332,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "t4g.2xlarge",
-		"availability_zones": [
+		"instanceType": "t4g.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4344,8 +4344,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "u-12tb1.112xlarge",
-		"availability_zones": [
+		"instanceType": "u-12tb1.112xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -4354,8 +4354,8 @@
 		"memory": 12288
 	},
 	{
-		"instance_type": "u-6tb1.56xlarge",
-		"availability_zones": [
+		"instanceType": "u-6tb1.56xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -4364,8 +4364,8 @@
 		"memory": 6144
 	},
 	{
-		"instance_type": "u-6tb1.112xlarge",
-		"availability_zones": [
+		"instanceType": "u-6tb1.112xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -4374,8 +4374,8 @@
 		"memory": 6144
 	},
 	{
-		"instance_type": "u-9tb1.112xlarge",
-		"availability_zones": [
+		"instanceType": "u-9tb1.112xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1d"
@@ -4384,8 +4384,8 @@
 		"memory": 9216
 	},
 	{
-		"instance_type": "x1.16xlarge",
-		"availability_zones": [
+		"instanceType": "x1.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4397,8 +4397,8 @@
 		"memory": 976
 	},
 	{
-		"instance_type": "x1.32xlarge",
-		"availability_zones": [
+		"instanceType": "x1.32xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4410,8 +4410,8 @@
 		"memory": 1952
 	},
 	{
-		"instance_type": "x1e.xlarge",
-		"availability_zones": [
+		"instanceType": "x1e.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4421,8 +4421,8 @@
 		"memory": 122
 	},
 	{
-		"instance_type": "x1e.2xlarge",
-		"availability_zones": [
+		"instanceType": "x1e.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4432,8 +4432,8 @@
 		"memory": 244
 	},
 	{
-		"instance_type": "x1e.4xlarge",
-		"availability_zones": [
+		"instanceType": "x1e.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4443,8 +4443,8 @@
 		"memory": 488
 	},
 	{
-		"instance_type": "x1e.8xlarge",
-		"availability_zones": [
+		"instanceType": "x1e.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4454,8 +4454,8 @@
 		"memory": 976
 	},
 	{
-		"instance_type": "x1e.16xlarge",
-		"availability_zones": [
+		"instanceType": "x1e.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4465,8 +4465,8 @@
 		"memory": 1952
 	},
 	{
-		"instance_type": "x1e.32xlarge",
-		"availability_zones": [
+		"instanceType": "x1e.32xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4476,8 +4476,8 @@
 		"memory": 3904
 	},
 	{
-		"instance_type": "x2gd.medium",
-		"availability_zones": [
+		"instanceType": "x2gd.medium",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4488,8 +4488,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "x2gd.large",
-		"availability_zones": [
+		"instanceType": "x2gd.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4500,8 +4500,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "x2gd.xlarge",
-		"availability_zones": [
+		"instanceType": "x2gd.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4512,8 +4512,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "x2gd.2xlarge",
-		"availability_zones": [
+		"instanceType": "x2gd.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4524,8 +4524,8 @@
 		"memory": 128
 	},
 	{
-		"instance_type": "x2gd.4xlarge",
-		"availability_zones": [
+		"instanceType": "x2gd.4xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4536,8 +4536,8 @@
 		"memory": 256
 	},
 	{
-		"instance_type": "x2gd.8xlarge",
-		"availability_zones": [
+		"instanceType": "x2gd.8xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4548,8 +4548,8 @@
 		"memory": 512
 	},
 	{
-		"instance_type": "x2gd.12xlarge",
-		"availability_zones": [
+		"instanceType": "x2gd.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4560,8 +4560,8 @@
 		"memory": 768
 	},
 	{
-		"instance_type": "x2gd.16xlarge",
-		"availability_zones": [
+		"instanceType": "x2gd.16xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4572,8 +4572,8 @@
 		"memory": 1024
 	},
 	{
-		"instance_type": "x2gd.metal",
-		"availability_zones": [
+		"instanceType": "x2gd.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4584,8 +4584,8 @@
 		"memory": 1024
 	},
 	{
-		"instance_type": "z1d.large",
-		"availability_zones": [
+		"instanceType": "z1d.large",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4596,8 +4596,8 @@
 		"memory": 16
 	},
 	{
-		"instance_type": "z1d.xlarge",
-		"availability_zones": [
+		"instanceType": "z1d.xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4608,8 +4608,8 @@
 		"memory": 32
 	},
 	{
-		"instance_type": "z1d.2xlarge",
-		"availability_zones": [
+		"instanceType": "z1d.2xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4620,8 +4620,8 @@
 		"memory": 64
 	},
 	{
-		"instance_type": "z1d.3xlarge",
-		"availability_zones": [
+		"instanceType": "z1d.3xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4632,8 +4632,8 @@
 		"memory": 96
 	},
 	{
-		"instance_type": "z1d.6xlarge",
-		"availability_zones": [
+		"instanceType": "z1d.6xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4644,8 +4644,8 @@
 		"memory": 192
 	},
 	{
-		"instance_type": "z1d.12xlarge",
-		"availability_zones": [
+		"instanceType": "z1d.12xlarge",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",
@@ -4656,8 +4656,8 @@
 		"memory": 384
 	},
 	{
-		"instance_type": "z1d.metal",
-		"availability_zones": [
+		"instanceType": "z1d.metal",
+		"availabilityZones": [
 			"us-east-1a",
 			"us-east-1b",
 			"us-east-1c",

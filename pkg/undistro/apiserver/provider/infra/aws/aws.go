@@ -19,6 +19,7 @@ import (
 	"context"
 	_ "embed"
 	"errors"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -32,43 +33,46 @@ import (
 )
 
 type ec2InstanceType struct {
-	InstanceType      string   `json:"instance_type,omitempty"`
-	AvailabilityZones []string `json:"availability_zones,omitempty"`
+	InstanceType      string   `json:"instanceType,omitempty"`
+	AvailabilityZones []string `json:"availabilityZones,omitempty"`
 	VCPUs             int      `json:"vcpus,omitempty"`
 	Memory            float64  `json:"memory,omitempty"`
 }
 
+type flavor struct {
+	Name               string   `json:"name"`
+	KubernetesVersions []string `json:"kubernetesVersion"`
+}
+
 var (
 	regions = []string{
-		"us-east-2",
-		"us-east-1",
-		"us-west-1",
-		"us-west-2",
-		"af-south-1",
-		"ap-east-1",
-		"ap-south-1",
-		"ap-northeast-3",
-		"ap-northeast-2",
-		"ap-southeast-1",
-		"ap-southeast-2",
 		"ap-northeast-1",
+		"ap-northeast-2",
+		"ap-south-1",
+		"ap-southeast-1",
+		"ap-northeast-2",
 		"ca-central-1",
-		"cn-north-1",
-		"cn-northwest-1",
 		"eu-central-1",
 		"eu-west-1",
 		"eu-west-2",
-		"eu-south-1",
 		"eu-west-3",
-		"eu-north-1",
-		"me-south-1",
 		"sa-east-1",
-		"us-gov-east-1",
-		"us-gov-west-1",
+		"us-east-1",
+		"us-east-2",
+		"us-west-1",
+		"us-west-2",
 	}
-	flavors = map[string]string{
-		undistrov1alpha1.EC2.String(): "1.20",
-		undistrov1alpha1.EKS.String(): "1.19",
+	flavors = []flavor{
+		{
+			Name: undistrov1alpha1.EC2.String(),
+			KubernetesVersions: []string{
+				"v1.18.19", "v1.18.20", "v1.21.2", "v1.19.12", "v1.20.8",
+			},
+		},
+		{
+			Name:               undistrov1alpha1.EKS.String(),
+			KubernetesVersions: []string{"v1.20.4", "v1.19.8", "v1.18.16"},
+		},
 	}
 
 	//go:embed instancetypesaws.json
@@ -81,16 +85,16 @@ var (
 	errInvalidPageRange = errors.New("invalid page range")
 	errRegionRequired   = errors.New("region is required")
 	ErrNoProviderMeta   = errors.New("meta is required. supported are " +
-		"['ssh_keys', 'regions', 'machine_types', 'supported_flavors']")
+		"['sshKeys', 'regions', 'machineTypes', 'supportedFlavors']")
 )
 
 type metaParam string
 
 const (
-	SShKeysMeta          = metaParam("ssh_keys")
+	SShKeysMeta          = metaParam("sshKeys")
 	RegionsMeta          = metaParam("regions")
-	MachineTypesMeta     = metaParam("machine_types")
-	SupportedFlavorsMeta = metaParam("supported_flavors")
+	MachineTypesMeta     = metaParam("machineTypes")
+	SupportedFlavorsMeta = metaParam("supportedFlavors")
 )
 
 type PagerResponse struct {
@@ -130,6 +134,9 @@ func describeSSHKeys(region string, restConf *rest.Config) (res []string, err er
 	k8sClient, err := client.New(restConf, client.Options{
 		Scheme: scheme.Scheme,
 	})
+	if err != nil {
+		return []string{}, errGetCredentials
+	}
 	creds, _, err := undistroaws.Credentials(context.Background(), k8sClient)
 	if err != nil {
 		return []string{}, errGetCredentials

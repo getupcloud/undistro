@@ -1,7 +1,13 @@
 local: false
+prometheus:
+  enabled: false
 ingress:
   enabled: true
-  host: localhost
+  hosts: 
+    - localhost
+    - ingress.local
+    - undistro.local
+    - undistro.internal
   tls:
     email: undistro@getup.io
   annotations: {}
@@ -13,7 +19,7 @@ resources:
     cpu: "0.5"
     memory: 256Mi
 image:
-  repository: getupioundistro/undistro
-  tag: v0.29.2
+  repository: registry.undistro.io/library/undistro
+  tag: v0.31.1
   pullPolicy: IfNotPresent
   pullSecrets: []

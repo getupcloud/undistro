@@ -28,6 +28,7 @@ import (
 	"github.com/getupio-undistro/undistro/pkg/certmanager"
 	"github.com/getupio-undistro/undistro/pkg/cloud"
 	"github.com/getupio-undistro/undistro/pkg/helm"
+	"github.com/getupio-undistro/undistro/pkg/internalautohttps"
 	"github.com/getupio-undistro/undistro/pkg/kube"
 	"github.com/getupio-undistro/undistro/pkg/meta"
 	"github.com/getupio-undistro/undistro/pkg/retry"
@@ -61,8 +62,8 @@ var (
 )
 
 const (
-	undistroRepo = "https://charts.undistro.io"
-	ns           = "undistro-system"
+	undistroRepo = "https://registry.undistro.io/chartrepo/library"
+	ns           = undistro.Namespace
 )
 
 type InstallOptions struct {
@@ -447,16 +448,18 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		}
 	}
 	if installUndistro {
+		undistroChartValues := getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro")
+		providerUndistro, err := o.installChart(restGetter, chartRepo, secretRef, "undistro", undistroChartValues)
+		if err != nil {
+			return err
+		}
+		providers = append(providers, providerUndistro)
+
 		providerNginx, err := o.installChart(restGetter, chartRepo, secretRef, "ingress-nginx", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "ingress-nginx"))
 		if err != nil {
 			return err
 		}
 		providers = append(providers, providerNginx)
-		providerUndistro, err := o.installChart(restGetter, chartRepo, secretRef, "undistro", getConfigFrom(cmd.Context(), c, cfg.CoreProviders, "undistro"))
-		if err != nil {
-			return err
-		}
-		providers = append(providers, providerUndistro)
 		err = retry.WithExponentialBackoff(retry.NewBackoff(), func() error {
 			for _, o := range undistroObjs {
 				_, errCert := util.CreateOrUpdate(cmd.Context(), c, &o)
@@ -468,6 +471,15 @@ func (o *InstallOptions) RunInstall(f cmdutil.Factory, cmd *cobra.Command) error
 		})
 		if err != nil {
 			return err
+		}
+		// install cert in local environments
+		isLocal := undistroChartValues["local"].(bool)
+		if isLocal {
+			fmt.Fprintf(o.IOStreams.Out, "Installing local certificates\n")
+			err = internalautohttps.InstallLocalCert(cmd.Context(), c)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	err = retry.WithExponentialBackoff(retry.NewBackoff(), func() error {

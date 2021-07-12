@@ -1,0 +1,51 @@
+{{- if .Values.local -}}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: undistro-local-clusterissuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ca-undistro
+  namespace: undistro-system
+spec:
+  isCA: true
+  commonName: "UnDistro Local Authority - ECC Root"
+  secretName: ca-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: undistro-local-clusterissuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: undistro-local-issuer
+  namespace: undistro-system
+spec:
+  ca:
+    secretName: ca-secret
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: localhost-cert
+  namespace: undistro-system
+spec: 
+  secretName: undistro-ingress-cert    
+  commonName: "UnDistro Local Authority - ECC Root"
+  issuerRef:
+    name: undistro-local-issuer
+    kind: Issuer
+  dnsNames:
+  {{- range .Values.ingress.hosts -}}
+  - {{ . }}
+  {{- end -}}
+{{- end -}}

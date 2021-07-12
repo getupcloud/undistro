@@ -365,7 +365,7 @@ func (r *ClusterReconciler) hasDiff(cl *appv1alpha1.Cluster) bool {
 func (r *ClusterReconciler) reconcileCNI(ctx context.Context, cl *appv1alpha1.Cluster) error {
 	const (
 		cniCalicoName = "calico"
-		chartRepo     = "https://charts.undistro.io"
+		chartRepo     = "https://registry.undistro.io/chartrepo/library"
 		calicoVersion = "3.19.1"
 	)
 
