@@ -14,8 +14,6 @@ keywords:
 sources:
   - https://github.com/kubernetes/ingress-nginx
 type: application
-maintainers:
-  - name: ChiefAlexander
 engine: gotpl
 kubeVersion: ">=1.16.0-0"
 annotations:
