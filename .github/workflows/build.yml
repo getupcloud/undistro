@@ -41,14 +41,6 @@ jobs:
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.0.1
 
-      - name: Run chart-testing (list-changed)        
-        id: list-changed
-        run: |
-          changed=$(ct list-changed)
-          if [[ -n "$changed" ]]; then
-            echo "::set-output name=changed::true"
-          fi
-
       - name: Run chart-testing (lint)        
         run: ct lint --all
 
