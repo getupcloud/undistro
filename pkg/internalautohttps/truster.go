@@ -21,6 +21,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 
+	"github.com/getupio-undistro/undistro/pkg/retry"
 	"github.com/getupio-undistro/undistro/pkg/undistro"
 	"github.com/pkg/errors"
 	"github.com/smallstep/truststore"
@@ -48,11 +49,16 @@ func InstallLocalCert(ctx context.Context, c client.Client) (err error) {
 	}
 
 	if !trusted(rootCert) {
-		truststore.Install(rootCert,
-			truststore.WithDebug(),
-			truststore.WithFirefox(),
-			truststore.WithJava(),
-		)
+		err = retry.WithExponentialBackoff(retry.NewBackoff(), func() error {
+			return truststore.Install(rootCert,
+				truststore.WithDebug(),
+				truststore.WithFirefox(),
+				truststore.WithJava(),
+			)
+		})
+		if err != nil {
+			return errors.Errorf("unable to install certificate %s: %v", caName, err)
+		}
 	}
 	return
 }
