@@ -25,8 +25,8 @@ spec:
   tls: 
     - 
       hosts:
-      {{- range .Values.ingress.hosts -}}
+      {{- range .Values.ingress.hosts }}
         - {{ . }}
-      {{- end -}}
+      {{- end }}
       secretName: undistro-ingress-cert
 {{- end -}}
