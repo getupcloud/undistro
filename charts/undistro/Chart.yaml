@@ -23,3 +23,6 @@ version: 0.31.3
 appVersion: 0.31.3
 
 icon: https://avatars1.githubusercontent.com/u/72454548
+maintainers:
+  - name: getupio-undistro
+    url: https://undistro.io/

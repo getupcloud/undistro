@@ -1,6 +1,9 @@
 apiVersion: v2
 name: calico
 description: A Helm chart for Kubernetes
+maintainers:
+  - name: getupio-undistro
+    url: https://undistro.io/
 
 # A chart can be either an 'application' or a 'library' chart.
 #

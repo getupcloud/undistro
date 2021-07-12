@@ -3,7 +3,7 @@ prometheus:
   enabled: false
 ingress:
   enabled: true
-  hosts: 
+  hosts:
     - localhost
     - ingress.local
     - undistro.local

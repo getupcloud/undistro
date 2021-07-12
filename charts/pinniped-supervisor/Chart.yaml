@@ -1,11 +1,11 @@
---- 
+---
 apiVersion: v2
 appVersion: "0.9.2"
 description: "A Pinniped Supervisor Helm chart for Kubernetes"
 home: "http://pinniped.dev/"
-maintainers: 
-  - 
-    name: "Undistro Authors"
+maintainers:
+  - name: getupio-undistro
+    url: https://undistro.io/
 name: pinniped-supervisor
 type: application
 version: "0.9.2"
