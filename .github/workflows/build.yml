@@ -8,7 +8,7 @@ on:
     branches: [main]
 
 jobs:
-  build:    
+  build: 
     name: Build
     runs-on: ubuntu-latest
     steps:
@@ -39,16 +39,7 @@ jobs:
         id: node
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.0.1
-
-      - name: Run chart-testing (list-changed)
-        working-directory: ./charts
-        id: list-changed
-        run: |
-          changed=$(ct list-changed)
-          if [[ -n "$changed" ]]; then
-            echo "::set-output name=changed::true"
-          fi
+        uses: helm/chart-testing-action@v2.0.1      
 
       - name: Run chart-testing (lint)
         working-directory: ./charts
