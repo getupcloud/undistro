@@ -31,6 +31,8 @@ Before you start, make sure the following prerequisites are installed:
 - Install and setup [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in your local environment.
 - Install and setup [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and [Docker](https://www.docker.com/get-started). **(required just for kind installation method)**
 - Install and setup [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html) in your local environment. **(required just for AWS provider)**
+- Install [NSS Tools](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/tools) in your OS using your favorite package manager (rpm/deb/apk)
+> :warning: **If the installation is from rpm, deb, apk or brew package managers it will also install nss tools for you**: Be very careful here!
 - Download [UnDistro CLI](https://github.com/getupio-undistro/undistro/releases) or use Homebrew to install.
 
 ~~~bash
@@ -155,6 +157,7 @@ After [prepare the environment](./docs#prepare-environment) choose one of the op
 - Install and setup [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) in your local environment
 - Install and setup [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and [Docker](https://www.docker.com/get-started) **(required just for kind installation method)**
 - Install and setup [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html) in your local environment **(required just for AWS provider)**
+- Install [NSS Tools](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/tools) in your OS using your favorite package manager (rpm/deb/apk).
 
 ## Existing Cluster
 
