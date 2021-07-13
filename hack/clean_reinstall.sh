@@ -21,4 +21,4 @@ kind delete cluster
 
 bash -x hack/kind.sh
 
-undistro install --config hack/undistro-config.yaml --v 4
+undistro install --config ~/.secrets/undistro-config.yaml --v 4
