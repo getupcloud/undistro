@@ -89,6 +89,7 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 	if cl.Spec.Paused {
 		log.Info("Reconciliation is paused for this object")
+		cl = appv1alpha1.ClusterPaused(cl)
 		return ctrl.Result{}, nil
 	}
 

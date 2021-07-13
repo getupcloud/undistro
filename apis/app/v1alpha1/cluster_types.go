@@ -274,6 +274,12 @@ func ClusterReady(p Cluster) Cluster {
 	return p
 }
 
+// ClusterPaused registers a paused reconciliation of the given Cluster.
+func ClusterPaused(p Cluster) Cluster {
+	meta.SetResourceCondition(&p, meta.ReadyCondition, metav1.ConditionTrue, meta.ReconciliationPausedReason, meta.ReconciliationPausedReason)
+	return p
+}
+
 // +kubebuilder:object:root=true
 
 // ClusterList contains a list of Cluster

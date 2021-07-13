@@ -74,6 +74,7 @@ func (r *ProviderReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 	if p.Spec.Paused {
 		log.Info("Reconciliation is paused for this object")
+		p = configv1alpha1.ProviderPaused(p)
 		return ctrl.Result{}, nil
 	}
 
