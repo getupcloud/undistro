@@ -57,6 +57,9 @@ brews:
     folder: Formula
     homepage: https://undistro.io
     description: UnDistro is a vanilla, non-opinionated, and open source Kubernetes distribution
+    dependencies:
+      - name: nss
+
 nfpms:
   - homepage: https://undistro.io
     description: UnDistro is a vanilla, non-opinionated, and open source Kubernetes distribution
@@ -69,6 +72,16 @@ nfpms:
       - apk
       - deb
       - rpm
+    overrides:
+      deb:
+        dependencies:
+          - libnss3-tools
+      rpm:
+        dependencies:
+          - nss-tools
+      apk:
+        dependencies:
+          - nss
 
 release:
   github:

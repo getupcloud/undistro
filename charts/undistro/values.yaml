@@ -3,7 +3,7 @@ prometheus:
   enabled: false
 ingress:
   enabled: true
-  hosts: 
+  hosts:
     - localhost
     - ingress.local
     - undistro.local
@@ -20,6 +20,6 @@ resources:
     memory: 256Mi
 image:
   repository: registry.undistro.io/library/undistro
-  tag: v0.31.1
+  tag: v0.31.4
   pullPolicy: IfNotPresent
   pullSecrets: []

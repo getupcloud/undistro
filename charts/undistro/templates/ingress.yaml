@@ -2,11 +2,11 @@
 --- 
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
-metadata: 
-  annotations:    
-    {{- if not .Values.local -}}
+metadata:
+  annotations:
+    {{- if not .Values.local }}
     cert-manager.io/issuer: letsencrypt-prod    
-    {{- end -}}
+    {{- end }}
     kubernetes.io/ingress.class: nginx    
     nginx.ingress.kubernetes.io/enable-cors: "true"
   name: undistro-ingress
@@ -25,8 +25,8 @@ spec:
   tls: 
     - 
       hosts:
-      {{- range .Values.ingress.hosts -}}
-      - {{ . }}
-      {{- end -}}
+      {{- range .Values.ingress.hosts }}
+        - {{ . }}
+      {{- end }}
       secretName: undistro-ingress-cert
 {{- end -}}

@@ -89,6 +89,11 @@ func ProviderReady(p Provider) Provider {
 	return p
 }
 
+func ProviderPaused(p Provider) Provider {
+	meta.SetResourceCondition(&p, meta.ReadyCondition, metav1.ConditionTrue, meta.ReconciliationPausedReason, meta.ReconciliationPausedReason)
+	return p
+}
+
 // ProviderAttempted registers an attempt of the given Provider with the given state.
 // and returns the modified Provider and a boolean indicating a state change.
 func ProviderAttempted(p Provider, releaseName, version string) Provider {

@@ -76,6 +76,7 @@ func (r *DefaultPoliciesReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 	if p.Spec.Paused {
 		log.Info("Reconciliation is paused for this object")
+		p = appv1alpha1.DefaultPoliciesPaused(p)
 		return ctrl.Result{}, nil
 	}
 	cl := &appv1alpha1.Cluster{}

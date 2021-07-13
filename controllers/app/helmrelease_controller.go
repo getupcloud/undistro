@@ -104,6 +104,7 @@ func (r *HelmReleaseReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	}
 	if hr.Spec.Paused {
 		log.Info("Reconciliation is paused for this object")
+		hr = appv1alpha1.HelmReleasePaused(hr)
 		return ctrl.Result{}, nil
 	}
 	if !hr.DeletionTimestamp.IsZero() {

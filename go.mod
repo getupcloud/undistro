@@ -10,7 +10,6 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/aws/aws-sdk-go v1.38.58
 	github.com/go-logr/logr v0.4.0
-	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/json-iterator/go v1.1.11
 	github.com/onsi/ginkgo v1.16.4

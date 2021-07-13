@@ -12,6 +12,20 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.6.2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
@@ -24,10 +38,11 @@ jobs:
           node-version: "15"
         id: node
 
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.0.1
+
+      - name: Run chart-testing (lint)
+        run: ct lint --all
 
       - name: Get dependencies
         run: go mod download

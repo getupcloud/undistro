@@ -235,6 +235,11 @@ func HelmReleaseReady(hr HelmRelease) HelmRelease {
 	return hr
 }
 
+func HelmReleasePaused(p HelmRelease) HelmRelease {
+	meta.SetResourceCondition(&p, meta.ReadyCondition, metav1.ConditionTrue, meta.ReconciliationPausedReason, meta.ReconciliationPausedReason)
+	return p
+}
+
 // HelmReleaseAttempted registers an attempt of the given HelmRelease with the given state.
 // and returns the modified HelmRelease and a boolean indicating a state change.
 func HelmReleaseAttempted(hr HelmRelease, revision string, releaseRevision int, valuesChecksum string) (HelmRelease, bool) {
