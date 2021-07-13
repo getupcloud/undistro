@@ -11,7 +11,7 @@ import Steps from './steps'
 import Button from '@components/button'
 import Api from 'util/api'
 import Toggle from '@components/toggle'
-
+import storeWizard from '../../store'
 type Props = {
   handleClose: () => void
 }
@@ -61,37 +61,36 @@ const ClusterWizard: FC<Props> = ({ handleClose }) => {
   const [sshKey, setSshKey] = useState<string>('')
   const [sshKeyOptions, setSshKeyOptions] = useState<string[]>([])
   const providerOptions = [{ value: provider, label: 'aws' }]
+  const wizardStore = storeWizard.useState(s => s)
 
+  console.log(wizardStore)
   const handleAction = () => {
     const getWorkers = workers.map(elm => ({ machineType: elm.machineType, replicas: elm.replicas, infraNode: elm.infraNode }))
-
-    const cluster = {
-      "name": clusterName,
-      "namespace": namespace
-    }
-
-    const spec = {
-      "kubernetesVersion": k8sVersion,
-      "controlPlane": {
-        "machineType": machineTypes,
-        "replicas": replicas
-      },
-
-      "infrastructureProvider": {
-        "flavor": flavor,
-        "name": provider,
-        "region": region,
-        "sshKey": sshKey
-      },
-
-      "workers": getWorkers
-    }
 
     const data = {
       "apiVersion": "app.undistro.io/v1alpha1",
       "kind": "Cluster",
-      "metadata": cluster,
-      "spec": spec
+      "metadata": {
+        "name": clusterName,
+        "namespace": namespace
+      },
+
+      "spec": {
+        "kubernetesVersion": k8sVersion,
+        "controlPlane": {
+          "machineType": machineTypes,
+          "replicas": replicas
+        },
+  
+        "infrastructureProvider": {
+          "flavor": flavor,
+          "name": provider,
+          "region": region,
+          "sshKey": sshKey
+        },
+  
+        "workers": getWorkers
+      }
     }
 
     const dataPolicies = {
